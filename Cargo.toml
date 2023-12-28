@@ -3,10 +3,11 @@ resolver = "2"
 
 
 members = [
-    "common",
-    "sbe/bindings",
-    "sbe/sbe_messages",
-    "service_utils",
+    "flv_common",
+    "flv_components/client_manager",
+    "flv_sbe/bindings",
+    "flv_sbe/sbe_messages",
+    "flv_service_utils",
 ]
 
 

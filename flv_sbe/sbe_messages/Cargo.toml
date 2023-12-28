@@ -21,7 +21,7 @@ version = "0.1.0"
 
 
 [dependencies.common]
-path = "../../common"
+path = "../../flv_common"
 version = "0.1.0"
 
 
