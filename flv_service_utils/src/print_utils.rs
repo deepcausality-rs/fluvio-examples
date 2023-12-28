@@ -1,6 +1,7 @@
+use common::prelude::ServiceID;
 
 pub fn print_start_header(
-    service_id: &str,
+    service_id: &ServiceID,
     service_addr: &str,
     metrics_addr: &str,
     metrics_uri: &str,
@@ -14,7 +15,7 @@ pub fn print_start_header(
 }
 
 pub fn print_start_header_message_service(
-    service_id: &str,
+    service_id: &ServiceID,
     service_topic: &str,
     metrics_addr: &str,
     metrics_uri: &str,
@@ -27,7 +28,7 @@ pub fn print_start_header_message_service(
     println!();
 }
 
-pub fn print_stop_header(service_id: &str) {
+pub fn print_stop_header(service_id: &ServiceID) {
     println!();
     println!("==========================================");
     println!("{} service shutdown complete", service_id);

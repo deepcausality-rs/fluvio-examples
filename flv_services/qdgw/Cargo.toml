@@ -1,0 +1,43 @@
+[package]
+name = "qdgw"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+readme.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+
+[[bin]]
+name = "qdgw"
+path = "src/main.rs"
+
+
+[dependencies.common]
+path = "../../flv_common"
+version = "0.1.0"
+
+
+[dependencies.client_manager]
+path = "../../flv_components/client_manager"
+version = "0.1.0"
+
+
+[dependencies.sbe_messages]
+path = "../../flv_sbe/sbe_messages"
+version = "0.1.0"
+
+
+[dependencies.service_utils]
+path = "../../flv_service_utils"
+version = "0.1.0"
+
+
+[dependencies]
+autometrics = { workspace = true }
+fluvio = { workspace = true }
+futures = { workspace = true }
+tokio = { workspace = true }
+tonic = { workspace = true }
+prost = { workspace = true }
+warp = { workspace = true }

@@ -8,6 +8,7 @@ members = [
     "flv_sbe/bindings",
     "flv_sbe/sbe_messages",
     "flv_service_utils",
+    "flv_services/qdgw",
 ]
 
 

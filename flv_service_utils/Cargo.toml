@@ -13,5 +13,10 @@ name = "service_utils"
 path = "src/lib.rs"
 
 
+[dependencies.common]
+path = "../flv_common"
+version = "0.1.0"
+
+
 [dependencies]
 tokio = { workspace = true }
