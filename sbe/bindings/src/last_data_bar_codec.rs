@@ -1,7 +1,7 @@
 use crate::*;
 
-pub use decoder::LastDataBarDecoder;
 pub use encoder::LastDataBarEncoder;
+pub use decoder::LastDataBarDecoder;
 
 pub const SBE_BLOCK_LENGTH: u16 = 1;
 pub const SBE_TEMPLATE_ID: u16 = 7;
@@ -69,7 +69,9 @@ pub mod encoder {
             let offset = self.offset;
             self.get_buf_mut().put_u8_at(offset, value as u8)
         }
+
     }
+
 } // end encoder
 
 pub mod decoder {
@@ -145,5 +147,8 @@ pub mod decoder {
         pub fn message_type(&self) -> MessageType {
             self.get_buf().get_u8_at(self.offset).into()
         }
+
     }
+
 } // end decoder
+
