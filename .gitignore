@@ -12,3 +12,11 @@ Cargo.lock
 
 # MSVC Windows builds of rustc generate these, which store debugging information
 *.pdb
+
+# Jetbrains stuff
+.idea/
+.idea/*
+.idea/*.*
+
+# Exclude the data directory from git b/c file size exceeds github's 100MB limit
+data/
