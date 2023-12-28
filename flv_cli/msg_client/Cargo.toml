@@ -1,0 +1,35 @@
+[package]
+name = "msg_client"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+readme.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+
+[[bin]]
+name = "main"
+path = "src/main.rs"
+
+
+[lib]
+name = "msg_manager"
+path = "src/lib.rs"
+
+
+[dependencies.common]
+path = "../../flv_common"
+version = "0.1.0"
+
+
+[dependencies.sbe_messages]
+path = "../../flv_sbe/sbe_messages"
+version = "0.1.0"
+
+
+[dependencies]
+futures = { workspace = true }
+tokio = { workspace = true }
+fluvio = { workspace = true }
+

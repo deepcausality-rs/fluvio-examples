@@ -21,7 +21,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let metrics_host = "0.0.0.0";
     let metrics_port = 8080;
-    let metrics_uri = "/metrics";
+    let metrics_uri = "metrics";
     let metrics_addr = format!("{}:{}", metrics_host, metrics_port);
 
     //Creates a SocketAddr instance from the metrics address string.
