@@ -1,0 +1,62 @@
+[workspace]
+resolver = "2"
+
+
+members = [
+    "common",
+    "sbe/bindings",
+    "sbe/sbe_messages",
+    "service_utils",
+]
+
+
+[workspace.package]
+edition = "2021"
+rust-version = "1.74"
+readme = "README.md"
+repository = "https://github.com/marvin-hansen/quant-engine"
+authors = ["Marvin Hansen <marvin.hansen@gmail.com>"]
+
+
+[workspace.dependencies]
+autometrics = { version = "1", features = ["prometheus-exporter"] }
+chrono = { version = "0.4", features = ["serde"] }
+ctrlc = "3.4"
+fluvio = { version = "0.21" , default-features = false, features = ["rustls"] }
+futures = "0.3"
+hickory-resolver = { version = "0.24", default-features = false, features = ["tokio-runtime"] }
+log = "0.4"
+parquet = "49.0.0"
+prost = "0.12"
+prost-types = { version = "0.12", default-features = false }
+rand = {version = "0.8", default-features = false , features = ["std"]}
+rust_decimal = "1.33"
+rust_decimal_macros = "1.33"
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", default-features = false }
+surrealdb = { version = "1.0.1", features = ["kv-mem"] }
+tokio = { version = "1", features = ["macros", "net", "rt-multi-thread", "signal"] }
+tonic-health = "0.10"
+tonic = "0.10"
+tonic-build = "0.10.2"
+# Quest DB uses the postgres wire protocol for queries, which requires the postgres crate
+questdb-rs = {version = "3.1"}
+postgres = {version = "0.19", features = ["with-uuid"]}
+warp = { version = "0.3", features = ["multipart"] }
+
+
+# Optimize all crates
+[profile.release]
+opt-level = 3
+strip = true  # Automatically strip debug symbols from the binary
+lto = true    # Enable Link Time Optimization (LTO)
+codegen-units = 1 # Reduce Parallel Code Generation Units to Increase Optimization
+
+
+# There's a Cargo feature named profile-overrides
+# that lets you override the optimization level of dependencies.
+# https://docs.rust-embedded.org/book/unsorted/speed-vs-size.html
+[profile.release.package."*"]
+opt-level = 3
+strip = true  # Automatically strip debug symbols from the binary to reduce size
+codegen-units = 1 # Reduce Parallel Code Generation Units to Increase Optimization

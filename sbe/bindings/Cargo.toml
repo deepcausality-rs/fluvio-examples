@@ -1,0 +1,10 @@
+[package]
+name = "sbe_bindings"
+version = "0.1.0"
+authors = ["sbetool"]
+description = "Example schema"
+edition = "2021"
+
+[lib]
+name = "sbe_bindings"
+path = "src/lib.rs"

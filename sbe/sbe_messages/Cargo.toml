@@ -1,0 +1,31 @@
+[package]
+name = "sbe_messages"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+readme.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+
+[lib]
+name = "sbe_messages"
+path = "src/lib.rs"
+
+
+[dependencies.sbe_bindings]
+path = "../bindings"
+version = "0.1.0"
+
+
+[dependencies.common]
+path = "../../common"
+version = "0.1.0"
+
+
+[dependencies]
+rust_decimal = { workspace = true }
+serde = { workspace = true }
+chrono = { workspace = true }
