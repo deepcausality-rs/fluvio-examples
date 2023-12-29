@@ -7,11 +7,14 @@ members = [
     "flv_cli/msg_client",
     "flv_common",
     "flv_components/client_manager",
+    "flv_components/config_manager",
     "flv_components/db_surreal_manager",
     "flv_sbe/bindings",
     "flv_sbe/sbe_messages",
     "flv_service_utils",
     "flv_services/qdgw",
+    "flv_specs/db_specs",
+    "flv_specs/service_specs",
 ]
 
 
