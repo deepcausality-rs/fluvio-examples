@@ -9,7 +9,7 @@ authors.workspace = true
 
 
 [[bin]]
-name = "main"
+name = "msg_client"
 path = "src/main.rs"
 
 

@@ -9,8 +9,23 @@ authors.workspace = true
 
 
 [[bin]]
-name = "main"
-path = "src/main.rs"
+name = "import_fiat_codes"
+path = "src/bin/import_cur_codes/main.rs"
+
+
+[[bin]]
+name = "import_dti_codes"
+path = "src/bin/import_dti_codes/main.rs"
+
+
+[[bin]]
+name = "import_trade_data"
+path = "src/bin/import_kraken_trade_data/main.rs"
+
+
+[lib]
+name = "lib_import"
+path = "src/lib/mod.rs"
 
 
 [dependencies.common]
