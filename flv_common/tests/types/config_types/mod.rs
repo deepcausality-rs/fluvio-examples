@@ -8,3 +8,4 @@ mod service_id_tests;
 
 #[cfg(test)]
 mod metric_config_tests;
+mod service_config_tests;
