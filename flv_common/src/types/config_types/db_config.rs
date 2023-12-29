@@ -27,8 +27,6 @@ pub struct DBConfig {
     username: String,
     /// Password to be used if the server demands password authentication.
     password: String,
-    /// Alternate name and version of the client to send to server. The default is "MemgraphBolt/0.1".
-    client_name: String,
 }
 
 impl DBConfig {
@@ -39,7 +37,6 @@ impl DBConfig {
         db_namespace: String,
         username: String,
         password: String,
-        client_name: String,
     ) -> Self {
         Self {
             port,
@@ -48,60 +45,10 @@ impl DBConfig {
             db_namespace,
             username,
             password,
-            client_name,
-        }
-    }
-
-    /// Creates a new unsafe config for a connection without authentication.
-    pub fn new_connection(port: u16, host: String) -> Self {
-        Self {
-            port,
-            host,
-            ..Default::default()
-        }
-    }
-
-    /// Creates a new config for authentication.
-    pub fn new_authentication(username: String, password: String) -> Self {
-        Self {
-            username,
-            password,
-            ..Default::default()
-        }
-    }
-
-    /// Creates a new config for a connection with authentication.
-    pub fn new_connection_with_authentication(
-        port: u16,
-        host: String,
-        username: String,
-        password: String,
-    ) -> Self {
-        Self {
-            port,
-            host,
-            username,
-            password,
-            ..Default::default()
         }
     }
 }
 
-impl Default for DBConfig {
-    /// Returns the default configuration.
-    //https://surrealdb.com/docs/installation/running/docker
-    fn default() -> Self {
-        Self {
-            port: 8000,
-            host: "0.0.0.0".to_string(),
-            db_name: "test".to_string(),
-            db_namespace: "test".to_string(),
-            username: "root".to_string(),
-            password: "root".to_string(),
-            client_name: String::from("dbgw"),
-        }
-    }
-}
 
 // getters
 impl DBConfig {
@@ -134,11 +81,6 @@ impl DBConfig {
     pub fn password(&self) -> &String {
         &self.password
     }
-
-    /// Returns the alternate name and version of the client to send to server.
-    pub fn client_name(&self) -> &str {
-        &self.client_name
-    }
 }
 
 impl Display for DBConfig {
@@ -147,14 +89,13 @@ impl Display for DBConfig {
         write!(
             f,
             "DBConfig {{ port: {}, host: {}, db_name: {}, db_namespace: {}, username: {},\
-                password: {}, client_name: {} }}",
+                password: {} }}",
             self.port,
             self.host,
             self.db_name,
             self.db_namespace,
             self.username,
             self.password,
-            self.client_name
         )
     }
 }
