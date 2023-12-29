@@ -1,0 +1,23 @@
+[package]
+name = "db_surreal_manager"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+readme.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[lib]
+name = "db_surreal_manager"
+path = "src/lib.rs"
+
+
+[dependencies.common]
+path = "../../flv_common"
+version = "0.1.0"
+
+
+[dependencies]
+futures = { workspace = true }
+surrealdb = { workspace = true }
+tokio = { workspace = true }

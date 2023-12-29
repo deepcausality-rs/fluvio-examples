@@ -3,7 +3,10 @@ use common::errors::MessageProcessingError;
 use fluvio::dataplane::record::ConsumerRecord;
 use fluvio::{Offset, PartitionConsumer};
 use futures::StreamExt;
-use sbe_messages::prelude::{ClientLoginMessage, ClientLogoutMessage, MessageType, StartDataMessage, StopAllDataMessage, StopDataMessage, };
+use sbe_messages::prelude::{
+    ClientLoginMessage, ClientLogoutMessage, MessageType, StartDataMessage, StopAllDataMessage,
+    StopDataMessage,
+};
 use std::future::Future;
 use std::sync::{Arc, Mutex};
 use tokio::{pin, select};
@@ -74,7 +77,6 @@ impl Server {
                 }// end stream.next()
 
             } // end select
-
         } // end loop
 
         return Ok(());

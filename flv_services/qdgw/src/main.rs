@@ -1,19 +1,18 @@
 mod handle_clients;
-mod service;
 mod handle_data;
+mod service;
 
 use std::net::SocketAddr;
 use std::sync::{Arc, Mutex};
 use warp::Filter;
 
+use crate::service::Server;
 use autometrics::prometheus_exporter;
 use client_manager::ClientManager;
 use common::prelude::{MessageClientConfig, ServiceID};
 use service_utils::{print_utils, shutdown_utils};
-use crate::service::Server;
 
 const SVC_ID: ServiceID = ServiceID::QDGW;
-
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -28,7 +27,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let web_addr: SocketAddr = metrics_addr
         .parse()
         .expect("[QDGW]/main: Failed to parse metric host to address");
-
 
     //Creates a new Warp filter for the metrics endpoint.
     let routes = warp::get()

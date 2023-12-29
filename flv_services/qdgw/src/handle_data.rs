@@ -1,8 +1,6 @@
 use crate::service::Server;
-use common::prelude::{MessageProcessingError};
-use sbe_messages::prelude::{
-    StartDataMessage, StopAllDataMessage, StopDataMessage,
-};
+use common::prelude::MessageProcessingError;
+use sbe_messages::prelude::{StartDataMessage, StopAllDataMessage, StopDataMessage};
 
 impl Server {
     pub(crate) async fn start_data(
@@ -12,7 +10,10 @@ impl Server {
         start_data_msg: &StartDataMessage,
     ) -> Result<(), MessageProcessingError> {
         // Remove debug print
-        println!("[QDGW/handle::start_date]: start_data: {:?} on channel : {:?}", start_data_msg, client_data_channel);
+        println!(
+            "[QDGW/handle::start_date]: start_data: {:?} on channel : {:?}",
+            start_data_msg, client_data_channel
+        );
 
         Ok(())
     }

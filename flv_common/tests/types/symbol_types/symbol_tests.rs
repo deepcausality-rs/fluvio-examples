@@ -65,4 +65,3 @@ fn test_size_precision() {
 
     assert_eq!(symbol.size_precision(), Decimal::from_str("0.001").unwrap());
 }
-

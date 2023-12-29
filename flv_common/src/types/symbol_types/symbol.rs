@@ -1,6 +1,6 @@
-use std::fmt;
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
+use std::fmt;
 
 use crate::prelude::ExchangeID;
 

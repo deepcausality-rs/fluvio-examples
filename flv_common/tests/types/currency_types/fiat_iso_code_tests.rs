@@ -1,6 +1,5 @@
 use common::prelude::FiatIsoCode;
 
-
 #[test]
 fn test_new() {
     let code = FiatIsoCode::new("USD".to_string(), ['U', 'S', 'D'], 840);
@@ -40,5 +39,3 @@ fn test_display() {
 
     assert_eq!(actual, expected);
 }
-
-

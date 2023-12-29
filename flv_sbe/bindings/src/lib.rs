@@ -3,32 +3,32 @@
 #![allow(ambiguous_glob_reexports)]
 #![allow(clippy::upper_case_acronyms)]
 #![allow(non_camel_case_types)]
-use ::core::{convert::TryInto};
+use ::core::convert::TryInto;
 
-pub mod stop_data_msg_codec;
-pub mod last_data_bar_codec;
+pub mod client_login_codec;
+pub mod client_logout_codec;
 pub mod data_bar_codec;
-pub mod message_type;
+pub mod exchange_id;
 pub mod float_codec;
+pub mod last_data_bar_codec;
+pub mod message_header_codec;
+pub mod message_type;
 pub mod start_data_msg_codec;
 pub mod stop_all_data_msg_codec;
-pub mod client_login_codec;
-pub mod message_header_codec;
-pub mod exchange_id;
-pub mod client_logout_codec;
+pub mod stop_data_msg_codec;
 pub mod var_string_encoding_codec;
 
-pub use crate::stop_data_msg_codec::*;
-pub use crate::last_data_bar_codec::*;
+pub use crate::client_login_codec::*;
+pub use crate::client_logout_codec::*;
 pub use crate::data_bar_codec::*;
-pub use crate::message_type::*;
+pub use crate::exchange_id::*;
 pub use crate::float_codec::*;
+pub use crate::last_data_bar_codec::*;
+pub use crate::message_header_codec::*;
+pub use crate::message_type::*;
 pub use crate::start_data_msg_codec::*;
 pub use crate::stop_all_data_msg_codec::*;
-pub use crate::client_login_codec::*;
-pub use crate::message_header_codec::*;
-pub use crate::exchange_id::*;
-pub use crate::client_logout_codec::*;
+pub use crate::stop_data_msg_codec::*;
 pub use crate::var_string_encoding_codec::*;
 
 pub type SbeResult<T> = core::result::Result<T, SbeErr>;
@@ -92,7 +92,9 @@ impl<'a> ReadBuf<'a> {
 
     #[inline]
     pub(crate) fn get_bytes_at<const N: usize>(slice: &[u8], index: usize) -> [u8; N] {
-        slice[index..index+N].try_into().expect("slice with incorrect length")
+        slice[index..index + N]
+            .try_into()
+            .expect("slice with incorrect length")
     }
 
     #[inline]
@@ -147,9 +149,8 @@ impl<'a> ReadBuf<'a> {
 
     #[inline]
     pub fn get_slice_at(&self, index: usize, len: usize) -> &[u8] {
-        &self.data[index..index+len]
+        &self.data[index..index + len]
     }
-
 }
 
 #[derive(Debug, Default)]
@@ -225,4 +226,3 @@ impl<'a> WriteBuf<'a> {
         len
     }
 }
-

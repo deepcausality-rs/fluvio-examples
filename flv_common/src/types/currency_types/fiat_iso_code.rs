@@ -1,9 +1,9 @@
-use std::fmt;
 use serde::Deserialize;
 use serde::Serialize;
+use std::fmt;
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct FiatIsoCode{
+pub struct FiatIsoCode {
     currency: String,
     alphabetic_code: [char; 3],
     iso_code: u16,
@@ -11,7 +11,11 @@ pub struct FiatIsoCode{
 
 impl FiatIsoCode {
     pub fn new(currency: String, alphabetic_code: [char; 3], iso_code: u16) -> Self {
-        Self { currency, alphabetic_code, iso_code }
+        Self {
+            currency,
+            alphabetic_code,
+            iso_code,
+        }
     }
 }
 
@@ -30,6 +34,12 @@ impl FiatIsoCode {
 
 impl fmt::Display for FiatIsoCode {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{} ({}, {})", self.currency, self.alphabetic_code(), self.iso_code)
+        write!(
+            f,
+            "{} ({}, {})",
+            self.currency,
+            self.alphabetic_code(),
+            self.iso_code
+        )
     }
 }

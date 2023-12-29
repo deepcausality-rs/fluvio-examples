@@ -7,6 +7,7 @@ members = [
     "flv_cli/msg_client",
     "flv_common",
     "flv_components/client_manager",
+    "flv_components/db_surreal_manager",
     "flv_sbe/bindings",
     "flv_sbe/sbe_messages",
     "flv_service_utils",
@@ -16,7 +17,7 @@ members = [
 
 [workspace.package]
 edition = "2021"
-rust-version = "1.74"
+rust-version = "1.75"
 readme = "README.md"
 repository = "https://github.com/marvin-hansen/quant-engine"
 authors = ["Marvin Hansen <marvin.hansen@gmail.com>"]

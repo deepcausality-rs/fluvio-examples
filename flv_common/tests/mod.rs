@@ -1,2 +1,2 @@
-mod types;
 mod errors;
+mod types;

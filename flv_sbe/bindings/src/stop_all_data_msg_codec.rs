@@ -1,7 +1,7 @@
 use crate::*;
 
-pub use encoder::StopAllDataMsgEncoder;
 pub use decoder::StopAllDataMsgDecoder;
+pub use encoder::StopAllDataMsgEncoder;
 
 pub const SBE_BLOCK_LENGTH: u16 = 4;
 pub const SBE_TEMPLATE_ID: u16 = 5;
@@ -90,9 +90,7 @@ pub mod encoder {
             let offset = self.offset + 3;
             self.get_buf_mut().put_u8_at(offset, value as u8)
         }
-
     }
-
 } // end encoder
 
 pub mod decoder {
@@ -180,8 +178,5 @@ pub mod decoder {
         pub fn exchange_id(&self) -> ExchangeID {
             self.get_buf().get_u8_at(self.offset + 3).into()
         }
-
     }
-
 } // end decoder
-
