@@ -10,7 +10,7 @@ authors.workspace = true
 
 [[bin]]
 name = "import_trade_data"
-path = "src/bin/import_kraken_trade_data/main.rs"
+path = "src/bin/import_kraken_data/main.rs"
 
 
 [lib]
