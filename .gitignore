@@ -19,4 +19,4 @@ Cargo.lock
 .idea/*.*
 
 # Exclude the data directory from git b/c file size exceeds github's 100MB limit
-data/
+data/Kraken_Trading_History/

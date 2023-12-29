@@ -1,0 +1,442 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Native Digital Token.Blockchain",
+    "LastModifyDateTime": "2023-12-18T14:48:40",
+    "description": "Digital token with a privileged position in the blockchain distributed ledger technology protocol",
+    "copyright": "Copyright \u00a9 2021 Digital Token Identifier Foundation Limited 2021. All Rights Reserved.",
+    "type": "object",
+    "properties": {
+        "Header": {
+            "type": "object",
+            "properties": {
+                "DTI": {
+                    "title": "Digital Token Identifier",
+                    "description": "",
+                    "type": "string"
+                },
+                "DTIType": {
+                    "description": "Native Digital Token",
+                    "title": "Digital Token Identifier Type",
+                    "elaboration": "Category of the digital token identifier",
+                    "type": "integer",
+                    "const": 1,
+                    "enum": [
+                        0,
+                        1,
+                        2,
+                        3
+                    ],
+                    "options": {
+                        "enum_titles": [
+                            "Auxiliary Digital Token",
+                            "Native Digital Token",
+                            "Distributed Ledger without a Native Digital Token",
+                            "Functionally Fungible Group of Digital Tokens"
+                        ]
+                    }
+                },
+                "DLTType": {
+                    "description": "Blockchain",
+                    "title": "Distributed Ledger Technology Type",
+                    "elaboration": "Category of systems implementing distributed ledger technology based on their consensus mechanisms",
+                    "type": "integer",
+                    "const": 1,
+                    "enum": [
+                        1,
+                        0
+                    ],
+                    "enum_elaboration": {
+                        "1": "Blockchain Distributed Ledger with confirmed blocks organized in an append-only, sequential chain using cryptographic links",
+                        "0": "Distributed Ledger which is not based on blockchain"
+                    },
+                    "options": {
+                        "enum_titles": [
+                            "Blockchain",
+                            "Other"
+                        ]
+                    }
+                },
+                "templateVersion": {
+                    "title": "Template Version",
+                    "description": "The template version (i.e. JSON schema document) for which this record is valid",
+                    "type": "string",
+                    "const": "V1.0.0",
+                    "enum": [
+                        "V1.0.0"
+                    ]
+                }
+            },
+            "required": [
+                "DTI",
+                "DTIType",
+                "DLTType",
+                "templateVersion"
+            ],
+            "additionalProperties": false
+        },
+        "Informative": {
+            "type": "object",
+            "properties": {
+                "LongName": {
+                    "condition": "Conditionally required for non provisional records",
+                    "title": "Digital Token Long Name",
+                    "description": "Digital token long name is a string containing the full name of the digital token",
+                    "type": "string"
+                },
+                "OrigLangLongName": {
+                    "title": "Original Language Digital Token Long Name",
+                    "description": "",
+                    "type": "string",
+                    "default": "Basic Latin (Unicode)"
+                },
+                "ShortNames": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "ShortName": {
+                                "title": "Digital Token Digital Token Short Name",
+                                "description": "Short name or ticker symbol of the digital token",
+                                "type": "string"
+                            },
+                            "OrigLangShortName": {
+                                "title": "Original Language Digital Token Short Name",
+                                "description": "",
+                                "type": "string",
+                                "default": "Basic Latin (Unicode)"
+                            }
+                        },
+                        "required": [
+                            "ShortName"
+                        ],
+                        "additionalProperties": false
+                    }
+                },
+                "UnderlyingAssetExternalIdentifiers": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "UnderlyingAssetExternalIdentifierType": {
+                                "title": "Underlying Asset External Identifier Type",
+                                "description": "Underlying asset external identifier type for the digital token",
+                                "type": "string",
+                                "elaboration": "Underlying Asset Types",
+                                "enum": [
+                                    "ISIN",
+                                    "Cusip",
+                                    "SEDOL",
+                                    "RIC",
+                                    "CCY",
+                                    "Country code",
+                                    "FIGI",
+                                    "LEI"
+                                ],
+                                "enum_elaboration": {
+                                    "ISIN": "ISO 6166",
+                                    "Cusip": "Cusip",
+                                    "SEDOL": "Stock Exchange Daily Official List assigned by the London Stock Exchange",
+                                    "RIC": "RIC",
+                                    "CCY": "ISO 4217",
+                                    "Country code": "ISO 3166 ALPHA 3",
+                                    "FIGI": "An Object Management Group (OMG) standard; Formerly known as \"Bloomberg Open Symbology BBGID\"",
+                                    "LEI": "ISO 17442"
+                                },
+                                "options": {
+                                    "enum_titles": [
+                                        "International Securities Identification Number",
+                                        "",
+                                        "Stock Exchange Daily Official List",
+                                        "Reuters Instrument Code",
+                                        "Currency Code",
+                                        "",
+                                        "Financial Instrument Global Identifier",
+                                        "Legal Entity Identifier"
+                                    ]
+                                }
+                            },
+                            "UnderlyingAssetExternalIdentifierValue": {
+                                "title": "Underlying Asset External Identifier Value",
+                                "description": "Underlying asset external identifier value for the digital token",
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "UnderlyingAssetExternalIdentifierType",
+                            "UnderlyingAssetExternalIdentifierValue"
+                        ],
+                        "additionalProperties": false
+                    }
+                },
+                "DTIExternalIdentifiers": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "DTIExternalIdentifierType": {
+                                "title": "Digital Token External Identifier Type",
+                                "description": "External identifier type for the digital token",
+                                "type": "string",
+                                "elaboration": "External Digital Token Identifier Types",
+                                "enum": [
+                                    "ITIN"
+                                ],
+                                "options": {
+                                    "enum_titles": [
+                                        "International Token Identification Number"
+                                    ]
+                                }
+                            },
+                            "ExternalIdentifierValue": {
+                                "title": "Digital Token External Identifier Value",
+                                "description": "External identifier for the digital token",
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "DTIExternalIdentifierType",
+                            "ExternalIdentifierValue"
+                        ],
+                        "additionalProperties": false
+                    }
+                },
+                "URL": {
+                    "title": "Digital token reference implementation URL",
+                    "description": "Uniform Resource Locator (URL) pointing to the digital token\u2019s reference implementation or software repository",
+                    "type": "string"
+                },
+                "UnitMultiplier": {
+                    "condition": "Conditionally required for non provisional records",
+                    "title": "Digital Token Unit Multiplier",
+                    "description": "Multiplier used to map from the unit of value stored on the distributed ledger to the unit of value associated with the digital token long name",
+                    "type": "integer"
+                },
+                "PublicDistributedLedgerIndication": {
+                    "condition": "Conditionally required for non provisional records",
+                    "title": "Public Distributed Ledger Indication",
+                    "description": "If true, access to reading the distributed ledger is unrestricted and the data elements are accessible for independent verification by the general public",
+                    "type": "boolean"
+                }
+            },
+            "additionalProperties": false
+        },
+        "Normative": {
+            "type": "object",
+            "properties": {
+                "GenesisBlockHash": {
+                    "condition": "Conditionally required for non provisional records",
+                    "title": "Genesis Block Hash",
+                    "description": "Block hash of the genesis block",
+                    "type": "string"
+                },
+                "GenesisBlockHashAlgorithm": {
+                    "condition": "Conditionally required for non provisional records",
+                    "title": "Genesis Block Hash Algorithm",
+                    "description": "Block hash algorithm used to produce the block hash of the genesis block",
+                    "type": "string",
+                    "elaboration": "Hash Algorithm",
+                    "enum": [
+                        "BLAKE2 (Base58)",
+                        "BLAKE-256",
+                        "BLAKE2b-256",
+                        "BLAKE2b-256 (0x)",
+                        "BLAKE2s-256",
+                        "Double SHA-256",
+                        "Keccak-256",
+                        "LISK SPEC",
+                        "LOST",
+                        "Poseidon Hash",
+                        "SHAKE-256",
+                        "SHA-224 (160Bits)",
+                        "SHA3-256",
+                        "SHA3-256 (Base58)",
+                        "SHA-256 (Decimals)",
+                        "SHA-256",
+                        "SHA-256 (Base32)",
+                        "SHA-256 (Base58)",
+                        "SHA-256 (Base64url)",
+                        "SHA-384",
+                        "SHA-512Half",
+                        "SHA512/256 (Base32)",
+                        "SteemHash",
+                        "VRF Signature"
+                    ],
+                    "enum_elaboration": {
+                        "BLAKE2 (Base58)": "The hash algorithm is based on BLAKE with 256 bit digest, encoded to Base 58.",
+                        "BLAKE-256": "The hash algorithm is based on BLAKE with 256 bit digest",
+                        "BLAKE2b-256": "The hash algorithm is based on BLAKE2b with 256 bit digest",
+                        "BLAKE2b-256 (0x)": "The hash algorithm is based on BLAKE2b with 256 bit digest. Prepended with a leading 0x.",
+                        "BLAKE2s-256": "The hash algorithm is based on BLAKE2s with 256 bit digest",
+                        "Double SHA-256": "The hash algorithm is based on SHA-2 256 bit and computes: SHA-256(SHA-256(value))",
+                        "Keccak-256": "The hash algorithm is based on Keccak SHA-3 submission (2011) which is availalbe in: https://keccak.team/files/Keccak-submission-3.pdf",
+                        "LISK SPEC": "Bespoke Lisk function: the data of the header of a signed block is put into a data block in a specified way. Afterwards, the data block is used as the input message for SHA-256. The first 8 bytes of the output are reversed and used as the blockID.",
+                        "LOST": "The hash algorithm has been lost",
+                        "Poseidon Hash": "Poseidon Hash function as defined here: https://www.poseidon-hash.info/",
+                        "SHAKE-256": "The hash algorithm is based on SHAKE (SHA-3 variant) with 256 bit digest",
+                        "SHA-224 (160Bits)": "The hash algorithm is based on SHA-2 224 bit, stored as 160 bits",
+                        "SHA3-256": "The hash algorithm is based on SHA-3 256 bit and computes: SHA-256(value)",
+                        "SHA3-256 (Base58)": "The hash algorithm is based on SHA-3 256 bit, encoded to Base 58.",
+                        "SHA-256 (Decimals)": "The hash algorithm is based on SHAKE (SHA-3 variant) with 256 bit digest. The output is converted to decimals.",
+                        "SHA-256": "The hash algorithm is based on SHA-2 256 bit and computes: SHA-256(value)",
+                        "SHA-256 (Base32)": "The hash algorithm is based on SHA-2 256 bit, encoded to Base 32.",
+                        "SHA-256 (Base58)": "The hash algorithm is based on SHA-2 256 bit, encoded to Base 58.",
+                        "SHA-256 (Base64url)": "The hash algorithm is based on SHA-2 256 bit, encoded to Base 64url.",
+                        "SHA-384": "The hash algorithm is based on SHA-2 256 bit with 384 bit digest",
+                        "SHA-512Half": "Calculates a SHA-512 hash, then takes the first half of the output. (That's 256 bits, which is 32 bytes, or 64 characters of the hexadecimal representation.)",
+                        "SHA512/256 (Base32)": "The hash algorithm is based on SHA-2 512 bit with 512 bit digest, output is truncated to 256 bits.",
+                        "SteemHash": "SHA224, truncated to 160 bytes, first 4 bytes replaced with the block height + 1 (where this number is expressed in big-endian format).",
+                        "VRF Signature": "Block signature generated by a Verifiable Random Function"
+                    },
+                    "options": {
+                        "enum_titles": [
+                            "BLAKE2 (Base58)",
+                            "BLAKE-256",
+                            "BLAKE2b-256",
+                            "BLAKE2b-256 (0x)",
+                            "BLAKE2s-256",
+                            "Double SHA-256",
+                            "Keccak-256",
+                            "LISK SPEC",
+                            "LOST",
+                            "Poseidon Hash",
+                            "SHAKE-256",
+                            "SHA-224 (160Bits)",
+                            "SHA3-256",
+                            "SHA3-256 (Base58)",
+                            "SHA-256 (Decimals)",
+                            "SHA-256",
+                            "SHA-256 (Base32)",
+                            "SHA-256 (Base58)",
+                            "SHA-256 (Base64url)",
+                            "SHA-384",
+                            "SHA-512Half",
+                            "SHA512/256 (Base32)",
+                            "SteemHash",
+                            "VRF Signature"
+                        ]
+                    }
+                },
+                "GenesisBlockUTCTimestamp": {
+                    "condition": "Conditionally required for non provisional records that their genesis block header contains UTC timestamp",
+                    "title": "Genesis Block UTC Timestamp",
+                    "description": "Timestamp, expressed in Coordinated Universal Time, recorded in the genesis block",
+                    "type": "string",
+                    "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]*)?$",
+                    "format": "date-time"
+                },
+                "Forks": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "description": "Each fork is a creation of two or more different versions of a distributed ledger originating from a common starting point with a single history; A fork may or may not result in the creation of a new digital token",
+                        "type": "object",
+                        "properties": {
+                            "ForkReferenceDTI": {
+                                "condition": "Conditionally required for non provisional records",
+                                "title": "Fork Reference DTI",
+                                "description": "A reference to the base record the fork record modifies",
+                                "type": "string"
+                            },
+                            "ForkBlockHeight": {
+                                "condition": "Conditionally required for non provisional records",
+                                "title": "Fork Block Height",
+                                "description": "Block height of the first block after the fork",
+                                "type": "integer"
+                            },
+                            "ForkBlockUTCTimestamp": {
+                                "condition": "Conditionally required for non provisional records and only for forks that their fork block header contains UTC timestamp",
+                                "title": "Fork Block UTC Timestamp",
+                                "description": "Timestamp, expressed in Coordinated Universal Time, recorded in the fork block",
+                                "type": "string",
+                                "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]*)?$",
+                                "format": "date-time"
+                            },
+                            "ForkBlockHash": {
+                                "condition": "Conditionally required for non provisional records",
+                                "title": "Fork Block Hash",
+                                "description": "Block hash of the block with a block height equal to the fork block height",
+                                "type": "string"
+                            },
+                            "ForkBlockHashAlgorithm": {
+                                "condition": "Conditionally required for non provisional records",
+                                "title": "Fork Block Hash Algorithm",
+                                "description": "Block hash algorithm of the fork block",
+                                "type": "string"
+                            },
+                            "ConsensusMechanismChangeResponse": {
+                                "condition": "Conditionally required for non provisional records",
+                                "title": "Consensus Mechanism Change Response",
+                                "description": "If true, the consensus mechanism used to validate the block at the fork block height identified in the fork record differ from the consensus mechanism used to validate the block immediately prior to the block at the fork block height identified in the fork record",
+                                "type": "boolean"
+                            },
+                            "DigitalTokenCreationResponse": {
+                                "condition": "Conditionally required for non provisional records",
+                                "title": "Digital Token Creation Response",
+                                "description": "If true, the fork result in the creation of a new digital token",
+                                "type": "boolean"
+                            }
+                        },
+                        "additionalProperties": false
+                    }
+                }
+            },
+            "additionalProperties": false
+        },
+        "Metadata": {
+            "type": "object",
+            "properties": {
+                "recVersion": {
+                    "title": "Record Version",
+                    "description": "The version of the record, incremental integer starting at 1 and incrementing each time the record is updated (e.g. with a new fork)",
+                    "type": "integer"
+                },
+                "recDateTime": {
+                    "title": "Record Date Time",
+                    "description": "The time at which this record version has been created",
+                    "type": "string",
+                    "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]*)?$",
+                    "format": "date-time"
+                },
+                "Provisional": {
+                    "title": "Provisional Digital Token Identifier",
+                    "description": "If true, the record contains normative or informative data elements in a provisional request for a DTI when one or more data elements (which may include mandatory data elements) are not yet available",
+                    "type": "boolean",
+                    "default": false
+                },
+                "Private": {
+                    "title": "Private Digital Token",
+                    "description": "If true, the record contains normative or informative data elements that are verified according to the DTIF guidelines but may not be independently verifiable by the general public",
+                    "type": "boolean",
+                    "default": false
+                },
+                "Disputed": {
+                    "title": "Disputed Digital Token Identifier",
+                    "description": "If true, the record contains normative or informative data elements that are disputed by one or more DTIF users",
+                    "type": "boolean",
+                    "default": false
+                },
+                "Deleted": {
+                    "title": "Deleted Digital Token Identifier",
+                    "description": "Record is marked Deleted due to technical reason(s) (e.g. invalid or duplicate token) or due to business reason(s) (e.g. a provisional token becomes invalid). Users are advised not to use this token.",
+                    "type": "boolean",
+                    "default": false
+                }
+            },
+            "required": [
+                "recVersion",
+                "recDateTime"
+            ],
+            "additionalProperties": false
+        }
+    },
+    "required": [
+        "Header",
+        "Informative",
+        "Normative",
+        "Metadata"
+    ],
+    "additionalProperties": false
+}

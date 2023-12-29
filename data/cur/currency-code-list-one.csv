@@ -1,0 +1,181 @@
+Currency,Alphabetic Code,ISO Code
+Afghani,AFN,971
+Euro,EUR,978
+Lek,ALL,008
+Algerian Dinar,DZD,012
+US Dollar,USD,840
+Kwanza,AOA,973
+East Caribbean Dollar,XCD,951
+Argentine Peso,ARS,032
+Armenian Dram,AMD,051
+Aruban Florin,AWG,533
+Australian Dollar,AUD,036
+Azerbaijan Manat,AZN,944
+Bahamian Dollar,BSD,044
+Bahraini Dinar,BHD,048
+Taka,BDT,050
+Barbados Dollar,BBD,052
+Belarusian Ruble,BYN,933
+Belize Dollar,BZD,084
+CFA Franc BCEAO,XOF,952
+Bermudian Dollar,BMD,060
+Indian Rupee,INR,356
+Ngultrum,BTN,064
+Boliviano,BOB,068
+Mvdol,BOV,984
+Convertible Mark,BAM,977
+Pula,BWP,072
+Norwegian Krone,NOK,578
+Brazilian Real,BRL,986
+Brunei Dollar,BND,096
+Bulgarian Lev,BGN,975
+Burundi Franc,BIF,108
+Cabo Verde Escudo,CVE,132
+Riel,KHR,116
+CFA Franc BEAC,XAF,950
+Canadian Dollar,CAD,124
+Cayman Islands Dollar,KYD,136
+Chilean Peso,CLP,152
+Unidad de Fomento,CLF,990
+Yuan Renminbi,CNY,156
+Colombian Peso,COP,170
+Unidad de Valor Real,COU,970
+Comorian Franc ,KMF,174
+Congolese Franc,CDF,976
+New Zealand Dollar,NZD,554
+Costa Rican Colon,CRC,188
+Cuban Peso,CUP,192
+Peso Convertible,CUC,931
+Netherlands Antillean Guilder,ANG,532
+Czech Koruna,CZK,203
+Danish Krone,DKK,208
+Djibouti Franc,DJF,262
+Dominican Peso,DOP,214
+Egyptian Pound,EGP,818
+El Salvador Colon,SVC,222
+Nakfa,ERN,232
+Lilangeni,SZL,748
+Ethiopian Birr,ETB,230
+Falkland Islands Pound,FKP,238
+Fiji Dollar,FJD,242
+CFP Franc,XPF,953
+Dalasi,GMD,270
+Lari,GEL,981
+Ghana Cedi,GHS,936
+Gibraltar Pound,GIP,292
+Quetzal,GTQ,320
+Pound Sterling,GBP,826
+Guinean Franc,GNF,324
+Guyana Dollar,GYD,328
+Gourde,HTG,332
+Lempira,HNL,340
+Hong Kong Dollar,HKD,344
+Forint,HUF,348
+Iceland Krona,ISK,352
+Rupiah,IDR,360
+SDR (Special Drawing Right),XDR,960
+Iranian Rial,IRR,364
+Iraqi Dinar,IQD,368
+New Israeli Sheqel,ILS,376
+Jamaican Dollar,JMD,388
+Yen,JPY,392
+Jordanian Dinar,JOD,400
+Tenge,KZT,398
+Kenyan Shilling,KES,404
+North Korean Won,KPW,408
+Won,KRW,410
+Kuwaiti Dinar,KWD,414
+Som,KGS,417
+Lao Kip,LAK,418
+Lebanese Pound,LBP,422
+Loti,LSL,426
+Rand,ZAR,710
+Liberian Dollar,LRD,430
+Libyan Dinar,LYD,434
+Swiss Franc,CHF,756
+Pataca,MOP,446
+Denar,MKD,807
+Malagasy Ariary,MGA,969
+Malawi Kwacha,MWK,454
+Malaysian Ringgit,MYR,458
+Rufiyaa,MVR,462
+Ouguiya,MRU,929
+Mauritius Rupee,MUR,480
+ADB Unit of Account,XUA,965
+Mexican Peso,MXN,484
+Mexican Unidad de Inversion (UDI),MXV,979
+Moldovan Leu,MDL,498
+Tugrik,MNT,496
+Moroccan Dirham,MAD,504
+Mozambique Metical,MZN,943
+Kyat,MMK,104
+Namibia Dollar,NAD,516
+Nepalese Rupee,NPR,524
+Cordoba Oro,NIO,558
+Naira,NGN,566
+Rial Omani,OMR,512
+Pakistan Rupee,PKR,586
+Balboa,PAB,590
+Kina,PGK,598
+Guarani,PYG,600
+Sol,PEN,604
+Philippine Peso,PHP,608
+Zloty,PLN,985
+Qatari Rial,QAR,634
+Romanian Leu,RON,946
+Russian Ruble,RUB,643
+Rwanda Franc,RWF,646
+Saint Helena Pound,SHP,654
+Tala,WST,882
+Dobra,STN,930
+Saudi Riyal,SAR,682
+Serbian Dinar,RSD,941
+Seychelles Rupee,SCR,690
+Leone,SLL,694
+Leone,SLE,925
+Singapore Dollar,SGD,702
+Sucre,XSU,994
+Solomon Islands Dollar,SBD,090
+Somali Shilling,SOS,706
+South Sudanese Pound,SSP,728
+Sri Lanka Rupee,LKR,144
+Sudanese Pound,SDG,938
+Surinam Dollar,SRD,968
+Swedish Krona,SEK,752
+WIR Euro,CHE,947
+WIR Franc,CHW,948
+Syrian Pound,SYP,760
+New Taiwan Dollar,TWD,901
+Somoni,TJS,972
+Tanzanian Shilling,TZS,834
+Baht,THB,764
+Pa’anga,TOP,776
+Trinidad and Tobago Dollar,TTD,780
+Tunisian Dinar,TND,788
+Turkish Lira,TRY,949
+Turkmenistan New Manat,TMT,934
+Uganda Shilling,UGX,800
+Hryvnia,UAH,980
+UAE Dirham,AED,784
+US Dollar (Next day),USN,997
+Peso Uruguayo,UYU,858
+Uruguay Peso en Unidades Indexadas (UI),UYI,940
+Unidad Previsional,UYW,927
+Uzbekistan Sum,UZS,860
+Vatu,VUV,548
+Bolívar Soberano,VES,928
+Bolívar Soberano,VED,926
+Dong,VND,704
+Yemeni Rial,YER,886
+Zambian Kwacha,ZMW,967
+Zimbabwe Dollar,ZWL,932
+Bond Markets Unit European Composite Unit (EURCO),XBA,955
+Bond Markets Unit European Monetary Unit (E.M.U.-6),XBB,956
+Bond Markets Unit European Unit of Account 9 (E.U.A.-9),XBC,957
+Bond Markets Unit European Unit of Account 17 (E.U.A.-17),XBD,958
+Codes specifically reserved for testing purposes,XTS,963
+The codes assigned for transactions where no currency is involved,XXX,999
+Gold,XAU,959
+Palladium,XPD,964
+Platinum,XPT,962
+Silver,XAG,961
