@@ -13,4 +13,3 @@ authors.workspace = true
 chrono = { workspace = true }
 rust_decimal = { workspace = true }
 serde = { workspace = true }
-surrealdb = {workspace = true}
