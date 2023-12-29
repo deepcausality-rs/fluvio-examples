@@ -1,0 +1,21 @@
+[package]
+name = "service_specs"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+readme.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+
+[lib]
+name = "service_specs"
+path = "src/lib.rs"
+
+
+[dependencies.common]
+path = "../../flv_common"
+version = "0.1.0"
+
+
+[dependencies]
