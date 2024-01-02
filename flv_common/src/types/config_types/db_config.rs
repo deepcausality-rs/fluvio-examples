@@ -28,7 +28,6 @@ impl DBConfig {
     }
 }
 
-
 // getters
 impl DBConfig {
     /// Returns the port number to connect to at the server host.

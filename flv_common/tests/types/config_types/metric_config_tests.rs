@@ -29,4 +29,3 @@ fn test_metric_port() {
 
     assert_eq!(config.metric_port(), 3000);
 }
-

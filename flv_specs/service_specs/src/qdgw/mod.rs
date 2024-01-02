@@ -1,6 +1,4 @@
-use common::prelude::{
-    MetricConfig, ServiceConfig, ServiceID,
-};
+use common::prelude::{MetricConfig, ServiceConfig, ServiceID};
 
 pub fn qdgw_service_config() -> ServiceConfig {
     let id = ServiceID::QDGW;
@@ -28,7 +26,7 @@ pub fn qdgw_service_config() -> ServiceConfig {
         cluster_port,
         health_check_uri,
         dependencies,
-        metrics
+        metrics,
     )
 }
 

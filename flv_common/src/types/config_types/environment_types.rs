@@ -20,20 +20,20 @@ impl From<u8> for EnvironmentType {
 }
 
 impl EnvironmentType {
-  pub fn from_string(s: &str) -> Result<Self, &'static str> {
-    match s {
-      "local" => Ok(Self::Local),
-      "k8s" => Ok(Self::Cluster),
-      _ => Err("Invalid environment type string"),
+    pub fn from_string(s: &str) -> Result<Self, &'static str> {
+        match s {
+            "local" => Ok(Self::Local),
+            "k8s" => Ok(Self::Cluster),
+            _ => Err("Invalid environment type string"),
+        }
     }
-  }
 }
 
 impl fmt::Display for EnvironmentType {
-  fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-    match self {
-      EnvironmentType::Local => write!(f, "Local"),
-      EnvironmentType::Cluster => write!(f, "Cluster"),
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            EnvironmentType::Local => write!(f, "Local"),
+            EnvironmentType::Cluster => write!(f, "Cluster"),
+        }
     }
-  }
 }

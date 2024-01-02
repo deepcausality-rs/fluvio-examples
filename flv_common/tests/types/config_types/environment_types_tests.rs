@@ -36,5 +36,3 @@ fn test_display() {
     let cluster = EnvironmentType::Cluster;
     assert_eq!(format!("{}", cluster), "Cluster");
 }
-
-

@@ -35,8 +35,34 @@ pub struct ServiceConfig {
 }
 
 impl ServiceConfig {
-    pub fn new(svc_id: ServiceID, name: String, version: u8, online: bool, description: String, local_host: String, local_port: Vec<u16>, cluster_host: String, cluster_port: Vec<u16>, health_check_uri: String, dependencies: Option<Vec<ServiceID>>, metrics: MetricConfig) -> Self {
-        Self { svc_id, name, version, online, description, local_host, local_port, cluster_host, cluster_port, health_check_uri, dependencies, metrics }
+    pub fn new(
+        svc_id: ServiceID,
+        name: String,
+        version: u8,
+        online: bool,
+        description: String,
+        local_host: String,
+        local_port: Vec<u16>,
+        cluster_host: String,
+        cluster_port: Vec<u16>,
+        health_check_uri: String,
+        dependencies: Option<Vec<ServiceID>>,
+        metrics: MetricConfig,
+    ) -> Self {
+        Self {
+            svc_id,
+            name,
+            version,
+            online,
+            description,
+            local_host,
+            local_port,
+            cluster_host,
+            cluster_port,
+            health_check_uri,
+            dependencies,
+            metrics,
+        }
     }
 }
 
@@ -80,9 +106,8 @@ impl ServiceConfig {
 }
 
 impl Display for ServiceConfig {
-
-  fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
-    write!(f, "ServiceConfig[id: {}, name: {}, version: {}, online: {}, description: {}, local_host: {}, local_port: {:?}, cluster_host: {}, cluster_port: {:?}, health_check_uri: {}, dependencies: {:?}, metrics: {}]",
+    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+        write!(f, "ServiceConfig[id: {}, name: {}, version: {}, online: {}, description: {}, local_host: {}, local_port: {:?}, cluster_host: {}, cluster_port: {:?}, health_check_uri: {}, dependencies: {:?}, metrics: {}]",
            self.svc_id(),
            self.name(),
            self.version(),
@@ -95,5 +120,5 @@ impl Display for ServiceConfig {
            self.health_check_uri(),
            self.dependencies(),
            self.metrics())
-  }
+    }
 }
