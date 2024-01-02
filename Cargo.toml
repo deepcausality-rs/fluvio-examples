@@ -33,7 +33,7 @@ ctrlc = "3.4"
 fluvio = { version = "0.21" , default-features = false, features = ["rustls"] }
 futures = "0.3"
 log = "0.4"
-parquet = "49.0.0"
+parquet = "49"
 prost = "0.12"
 prost-types = { version = "0.12", default-features = false }
 rand = {version = "0.8", default-features = false , features = ["std"]}

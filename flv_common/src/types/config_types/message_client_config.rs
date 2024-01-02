@@ -52,6 +52,10 @@ impl MessageClientConfig {
     pub fn execution_channel(&self) -> String {
         format!("{}-{}", self.name, "execution")
     }
+
+    pub fn heartbeat_channel(&self) -> String {
+        format!("{}-{}", self.name, "heartbeat")
+    }
 }
 
 impl MessageClientConfig {
