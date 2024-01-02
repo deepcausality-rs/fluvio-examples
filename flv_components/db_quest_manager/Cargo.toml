@@ -16,3 +16,10 @@ path = "src/lib.rs"
 [dependencies.common]
 path = "../../flv_common"
 version = "0.1.0"
+
+[dependencies]
+futures = { workspace = true }
+tokio = { workspace = true }
+# Quest DB uses the postgres wire protocol for queries, which requires the postgres crate
+questdb-rs =  { workspace = true }
+postgres =  { workspace = true }

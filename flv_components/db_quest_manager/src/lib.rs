@@ -1,1 +1,4 @@
 
+pub struct QuestManager{
+
+}
