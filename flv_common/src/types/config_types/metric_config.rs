@@ -29,11 +29,11 @@ impl Default for MetricConfig {
 }
 
 impl MetricConfig {
-    pub fn metric_uri(&self) -> &str {
-        &self.metric_uri
+    pub fn metric_uri(&self) -> String {
+        self.metric_uri.clone()
     }
-    pub fn metric_host(&self) -> &str {
-        &self.metric_host
+    pub fn metric_host(&self) -> String {
+        self.metric_host.clone()
     }
     pub fn metric_port(&self) -> u16 {
         self.metric_port

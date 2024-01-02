@@ -1,7 +1,7 @@
-use std::env;
 use common::prelude::{EnvironmentType, MessageClientConfig, ServiceConfig, ServiceID};
 use config_manager::ConfigManager;
 use db_specs::prelude::get_local_db_config;
+use std::env;
 
 #[test]
 fn test_get_svc_id() {
@@ -29,7 +29,7 @@ fn test_get_db_config() {
     let config = ConfigManager::new(svc_id);
     let db_config = get_local_db_config();
 
-    assert_eq!(&db_config, config.get_db_config());
+    assert_eq!(db_config, config.get_db_config());
 }
 
 #[test]
@@ -40,7 +40,7 @@ fn test_get_svc_config() {
     let config = ConfigManager::new(svc_id);
 
     let svc_config = ServiceConfig::default();
-    assert_eq!(&svc_config, config.get_svc_config());
+    assert_eq!(svc_config, config.get_svc_config());
 }
 
 #[test]
@@ -62,5 +62,3 @@ fn test_get_svc_metric_config() {
     let expected = svc_config.metrics().to_owned();
     assert_eq!(expected, config.get_svc_metric_config());
 }
-
-

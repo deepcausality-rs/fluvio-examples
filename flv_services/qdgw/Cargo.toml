@@ -23,6 +23,11 @@ path = "../../flv_components/client_manager"
 version = "0.1.0"
 
 
+[dependencies.config_manager]
+path = "../../flv_components/config_manager"
+version = "0.1.0"
+
+
 [dependencies.sbe_messages]
 path = "../../flv_sbe/sbe_messages"
 version = "0.1.0"

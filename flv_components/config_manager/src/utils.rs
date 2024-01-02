@@ -1,9 +1,9 @@
+use crate::ERROR_MSG;
 use common::prelude::{DBConfig, EnvironmentType, ServiceConfig, ServiceID};
-use std::env;
-use std::path::Path;
 use db_specs::prelude::{get_cluster_db_config, get_local_db_config};
 use service_specs::prelude::get_qdgw_service_config;
-use crate::ERROR_MSG;
+use std::env;
+use std::path::Path;
 
 // Check if the environment variable is set to Local or Cluster.
 // If so, return the environment type if the environment variable is known.
@@ -13,11 +13,9 @@ use crate::ERROR_MSG;
 // If not, panic.
 // Note, on Mac OS, shell environment variables are sanitized (erased) by default for security reasons
 // thus the presence of an .env file at the project root is used to identify a local environment.
-pub (crate) fn get_env_type() -> EnvironmentType {
+pub(crate) fn get_env_type() -> EnvironmentType {
     let env_var = match env::var("ENV") {
-        Ok(val) => {
-            val
-        }
+        Ok(val) => val,
         Err(_) => {
             let file_path = ".env";
             let path = Path::new(file_path);
@@ -34,32 +32,26 @@ pub (crate) fn get_env_type() -> EnvironmentType {
         "LOCAL" => EnvironmentType::Local,
         "CLUSTER" => EnvironmentType::Cluster,
         _ => {
-            panic!("Unknown environment type: {}. Environment can only be Local or Cluster", env_var);
+            panic!(
+                "Unknown environment type: {}. Environment can only be Local or Cluster",
+                env_var
+            );
         }
     };
 }
 
 // Return the DB configuration for the detected environment type.
-pub (crate) fn get_db_config(env_type: &EnvironmentType) -> DBConfig {
+pub(crate) fn get_db_config(env_type: &EnvironmentType) -> DBConfig {
     match env_type {
-        EnvironmentType::Local => {
-            get_local_db_config()
-        }
-        EnvironmentType::Cluster => {
-            get_cluster_db_config()
-        }
+        EnvironmentType::Local => get_local_db_config(),
+        EnvironmentType::Cluster => get_cluster_db_config(),
     }
 }
 
-
 // returns the service configuration for the given service id.
-pub (crate) fn get_service_config(id: &ServiceID) -> ServiceConfig {
+pub(crate) fn get_service_config(id: &ServiceID) -> ServiceConfig {
     match id {
-        ServiceID::QDGW => {
-            get_qdgw_service_config()
-        }
-        ServiceID::Default => {
-            ServiceConfig::default()
-        }
+        ServiceID::QDGW => get_qdgw_service_config(),
+        ServiceID::Default => ServiceConfig::default(),
     }
 }

@@ -1,7 +1,7 @@
 use common::prelude::{DBConfig, EnvironmentType, ServiceConfig, ServiceID};
 
-mod utils;
 mod getters;
+mod utils;
 
 const ERROR_MSG: &str = "Failed to detect ENV environment variable. Ensure ENV is set to either Local or Cluster or a local .env file is present.";
 
@@ -18,11 +18,17 @@ pub struct ConfigManager {
 }
 
 impl ConfigManager {
-    pub fn new( svc_id: ServiceID) -> Self {
+    pub fn new(svc_id: ServiceID) -> Self {
+
         let env_type = utils::get_env_type();
         let db_config = utils::get_db_config(&env_type);
         let svc_config = utils::get_service_config(&svc_id);
 
-        Self {svc_id, env_type, db_config, svc_config }
+        Self {
+            svc_id,
+            env_type,
+            db_config,
+            svc_config,
+        }
     }
 }

@@ -9,18 +9,25 @@ use warp::Filter;
 use crate::service::Server;
 use autometrics::prometheus_exporter;
 use client_manager::ClientManager;
-use common::prelude::{MessageClientConfig, ServiceID};
+use common::prelude::ServiceID;
+use config_manager::ConfigManager;
 use service_utils::{print_utils, shutdown_utils};
 
 const SVC_ID: ServiceID = ServiceID::QDGW;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // Initialize the metrics exporter.
     prometheus_exporter::init();
 
-    let metrics_host = "0.0.0.0";
-    let metrics_port = 8080;
-    let metrics_uri = "metrics";
+    // Setup ConfigManager instance for contextual autoconfiguration.
+    let cfg_manager = async { ConfigManager::new(SVC_ID) }.await;
+
+    // Configure the metrics endpoint.
+    let metric_config = cfg_manager.get_svc_metric_config();
+    let metrics_host = metric_config.metric_host();
+    let metrics_port = metric_config.metric_port();
+    let metrics_uri = metric_config.metric_uri();
     let metrics_addr = format!("{}:{}", metrics_host, metrics_port);
 
     //Creates a SocketAddr instance from the metrics address string.
@@ -30,7 +37,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     //Creates a new Warp filter for the metrics endpoint.
     let routes = warp::get()
-        .and(warp::path(metrics_uri))
+        .and(warp::path(metrics_uri.clone()))
         .map(prometheus_exporter::encode_http_response);
 
     //Creates a new Warp filter for the metrics endpoint with a graceful shutdown handler.
@@ -41,7 +48,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let web_handle = tokio::spawn(web_server);
 
     // Autoconfigures message channel
-    let msg_config = MessageClientConfig::from_svc_id(SVC_ID);
+    let msg_config = cfg_manager.get_message_client_config();
     let service_topic = msg_config.control_channel();
 
     // creates a new consumer for the topic
@@ -49,6 +56,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .await
         .expect("[QDGW]/main: Failed to create a message consumer");
 
+    // We have to use Arc/Mutex here to allow multi-threaded access the client manager.
     let client_manager = Arc::new(Mutex::new(ClientManager::new()));
 
     //Creates a new server
