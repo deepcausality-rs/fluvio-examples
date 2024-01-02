@@ -60,8 +60,8 @@ COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /qdgw /
 
 # Port number must match deployment.yaml and specs/*/service_info
-# Fluvio port: 9003 9005 9010
-# metrics port: 8080
+# Fluvio PORT: 9003 9005 9010
+# metrics PORT: 8080
 EXPOSE 9003 9005 9010 8080
 
 # Run binary as unprivileged user
