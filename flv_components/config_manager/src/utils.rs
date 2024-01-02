@@ -1,9 +1,10 @@
-use crate::ERROR_MSG;
 use common::prelude::{DBConfig, EnvironmentType, ServiceConfig, ServiceID};
 use db_specs::prelude::{get_cluster_db_config, get_local_db_config};
 use service_specs::prelude::get_qdgw_service_config;
 use std::env;
 use std::path::Path;
+
+const ERROR_MSG: &str = "Failed to detect ENV environment variable. Ensure ENV is set to either Local or Cluster or a local .env file is present.";
 
 // Check if the environment variable is set to Local or Cluster.
 // If so, return the environment type if the environment variable is known.
