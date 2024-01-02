@@ -18,6 +18,16 @@ impl MetricConfig {
     }
 }
 
+impl Default for MetricConfig {
+    fn default() -> Self {
+        let metric_host = "0.0.0.0".to_string();
+        let metric_uri = "metrics".to_string();
+        let metric_port = 8080; // Default port for prometheus is 8080
+
+        MetricConfig::new(metric_uri, metric_host, metric_port)
+    }
+}
+
 impl MetricConfig {
     pub fn metric_uri(&self) -> &str {
         &self.metric_uri

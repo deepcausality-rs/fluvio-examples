@@ -1,11 +1,11 @@
 #[cfg(test)]
 mod tests {
     use common::prelude::ServiceID;
-    use service_specs::prelude::qdgw_service_config;
+    use service_specs::prelude::get_qdgw_service_config;
 
     #[test]
     fn test_qdgw_service_config() {
-        let config = qdgw_service_config();
+        let config = get_qdgw_service_config();
 
         assert_eq!(config.svc_id(), ServiceID::QDGW);
         assert_eq!(config.name(), "qdgwv1");

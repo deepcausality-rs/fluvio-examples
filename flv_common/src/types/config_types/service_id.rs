@@ -9,9 +9,7 @@ use serde::{Deserialize, Serialize};
 pub enum ServiceID {
     #[default]
     Default = 0x0_u8,
-    DBGW = 0x1_u8,
-    QDGW = 0x2_u8,
-    VEX = 0x3_u8,
+    QDGW = 0x1_u8,
 }
 
 impl ServiceID {
@@ -24,17 +22,15 @@ impl ServiceID {
     }
 }
 
-impl From<i32> for ServiceID {
+impl From<u8> for ServiceID {
     /// Converts a raw byte value into a `ServiceID`.
     /// Unknown message type results in NullVal
     /// ```
     #[inline]
-    fn from(v: i32) -> Self {
+    fn from(v: u8) -> Self {
         match v {
-            0x0_i32 => ServiceID::Default,
-            0x1_i32 => ServiceID::DBGW,
-            0x2_i32 => ServiceID::QDGW,
-            0x3_i32 => ServiceID::VEX,
+            0x0_u8 => ServiceID::Default,
+            0x1_u8 => ServiceID::QDGW,
             _ => Self::Default,
         }
     }
@@ -44,9 +40,7 @@ impl ServiceID {
     pub fn from_string(n: &str) -> Option<ServiceID> {
         match n {
             "Default" => Some(ServiceID::Default),
-            "DBGW" => Some(ServiceID::DBGW),
             "QDGW" => Some(ServiceID::QDGW),
-            "VEX" => Some(ServiceID::VEX),
             _ => None,
         }
     }
@@ -56,9 +50,7 @@ impl Display for ServiceID {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             ServiceID::Default => write!(f, "Default"),
-            ServiceID::DBGW => write!(f, "DBGW"),
             ServiceID::QDGW => write!(f, "QDGW"),
-            ServiceID::VEX => write!(f, "VEX"),
         }
     }
 }

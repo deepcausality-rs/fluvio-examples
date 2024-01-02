@@ -4,7 +4,7 @@ use std::fmt::{Display, Error, Formatter};
 
 use crate::prelude::{MetricConfig, ServiceID};
 
-#[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Default, Clone, Eq, PartialEq)]
 pub struct ServiceConfig {
     // // DB ID
     // id: Option<Thing>,

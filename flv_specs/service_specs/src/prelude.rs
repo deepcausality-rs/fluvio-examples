@@ -1,1 +1,1 @@
-pub use crate::qdgw::qdgw_service_config;
+pub use crate::services::qdgw::get_qdgw_service_config;

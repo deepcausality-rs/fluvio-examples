@@ -18,4 +18,14 @@ path = "../../flv_common"
 version = "0.1.0"
 
 
+[dependencies.db_specs]
+path = "../../flv_specs/db_specs"
+version = "0.1.0"
+
+
+[dependencies.service_specs]
+path = "../../flv_specs/service_specs"
+version = "0.1.0"
+
+
 [dependencies]

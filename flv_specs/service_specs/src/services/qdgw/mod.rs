@@ -1,6 +1,6 @@
 use common::prelude::{MetricConfig, ServiceConfig, ServiceID};
 
-pub fn qdgw_service_config() -> ServiceConfig {
+pub fn get_qdgw_service_config() -> ServiceConfig {
     let id = ServiceID::QDGW;
     let name = "qdgwv1".to_string();
     let version = 1;

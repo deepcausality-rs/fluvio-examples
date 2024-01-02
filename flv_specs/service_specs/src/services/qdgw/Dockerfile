@@ -57,7 +57,7 @@ COPY --from=builder /user/group /user/passwd /etc/
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
 # Copy binary from build output directory
-COPY --from=builder /qdgw /
+COPY --from=builder /services/qdgw /
 
 # Port number must match deployment.yaml and specs/*/service_info
 # Fluvio PORT: 9003 9005 9010

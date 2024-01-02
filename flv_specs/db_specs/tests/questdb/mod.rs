@@ -5,6 +5,7 @@ mod tests {
 
     #[test]
     fn test_get_local_db_config() {
+        // https://stackoverflow.com/questions/20778771/what-is-the-difference-between-0-0-0-0-127-0-0-1-and-localhost
         let expected = DBConfig::new(9009, "0.0.0.0".into());
         let actual = get_local_db_config();
         assert_eq!(expected, actual);
