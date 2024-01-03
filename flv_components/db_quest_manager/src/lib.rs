@@ -12,6 +12,7 @@ pub struct QuestDBManager {
 }
 
 impl QuestDBManager {
+
     pub fn new(db_config: DBConfig) -> Self {
         let host = db_config.host();
         let port = db_config.port();
@@ -25,6 +26,31 @@ impl QuestDBManager {
 }
 
 impl QuestDBManager {
+
+    /// Inserts a batch of trade bars into the specified QuestDB table.
+    ///
+    /// # Arguments
+    ///
+    /// * `trade_bars` - The vector of TradeBar items to insert
+    /// * `table_name` - The name of the QuestDB table to insert into
+    /// * `symbol` - The symbol associated with the trade bars
+    ///
+    /// # Returns
+    ///
+    /// Returns a `QuestDBResult` indicating success or failure.
+    ///
+    /// # Details
+    ///
+    /// This method batches the trade bars into a buffer before inserting
+    /// into QuestDB. It converts the TradeBar fields into the required QuestDB
+    /// column types like f64 and TimestampNanos.
+    ///
+    /// The buffer is flushed based on the configured `max_buffer_size`. This
+    /// allows efficiently inserting multiple trade bars in bulk.
+    ///
+    /// The `extract_nano_timestamp` and `convert_decimal_to_f64` helper
+    /// functions are used to do the field conversions from TradeBar to the
+    /// QuestDB types.
     pub fn insert_trade_bars(
         &mut self,
         trade_bars: Vec<TradeBar>,
