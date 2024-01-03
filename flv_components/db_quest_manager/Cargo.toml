@@ -22,3 +22,4 @@ version = "0.1.0"
 # Quest DB uses the postgres wire protocol for queries, which requires the postgres crate
 questdb-rs =  { workspace = true }
 postgres =  { workspace = true }
+rust_decimal =  { workspace = true }

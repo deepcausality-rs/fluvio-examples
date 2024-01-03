@@ -12,7 +12,7 @@ fn test_new() {
 fn test_debug() {
     let config = DBConfig::new(27017, "localhost".to_string());
 
-    let expected = "DBConfig { port: 27017, host: \"localhost\" }";
+    let expected = "DBConfig { port: 27017, host: \"localhost\", buffer_size: 50000 }";
 
     assert_eq!(format!("{:?}", config), expected);
 }
@@ -21,7 +21,7 @@ fn test_debug() {
 fn test_display() {
     let config = DBConfig::new(27017, "localhost".to_string());
 
-    let expected = "DBConfig { port: 27017, host: localhost }";
+    let expected = "DBConfig { port: 27017, host: localhost, buffer_size: 50000 }";
 
     assert_eq!(format!("{}", config), expected);
 }

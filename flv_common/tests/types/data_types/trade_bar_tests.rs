@@ -1,15 +1,11 @@
 use chrono::{Datelike, Utc};
-use rust_decimal::Decimal;
-use rust_decimal::prelude::Zero;
 use common::prelude::TradeBar;
+use rust_decimal::prelude::Zero;
+use rust_decimal::Decimal;
 
 #[test]
 fn test_new() {
-    let bar = TradeBar::new(
-        Utc::now(),
-        Decimal::from(100),
-        Decimal::from(50)
-    );
+    let bar = TradeBar::new(Utc::now(), Decimal::from(100), Decimal::from(50));
 
     assert_eq!(bar.price(), Decimal::from(100));
     assert_eq!(bar.volume(), Decimal::from(50));
@@ -38,14 +34,14 @@ fn test_volume() {
 
 #[test]
 fn test_display() {
-    let bar = TradeBar::new(
-        Utc::now(),
-        Decimal::from(100),
-        Decimal::from(50)
-    );
+    let bar = TradeBar::new(Utc::now(), Decimal::from(100), Decimal::from(50));
 
-    let expected = format!("timestamp: {}: price={}, volume={}",
-                           bar.date_time(), bar.price(), bar.volume());
+    let expected = format!(
+        "timestamp: {}: price={}, volume={}",
+        bar.date_time(),
+        bar.price(),
+        bar.volume()
+    );
 
     assert_eq!(expected, format!("{}", bar));
 }

@@ -1,6 +1,6 @@
+use crate::types::data_types::trade_bar::TradeBar;
 use chrono::{DateTime, Utc};
 use rust_decimal::Decimal;
-use crate::types::data_types::trade_bar::TradeBar;
 
 impl TradeBar {
     pub fn date_time(&self) -> DateTime<Utc> {
