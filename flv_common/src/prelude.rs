@@ -11,6 +11,7 @@ pub use crate::types::config_types::service_config::ServiceConfig;
 pub use crate::types::config_types::service_id::ServiceID;
 // Data Types
 pub use crate::types::data_types::data_bar::DataBar;
+pub use crate::types::data_types::trade_bar::TradeBar;
 pub use crate::types::data_types::time_resolution::TimeResolution;
 //  Exchange Types
 pub use crate::types::exchange_types::account_type::AccountType;
