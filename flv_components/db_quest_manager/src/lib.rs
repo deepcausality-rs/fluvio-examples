@@ -12,7 +12,22 @@ pub struct QuestDBManager {
 }
 
 impl QuestDBManager {
-
+    /// Creates a new QuestDBManager instance.
+    ///
+    /// # Arguments
+    ///
+    /// * `db_config` - The DBConfig with QuestDB connection details.
+    ///
+    /// # Returns
+    ///
+    /// Returns a new QuestDBManager instance.
+    ///
+    /// # Functionality
+    ///
+    /// This function extracts the host and port from the provided DBConfig.
+    /// It uses these to create a new Sender via the SenderBuilder.
+    /// The Sender is used to insert data into QuestDB via the ILP protocol.
+    ///
     pub fn new(db_config: DBConfig) -> Self {
         let host = db_config.host();
         let port = db_config.port();
@@ -26,43 +41,77 @@ impl QuestDBManager {
 }
 
 impl QuestDBManager {
-
-    /// Inserts a batch of trade bars into the specified QuestDB table.
+    /// Inserts trade bars into QuestDB.
     ///
     /// # Arguments
     ///
-    /// * `trade_bars` - The vector of TradeBar items to insert
-    /// * `table_name` - The name of the QuestDB table to insert into
-    /// * `symbol` - The symbol associated with the trade bars
+    /// * `trade_bars` - The vector of trade bars to insert.
+    /// * `table_name` - The name of the table to insert the trade bars into.
+    /// * `symbol` - The symbol the trade bars are for.
+    /// * `symbol_id` - The numeric id of the symbol.
+    /// * `symbol_table_name` - The name of the symbol metadata table.
     ///
     /// # Returns
     ///
-    /// Returns a `QuestDBResult` indicating success or failure.
+    /// Returns a `QuestDBResult<()>` indicating success or failure.
     ///
-    /// # Details
+    /// # Functionality
     ///
-    /// This method batches the trade bars into a buffer before inserting
-    /// into QuestDB. It converts the TradeBar fields into the required QuestDB
-    /// column types like f64 and TimestampNanos.
+    /// This function takes a vector of `TradeBar` structs and inserts them into the
+    /// specified QuestDB table. It also inserts a metadata record into a separate
+    /// symbol table with the symbol name, id, number of rows inserted, and destination
+    /// table name.
     ///
-    /// The buffer is flushed based on the configured `max_buffer_size`. This
-    /// allows efficiently inserting multiple trade bars in bulk.
+    /// The trade bars are inserted in batches based on the configured buffer size.
+    /// Timestamps are extracted from the `TradeBar` and converted to nanoseconds.
+    /// Price and volume decimal values are converted to `f64`.
     ///
-    /// The `extract_nano_timestamp` and `convert_decimal_to_f64` helper
-    /// functions are used to do the field conversions from TradeBar to the
-    /// QuestDB types.
+    ///
+    /// # Arguments
+    ///
+    /// * `trade_bars` - The vector of trade bars to insert.
+    /// * `table_name` - The name of the table to insert the trade bars into.
+    /// * `symbol` - The symbol the trade bars are for.
+    /// * `symbol_id` - The numeric id of the symbol.
+    /// * `symbol_table_name` - The name of the symbol metadata table.
+    ///
+    /// # Returns
+    ///
+    /// Returns a `QuestDBResult<()>` indicating success or failure.
+    ///
+    /// # Functionality
+    ///
+    /// This function takes a vector of `TradeBar` structs and inserts them into the
+    /// specified QuestDB table. It also inserts a metadata record into a separate
+    /// symbol table with the symbol name, id, number of rows inserted, and destination
+    /// table name.
+    ///
+    /// The trade bars are inserted in batches based on the configured buffer size.
+    /// Timestamps are extracted from the `TradeBar` and converted to nanoseconds.
+    /// Price and volume decimal values are converted to `f64`.
+    ///
     pub fn insert_trade_bars(
         &mut self,
         trade_bars: Vec<TradeBar>,
         table_name: &str,
         symbol: &str,
+        symbol_id: i64,
+        symbol_table_name: &str,
     ) -> QuestDBResult<()> {
-        let sender = &mut self.sender;
-        let max_len = trade_bars.len();
-        let mut buffer = Buffer::with_max_name_len(max_len);
+        // Determine the total number of rows to insert into the trade table.
+        let number_of_rows = trade_bars.len();
 
-        let mut counter: usize = 0;
+        // Acquire a mut reference to the sender.
+        let sender = &mut self.sender;
+
+        // Create a buffer with the size equal to the maximum number of rows.
+        let mut buffer = Buffer::with_max_name_len(number_of_rows);
+
+        // The maximum buffer size (number of buffered rows) is used to determine when to flush the buffer.
         let max_buffer_size = self.db_config.buffer_size();
+
+        // Counter increments for each row inserted into the buffer until it hits the maximum buffer size.
+        let mut counter: usize = 0;
 
         for trade_bar in trade_bars {
             counter += 1;
@@ -95,8 +144,26 @@ impl QuestDBManager {
             }
         }
 
-        // Flush out all the rest.
+        // Flush out all the remaining trade bars.
         sender.flush(&mut buffer).expect("Failed to flush buffer");
+
+        // create a new buffer to insert into the symbol table
+        let mut buf = Buffer::with_max_name_len(5);
+
+        // Insert a meta data record with the number of rows and table name into the symbol table.
+        buf.table(symbol_table_name)
+            .expect("Failed to set symbol table name")
+            .symbol("symbol", symbol)
+            .expect("Failed to set symbol")
+            .column_i64("symbol_id", symbol_id)
+            .expect("Failed to set symbol_id")
+            .column_i64("number_of_rows", number_of_rows as i64)
+            .expect("Failed to set number_of_rows")
+            .column_str("table_name", table_name)
+            .expect("Failed to set trade bars table_name");
+
+        // Flush out the symbol table record.
+        sender.flush(&mut buf).expect("Failed to flush buffer");
 
         Ok(())
     }
