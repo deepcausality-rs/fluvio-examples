@@ -29,7 +29,9 @@ authors = ["Marvin Hansen <marvin.hansen@gmail.com>"]
 [workspace.dependencies]
 autometrics = { version = "1", features = ["prometheus-exporter"] }
 chrono = { version = "0.4", features = ["serde"] }
+csv = "1.3"
 ctrlc = "3.4"
+encoding_rs = "0.8"
 fluvio = { version = "0.21" , default-features = false, features = ["rustls"] }
 futures = "0.3"
 log = "0.4"
