@@ -1,5 +1,5 @@
 use client_manager::ClientManager;
-use common::errors::MessageProcessingError;
+use common::prelude::MessageProcessingError;
 use fluvio::dataplane::record::ConsumerRecord;
 use fluvio::{Offset, PartitionConsumer};
 use futures::StreamExt;

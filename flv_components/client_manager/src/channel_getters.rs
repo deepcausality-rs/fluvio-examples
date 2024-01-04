@@ -1,5 +1,5 @@
 use crate::ClientManager;
-use common::errors::MessageClientConfigError;
+use common::prelude::MessageClientConfigError;
 
 impl ClientManager {
     ///  Get the control channel for the client with the given ID.

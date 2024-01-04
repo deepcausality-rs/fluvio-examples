@@ -1,4 +1,5 @@
 pub mod prelude;
 
-pub mod errors;
+mod errors;
 mod types;
+mod utils;

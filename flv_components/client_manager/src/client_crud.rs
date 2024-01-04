@@ -1,6 +1,5 @@
 use crate::ClientManager;
-use common::errors::MessageClientConfigError;
-use common::prelude::MessageClientConfig;
+use common::prelude::{MessageClientConfig, MessageClientConfigError};
 
 impl ClientManager {
     /// Adds a new client to the manager.
