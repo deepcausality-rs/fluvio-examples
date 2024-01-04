@@ -9,6 +9,12 @@ pub struct ClientManager {
     clients: HashMap<u16, MessageClientConfig>,
 }
 
+impl Default for ClientManager {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl ClientManager {
     /// Construct a new ClientManager.
     ///

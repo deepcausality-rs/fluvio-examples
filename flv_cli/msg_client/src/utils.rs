@@ -15,18 +15,14 @@ pub async fn send_message(producer: &TopicProducer, buffer: Vec<u8>) -> Result<(
 pub async fn get_producer(topic: &str) -> TopicProducer {
     let fluvio = Fluvio::connect().await.unwrap();
 
-    let producer = fluvio
+    fluvio
         .topic_producer(topic)
         .await
-        .expect("Failed to create a producer");
-
-    producer
+        .expect("Failed to create a producer")
 }
 
 pub async fn get_consumer(topic: &str) -> PartitionConsumer {
-    let consumer = fluvio::consumer(topic, 0)
+    fluvio::consumer(topic, 0)
         .await
-        .expect("Failed to create a consumer");
-
-    consumer
+        .expect("Failed to create a consumer")
 }

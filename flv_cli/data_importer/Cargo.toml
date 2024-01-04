@@ -18,11 +18,11 @@ name = "lib_import"
 path = "src/lib/mod.rs"
 
 
-[dependencies.common]
-path = "../../flv_common"
-version = "0.1.0"
-
-
-[dependencies]
-futures = { workspace = true }
-tokio = { workspace = true }
+#[dependencies.common]
+#path = "../../flv_common"
+#version = "0.1.0"
+#
+#
+#[dependencies]
+#futures = { workspace = true }
+#tokio = { workspace = true }

@@ -43,6 +43,4 @@ autometrics = { workspace = true }
 fluvio = { workspace = true }
 futures = { workspace = true }
 tokio = { workspace = true }
-tonic = { workspace = true }
-prost = { workspace = true }
 warp = { workspace = true }

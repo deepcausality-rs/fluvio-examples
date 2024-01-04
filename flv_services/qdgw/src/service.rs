@@ -79,7 +79,7 @@ impl Server {
             } // end select
         } // end loop
 
-        return Ok(());
+        Ok(())
     }
 
     async fn handle_record(&self, record: &ConsumerRecord) -> Result<(), MessageProcessingError> {

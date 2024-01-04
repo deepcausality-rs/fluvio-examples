@@ -82,5 +82,5 @@ fn test_online() {
         None,
         get_metric_config(),
     );
-    assert_eq!(config.online(), true);
+    assert!(config.online());
 }

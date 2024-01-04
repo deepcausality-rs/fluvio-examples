@@ -10,7 +10,7 @@ mod tests {
         assert_eq!(config.svc_id(), ServiceID::QDGW);
         assert_eq!(config.name(), "qdgwv1");
         assert_eq!(config.version(), 1);
-        assert_eq!(config.online(), false);
+        assert!(!config.online());
         assert_eq!(
             config.description(),
             "QDGW gives access to quantitative tick data"

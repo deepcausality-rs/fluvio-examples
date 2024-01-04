@@ -27,7 +27,7 @@ const SEMICOLON_DELIMITER: u8 = b';';
 /// - Checks if the file exists before trying to read it
 /// - Calls read_csv_lines() to parse the file contents into TradeBar objects
 pub fn read_csv_file(path: &str) -> Result<Vec<TradeBar>, Box<Error>> {
-    if false == Path::new(&path).exists() {
+    if !Path::new(&path).exists() {
         panic!("{}", format!("File {} does not exist", path));
     }
 
