@@ -69,6 +69,7 @@ where
         .has_headers(false)
         .from_reader(res.as_bytes());
 
+    // https://docs.rs/csv/latest/csv/struct.Reader.html
     for result in rdr.records() {
         match result {
             Ok(record) => {

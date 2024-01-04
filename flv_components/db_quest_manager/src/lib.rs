@@ -96,7 +96,7 @@ impl QuestDBManager {
         table_name: &str,
         symbol: &str,
         symbol_id: i64,
-        symbol_table_name: &str,
+        meta_data_table: &str,
     ) -> QuestDBResult<()> {
         // Determine the total number of rows to insert into the trade table.
         let number_of_rows = trade_bars.len();
@@ -117,16 +117,12 @@ impl QuestDBManager {
             counter += 1;
 
             let designated_timestamp = extract_nano_timestamp(&trade_bar);
-
             let price = convert_decimal_to_f64(&trade_bar.price());
-
             let volume = convert_decimal_to_f64(&trade_bar.volume());
 
             buffer
                 .table(table_name)
                 .expect("Failed to set table name")
-                .symbol("symbol", symbol)
-                .expect("Failed to set symbol")
                 .column_f64("price", price)
                 .expect("Failed to set price")
                 .column_f64("volume", volume)
@@ -147,11 +143,8 @@ impl QuestDBManager {
         // Flush out all the remaining trade bars.
         sender.flush(&mut buffer).expect("Failed to flush buffer");
 
-        // create a new buffer to insert into the symbol table
-        let mut buf = Buffer::with_max_name_len(5);
-
-        // Insert a meta data record with the number of rows and table name into the symbol table.
-        buf.table(symbol_table_name)
+        buffer
+            .table(meta_data_table)
             .expect("Failed to set symbol table name")
             .symbol("symbol", symbol)
             .expect("Failed to set symbol")
@@ -160,10 +153,12 @@ impl QuestDBManager {
             .column_i64("number_of_rows", number_of_rows as i64)
             .expect("Failed to set number_of_rows")
             .column_str("table_name", table_name)
-            .expect("Failed to set trade bars table_name");
+            .expect("Failed to set trade bars table_name")
+            .at(TimestampNanos::now())
+            .expect("Failed to set timestamp");
 
         // Flush out the symbol table record.
-        sender.flush(&mut buf).expect("Failed to flush buffer");
+        sender.flush(&mut buffer).expect("Failed to flush buffer");
 
         Ok(())
     }
