@@ -30,17 +30,11 @@ authors = ["Marvin Hansen <marvin.hansen@gmail.com>"]
 autometrics = { version = "1", features = ["prometheus-exporter"] }
 chrono = { version = "0.4", features = ["serde"] }
 csv = "1.3"
-ctrlc = "3.4"
 encoding_rs = "0.8"
 fluvio = { version = "0.21" , default-features = false, features = ["rustls"] }
 futures = "0.3"
-parquet = "49"
-prost-types = { version = "0.12", default-features = false }
-rand = {version = "0.8", default-features = false , features = ["std"]}
 rust_decimal = "1.33"
-rust_decimal_macros = "1.33"
 serde = { version = "1", features = ["derive"] }
-serde_json = { version = "1", default-features = false }
 tokio = { version = "1", features = ["macros", "net", "rt-multi-thread", "signal"] }
 # Quest DB uses the postgres wire protocol for queries, which requires the postgres crate
 questdb-rs = {version = "3.1"}
