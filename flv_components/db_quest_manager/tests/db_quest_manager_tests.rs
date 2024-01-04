@@ -20,20 +20,15 @@ fn test_insert_trade_bars() {
 
     let trade_bars = trade_bars.unwrap();
 
-    assert!(trade_bars.len() > 0);
+    assert!(!trade_bars.is_empty());
 
     let table_name = "KRAKEN_ADA_USD".to_lowercase();
     let symbol = "ADA_USD".to_lowercase();
     let symbol_id = 1;
     let meta_data_table = "kraken_symbols";
 
-    let result = db_manager.insert_trade_bars(
-        trade_bars,
-        &table_name,
-        &symbol,
-        symbol_id,
-        &meta_data_table,
-    );
+    let result =
+        db_manager.insert_trade_bars(trade_bars, &table_name, &symbol, symbol_id, meta_data_table);
 
     assert!(result.is_ok());
 }

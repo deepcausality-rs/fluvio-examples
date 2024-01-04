@@ -54,28 +54,23 @@ impl Server {
                     }
 
                     record = stream.next() => {
-                        match record {
-                            Some(res) => {
-                                match res {
-                                    Ok(record) => {
-                                        match self.handle_record(&record).await{
+
+                    if let Some(res) = record {
+                                 match res {
+                                     Ok(record) => {
+                                         match self.handle_record(&record).await{
                                         Ok(()) => {},
                                         Err(e) => {
                                             return Err(e);
                                         }
                                     }
-                                },
+                                 },
                                     Err(e) =>{
-                                        return Err(MessageProcessingError(e.to_string()));
-                                    }
-                            }
-                        },
-                        None => {}, // No message,
-                        // no processing.
-                    }
-
+                                         return Err(MessageProcessingError(e.to_string()));
+                                     }
+                             }
+                         }
                 }// end stream.next()
-
             } // end select
         } // end loop
 
@@ -111,8 +106,8 @@ impl Server {
                     Ok(channel) => channel,
                     Err(e) => {
                         // Send error message back to client instead of return
-                        return Err(e)
-                    },
+                        return Err(e);
+                    }
                 };
 
                 self.start_data(&client_data_channel, &start_data_msg).await
@@ -124,7 +119,6 @@ impl Server {
             MessageType::StopAllData => {
                 let stop_all_data_msg = StopAllDataMessage::from(buffer);
                 self.stop_all_data(&stop_all_data_msg).await
-
             }
             _ => {
                 Ok(())
