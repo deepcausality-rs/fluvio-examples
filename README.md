@@ -1,14 +1,18 @@
 # Fluvio DeepCausality Example Project
 
-## 🔥 What is ...?
-
 ### 👉 **Fluvio**
 
-Fluvio is an open-source data streaming platform with in-flight computation capabilities to aggregate, correlate, and transform data records in real-time as they move over the network. Read more on the [Fluvio website](https://www.fluvio.io). 
+Fluvio is an open-source data streaming platform with in-flight computation capabilities to aggregate, correlate, and transform data records in real-time as they move through the network. Read more on the [Fluvio website](https://www.fluvio.io). 
 
 ### 👉 **DeepCausality**
 
 DeepCausality is a hyper-geometric computational causality library that enables fast and deterministic context-aware reasoning over complex multi-stage causality models. Deep Causality adds only minimal overhead and thus is suitable for real-time applications. Read more on the [Deep Causality website](https://www.deepcausality.com).
+
+
+### 👉 **QuestDB**
+
+QuestDB is an open-source high performance time series database with enhanced SQL analytics for time series data. Read more on the [QuestDB website](https://questdb.io).
+
 
 ### 👉 **Example Project**
 
@@ -80,18 +84,16 @@ make import
 
 Depending on the machine, and the selected dataset, this may take a while.
 
-After the import completed, you can verify the data was imported by opening the SQL console
-in your browser:
+## 🔥 Analyze data with SQL
+
+After the import has completed, you can inspect the data was imported by opening the SQL console in your browser:
 
 http://localhost:7777/
 
-
-![web_console.png](doc/img/web_console.png)
-And run the following query:
+All SQL queries are stored in the [sql folder.](sql) Let's summarize the imported data by running the following query:
 
 ```
 SELECT 
-
   count,
   min(number_of_rows),
   max(number_of_rows),
@@ -106,6 +108,36 @@ Which should result in the following output for the complete dataset:
 ![query_result_1.png](doc/img/query_result_1.png)
 
 That means, we have imported 695 markets with a total of 936_307_899 rows of data into QuestDB.
+
+Let's see the top ten most traded markets of all time on Kraken: 
+
+```
+SELECT * 
+FROM kraken_symbols
+ORDER BY number_of_rows ASC
+LIMIT 10;
+```
+![top_ten_markets.png](doc/img/top_ten_markets.png)
+
+Let's resample the raw bitcoin (XBT on Kraken) trade data from 2022 into 15 minute bars. 
+For unknown reasons, the resampling leads to a one second shift that needs to be adjusted by starting sampling at exactly midnight. To do so, we use the align to calender expression followed by an offset in the 24h format. 
+
+```
+SELECT
+  timestamp datetime,
+  first(price) open,
+  max(price) high,
+  min(price) low,
+  last(price) close,
+  sum(volume) volume,
+
+FROM kraken_xbtusd
+WHERE timestamp IN '2022'
+SAMPLE BY 15m
+ALIGN TO CALENDAR WITH OFFSET '00:00';
+```
+![resamples_bars.png](doc/img/resamples_bars.png)
+
 
 ## 🚀 Start the Quant Data Gateway (QDGW)
 
@@ -139,10 +171,15 @@ gracefully shutdowns the gateway.
 
 ## 📜 Licence
 
-This project is licensed under the Apache V2 Licence. 
+This project is licensed under the Apache Licence.
 See the [LICENSE](LICENSE) file for details.
 
+## 🙏 Acknowledgment 
+
+The author expresses his gratitude to the [infinyon team](https://infinyon.com/about/#) behind the [Fluvio platform](https://fluvio.io/).
+
+
 ## 💻 Author
-* [Marvin Hansen.](https://github.com/marvin-hansen)
+* [Marvin Hansen](https://github.com/marvin-hansen)
 * Github GPG key ID: 369D5A0B210D39BC
 * GPG Fingerprint: 4B18 F7B2 04B9 7A72 967E 663E 369D 5A0B 210D 39BC
