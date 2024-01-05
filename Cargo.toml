@@ -9,6 +9,8 @@ members = [
     "flv_components/client_manager",
     "flv_components/config_manager",
     "flv_components/db_quest_manager",
+    "flv_components/query_manager",
+    "flv_components/symbol_manager",
     "flv_sbe/bindings",
     "flv_sbe/sbe_messages",
     "flv_service_utils",

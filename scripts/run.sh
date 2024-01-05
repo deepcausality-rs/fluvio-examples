@@ -4,4 +4,6 @@ set -o nounset
 set -o pipefail
 
 
-command  cargo run --bin qdgw
+RUSTFLAGS='-C target-cpu=native'  cargo run --bin qdgw --release
+
+
