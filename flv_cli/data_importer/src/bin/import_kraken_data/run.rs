@@ -31,9 +31,9 @@ pub fn run() -> Result<(), Box<dyn Error>> {
     let mut db_manager = QuestDBManager::new(db_config);
 
     print_utils::dbg_print(vrb, "Read all files in data folder");
-    let files = match file_utils::get_file_paths_from_directory(&config.data_folder()) {
+    let files = match file_utils::get_file_paths_from_directory(config.data_folder()) {
         Ok(files) => files,
-        Err(e) => return Err(Box::try_from(e).unwrap()),
+        Err(e) => return Err(Box::from(e)),
     };
     print_utils::dbg_print(vrb, format!("Found {} files", files.len()).as_str());
 
