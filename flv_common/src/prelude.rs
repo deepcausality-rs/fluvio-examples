@@ -20,6 +20,3 @@ pub use crate::types::exchange_types::security_type::SecurityType;
 //  Symbol Types
 pub use crate::types::symbol_types::symbol::Symbol;
 pub use crate::types::symbol_types::symbol_id::SymbolID;
-// Utils
-pub use crate::utils::csv_utils;
-pub use crate::utils::file_utils;

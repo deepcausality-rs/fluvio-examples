@@ -9,7 +9,7 @@ authors.workspace = true
 
 
 [[bin]]
-name = "import_trade_data"
+name = "import_kraken"
 path = "src/bin/import_kraken_data/main.rs"
 
 
@@ -18,11 +18,20 @@ name = "lib_import"
 path = "src/lib/mod.rs"
 
 
-#[dependencies.common]
-#path = "../../flv_common"
-#version = "0.1.0"
-#
-#
-#[dependencies]
-#futures = { workspace = true }
-#tokio = { workspace = true }
+[dependencies.common]
+path = "../../flv_common"
+version = "0.1.0"
+
+
+[dependencies.db_quest_manager]
+path = "../../flv_components/db_quest_manager"
+version = "0.1.0"
+
+
+[dependencies]
+config-file = { workspace = true }
+csv = { workspace = true }
+chrono = { workspace = true }
+encoding_rs = { workspace = true }
+rust_decimal = { workspace = true }
+serde = { workspace = true }

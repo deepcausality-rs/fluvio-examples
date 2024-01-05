@@ -10,8 +10,6 @@ authors.workspace = true
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-csv = { workspace = true }
 chrono = { workspace = true }
-encoding_rs = { workspace = true }
 rust_decimal = { workspace = true }
 serde = { workspace = true }
