@@ -25,7 +25,7 @@ This project is a simple example of how to use Fluvio and DeepCausality to build
 * Fluvio as message bus and in-flight compute system.
 
 The careful reader may have noticed that this system amounts to an event based back-testing facility and 
-that is exactly what we're demonstrating in this project. 
+that is exactly what's demonstrated in this project. 
 
 ## 📚 Docs
 
@@ -131,13 +131,8 @@ which should show:
 ```
 
 When you want to shut down the QDGW, just press `ctrl+c`, which then
-gracefully shutdowns the system with the following message:
+gracefully shutdowns the gateway.
 
-```
-    * http web server received SIGINT
-    * Fluvio connector received SIGINT
-    
-    ==========================================
-    QDGW service shutdown complete
-    ==========================================
-```
+## ⚙️ Connecting the client
+
+@TODO
