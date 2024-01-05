@@ -14,18 +14,18 @@ DeepCausality is a hyper-geometric computational causality library that enables 
 
 This project is a simple example of how to use Fluvio and DeepCausality to build a real-time causal inference pipeline. Specifically, the project illustrates:
 
-1) How to replay and resample trade data from 695 market places 
-2) How to analyze trade data in real-time using causal inference
-3) How to pass forward causal inference results to downstream systems via Fluvio's in-flight computation
+1) How to replay and resample trade data from 695 crypto markets. 
+2) How to analyze trade data in real-time using causal inference.
+3) How to pass forward causal inference results to downstream systems via Fluvio's in-flight computation.
 
 ### **Technologies used:**
-* SBE (Simple Binary Encoding) protocoll for binary message encoding & decoding
+* SBE (Simple Binary Encoding) protocol for binary message encoding & decoding.
 * QuestDB to store and query nearly 1 billion trade data from 695 crypto markets.
-* DeepCausality to process trade bars in flight as they pass through the message bus
+* DeepCausality to process trade bars in flight as they pass through the message bus.
 * Fluvio as message bus and in-flight compute system.
 
 The careful reader may have noticed that this system amounts to an event based back-testing facility and 
-that is exactly what we're demonstrating in this example project. 
+that is exactly what we're demonstrating in this project. 
 
 ## 📚 Docs
 
@@ -127,5 +127,17 @@ which should show:
     ==========================================
     Listening on topic: qdgw-control
     Metrics on endpoint: 0.0.0.0:8080/metrics
+    ==========================================
+```
+
+When you want to shut down the QDGW, just press `ctrl+c`, which then
+gracefully shutdowns the system with the following message:
+
+```
+    * http web server received SIGINT
+    * Fluvio connector received SIGINT
+    
+    ==========================================
+    QDGW service shutdown complete
     ==========================================
 ```

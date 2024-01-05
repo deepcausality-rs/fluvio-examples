@@ -41,7 +41,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .map(prometheus_exporter::encode_http_response);
 
     //Creates a new Warp filter for the metrics endpoint with a graceful shutdown handler.
-    let signal = shutdown_utils::signal_handler("http web server");
+    let signal = shutdown_utils::signal_handler("Http web server");
     let (_, web_server) = warp::serve(routes).bind_with_graceful_shutdown(web_addr, signal);
 
     //Creates a new Tokio task for the HTTP web server.
@@ -63,7 +63,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let server = Server::new(consumer, client_manager);
 
     //Creates a new Tokio task for the server.
-    let signal = shutdown_utils::signal_handler("ZMQ server");
+    let signal = shutdown_utils::signal_handler("Fluvio connector");
     let service_handle = tokio::spawn(server.run(signal));
 
     // Prints the start header for the service

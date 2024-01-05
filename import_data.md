@@ -16,10 +16,11 @@ Kraken returns [millisecond-precision unix timestamps](https://github.com/ccxt/c
 
 ## Download link
 
+You can download either the full dataset (recommended, but but big), or the 
+quarterly dataset, which is significantly smaller. Either one works. 
+
 https://support.kraken.com/hc/en-us/articles/360047543791-Downloadable-historical-market-data-time-and-sales-
 
-**Important**: When downloading the quarterly tick data, you must rename the unzipped folder to 
+## (!!!) Important (!!!)
 
-Kraken_Trading_History
-
-before copying it in the data folder otherwise the data import will fail due to unrecognized file path. 
+Make sure that the unzipped folder is in the project [data folder](data) ***and*** the absolute path to the data folder is set in the [import_data.toml](import_config.toml)  config file. This is crucial to make the data import work. 
