@@ -2,15 +2,15 @@
 
 ## 🔥 What is ...?
 
-### **Fluvio**
+### 👉 **Fluvio**
 
 Fluvio is an open-source data streaming platform with in-flight computation capabilities to aggregate, correlate, and transform data records in real-time as they move over the network. Read more on the [Fluvio website](https://www.fluvio.io). 
 
-### **DeepCausality**
+### 👉 **DeepCausality**
 
 DeepCausality is a hyper-geometric computational causality library that enables fast and deterministic context-aware reasoning over complex multi-stage causality models. Deep Causality adds only minimal overhead and thus is suitable for real-time applications. Read more on the [Deep Causality website](https://www.deepcausality.com).
 
-### **Example Project**
+### 👉 **Example Project**
 
 This project is a simple example of how to use Fluvio and DeepCausality to build a real-time causal inference pipeline. Specifically, the project illustrates:
 
@@ -18,7 +18,7 @@ This project is a simple example of how to use Fluvio and DeepCausality to build
 2) How to analyze trade data in real-time using causal inference.
 3) How to pass forward causal inference results to downstream systems via Fluvio's in-flight computation.
 
-### **Technologies used:**
+### 👉 **Technologies used:**
 * [SBE (Simple Binary Encoding) ](https://github.com/real-logic/simple-binary-encoding)for binary message encoding & decoding.
 * [QuestDB](https://github.com/questdb/questdb) to store and query nearly 1 billion trade data from 695 crypto markets.
 * [DeepCausality](https://github.com/deepcausality-rs/deep_causality/tree/main) to process trade bars in flight as they pass through the message bus.
