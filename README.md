@@ -14,7 +14,7 @@ DeepCausality is a hyper-geometric computational causality library that enables 
 
 This project is a simple example of how to use Fluvio and DeepCausality to build a real-time causal inference pipeline. Specifically, the project illustrates:
 
-1) How to replay and resample trade data from 695 crypto markets. 
+1) How to replay and resample trade data. 
 2) How to analyze trade data in real-time using causal inference.
 3) How to pass forward causal inference results to downstream systems via Fluvio's in-flight computation.
 
