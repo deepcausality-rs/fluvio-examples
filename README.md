@@ -114,7 +114,7 @@ Please ensure that:
 2) QuestDB is up and running
 3) Tick data are imported
 
-run in a dedicated terminal: 
+Run in a dedicated terminal: 
 
 ```bash
     make run
@@ -133,6 +133,16 @@ which should show:
 When you want to shut down the QDGW, just press `ctrl+c`, which then
 gracefully shutdowns the gateway.
 
-## ⚙️ Connecting the client
+## ⚙️ Start the client
 
 @TODO
+
+## 📜 Licence
+
+This project is licensed under the Apache V2 Licence. 
+See the [LICENSE](LICENSE) file for details.
+
+## 💻 Author
+* [Marvin Hansen.](https://github.com/marvin-hansen)
+* Github GPG key ID: 369D5A0B210D39BC
+* GPG Fingerprint: 4B18 F7B2 04B9 7A72 967E 663E 369D 5A0B 210D 39BC
