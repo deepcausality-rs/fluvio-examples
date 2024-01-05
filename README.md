@@ -1,6 +1,6 @@
 # Fluvio DeepCausality Example Project
 
-## 🤔 What is ...?
+## 🔥 What is ...?
 
 ### **Fluvio**
 
@@ -19,10 +19,10 @@ This project is a simple example of how to use Fluvio and DeepCausality to build
 3) How to pass forward causal inference results to downstream systems via Fluvio's in-flight computation.
 
 ### **Technologies used:**
-* SBE (Simple Binary Encoding) protocol for binary message encoding & decoding.
-* QuestDB to store and query nearly 1 billion trade data from 695 crypto markets.
-* DeepCausality to process trade bars in flight as they pass through the message bus.
-* Fluvio as message bus and in-flight compute system.
+* [SBE (Simple Binary Encoding) ](https://github.com/real-logic/simple-binary-encoding)for binary message encoding & decoding.
+* [QuestDB](https://github.com/questdb/questdb) to store and query nearly 1 billion trade data from 695 crypto markets.
+* [DeepCausality](https://github.com/deepcausality-rs/deep_causality/tree/main) to process trade bars in flight as they pass through the message bus.
+* [Fluvio](https://github.com/infinyon/fluvio) as message bus and in-flight compute system.
 
 The careful reader may have noticed that this system amounts to an event based back-testing facility and 
 that is exactly what's demonstrated in this project. 
