@@ -13,8 +13,8 @@ pub fn run() -> Result<(), Box<dyn Error>> {
     print_utils::print_import_header();
 
     print_utils::dbg_print(vrb, "Build import config");
-    let config = config_utils::get_config_file(CONFIG_FILE_NAME)
-        .expect("Import config file not found");
+    let config =
+        config_utils::get_config_file(CONFIG_FILE_NAME).expect("Import config file not found");
 
     print_utils::dbg_print(
         vrb,
@@ -32,7 +32,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
     let mut db_manager = QuestDBManager::new(db_config);
 
     print_utils::dbg_print(vrb, "Read all files in data folder");
-    let files =  file_utils::get_file_paths_from_directory(config.data_folder())
+    let files = file_utils::get_file_paths_from_directory(config.data_folder())
         .expect("Failed to read files in data folder");
 
     print_utils::dbg_print(vrb, format!("Found {} files", files.len()).as_str());
@@ -41,7 +41,6 @@ pub fn run() -> Result<(), Box<dyn Error>> {
     let mut imported_files = 1;
 
     for file_path in &files {
-
         let file = file_path
             .file_name()
             .expect("Failed to get file name")
@@ -49,13 +48,16 @@ pub fn run() -> Result<(), Box<dyn Error>> {
             .expect("Failed to convert file name to str")
             .replace(".csv", "");
 
-        let path = file_path.to_str().expect("Failed to convert file path to str");
+        let path = file_path
+            .to_str()
+            .expect("Failed to convert file path to str");
 
-        let trade_bars = match   csv_utils::read_csv_file(path){
+        let trade_bars = match csv_utils::read_csv_file(path) {
             Ok(bars) => bars,
             Err(e) => return Err(e),
         };
 
+        // skip empty data records
         if trade_bars.is_empty() {
             break;
         }
@@ -64,13 +66,9 @@ pub fn run() -> Result<(), Box<dyn Error>> {
         let symbol = file.to_lowercase();
         let symbol_id = imported_files as i64;
 
-        let _ = db_manager.insert_trade_bars(
-            trade_bars,
-            &table_name,
-            &symbol,
-            symbol_id,
-            META_DATA_TABLE,
-        ).expect("Failed to insert trade data bars into DB");
+        let _ = db_manager
+            .insert_trade_bars(trade_bars, &table_name, &symbol, symbol_id, META_DATA_TABLE)
+            .expect("Failed to insert trade data bars into DB");
 
         imported_files += 1;
     }
