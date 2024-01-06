@@ -13,45 +13,48 @@ pub fn run() -> Result<(), Box<dyn Error>> {
     print_utils::print_import_header();
 
     print_utils::dbg_print(vrb, "Build import config");
-    let config = match config_utils::get_config_file(CONFIG_FILE_NAME) {
-        Ok(config) => config,
-        Err(e) => return Err(e),
-    };
+    let config = config_utils::get_config_file(CONFIG_FILE_NAME)
+        .expect("Import config file not found");
+
     print_utils::dbg_print(
         vrb,
         format!("Import data folder: {}", config.data_folder()).as_str(),
     );
 
+    // Get DB config
     print_utils::dbg_print(vrb, "Build DB config");
     let db_config = config_utils::get_local_db_config();
     println!("DB config: {:?}", db_config);
     println!();
 
+    // Connect to QuestDB
     print_utils::dbg_print(vrb, "Connect to QuestDB");
     let mut db_manager = QuestDBManager::new(db_config);
 
     print_utils::dbg_print(vrb, "Read all files in data folder");
-    let files = match file_utils::get_file_paths_from_directory(config.data_folder()) {
-        Ok(files) => files,
-        Err(e) => return Err(Box::from(e)),
-    };
+    let files =  file_utils::get_file_paths_from_directory(config.data_folder())
+        .expect("Failed to read files in data folder");
+
     print_utils::dbg_print(vrb, format!("Found {} files", files.len()).as_str());
 
     print_utils::dbg_print(vrb, "Import all data files into DB");
     let mut imported_files = 1;
 
     for file_path in &files {
+
         let file = file_path
             .file_name()
-            .unwrap()
+            .expect("Failed to get file name")
             .to_str()
-            .unwrap()
+            .expect("Failed to convert file name to str")
             .replace(".csv", "");
 
-        let trade_bars = csv_utils::read_csv_file(file_path.to_str().unwrap());
-        assert!(trade_bars.is_ok());
+        let path = file_path.to_str().expect("Failed to convert file path to str");
 
-        let trade_bars = trade_bars.unwrap();
+        let trade_bars = match   csv_utils::read_csv_file(path){
+            Ok(bars) => bars,
+            Err(e) => return Err(e),
+        };
 
         if trade_bars.is_empty() {
             break;
@@ -61,15 +64,13 @@ pub fn run() -> Result<(), Box<dyn Error>> {
         let symbol = file.to_lowercase();
         let symbol_id = imported_files as i64;
 
-        let result = db_manager.insert_trade_bars(
+        let _ = db_manager.insert_trade_bars(
             trade_bars,
             &table_name,
             &symbol,
             symbol_id,
             META_DATA_TABLE,
-        );
-
-        assert!(result.is_ok());
+        ).expect("Failed to insert trade data bars into DB");
 
         imported_files += 1;
     }
