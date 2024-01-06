@@ -10,17 +10,17 @@ pub struct SymbolManager<'l> {
 
 impl<'l> SymbolManager<'l> {
     pub fn new() -> SymbolManager<'l> {
-
         // TODO:
         // * Connect to the DB
         // * Load symbols from the DB
         // * Generate both hashmaps
         // * Construct the symbol manager
 
-        // Implicitly drop the DB connection to make sure it's closed so that SymbolManager is thread-safe.
+        // Implicitly drop the DB connection to make sure it's closed
+        // so that SymbolManager is thread-safe to use via clone.
         SymbolManager {
             symbol_to_index: Default::default(),
-            index_to_symbol: Default::default()
+            index_to_symbol: Default::default(),
         }
     }
 }

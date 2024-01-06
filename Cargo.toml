@@ -8,8 +8,8 @@ members = [
     "flv_common",
     "flv_components/client_manager",
     "flv_components/config_manager",
+    "flv_components/db_query_managr",
     "flv_components/db_quest_manager",
-    "flv_components/query_manager",
     "flv_components/symbol_manager",
     "flv_sbe/bindings",
     "flv_sbe/sbe_messages",
@@ -42,6 +42,7 @@ tokio = { version = "1", features = ["macros", "net", "rt-multi-thread", "signal
 # Quest DB uses the postgres wire protocol for queries, which requires the postgres crate
 questdb-rs = {version = "3.1"}
 postgres = {version = "0.19"}
+postgres-types = { version = "0.2", features = ["derive"] }
 warp = { version = "0.3", features = ["multipart"] }
 
 

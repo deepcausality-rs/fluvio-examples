@@ -13,19 +13,19 @@ use tokio::{pin, select};
 
 pub struct Server {
     consumer: PartitionConsumer,
-    // qd_manager: QDManager,
+    // query_manager: Arc<Mutex<QueryDBManager>>,
     client_manager: Arc<Mutex<ClientManager>>,
 }
 
 impl Server {
     pub fn new(
         consumer: PartitionConsumer,
-        // qd_manager: QDManager,
+        // query_manager: Arc<Mutex<QueryDBManager>>,
         client_manager: Arc<Mutex<ClientManager>>,
     ) -> Self {
         Self {
             consumer,
-            // qd_manager,
+            // query_manager,
             client_manager,
         }
     }

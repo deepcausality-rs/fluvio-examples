@@ -1,5 +1,5 @@
 [package]
-name = "db_quest_manager"
+name = "db_query_managr"
 version = "0.1.0"
 edition.workspace = true
 rust-version.workspace = true
@@ -9,7 +9,7 @@ authors.workspace = true
 
 
 [lib]
-name = "db_quest_manager"
+name = "db_query_managr"
 path = "src/lib.rs"
 
 
@@ -19,6 +19,5 @@ version = "0.1.0"
 
 
 [dependencies]
-# Quest DB uses the postgres wire protocol for queries, which requires the postgres crate
-questdb-rs =  { workspace = true }
-rust_decimal =  { workspace = true }
+postgres =  { workspace = true }
+#postgres-types =  { workspace = true }
