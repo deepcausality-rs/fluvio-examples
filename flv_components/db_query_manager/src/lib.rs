@@ -64,10 +64,10 @@ impl QueryDBManager {
     ///
     /// // Use query_manager to query the database
     ///
-    /// query_manager.close(); // Close connection when done
+    /// query_manager.close().expect("Failed to close DB connection"); // Close connection when done
     /// ```
-    pub fn close(self) {
-        self.client.close().expect("Failed to close DB");
+    pub fn close(self) -> Result<(), postgres::error::Error> {
+        self.client.close()
     }
 
     /// Checks if the database connection is closed.

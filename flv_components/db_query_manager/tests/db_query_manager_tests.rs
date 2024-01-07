@@ -10,14 +10,14 @@ fn test_new() {
     let db_config = get_local_db_config();
     let manager = QueryDBManager::new(db_config);
     assert!(!manager.is_close());
-    manager.close();
+    manager.close().expect("Failed to close db connection");
 }
 
 #[test]
 fn test_close() {
     let db_config = get_local_db_config();
     let manager = QueryDBManager::new(db_config);
-    manager.close();
+    manager.close().expect("Failed to close db connection");
 }
 
 #[test]
@@ -25,8 +25,7 @@ fn test_is_close() {
     let db_config = get_local_db_config();
     let manager = QueryDBManager::new(db_config);
     assert!(!manager.is_close());
-
-    manager.close();
+    assert!(manager.close().is_ok());
 }
 
 #[test]
@@ -58,5 +57,5 @@ fn test_get_all_symbol_ids() {
     let expected_symbol = &"apeusdt".to_string();
     assert_eq!(expected_symbol, actual_symbol);
 
-    manager.close();
+    manager.close().expect("Failed to close db connection");
 }

@@ -4,6 +4,12 @@ use std::fmt;
 #[derive(Debug, Clone)]
 pub struct InitError(pub String);
 
+impl InitError {
+    pub fn new(field0: String) -> Self {
+        Self(field0)
+    }
+}
+
 impl Error for InitError {}
 
 impl fmt::Display for InitError {

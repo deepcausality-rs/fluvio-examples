@@ -19,9 +19,9 @@ impl SymbolManager {
     /// use db_query_manager::QueryDBManager;
     /// use symbol_manager::SymbolManager;
     ///
-    ///  let db_config =  DBConfig::new(9009, "0.0.0.0".into());
-    ///  let mut query_db_manager = QueryDBManager::new(db_config);
-    ///  let mut symbol_manager = SymbolManager::new(&mut query_db_manager);
+    ///  let db_config = DBConfig::new(9009, "0.0.0.0".into());
+    ///  let mut symbol_manager = SymbolManager::new(db_config)
+    ///         .expect("Failed to create symbol manager");;
     ///
     /// let symbol = symbol_manager.get_symbol(1).expect("Failed to get symbol");
     /// println!("Symbol: {}", symbol);
@@ -69,8 +69,9 @@ impl SymbolManager {
     /// use symbol_manager::SymbolManager;
     ///
     ///  let db_config =  DBConfig::new(9009, "0.0.0.0".into());
-    ///  let mut query_db_manager = QueryDBManager::new(db_config);
-    ///  let mut symbol_manager = SymbolManager::new(&mut query_db_manager);
+    ///  let mut symbol_manager = SymbolManager::new(db_config)
+    ///         .expect("Failed to create symbol manager");;
+    ///
     /// let id = symbol_manager.get_symbol_id("apeusdt").expect("Failed to get ID");
     /// println!("ID: {}", id);
     /// ```
@@ -114,9 +115,10 @@ impl SymbolManager {
     /// use symbol_manager::SymbolManager;
     ///
     ///  let db_config =  DBConfig::new(9009, "0.0.0.0".into());
-    ///  let mut query_db_manager = QueryDBManager::new(db_config);
-    ///  let mut symbol_manager = SymbolManager::new(&mut query_db_manager);
-    /// let symbols = symbol_manager.get_all_symbols()?;
+    ///  let mut symbol_manager = SymbolManager::new(db_config)
+    ///         .expect("Failed to create symbol manager");
+    ///
+    /// let symbols = symbol_manager.get_all_symbols();
     /// println!("Symbols: {:?}", symbols);
     /// ```
     ///
@@ -148,10 +150,16 @@ impl SymbolManager {
     /// use symbol_manager::SymbolManager;
     ///
     ///  let db_config =  DBConfig::new(9009, "0.0.0.0".into());
-    ///  let mut query_db_manager = QueryDBManager::new(db_config);
-    ///  let mut symbol_manager = SymbolManager::new(&mut query_db_manager);
-    /// let ids = symbol_manager.get_all_symbol_ids()?;
-    /// println!("Symbol IDs: {:?}", ids);
+    ///  let mut symbol_manager = SymbolManager::new(db_config)
+    ///         .expect("Failed to create symbol manager");
+    ///
+    ///  let result = symbol_manager.get_all_symbol_ids();
+    ///  assert!(result.is_ok());
+    ///
+    ///  let ids = result.unwrap();
+    ///  assert!(ids.contains(&23));
+    ///
+    ///  println!("Symbol IDs: {:?}", ids);
     /// ```
     ///
     /// # Notes
