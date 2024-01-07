@@ -56,7 +56,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .await
         .expect("[QDGW]/main: Failed to create a message consumer");
 
-
     // We have to use Arc/Mutex here to allow multi-threaded access those manager instances.
     let client_manager = Arc::new(Mutex::new(ClientManager::new()));
 

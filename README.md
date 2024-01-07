@@ -2,7 +2,7 @@
 
 ## ⚡ Status: **Progressing...**
 
-This project is under **active development** and things may break overnight. 
+This project is early stage and under **active development** meaning things break overnight. 
 
 ### 👉 **Fluvio**
 
@@ -10,7 +10,7 @@ Fluvio is an open-source data streaming platform with in-flight computation capa
 
 ### 👉 **DeepCausality**
 
-DeepCausality is a hyper-geometric computational causality library that enables fast and deterministic context-aware reasoning over complex multi-stage causality models. Deep Causality adds only minimal overhead and thus is suitable for real-time applications. Read more on the [Deep Causality website](https://www.deepcausality.com).
+DeepCausality is a hyper-geometric computational causality library that enables fast and deterministic context-aware reasoning over complex multi-stage causality models. Deep Causality adds only minimal overhead and thus is suitable for real-time applications. Read more on the [DeepCausality website](https://www.deepcausality.com).
 
 
 ### 👉 **QuestDB**
@@ -43,7 +43,7 @@ that is exactly what's demonstrated in this project.
 
 ## 📦 Installation
 
-See the [installation guide ](doc/install.md)for detailed installation instructions.
+See the [installation guide ](doc/install.md)for detailed instructions.
 
 ## 🛠️ Cargo & Make
 
@@ -78,10 +78,7 @@ The scripts called by each make command are located in the [script folder.](scri
 ## ⭐ Import Data
 
 Please first download either the full or the quarterly trade tick data from the Kraken exchange. See the [import data guide](doc/import_data.md) for detailed instructions. Make sure the unzipped data folder is in the [data folder.](data) *and* the absolute path to
-the data folder is set in the [import_data.toml config file](import_config.toml). This is crucial to make the data import work. 
-
-
-run 
+the data folder is set in the [import_data.toml config file](import_config.toml). This is crucial to make the data import work. To start the data import, run in a terminal: 
 
 ```bash
 make import
