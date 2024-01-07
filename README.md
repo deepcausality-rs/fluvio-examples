@@ -1,5 +1,9 @@
 # Fluvio DeepCausality Example Project
 
+## ⚡ Status: **Progressing...**
+
+This project is under **active development** and things may break overnight. 
+
 ### 👉 **Fluvio**
 
 Fluvio is an open-source data streaming platform with in-flight computation capabilities to aggregate, correlate, and transform data records in real-time as they move through the network. Read more on the [Fluvio website](https://www.fluvio.io). 
@@ -35,6 +39,7 @@ that is exactly what's demonstrated in this project.
 
 * [Installation](doc/install.md)
 * [Data import](doc/import_data.md)
+* [Data analysis with SQL](doc/analyze_data.md)
 
 ## 📦 Installation
 
@@ -107,37 +112,11 @@ Which should result in the following output for the complete dataset:
 
 ![query_result_1.png](doc/img/query_result_1.png)
 
-That means, we have imported 695 markets with a total of 936_307_899 rows of data into QuestDB.
+That means, we have imported all markets into 695 tables with a total of 936_307_899 rows of data into QuestDB.
 
-Let's see the top ten most traded markets of all time on Kraken: 
+For more details on how to analyze the data, please see the following guide:
 
-```
-SELECT * 
-FROM kraken_symbols
-ORDER BY number_of_rows ASC
-LIMIT 10;
-```
-![top_ten_markets.png](doc/img/top_ten_markets.png)
-
-Let's resample the raw bitcoin (XBT on Kraken) trade data from 2022 into 15 minute bars. 
-For unknown reasons, the resampling leads to a one second shift that needs to be adjusted by starting sampling at exactly midnight. To do so, we use the align to calender expression followed by an offset in the 24h format. 
-
-```
-SELECT
-  timestamp datetime,
-  first(price) open,
-  max(price) high,
-  min(price) low,
-  last(price) close,
-  sum(volume) volume,
-
-FROM kraken_xbtusd
-WHERE timestamp IN '2022'
-SAMPLE BY 15m
-ALIGN TO CALENDAR WITH OFFSET '00:00';
-```
-![resamples_bars.png](doc/img/resamples_bars.png)
-
+* [Data analysis with SQL](doc/analyze_data.md)
 
 ## 🚀 Start the Quant Data Gateway (QDGW)
 
@@ -168,6 +147,19 @@ gracefully shutdowns the gateway.
 ## ⚙️ Start the client
 
 @TODO
+
+## ✨ Symbol Mapping
+
+Because the dataset contains so many symbols (695) and the message bus relies entirely on
+binary encoding, we need to map textual symbols to their numeric IDs.
+
+The symbol manager provides methods to convert symbols and numeric IDs back
+and forth, which helps to implement clients efficiently. 
+
+For more details on the symbol mapping and how to query the DB,
+please see the following guide:
+
+* [Symbol mapping](doc/symbol_mapping.md)
 
 ## 📜 Licence
 
