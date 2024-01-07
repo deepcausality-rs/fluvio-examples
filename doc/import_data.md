@@ -23,4 +23,4 @@ https://support.kraken.com/hc/en-us/articles/360047543791-Downloadable-historica
 
 ## (!!!) Important (!!!)
 
-Make sure that the unzipped folder is in the project [data folder](data) ***and*** the absolute path to the data folder is set in the [import_data.toml](import_config.toml)  config file. This is crucial to make the data import work. 
+Make sure that the unzipped folder is in the project [data folder](../data) ***and*** the absolute path to the data folder is set in the [import_data.toml](../import_config.toml)  config file. This is crucial to make the data import work. 

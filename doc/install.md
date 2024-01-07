@@ -49,7 +49,7 @@ http.min.net.bind.to=0.0.0.0:9007
 
 You find a correctly re-configured sever.conf in the following folder:
 
-[doc/quest_db_config](doc/quest_db_config)
+[doc/quest_db_config](quest_db_config)
 
 
 You can copy this server.conf over the default server.conf and restart quest db
@@ -155,4 +155,4 @@ After all dependencies have been installed, the following commands are ready to 
     make sbe   		Generates Rust bindings for SBE messages define in spec/sbe.
 ```
 
-The scripts called by each make command are located in the [script folder.](scripts)
+The scripts called by each make command are located in the [script folder.](../scripts)

@@ -33,12 +33,12 @@ that is exactly what's demonstrated in this project.
 
 ## 📚 Docs
 
-* [Installation](install.md)
-* [Data import](import_data.md)
+* [Installation](doc/install.md)
+* [Data import](doc/import_data.md)
 
 ## 📦 Installation
 
-See the [installation guide ](install.md)for detailed installation instructions.
+See the [installation guide ](doc/install.md)for detailed installation instructions.
 
 ## 🛠️ Cargo & Make
 
@@ -72,7 +72,7 @@ The scripts called by each make command are located in the [script folder.](scri
 
 ## ⭐ Import Data
 
-Please first download either the full or the quarterly trade tick data from the Kraken exchange. See the [import data guide](import_data.md) for detailed instructions. Make sure the unzipped data folder is in the [data folder.](data) *and* the absolute path to
+Please first download either the full or the quarterly trade tick data from the Kraken exchange. See the [import data guide](doc/import_data.md) for detailed instructions. Make sure the unzipped data folder is in the [data folder.](data) *and* the absolute path to
 the data folder is set in the [import_data.toml config file](import_config.toml). This is crucial to make the data import work. 
 
 
