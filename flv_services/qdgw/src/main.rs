@@ -56,11 +56,33 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .await
         .expect("[QDGW]/main: Failed to create a message consumer");
 
-    // We have to use Arc/Mutex here to allow multi-threaded access the client manager.
+
+    // We have to use Arc/Mutex here to allow multi-threaded access those manager instances.
     let client_manager = Arc::new(Mutex::new(ClientManager::new()));
 
+    // let db_config = cfg_manager.get_db_config();
+
+    // NEEDS FIX: PG connection needs to be fully tokio async.
+    //
+
+    // let query_manager =
+    //     async { Arc::new(Mutex::new(QueryDBManager::new(db_config.clone()))) }.await;
+    //
+    // // SymbolManager is fallible because it reads from the DB during instantiation.
+    // let symbol_manager = async {
+    //     Arc::new(Mutex::new(
+    //         SymbolManager::new(db_config.clone())
+    //             .expect("[QDGW]/main: Failed to create SymbolManager instance."),
+    //     ))
+    // }.await;
+
     //Creates a new server
-    let server = Server::new(consumer, client_manager);
+    let server = Server::new(
+        consumer,
+        client_manager,
+        // query_manager,
+        // symbol_manager
+    );
 
     //Creates a new Tokio task for the server.
     let signal = shutdown_utils::signal_handler("Fluvio connector");

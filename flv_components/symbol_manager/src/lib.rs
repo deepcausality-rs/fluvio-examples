@@ -13,6 +13,7 @@ pub struct SymbolManager {
     index_to_symbol: HashMap<u16, String>,
 
     // LRU Caches for faster look-ups
+    // https://docs.rs/lru/latest/lru/
     symbol_cache: LruCache<String, u16>,
     id_cache: LruCache<u16, String>,
 

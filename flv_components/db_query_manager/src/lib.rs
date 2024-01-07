@@ -5,6 +5,9 @@ mod query_utils;
 use common::prelude::DBConfig;
 use postgres::{Client, NoTls};
 
+// FIXME: PG connection needs to be fully tokio async to work properly in QDGW service.
+// https://docs.rs/tokio-postgres/latest/tokio_postgres/
+
 pub struct QueryDBManager {
     client: Client,
 }
