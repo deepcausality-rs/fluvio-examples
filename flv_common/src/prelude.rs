@@ -2,6 +2,7 @@
 pub use crate::errors::InitError;
 pub use crate::errors::MessageClientConfigError;
 pub use crate::errors::MessageProcessingError;
+pub use crate::errors::ValidationError;
 // Config types
 pub use crate::types::config_types::db_config::DBConfig;
 pub use crate::types::config_types::environment_types::EnvironmentType;

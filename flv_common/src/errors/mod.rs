@@ -35,3 +35,21 @@ impl fmt::Display for MessageClientConfigError {
         write!(f, "MessageClientConfigError: {}", self.0)
     }
 }
+
+#[derive(Debug, Clone)]
+pub struct ValidationError(pub String);
+
+impl ValidationError {
+    pub fn new(field0: String) -> Self {
+        Self(field0)
+    }
+}
+
+impl Error for ValidationError {}
+
+impl fmt::Display for ValidationError {
+    #[inline]
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "ValidationError: {}", self.0)
+    }
+}

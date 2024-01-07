@@ -1,3 +1,4 @@
+mod error;
 mod query_symbols;
 mod query_utils;
 
