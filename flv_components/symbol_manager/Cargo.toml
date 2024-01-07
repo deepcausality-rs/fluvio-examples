@@ -7,6 +7,21 @@ readme.workspace = true
 repository.workspace = true
 authors.workspace = true
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+name = "symbol_manager"
+path = "src/lib.rs"
+
+
+[dependencies.common]
+path = "../../flv_common"
+version = "0.1.0"
+
+
+[dependencies.db_query_manager]
+path = "../../flv_components/db_query_manager"
+version = "0.1.0"
+
 
 [dependencies]
+lru =  { workspace = true }

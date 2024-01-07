@@ -1,5 +1,6 @@
 // Errors
 pub use crate::errors::InitError;
+pub use crate::errors::LookupError;
 pub use crate::errors::MessageClientConfigError;
 pub use crate::errors::MessageProcessingError;
 pub use crate::errors::ValidationError;

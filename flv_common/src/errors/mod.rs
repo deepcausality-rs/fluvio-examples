@@ -14,6 +14,24 @@ impl fmt::Display for InitError {
 }
 
 #[derive(Debug, Clone)]
+pub struct LookupError(pub String);
+
+impl LookupError {
+    pub fn new(field0: String) -> Self {
+        Self(field0)
+    }
+}
+
+impl Error for LookupError {}
+
+impl fmt::Display for LookupError {
+    #[inline]
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "LookupError: {}", self.0)
+    }
+}
+
+#[derive(Debug, Clone)]
 pub struct MessageProcessingError(pub String);
 
 impl Error for MessageProcessingError {}

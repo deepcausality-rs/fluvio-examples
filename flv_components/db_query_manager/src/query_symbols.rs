@@ -32,7 +32,7 @@ impl QueryDBManager {
     ///  let mut query_db_manager = QueryDBManager::new(db_config);
     ///
     /// let symbols = query_db_manager.get_all_symbols_with_ids("kraken_symbols")
-    ///             .expect("Failed to query all symbols from kraken_symbols table");
+    ///             .expect("Failed to query all symbols from symbols table");
     /// ```
     ///
     /// Note:
