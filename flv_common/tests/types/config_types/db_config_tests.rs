@@ -18,6 +18,15 @@ fn test_debug() {
 }
 
 #[test]
+fn test_pg_connection_string() {
+    let config = DBConfig::new(27017, "localhost".to_string());
+
+    let expected = "user=admin password=quest host=localhost port=8812 dbname=qdb";
+
+    assert_eq!(expected, config.pg_connection_string());
+}
+
+#[test]
 fn test_display() {
     let config = DBConfig::new(27017, "localhost".to_string());
 

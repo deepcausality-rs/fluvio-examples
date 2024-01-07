@@ -50,10 +50,18 @@ impl DBConfig {
     pub fn buffer_size(&self) -> usize {
         self.buffer_size
     }
+
+    pub fn pg_connection_string(&self) -> String {
+        // https://questdb.io/docs/develop/query-data/#postgresql-wire-protocol
+        format!(
+            "user=admin password=quest host={} port=8812 dbname=qdb",
+            self.host
+        )
+    }
 }
 
 impl Display for DBConfig {
-    /// Formats the config as a string.
+    /// Formats the config as a postgres connection string.
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(
             f,

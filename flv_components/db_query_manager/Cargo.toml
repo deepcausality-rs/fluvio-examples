@@ -20,4 +20,3 @@ version = "0.1.0"
 
 [dependencies]
 postgres =  { workspace = true }
-#postgres-types =  { workspace = true }
