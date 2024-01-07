@@ -66,7 +66,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
         let symbol = file.to_lowercase();
         let symbol_id = imported_files as i64;
 
-        let _ = db_manager
+        db_manager
             .insert_trade_bars(trade_bars, &table_name, &symbol, symbol_id, META_DATA_TABLE)
             .expect("Failed to insert trade data bars into DB");
 

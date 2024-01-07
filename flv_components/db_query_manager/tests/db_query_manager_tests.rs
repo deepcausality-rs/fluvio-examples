@@ -50,7 +50,7 @@ fn test_get_all_symbol_ids() {
     assert_eq!(expected_len, actual_len);
 
     let expected_symbol_id = 1;
-    let (actual_symbol_id, actual_symbol) = symbols.get(0).unwrap();
+    let (actual_symbol_id, actual_symbol) = symbols.first().unwrap();
 
     assert_eq!(expected_symbol_id, *actual_symbol_id);
 

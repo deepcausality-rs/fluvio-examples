@@ -21,7 +21,7 @@ impl SymbolManager {
     ///
     ///  let db_config = DBConfig::new(9009, "0.0.0.0".into());
     ///  let mut symbol_manager = SymbolManager::new(db_config)
-    ///         .expect("Failed to create symbol manager");;
+    ///         .expect("Failed to create symbol manager");
     ///
     /// let symbol = symbol_manager.get_symbol(1).expect("Failed to get symbol");
     /// println!("Symbol: {}", symbol);
@@ -70,7 +70,7 @@ impl SymbolManager {
     ///
     ///  let db_config =  DBConfig::new(9009, "0.0.0.0".into());
     ///  let mut symbol_manager = SymbolManager::new(db_config)
-    ///         .expect("Failed to create symbol manager");;
+    ///         .expect("Failed to create symbol manager");
     ///
     /// let id = symbol_manager.get_symbol_id("apeusdt").expect("Failed to get ID");
     /// println!("ID: {}", id);

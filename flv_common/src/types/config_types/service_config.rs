@@ -1,13 +1,9 @@
 use serde::{Deserialize, Serialize};
 use std::fmt::{Display, Error, Formatter};
-// use surrealdb::sql::Thing;
 
 use crate::prelude::{MetricConfig, ServiceID};
-
 #[derive(Serialize, Deserialize, Debug, Default, Clone, Eq, PartialEq)]
 pub struct ServiceConfig {
-    // // DB ID
-    // id: Option<Thing>,
     /// Unique Service ID.
     svc_id: ServiceID,
     /// Service name.
@@ -35,6 +31,7 @@ pub struct ServiceConfig {
 }
 
 impl ServiceConfig {
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         svc_id: ServiceID,
         name: String,

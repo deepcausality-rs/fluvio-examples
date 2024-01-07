@@ -53,7 +53,7 @@ impl QueryDBManager {
         };
 
         // Build the query
-        let query = self.build_get_symbol_id_query(&sanitized_name);
+        let query = self.build_get_symbol_id_query(sanitized_name);
 
         // Execute query
         let result = self.query(&query);

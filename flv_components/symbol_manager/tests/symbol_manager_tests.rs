@@ -8,8 +8,7 @@ fn get_local_db_config() -> DBConfig {
 #[test]
 fn test_new() {
     let db_config = get_local_db_config();
-    let symbol_manager = SymbolManager::new(db_config)
-        .expect("Failed to create symbol manager");
+    let symbol_manager = SymbolManager::new(db_config).expect("Failed to create symbol manager");
 
     assert_eq!(symbol_manager.number_of_symbols(), 695);
 }
@@ -17,8 +16,8 @@ fn test_new() {
 #[test]
 fn test_get_symbol() {
     let db_config = get_local_db_config();
-    let mut symbol_manager = SymbolManager::new(db_config)
-        .expect("Failed to create symbol manager");
+    let mut symbol_manager =
+        SymbolManager::new(db_config).expect("Failed to create symbol manager");
 
     // Cache miss
     let symbol = symbol_manager.get_symbol(1).unwrap();
@@ -29,15 +28,15 @@ fn test_get_symbol() {
     assert_eq!(symbol, "apeusdt");
 
     // Symbol not found
-    let result = symbol_manager.get_symbol(000999);
+    let result = symbol_manager.get_symbol(9999);
     assert!(result.is_err());
 }
 
 #[test]
 fn test_get_symbol_id() {
     let db_config = get_local_db_config();
-    let mut symbol_manager = SymbolManager::new(db_config)
-        .expect("Failed to create symbol manager");
+    let mut symbol_manager =
+        SymbolManager::new(db_config).expect("Failed to create symbol manager");
 
     // Cache miss
     let id = symbol_manager.get_symbol_id("apeusdt").unwrap();
@@ -59,8 +58,7 @@ fn test_get_symbol_id() {
 #[test]
 fn test_get_all_symbols() {
     let db_config = get_local_db_config();
-    let symbol_manager = SymbolManager::new(db_config)
-        .expect("Failed to create symbol manager");
+    let symbol_manager = SymbolManager::new(db_config).expect("Failed to create symbol manager");
 
     let results = symbol_manager.get_all_symbols();
     assert!(results.is_ok());
@@ -74,8 +72,7 @@ fn test_get_all_symbols() {
 #[test]
 fn test_get_all_get_all_symbol_ids() {
     let db_config = get_local_db_config();
-    let symbol_manager = SymbolManager::new(db_config)
-        .expect("Failed to create symbol manager");
+    let symbol_manager = SymbolManager::new(db_config).expect("Failed to create symbol manager");
 
     let result = symbol_manager.get_all_symbol_ids();
     assert!(result.is_ok());

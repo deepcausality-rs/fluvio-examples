@@ -26,7 +26,7 @@ impl From<u16> for SymbolID {
 }
 
 impl SymbolID {
-    pub fn from_str(s: &str) -> SymbolID {
+    pub fn from_string(s: &str) -> SymbolID {
         match s.to_lowercase().as_str() {
             "btcusd" => SymbolID::BTCUSD,
             "ethusd" => SymbolID::ETHUSD,

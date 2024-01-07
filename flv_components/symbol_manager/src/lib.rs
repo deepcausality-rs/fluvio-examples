@@ -40,7 +40,7 @@ impl SymbolManager {
     ///
     ///  let db_config =  DBConfig::new(9009, "0.0.0.0".into());
     ///  let symbol_manager = SymbolManager::new(db_config)
-    ///         .expect("Failed to create symbol manager");;
+    ///         .expect("Failed to create symbol manager");
     ///
     /// let nr_symbols = symbol_manager.number_of_symbols();
     /// println!("Symbol: {}", nr_symbols);
@@ -65,7 +65,6 @@ impl SymbolManager {
     ///
     /// - Propagates any errors via the returned Result.
     pub fn new(db_config: DBConfig) -> Result<Self, InitError> {
-
         // create a temporary mutable query_db_manager
         let mut query_db_manager = QueryDBManager::new(db_config);
 
