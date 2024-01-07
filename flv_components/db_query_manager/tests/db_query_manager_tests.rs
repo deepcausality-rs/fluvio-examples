@@ -1,5 +1,5 @@
 use common::prelude::DBConfig;
-use db_query_managr::QueryDBManager;
+use db_query_manager::QueryDBManager;
 
 fn get_local_db_config() -> DBConfig {
     DBConfig::new(9009, "0.0.0.0".into())
@@ -25,6 +25,7 @@ fn test_is_close() {
     let db_config = get_local_db_config();
     let manager = QueryDBManager::new(db_config);
     assert!(!manager.is_close());
+
     manager.close();
 }
 
