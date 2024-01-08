@@ -15,7 +15,7 @@ impl QueryDBManager {
     pub(crate) async fn query(
         &mut self,
         query: &str,
-    ) -> Result<Vec<postgres::Row>, tokio_postgres::Error> {
+    ) -> Result<Vec<tokio_postgres::Row>, tokio_postgres::Error> {
         self.client.query(query, &[]).await
     }
 

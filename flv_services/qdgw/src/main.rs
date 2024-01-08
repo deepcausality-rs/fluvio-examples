@@ -11,7 +11,9 @@ use autometrics::prometheus_exporter;
 use client_manager::ClientManager;
 use common::prelude::ServiceID;
 use config_manager::ConfigManager;
+use db_query_manager::QueryDBManager;
 use service_utils::{print_utils, shutdown_utils};
+use symbol_manager::SymbolManager;
 
 const SVC_ID: ServiceID = ServiceID::QDGW;
 
@@ -59,28 +61,33 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // We have to use Arc/Mutex here to allow multi-threaded access those manager instances.
     let client_manager = Arc::new(Mutex::new(ClientManager::new()));
 
-    // let db_config = cfg_manager.get_db_config();
+    let db_config = cfg_manager.get_db_config();
+    let mut q_manager = QueryDBManager::new(db_config)
+        .await
+        .expect("[QDGW]/main: Failed to create QueryDBManager instance.");
 
-    // NEEDS FIX: PG connection needs to be fully tokio async.
-    //
+    // Move this to autoconfig later.
+    let symbol_table = "kraken_symbols";
 
-    // let query_manager =
-    //     async { Arc::new(Mutex::new(QueryDBManager::new(db_config.clone()))) }.await;
-    //
-    // // SymbolManager is fallible because it reads from the DB during instantiation.
-    // let symbol_manager = async {
-    //     Arc::new(Mutex::new(
-    //         SymbolManager::new(db_config.clone())
-    //             .expect("[QDGW]/main: Failed to create SymbolManager instance."),
-    //     ))
-    // }.await;
+    let symbols = q_manager.get_all_symbols_with_ids(symbol_table)
+        .await
+        .expect("[QDGW]/main: Failed to get all symbols for SymbolManager.");
+
+    let symbol_manager = async {
+        Arc::new(Mutex::new(
+            SymbolManager::new(symbols)
+                .expect("[QDGW]/main: Failed to create SymbolManager instance."),
+        ))
+    }.await;
+
+    let query_manager =  Arc::new(Mutex::new(q_manager));
 
     //Creates a new server
     let server = Server::new(
         consumer,
         client_manager,
-        // query_manager,
-        // symbol_manager
+        query_manager,
+        symbol_manager
     );
 
     //Creates a new Tokio task for the server.
@@ -99,7 +106,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     match tokio::try_join!(web_handle, service_handle) {
         Ok(_) => {}
         Err(e) => {
-            println!("[QDGW]/main: Failed to start gRPC and HTTP server: {:?}", e);
+            println!("[QDGW]/main: Failed to start Fluvio and HTTP server: {:?}", e);
         }
     }
 

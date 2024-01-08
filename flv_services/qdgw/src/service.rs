@@ -10,26 +10,28 @@ use sbe_messages::prelude::{
 use std::future::Future;
 use std::sync::{Arc, Mutex};
 use tokio::{pin, select};
+use db_query_manager::QueryDBManager;
+use symbol_manager::SymbolManager;
 
 pub struct Server {
     consumer: PartitionConsumer,
     client_manager: Arc<Mutex<ClientManager>>,
-    // query_manager: Arc<Mutex<QueryDBManager>>,
-    // symbol_manager: Arc<Mutex<SymbolManager>>,
+    query_manager: Arc<Mutex<QueryDBManager>>,
+    symbol_manager: Arc<Mutex<SymbolManager>>,
 }
 
 impl Server {
     pub fn new(
         consumer: PartitionConsumer,
         client_manager: Arc<Mutex<ClientManager>>,
-        // query_manager: Arc<Mutex<QueryDBManager>>,
-        // symbol_manager: Arc<Mutex<SymbolManager>>,
+        query_manager: Arc<Mutex<QueryDBManager>>,
+        symbol_manager: Arc<Mutex<SymbolManager>>,
     ) -> Self {
         Self {
             consumer,
             client_manager,
-            // query_manager,
-            // symbol_manager,
+            query_manager,
+            symbol_manager,
         }
     }
 }
