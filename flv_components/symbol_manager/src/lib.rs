@@ -65,12 +65,17 @@ impl SymbolManager {
     ///   hashmaps and caches.
     ///
     /// - Propagates any errors via the returned Result.
-    pub fn new(db_config: DBConfig) -> Result<Self, InitError> {
+    pub async fn new(db_config: DBConfig) -> Result<Self, InitError> {
         // create a temporary mutable query_db_manager
-        let mut query_db_manager = QueryDBManager::new(db_config);
+        let mut query_db_manager = QueryDBManager::new(db_config)
+            .await
+            .expect("Failed to create QueryDBManager");
 
         // query all symbols from the symbols table
-        let symbols = match query_db_manager.get_all_symbols_with_ids("kraken_symbols") {
+        let symbols = match query_db_manager
+            .get_all_symbols_with_ids("kraken_symbols")
+            .await
+        {
             Ok(symbols) => symbols,
             Err(e) => return Err(InitError::new(e.to_string())),
         };
@@ -93,14 +98,6 @@ impl SymbolManager {
         for (id, symbol) in symbols {
             symbol_to_index.insert(symbol.clone(), id);
             index_to_symbol.insert(id, symbol.clone());
-        }
-
-        // Close the connection to the database
-        match query_db_manager.close() {
-            Ok(_) => {}
-            Err(e) => {
-                return Err(InitError::new(e.to_string()));
-            }
         }
 
         // Implicitly drop QueryDBManager

@@ -42,7 +42,7 @@ impl QueryDBManager {
     /// The result rows are parsed into a vector of `(u16, String)` tuples containing
     /// the symbol ID and name respectively. Any errors are handled and returned in
     /// the `QueryError` enum.
-    pub fn get_all_symbols_with_ids(
+    pub async fn get_all_symbols_with_ids(
         &mut self,
         symbol_table: &str,
     ) -> Result<Vec<(u16, String)>, QueryError> {
@@ -56,7 +56,7 @@ impl QueryDBManager {
         let query = self.build_get_symbol_id_query(sanitized_name);
 
         // Execute query
-        let result = self.query(&query);
+        let result = self.query(&query).await;
 
         // Handle query errors
         let result_rows = match result {

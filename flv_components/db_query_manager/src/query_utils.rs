@@ -12,8 +12,11 @@ impl QueryDBManager {
     /// A `Result` containing a `Vec` of `postgres::Row` representing the result rows if the query
     /// executed successfully. Returns a `postgres::Error` if there was an error executing the query.
     ///
-    pub(crate) fn query(&mut self, query: &str) -> Result<Vec<postgres::Row>, postgres::Error> {
-        self.client.query(query, &[])
+    pub(crate) async fn query(
+        &mut self,
+        query: &str,
+    ) -> Result<Vec<postgres::Row>, tokio_postgres::Error> {
+        self.client.query(query, &[]).await
     }
 
     /// Builds a SQL query to get all symbol IDs and symbols from a symbol table.

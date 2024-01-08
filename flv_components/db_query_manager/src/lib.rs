@@ -3,10 +3,7 @@ mod query_symbols;
 mod query_utils;
 
 use common::prelude::DBConfig;
-use postgres::{Client, NoTls};
-
-// FIXME: PG connection needs to be fully tokio async to work properly in QDGW service.
-// https://docs.rs/tokio-postgres/latest/tokio_postgres/
+use tokio_postgres::{Client, NoTls};
 
 pub struct QueryDBManager {
     client: Client,
@@ -36,43 +33,30 @@ impl QueryDBManager {
     ///  let db_config =  DBConfig::new(9009, "0.0.0.0".into());
     /// let query_manager = QueryDBManager::new(db_config);
     /// ```
-    pub fn new(db_config: DBConfig) -> Self {
-        let params = db_config.pg_connection_string();
+    pub async fn new(db_config: DBConfig) -> Result<Self, tokio_postgres::Error> {
+        {
+            // Extract connection string.
+            let params = db_config.pg_connection_string();
 
-        let client = Client::connect(&params, NoTls).expect("Failed to connect to DB");
+            // Connect to the database.
+            let (client, connection) = tokio_postgres::connect(&params, NoTls)
+                .await
+                .expect("Failed to connect to DB");
 
-        Self { client }
+            // The connection object performs the actual communication with the database,
+            // so spawn it off to run on its own.
+            tokio::spawn(async move {
+                if let Err(e) = connection.await {
+                    eprintln!("connection error: {}", e);
+                }
+            });
+
+            Ok(Self { client })
+        }
     }
 }
 
 impl QueryDBManager {
-    /// Closes the database connection.
-    ///
-    /// # Returns
-    ///
-    /// Returns nothing.
-    ///
-    /// # Errors
-    ///
-    /// Will return an error if closing the connection fails.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use common::prelude::DBConfig;
-    /// use db_query_manager::QueryDBManager;
-    ///
-    /// let db_config =  DBConfig::new(9009, "0.0.0.0".into());
-    /// let mut query_manager = QueryDBManager::new(db_config);
-    ///
-    /// // Use query_manager to query the database
-    ///
-    /// query_manager.close().expect("Failed to close DB connection"); // Close connection when done
-    /// ```
-    pub fn close(self) -> Result<(), postgres::error::Error> {
-        self.client.close()
-    }
-
     /// Checks if the database connection is closed.
     ///
     /// # Returns
