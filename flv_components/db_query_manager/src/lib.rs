@@ -7,6 +7,7 @@ use tokio_postgres::{Client, NoTls};
 
 pub struct QueryDBManager {
     client: Client,
+    // connection: Connection<Socket, NoTlsStream>
 }
 
 impl QueryDBManager {
@@ -78,7 +79,7 @@ impl QueryDBManager {
     ///     // Connection is open
     /// }
     /// ```
-    pub fn is_close(&self) -> bool {
+    pub async fn is_close(&self) -> bool {
         self.client.is_closed()
     }
 }
