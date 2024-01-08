@@ -16,11 +16,10 @@ impl SymbolManager {
     ///
     /// ```
     /// use common::prelude::DBConfig;
-    /// use db_query_manager::QueryDBManager;
     /// use symbol_manager::SymbolManager;
     ///
     ///  let symbols =  vec![(1, "apeusdt".to_string()), (2, "btxusdt".to_string())];
-    /// 
+    ///
     ///  let mut symbol_manager = SymbolManager::new(symbols)
     ///         .expect("Failed to create symbol manager");
     ///
@@ -66,11 +65,10 @@ impl SymbolManager {
     ///
     /// ```
     /// use common::prelude::DBConfig;
-    /// use db_query_manager::QueryDBManager;
     /// use symbol_manager::SymbolManager;
     ///
     ///  let symbols =  vec![(1, "apeusdt".to_string()), (2, "btxusdt".to_string())];
-    /// 
+    ///
     ///  let mut symbol_manager = SymbolManager::new(symbols)
     ///         .expect("Failed to create symbol manager");
     ///
@@ -113,7 +111,6 @@ impl SymbolManager {
     ///
     /// ```
     /// use common::prelude::DBConfig;
-    /// use db_query_manager::QueryDBManager;
     /// use symbol_manager::SymbolManager;
     ///
     ///  let symbols =  vec![(1, "apeusdt".to_string()), (2, "btxusdt".to_string())];
@@ -149,7 +146,6 @@ impl SymbolManager {
     ///
     /// ```
     /// use common::prelude::DBConfig;
-    /// use db_query_manager::QueryDBManager;
     /// use symbol_manager::SymbolManager;
     ///
     ///  let symbols =  vec![(1, "apeusdt".to_string()), (2, "btxusdt".to_string())];

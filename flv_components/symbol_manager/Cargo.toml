@@ -18,10 +18,5 @@ path = "../../flv_common"
 version = "0.1.0"
 
 
-[dependencies.db_query_manager]
-path = "../../flv_components/db_query_manager"
-version = "0.1.0"
-
-
 [dependencies]
 lru =  { workspace = true }

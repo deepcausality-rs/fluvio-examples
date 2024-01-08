@@ -1,7 +1,8 @@
 use symbol_manager::SymbolManager;
 
 fn get_test_symbols() -> Vec<(u16, String)> {
-    vec![(1, "apeusdt".to_string()),
+    vec![
+        (1, "apeusdt".to_string()),
         (2, "btxusdt".to_string()),
         (3, "xrpusd".to_string()),
     ]

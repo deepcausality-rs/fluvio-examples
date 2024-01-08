@@ -1,5 +1,6 @@
 use client_manager::ClientManager;
 use common::prelude::MessageProcessingError;
+use db_query_manager::QueryDBManager;
 use fluvio::dataplane::record::ConsumerRecord;
 use fluvio::{Offset, PartitionConsumer};
 use futures::StreamExt;
@@ -9,9 +10,8 @@ use sbe_messages::prelude::{
 };
 use std::future::Future;
 use std::sync::{Arc, Mutex};
-use tokio::{pin, select};
-use db_query_manager::QueryDBManager;
 use symbol_manager::SymbolManager;
+use tokio::{pin, select};
 
 pub struct Server {
     consumer: PartitionConsumer,

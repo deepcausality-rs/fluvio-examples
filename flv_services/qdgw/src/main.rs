@@ -69,7 +69,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Move this to autoconfig later.
     let symbol_table = "kraken_symbols";
 
-    let symbols = q_manager.get_all_symbols_with_ids(symbol_table)
+    let symbols = q_manager
+        .get_all_symbols_with_ids(symbol_table)
         .await
         .expect("[QDGW]/main: Failed to get all symbols for SymbolManager.");
 
@@ -78,17 +79,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             SymbolManager::new(symbols)
                 .expect("[QDGW]/main: Failed to create SymbolManager instance."),
         ))
-    }.await;
+    }
+    .await;
 
-    let query_manager =  Arc::new(Mutex::new(q_manager));
+    let query_manager = Arc::new(Mutex::new(q_manager));
 
     //Creates a new server
-    let server = Server::new(
-        consumer,
-        client_manager,
-        query_manager,
-        symbol_manager
-    );
+    let server = Server::new(consumer, client_manager, query_manager, symbol_manager);
 
     //Creates a new Tokio task for the server.
     let signal = shutdown_utils::signal_handler("Fluvio connector");
@@ -106,7 +103,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     match tokio::try_join!(web_handle, service_handle) {
         Ok(_) => {}
         Err(e) => {
-            println!("[QDGW]/main: Failed to start Fluvio and HTTP server: {:?}", e);
+            println!(
+                "[QDGW]/main: Failed to start Fluvio and HTTP server: {:?}",
+                e
+            );
         }
     }
 
