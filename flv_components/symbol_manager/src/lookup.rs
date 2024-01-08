@@ -19,8 +19,9 @@ impl SymbolManager {
     /// use db_query_manager::QueryDBManager;
     /// use symbol_manager::SymbolManager;
     ///
-    ///  let db_config = DBConfig::new(9009, "0.0.0.0".into());
-    ///  let mut symbol_manager = SymbolManager::new(db_config)
+    ///  let symbols =  vec![(1, "apeusdt".to_string()), (2, "btxusdt".to_string())];
+    /// 
+    ///  let mut symbol_manager = SymbolManager::new(symbols)
     ///         .expect("Failed to create symbol manager");
     ///
     /// let symbol = symbol_manager.get_symbol(1).expect("Failed to get symbol");
@@ -68,8 +69,9 @@ impl SymbolManager {
     /// use db_query_manager::QueryDBManager;
     /// use symbol_manager::SymbolManager;
     ///
-    ///  let db_config =  DBConfig::new(9009, "0.0.0.0".into());
-    ///  let mut symbol_manager = SymbolManager::new(db_config)
+    ///  let symbols =  vec![(1, "apeusdt".to_string()), (2, "btxusdt".to_string())];
+    /// 
+    ///  let mut symbol_manager = SymbolManager::new(symbols)
     ///         .expect("Failed to create symbol manager");
     ///
     /// let id = symbol_manager.get_symbol_id("apeusdt").expect("Failed to get ID");
@@ -114,8 +116,9 @@ impl SymbolManager {
     /// use db_query_manager::QueryDBManager;
     /// use symbol_manager::SymbolManager;
     ///
-    ///  let db_config =  DBConfig::new(9009, "0.0.0.0".into());
-    ///  let mut symbol_manager = SymbolManager::new(db_config)
+    ///  let symbols =  vec![(1, "apeusdt".to_string()), (2, "btxusdt".to_string())];
+    ///
+    ///  let mut symbol_manager = SymbolManager::new(symbols)
     ///         .expect("Failed to create symbol manager");
     ///
     /// let symbols = symbol_manager.get_all_symbols();
@@ -149,15 +152,16 @@ impl SymbolManager {
     /// use db_query_manager::QueryDBManager;
     /// use symbol_manager::SymbolManager;
     ///
-    ///  let db_config =  DBConfig::new(9009, "0.0.0.0".into());
-    ///  let mut symbol_manager = SymbolManager::new(db_config)
+    ///  let symbols =  vec![(1, "apeusdt".to_string()), (2, "btxusdt".to_string())];
+    ///
+    ///  let mut symbol_manager = SymbolManager::new(symbols)
     ///         .expect("Failed to create symbol manager");
     ///
     ///  let result = symbol_manager.get_all_symbol_ids();
     ///  assert!(result.is_ok());
     ///
     ///  let ids = result.unwrap();
-    ///  assert!(ids.contains(&23));
+    ///  assert!(ids.contains(&2));
     ///
     ///  println!("Symbol IDs: {:?}", ids);
     /// ```

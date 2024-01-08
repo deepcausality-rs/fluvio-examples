@@ -27,13 +27,17 @@ impl QueryDBManager {
     ///
     /// # Example
     ///
-    /// ```
+    /// ```rust
     /// use common::prelude::DBConfig;
     /// use db_query_manager::QueryDBManager;
     ///
+    /// #[tokio::main]
+    /// async fn main() {
     ///  let db_config =  DBConfig::new(9009, "0.0.0.0".into());
-    /// let query_manager = QueryDBManager::new(db_config);
+    ///  let query_manager = QueryDBManager::new(db_config).await.expect("Failed to create db connection");
+    /// }
     /// ```
+    ///
     pub async fn new(db_config: DBConfig) -> Result<Self, tokio_postgres::Error> {
         {
             // Extract connection string.
@@ -65,20 +69,23 @@ impl QueryDBManager {
     /// Returns `true` if the connection is closed, `false` otherwise.
     ///
     /// # Example
-    ///
-    /// ```
+    /// ```rust
     /// use common::prelude::DBConfig;
     /// use db_query_manager::QueryDBManager;
     ///
+    /// #[tokio::main]
+    /// async fn main() {
     /// let db_config =  DBConfig::new(9009, "0.0.0.0".into());
-    /// let query_manager = QueryDBManager::new(db_config);
+    /// let query_manager = QueryDBManager::new(db_config).await.expect("Failed to create db connection");
     ///
-    /// if query_manager.is_close() {
-    ///         println!("Connection is closed: {}", query_manager.is_close());
+    /// if query_manager.is_close().await {
+    ///         println!("Connection is closed: {}", query_manager.is_close().await);
     /// } else {
     ///     // Connection is open
     /// }
+    /// }
     /// ```
+    ///
     pub async fn is_close(&self) -> bool {
         self.client.is_closed()
     }

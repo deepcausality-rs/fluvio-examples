@@ -1,8 +1,7 @@
 mod lookup;
 mod utils;
 
-use common::prelude::{DBConfig, InitError};
-use db_query_manager::QueryDBManager;
+use common::prelude::InitError;
 use lru::LruCache;
 use std::collections::HashMap;
 use std::num::NonZeroUsize;
@@ -39,8 +38,9 @@ impl SymbolManager {
     /// use db_query_manager::QueryDBManager;
     /// use symbol_manager::SymbolManager;
     ///
-    ///  let db_config =  DBConfig::new(9009, "0.0.0.0".into());
-    ///  let symbol_manager = SymbolManager::new(db_config)
+    ///  let symbols =  vec![(1, "apeusdt".to_string()), (2, "btxusdt".to_string())];
+    ///
+    ///  let symbol_manager = SymbolManager::new(symbols)
     ///         .expect("Failed to create symbol manager");
     ///
     /// let nr_symbols = symbol_manager.number_of_symbols();
@@ -49,9 +49,6 @@ impl SymbolManager {
     ///
     /// # Noteworthy
     ///
-    /// - Creates a temporary QueryDBManager instance from the provided config.
-    ///
-    /// - Queries for all symbols and ids using the QueryDBManager instance.
     ///
     /// - Determines hashmap capacities based on number of symbols.
     ///
@@ -65,22 +62,8 @@ impl SymbolManager {
     ///   hashmaps and caches.
     ///
     /// - Propagates any errors via the returned Result.
-    pub async fn new(db_config: DBConfig) -> Result<Self, InitError> {
-        // create a temporary mutable query_db_manager
-        let mut query_db_manager = QueryDBManager::new(db_config)
-            .await
-            .expect("Failed to create QueryDBManager");
-
-        // query all symbols from the symbols table
-        let symbols = match query_db_manager
-            .get_all_symbols_with_ids("kraken_symbols")
-            .await
-        {
-            Ok(symbols) => symbols,
-            Err(e) => return Err(InitError::new(e.to_string())),
-        };
-
-        // Determine the capacity of the hashmaps
+    pub fn new(symbols: Vec<(u16, String)>) -> Result<Self, InitError> {
+        // Determine the capacity of the two hashmaps
         let capacity = symbols.len();
 
         // Set the capacity of the LRU caches at either 10% of the hashmaps capacity
@@ -100,10 +83,6 @@ impl SymbolManager {
             index_to_symbol.insert(id, symbol.clone());
         }
 
-        // Implicitly drop QueryDBManager
-
-        // SymbolManager is thread-safe when using one clone per thread
-        // or when wrapped in Arc/Mutex.
         Ok(SymbolManager {
             symbol_to_index,
             index_to_symbol,

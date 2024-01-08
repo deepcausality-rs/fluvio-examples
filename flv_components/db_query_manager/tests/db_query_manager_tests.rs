@@ -8,25 +8,26 @@ fn get_local_db_config() -> DBConfig {
 #[tokio::test]
 async fn test_new_query_db_manager() {
     let db_config = get_local_db_config();
-    let manager = QueryDBManager::new(db_config).await.expect("Failed to create db connection");
-
+    let manager = QueryDBManager::new(db_config)
+        .await
+        .expect("Failed to create db connection");
 
     assert!(!manager.is_close().await);
 }
 
-
 #[tokio::test]
 async fn test_get_all_symbol_ids() {
     let db_config = get_local_db_config();
-    let mut manager = QueryDBManager::new(db_config).await.expect("Failed to create db connection");
+    let mut manager = QueryDBManager::new(db_config)
+        .await
+        .expect("Failed to create db connection");
     assert!(!manager.is_close().await);
 
     // symbol table
     let symbol_table = "kraken_symbols";
 
     // Call method under test
-    let result = manager
-        .get_all_symbols_with_ids(symbol_table).await;
+    let result = manager.get_all_symbols_with_ids(symbol_table).await;
     // Verify result
     assert!(result.is_ok());
 
