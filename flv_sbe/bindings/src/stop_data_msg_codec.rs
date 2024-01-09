@@ -3,8 +3,8 @@ use crate::*;
 pub use decoder::StopDataMsgDecoder;
 pub use encoder::StopDataMsgEncoder;
 
-pub const SBE_BLOCK_LENGTH: u16 = 6;
-pub const SBE_TEMPLATE_ID: u16 = 4;
+pub const SBE_BLOCK_LENGTH: u16 = 7;
+pub const SBE_TEMPLATE_ID: u16 = 202;
 pub const SBE_SCHEMA_ID: u16 = 1;
 pub const SBE_SCHEMA_VERSION: u16 = 1;
 pub const SBE_SEMANTIC_VERSION: &str = "5.2";
@@ -67,7 +67,7 @@ pub mod encoder {
         #[inline]
         pub fn message_type(&mut self, value: MessageType) {
             let offset = self.offset;
-            self.get_buf_mut().put_u8_at(offset, value as u8)
+            self.get_buf_mut().put_u16_at(offset, value as u16)
         }
 
         /// primitive field 'clientID'
@@ -76,18 +76,18 @@ pub mod encoder {
         /// - null value: 65535
         /// - characterEncoding: null
         /// - semanticType: null
-        /// - encodedOffset: 1
+        /// - encodedOffset: 2
         /// - encodedLength: 2
         #[inline]
         pub fn client_id(&mut self, value: u16) {
-            let offset = self.offset + 1;
+            let offset = self.offset + 2;
             self.get_buf_mut().put_u16_at(offset, value);
         }
 
         /// REQUIRED enum
         #[inline]
         pub fn exchange_id(&mut self, value: ExchangeID) {
-            let offset = self.offset + 3;
+            let offset = self.offset + 4;
             self.get_buf_mut().put_u8_at(offset, value as u8)
         }
 
@@ -97,11 +97,11 @@ pub mod encoder {
         /// - null value: 65535
         /// - characterEncoding: null
         /// - semanticType: null
-        /// - encodedOffset: 4
+        /// - encodedOffset: 5
         /// - encodedLength: 2
         #[inline]
         pub fn symbol_id(&mut self, value: u16) {
-            let offset = self.offset + 4;
+            let offset = self.offset + 5;
             self.get_buf_mut().put_u16_at(offset, value);
         }
     }
@@ -178,25 +178,25 @@ pub mod decoder {
         /// REQUIRED enum
         #[inline]
         pub fn message_type(&self) -> MessageType {
-            self.get_buf().get_u8_at(self.offset).into()
+            self.get_buf().get_u16_at(self.offset).into()
         }
 
         /// primitive field - 'REQUIRED'
         #[inline]
         pub fn client_id(&self) -> u16 {
-            self.get_buf().get_u16_at(self.offset + 1)
+            self.get_buf().get_u16_at(self.offset + 2)
         }
 
         /// REQUIRED enum
         #[inline]
         pub fn exchange_id(&self) -> ExchangeID {
-            self.get_buf().get_u8_at(self.offset + 3).into()
+            self.get_buf().get_u8_at(self.offset + 4).into()
         }
 
         /// primitive field - 'REQUIRED'
         #[inline]
         pub fn symbol_id(&self) -> u16 {
-            self.get_buf().get_u16_at(self.offset + 4)
+            self.get_buf().get_u16_at(self.offset + 5)
         }
     }
 } // end decoder

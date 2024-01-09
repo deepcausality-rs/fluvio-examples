@@ -15,6 +15,8 @@ impl Server {
 
         let mut client_db = client_manager.lock().unwrap();
         let exists = client_db.check_client(client_login_msg.client_id());
+
+        // Return a proper error message to the client if the client already exists
         if exists {
             return Err(MessageProcessingError(
                 "[QDGW/handle_client::client_login]: Client already exists".to_string(),
@@ -43,6 +45,16 @@ impl Server {
         );
 
         let mut client_db = client_manager.lock().unwrap();
+
+        let exists = client_db.check_client(client_logout_msg.client_id());
+
+        // Return a proper error message to the client if the client already exists
+        if !exists {
+            return Err(MessageProcessingError(
+                "[QDGW/handle_client::client_login]: Client does not exists".to_string(),
+            ));
+        }
+
         client_db.remove_client(client_logout_msg.client_id());
 
         Ok(())

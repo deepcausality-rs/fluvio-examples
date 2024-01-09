@@ -85,7 +85,7 @@ impl Server {
     async fn handle_record(&self, record: &ConsumerRecord) -> Result<(), MessageProcessingError> {
         let value = record.get_value().to_vec();
         let buffer = value.as_slice();
-        let message_type = MessageType::from(buffer[2]);
+        let message_type = MessageType::from(buffer[2] as u16);
 
         match message_type {
             MessageType::UnknownMessageType => Err(MessageProcessingError(

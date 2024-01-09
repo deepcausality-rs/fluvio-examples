@@ -17,7 +17,7 @@ impl StopDataMessage {
 
         csg = csg.header(0).parent().expect("Failed to encode header");
 
-        let value = SbeMessageType::from(self.message_type as u8);
+        let value = SbeMessageType::from(self.message_type as u16);
         csg.message_type(value);
 
         let value = self.client_id;

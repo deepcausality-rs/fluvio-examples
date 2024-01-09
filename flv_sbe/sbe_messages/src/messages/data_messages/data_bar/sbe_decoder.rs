@@ -16,7 +16,7 @@ pub fn decode_data_bar_message(buffer: &[u8]) -> Result<DataBar, SbeDecodeError>
     csg = csg.header(header);
 
     let sbe_message_type = csg.message_type();
-    let message_type = MessageType::from(sbe_message_type as u8);
+    let message_type = MessageType::from(sbe_message_type as u16);
     assert_eq!(message_type, MessageType::DataBar);
 
     let sbe_date_time = csg.date_time();

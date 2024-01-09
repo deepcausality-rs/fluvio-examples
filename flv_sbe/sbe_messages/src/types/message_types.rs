@@ -6,29 +6,40 @@ use std::fmt::Display;
 #[derive(
     Serialize, Deserialize, Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash,
 )]
-#[repr(u8)]
+#[repr(u16)]
 pub enum MessageType {
     #[default]
-    UnknownMessageType = 0xff_u8,
-    ClientLogin = 0x1_u8,
-    ClientLogout = 0x2_u8,
-    StartData = 0x3_u8,
-    StopData = 0x4_u8,
-    StopAllData = 0x5_u8,
-    DataBar = 0x6_u8,
-    LastDataBar = 0x7_u8,
+    UnknownMessageType = 0_u16,
+    // Client Message Types
+    ClientLogin = 101_u16,
+    ClientLogout = 102_u16,
+    // Data Message Types
+    StartData = 201_u16,
+    StopData = 202_u16,
+    StopAllData = 203_u16,
+    DataBar = 204_u16,
+    FirstDataBar = 205_u16,
+    LastDataBar = 206_u16,
+    // Error Message Types
+    ClientError = 801_u16,
 }
 
-impl From<u8> for MessageType {
-    fn from(value: u8) -> Self {
+impl From<u16> for MessageType {
+    fn from(value: u16) -> Self {
         match value {
-            0x1 => MessageType::ClientLogin,
-            0x2 => MessageType::ClientLogout,
-            0x3 => MessageType::StartData,
-            0x4 => MessageType::StopData,
-            0x5 => MessageType::StopAllData,
-            0x6 => MessageType::DataBar,
-            0x7 => MessageType::LastDataBar,
+            0_u16 => MessageType::UnknownMessageType,
+            // Client Message Types
+            101_u16 => MessageType::ClientLogin,
+            102_u16 => MessageType::ClientLogout,
+            // Data Message Types
+            201_u16 => MessageType::StartData,
+            202_u16 => MessageType::StopData,
+            203_u16 => MessageType::StopAllData,
+            204_u16 => MessageType::DataBar,
+            205_u16 => MessageType::FirstDataBar,
+            206_u16 => MessageType::LastDataBar,
+            // Error Message Types
+            801_u16 => MessageType::ClientError,
             _ => MessageType::UnknownMessageType,
         }
     }
@@ -43,8 +54,10 @@ impl Display for MessageType {
             MessageType::StopData => write!(f, "StopData"),
             MessageType::StopAllData => write!(f, "StopAllData"),
             MessageType::DataBar => write!(f, "DataBar"),
+            MessageType::FirstDataBar => write!(f, "FirstDataBar"),
             MessageType::LastDataBar => write!(f, "LastDataBar"),
             MessageType::UnknownMessageType => write!(f, "UnknownMessageType"),
+            MessageType::ClientError => write!(f, "ClientError"),
         }
     }
 }

@@ -2,7 +2,7 @@
 name = "sbe_bindings"
 version = "0.1.0"
 authors = ["sbetool"]
-description = "Example schema"
+description = "Fluvio DeepCausality Schema"
 edition = "2021"
 
 [lib]

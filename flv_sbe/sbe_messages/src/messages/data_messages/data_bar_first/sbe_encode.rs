@@ -1,14 +1,13 @@
 use crate::errors::SbeEncodeError;
-use crate::prelude::ClientLoginMessage;
+use crate::prelude::FirstDataBar;
 use sbe_bindings::MessageType as SbeMessageType;
-use sbe_bindings::{message_header_codec, ClientLoginEncoder, Encoder, WriteBuf};
+use sbe_bindings::{message_header_codec, Encoder, FirstDataBarEncoder, WriteBuf};
 
-impl ClientLoginMessage {
+impl FirstDataBar {
     pub fn encode(&self) -> Result<(usize, Vec<u8>), SbeEncodeError> {
-        // precise buffer size is 19 bytes for the entire message.
-        let mut buffer = vec![0u8; 11];
+        let mut buffer = vec![0u8; 24];
 
-        let mut csg = ClientLoginEncoder::default();
+        let mut csg = FirstDataBarEncoder::default();
 
         csg = csg.wrap(
             WriteBuf::new(buffer.as_mut_slice()),
@@ -20,8 +19,8 @@ impl ClientLoginMessage {
         let value = SbeMessageType::from(self.message_type as u16);
         csg.message_type(value);
 
-        let value = self.client_id;
-        csg.client_id(value);
+        let value = self.symbol_id;
+        csg.symbol_id(value);
 
         let limit = csg.get_limit();
         Ok((limit, buffer))

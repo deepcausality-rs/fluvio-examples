@@ -4,9 +4,10 @@
                    id="1"
                    version="1"
                    semanticVersion="5.2"
-                   description="Example schema"
+                   description="Fluvio DeepCausality Schema"
                    byteOrder="littleEndian">
 
+    <!--   BASE TYPE DEFINITIONS -->
     <types>
         <type name="Char" description="Char" primitiveType="char"/>
 
@@ -31,6 +32,15 @@
         <type name="uInt64NULL" presence="optional" nullValue="18446744073709551615" primitiveType="uint64"/>
     </types>
 
+    <!--    TYPE ALIAS DEFINITIONS -->
+    <types>
+        <type name="Currency" description="Currency" length="3" primitiveType="char"/>
+        <type name="ClientID" encodingType="uInt16NULL" primitiveType="uint16"/>
+        <type name="SymbolID" encodingType="uInt16NULL" primitiveType="uint16"/>
+        <type name="Timestamp" encodingType="Int64NULL" primitiveType="int64"/>
+    </types>
+
+<!--    MESSAGE HEADER DEFINITION -->
     <types>
         <composite name="messageHeader" description="Message identifiers and length of message root">
             <type name="blockLength" primitiveType="uint16"/>
@@ -40,69 +50,71 @@
         </composite>
     </types>
 
-    <!--    ENUM DEFINITIONS-->
+    <!--    ENUM DEFINITIONS -->
     <types>
-        <enum name="MessageType" encodingType="uInt8NULL">
-            <validValue name="UnknownMessageType">0</validValue>
-            <validValue name="ClientLogin">1</validValue>
-            <validValue name="ClientLogout">2</validValue>
-            <validValue name="StartData">3</validValue>
-            <validValue name="StopData">4</validValue>
-            <validValue name="StopAllData">5</validValue>
-            <validValue name="DataBar">6</validValue>
-            <validValue name="LastDataBar">7</validValue>
-        </enum>
-
+<!--        Exchange IDs-->
         <enum name="ExchangeID" encodingType="uInt8NULL">
             <validValue name="BNB" description="Binance Spot Exchange">1</validValue>
             <validValue name="VEX" description="Virtual Exchange">2</validValue>
         </enum>
+<!--        Message Types-->
+        <enum name="MessageType" encodingType="uInt16NULL">
+            <validValue name="UnknownMessageType">0</validValue>
+<!--            Client Message Types-->
+            <validValue name="ClientLogin">101</validValue>
+            <validValue name="ClientLogout">102</validValue>
+<!--            Data Message Types-->
+            <validValue name="StartData">201</validValue>
+            <validValue name="StopData">202</validValue>
+            <validValue name="StopAllData">203</validValue>
+            <validValue name="DataBar">204</validValue>
+            <validValue name="FirstDataBar">205</validValue>
+            <validValue name="LastDataBar">206</validValue>
+<!--            Error Message Types-->
+            <validValue name="ClientError">801</validValue>
+        </enum>
+
+        <enum name="ClientErrorType" encodingType="uInt8NULL">
+            <validValue name="ClientAlreadyLoggedIn">1</validValue>
+            <validValue name="ClientLogInError">2</validValue>
+            <validValue name="ClientNotLoggedIn">3</validValue>
+            <validValue name="ClientLogOutError">4</validValue>
+        </enum>
     </types>
 
-    <!--    TYPE ALIAS DEFINITIONS-->
-    <types>
-        <type name="Currency" description="Currency" length="3" primitiveType="char"/>
-        <type name="ClientID" encodingType="uInt16NULL" primitiveType="uint16"/>
-        <type name="ClientName" primitiveType="char" length="10" characterEncoding="ASCII"/>
-        <type name="SymbolID" encodingType="uInt16NULL" primitiveType="uint16"/>
-        <type name="Timestamp" encodingType="Int64NULL" primitiveType="int64"/>
-    </types>
-
-
-    <!--   REQUEST MESSAGE DEFINITIONS -->
-    <sbe:message name="ClientLogin" id="1" description="Message to start data stream">
+    <!--   CLIENT MESSAGE DEFINITIONS -->
+    <sbe:message name="ClientLogin" id="101" description="Message to start data stream">
         <field name="messageType" id="1" type="MessageType"/>
         <field name="clientID" id="2" type="ClientID"/>
     </sbe:message>
 
-    <sbe:message name="ClientLogout" id="2" description="Message to start data stream">
+    <sbe:message name="ClientLogout" id="102" description="Message to start data stream">
         <field name="messageType" id="1" type="MessageType"/>
         <field name="clientID" id="2" type="ClientID"/>
     </sbe:message>
-
-    <sbe:message name="StartDataMsg" id="3" description="Message to start data stream">
-        <field name="messageType" id="1" type="MessageType"/>
-        <field name="clientID" id="2" type="ClientID"/>
-        <field name="exchangeID" id="3" type="ExchangeID"/>
-        <field name="symbolID" id="4" type="SymbolID"/>
-    </sbe:message>
-
-    <sbe:message name="StopDataMsg" id="4" description="Message to stop data stream">
-        <field name="messageType" id="1" type="MessageType"/>
-        <field name="clientID" id="2" type="ClientID"/>
-        <field name="exchangeID" id="3" type="ExchangeID"/>
-        <field name="symbolID" id="4" type="SymbolID"/>
-    </sbe:message>
-
-    <sbe:message name="StopAllDataMsg" id="5" description="Message to stop all data streams from an exchange">
-        <field name="messageType" id="1" type="MessageType"/>
-        <field name="clientID" id="2" type="ClientID"/>
-        <field name="exchangeID" id="3" type="ExchangeID"/>
-    </sbe:message>
-
 
     <!--   DATA MESSAGE DEFINITIONS -->
-    <sbe:message name="DataBar" id="6" description="Message containing an OHLCV Bar">
+    <sbe:message name="StartDataMsg" id="201" description="Message to start data stream">
+        <field name="messageType" id="1" type="MessageType"/>
+        <field name="clientID" id="2" type="ClientID"/>
+        <field name="exchangeID" id="3" type="ExchangeID"/>
+        <field name="symbolID" id="4" type="SymbolID"/>
+    </sbe:message>
+
+    <sbe:message name="StopDataMsg" id="202" description="Message to stop data stream">
+        <field name="messageType" id="1" type="MessageType"/>
+        <field name="clientID" id="2" type="ClientID"/>
+        <field name="exchangeID" id="3" type="ExchangeID"/>
+        <field name="symbolID" id="4" type="SymbolID"/>
+    </sbe:message>
+
+    <sbe:message name="StopAllDataMsg" id="203" description="Message to stop all data streams from an exchange">
+        <field name="messageType" id="1" type="MessageType"/>
+        <field name="clientID" id="2" type="ClientID"/>
+        <field name="exchangeID" id="3" type="ExchangeID"/>
+    </sbe:message>
+
+    <sbe:message name="DataBar" id="204" description="Message containing an OHLCV Bar">
         <field name="messageType" id="1" type="MessageType"/>
         <field name="dateTime" id="2" type="Timestamp"/>
         <field name="symbolID" id="3" type="SymbolID"/>
@@ -113,8 +125,21 @@
         <field name="volume" id="8" type="float"/>
     </sbe:message>
 
-    <sbe:message name="LastDataBar" id="7" description="Message indicates the last OHLCV Bar was send">
+    <sbe:message name="FirstDataBar" id="205" description="Message indicates the last OHLCV Bar was send">
         <field name="messageType" id="1" type="MessageType"/>
+        <field name="symbolID" id="2" type="SymbolID"/>
+    </sbe:message>
+
+    <sbe:message name="LastDataBar" id="206" description="Message indicates the last OHLCV Bar was send">
+        <field name="messageType" id="1" type="MessageType"/>
+        <field name="symbolID" id="2" type="SymbolID"/>
+    </sbe:message>
+
+    <!--  ERROR MESSAGE DEFINITIONS -->
+    <sbe:message name="ClientError" id="801" description="Message to start data stream">
+        <field name="messageType" id="1" type="MessageType"/>
+        <field name="clientID" id="2" type="ClientID"/>
+        <field name="clientErrorType" id="3" type="ClientErrorType"/>
     </sbe:message>
 
 </sbe:messageSchema>

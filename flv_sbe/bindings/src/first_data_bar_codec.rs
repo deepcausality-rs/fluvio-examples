@@ -1,10 +1,10 @@
 use crate::*;
 
-pub use decoder::ClientLoginDecoder;
-pub use encoder::ClientLoginEncoder;
+pub use decoder::FirstDataBarDecoder;
+pub use encoder::FirstDataBarEncoder;
 
 pub const SBE_BLOCK_LENGTH: u16 = 4;
-pub const SBE_TEMPLATE_ID: u16 = 101;
+pub const SBE_TEMPLATE_ID: u16 = 205;
 pub const SBE_SCHEMA_ID: u16 = 1;
 pub const SBE_SCHEMA_VERSION: u16 = 1;
 pub const SBE_SEMANTIC_VERSION: &str = "5.2";
@@ -13,21 +13,21 @@ pub mod encoder {
     use super::*;
 
     #[derive(Debug, Default)]
-    pub struct ClientLoginEncoder<'a> {
+    pub struct FirstDataBarEncoder<'a> {
         buf: WriteBuf<'a>,
         initial_offset: usize,
         offset: usize,
         limit: usize,
     }
 
-    impl<'a> Writer<'a> for ClientLoginEncoder<'a> {
+    impl<'a> Writer<'a> for FirstDataBarEncoder<'a> {
         #[inline]
         fn get_buf_mut(&mut self) -> &mut WriteBuf<'a> {
             &mut self.buf
         }
     }
 
-    impl<'a> Encoder<'a> for ClientLoginEncoder<'a> {
+    impl<'a> Encoder<'a> for FirstDataBarEncoder<'a> {
         #[inline]
         fn get_limit(&self) -> usize {
             self.limit
@@ -39,7 +39,7 @@ pub mod encoder {
         }
     }
 
-    impl<'a> ClientLoginEncoder<'a> {
+    impl<'a> FirstDataBarEncoder<'a> {
         pub fn wrap(mut self, buf: WriteBuf<'a>, offset: usize) -> Self {
             let limit = offset + SBE_BLOCK_LENGTH as usize;
             self.buf = buf;
@@ -70,7 +70,7 @@ pub mod encoder {
             self.get_buf_mut().put_u16_at(offset, value as u16)
         }
 
-        /// primitive field 'clientID'
+        /// primitive field 'symbolID'
         /// - min value: 0
         /// - max value: 65534
         /// - null value: 65535
@@ -79,7 +79,7 @@ pub mod encoder {
         /// - encodedOffset: 2
         /// - encodedLength: 2
         #[inline]
-        pub fn client_id(&mut self, value: u16) {
+        pub fn symbol_id(&mut self, value: u16) {
             let offset = self.offset + 2;
             self.get_buf_mut().put_u16_at(offset, value);
         }
@@ -90,7 +90,7 @@ pub mod decoder {
     use super::*;
 
     #[derive(Clone, Copy, Debug, Default)]
-    pub struct ClientLoginDecoder<'a> {
+    pub struct FirstDataBarDecoder<'a> {
         buf: ReadBuf<'a>,
         initial_offset: usize,
         offset: usize,
@@ -99,14 +99,14 @@ pub mod decoder {
         pub acting_version: u16,
     }
 
-    impl<'a> Reader<'a> for ClientLoginDecoder<'a> {
+    impl<'a> Reader<'a> for FirstDataBarDecoder<'a> {
         #[inline]
         fn get_buf(&self) -> &ReadBuf<'a> {
             &self.buf
         }
     }
 
-    impl<'a> Decoder<'a> for ClientLoginDecoder<'a> {
+    impl<'a> Decoder<'a> for FirstDataBarDecoder<'a> {
         #[inline]
         fn get_limit(&self) -> usize {
             self.limit
@@ -118,7 +118,7 @@ pub mod decoder {
         }
     }
 
-    impl<'a> ClientLoginDecoder<'a> {
+    impl<'a> FirstDataBarDecoder<'a> {
         pub fn wrap(
             mut self,
             buf: ReadBuf<'a>,
@@ -162,7 +162,7 @@ pub mod decoder {
 
         /// primitive field - 'REQUIRED'
         #[inline]
-        pub fn client_id(&self) -> u16 {
+        pub fn symbol_id(&self) -> u16 {
             self.get_buf().get_u16_at(self.offset + 2)
         }
     }
