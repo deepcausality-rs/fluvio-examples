@@ -1,4 +1,6 @@
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize, Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(u8)]
 pub enum ClientErrorType {
     ClientAlreadyLoggedIn = 0x1_u8,

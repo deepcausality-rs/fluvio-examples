@@ -75,6 +75,7 @@
         </enum>
 
         <enum name="ClientErrorType" encodingType="uInt8NULL">
+            <validValue name="UnknownClientError">0</validValue>
             <validValue name="ClientAlreadyLoggedIn">1</validValue>
             <validValue name="ClientLogInError">2</validValue>
             <validValue name="ClientNotLoggedIn">3</validValue>
