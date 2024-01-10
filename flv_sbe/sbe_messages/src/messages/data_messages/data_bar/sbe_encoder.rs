@@ -7,8 +7,8 @@ use sbe_bindings::{
 };
 
 pub fn encode_data_bar_message(bar: DataBar) -> Result<(usize, Vec<u8>), SbeEncodeError> {
-    // precise buffer size is 40 bytes for the entire message.
-    let mut buffer = vec![0u8; 40];
+    // precise buffer size is 38 bytes for the entire message.
+    let mut buffer = vec![0u8; 38];
 
     let mut csg = DataBarEncoder::default();
 
@@ -24,9 +24,6 @@ pub fn encode_data_bar_message(bar: DataBar) -> Result<(usize, Vec<u8>), SbeEnco
 
     let date_time = bar.date_time().timestamp_micros();
     csg.date_time(date_time);
-
-    let symbol_id = bar.symbol() as u16;
-    csg.symbol_id(symbol_id);
 
     let open_price = bar
         .open()

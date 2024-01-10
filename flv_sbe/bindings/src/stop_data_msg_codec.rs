@@ -1,7 +1,7 @@
 use crate::*;
 
-pub use decoder::StopDataMsgDecoder;
 pub use encoder::StopDataMsgEncoder;
+pub use decoder::StopDataMsgDecoder;
 
 pub const SBE_BLOCK_LENGTH: u16 = 7;
 pub const SBE_TEMPLATE_ID: u16 = 202;
@@ -104,7 +104,9 @@ pub mod encoder {
             let offset = self.offset + 5;
             self.get_buf_mut().put_u16_at(offset, value);
         }
+
     }
+
 } // end encoder
 
 pub mod decoder {
@@ -198,5 +200,8 @@ pub mod decoder {
         pub fn symbol_id(&self) -> u16 {
             self.get_buf().get_u16_at(self.offset + 5)
         }
+
     }
+
 } // end decoder
+

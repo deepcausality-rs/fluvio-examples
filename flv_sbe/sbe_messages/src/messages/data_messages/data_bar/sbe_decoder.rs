@@ -1,7 +1,7 @@
 use crate::errors::SbeDecodeError;
 use crate::prelude::MessageType;
 use chrono::{DateTime, TimeZone, Utc};
-use common::prelude::{DataBar, SymbolID};
+use common::prelude::{DataBar};
 use rust_decimal::prelude::FromPrimitive;
 use rust_decimal::Decimal;
 use sbe_bindings::data_bar_codec::SBE_TEMPLATE_ID;
@@ -21,8 +21,6 @@ pub fn decode_data_bar_message(buffer: &[u8]) -> Result<DataBar, SbeDecodeError>
 
     let sbe_date_time = csg.date_time();
     let date_time: DateTime<Utc> = Utc.timestamp_micros(sbe_date_time).unwrap();
-    let sbe_symbol = csg.symbol_id();
-    let symbol_id = SymbolID::from(sbe_symbol);
 
     let sbe_open_price = csg.open_price();
     let open =
@@ -42,7 +40,7 @@ pub fn decode_data_bar_message(buffer: &[u8]) -> Result<DataBar, SbeDecodeError>
     let sbe_volume = csg.volume();
     let volume = Decimal::from_f32(sbe_volume).expect("[FileManager]: Failed to parse volume");
 
-    let data_bar = DataBar::new(date_time, symbol_id, open, high, low, close, volume);
+    let data_bar = DataBar::new(date_time, open, high, low, close, volume);
 
     Ok(data_bar)
 }

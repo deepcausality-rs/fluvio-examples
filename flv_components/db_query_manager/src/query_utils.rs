@@ -86,7 +86,7 @@ impl QueryDBManager {
     ///
     /// Returns a SQL query string to retrieve all timestamps, prices, and volumes from the given trade table.
     ///
-    pub(crate) fn build_get_all_trades_query(&self, trade_table: &str) -> String {
+    pub(crate) fn build_get_trades_query(&self, trade_table: &str) -> String {
         format!("SELECT timestamp, price, volume FROM {};", trade_table)
     }
 

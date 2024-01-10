@@ -14,7 +14,7 @@ impl QueryDBManager {
         };
 
         // Build the query
-        let query = self.build_get_all_trades_query(sanitized_name);
+        let query = self.build_get_trades_query(sanitized_name);
 
         // Execute query
         let result = self.query(&query).await;

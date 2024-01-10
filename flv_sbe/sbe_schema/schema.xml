@@ -111,7 +111,6 @@
     <sbe:message name="DataBar" id="204">
         <field name="messageType" id="1" type="MessageType"/>
         <field name="dateTime" id="2" type="Timestamp"/>
-        <field name="symbolID" id="3" type="SymbolID"/>
         <field name="openPrice" id="4" type="float"/>
         <field name="highPrice" id="5" type="float"/>
         <field name="lowPrice" id="6" type="float"/>

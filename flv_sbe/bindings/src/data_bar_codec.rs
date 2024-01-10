@@ -1,9 +1,9 @@
 use crate::*;
 
-pub use decoder::DataBarDecoder;
 pub use encoder::DataBarEncoder;
+pub use decoder::DataBarDecoder;
 
-pub const SBE_BLOCK_LENGTH: u16 = 32;
+pub const SBE_BLOCK_LENGTH: u16 = 30;
 pub const SBE_TEMPLATE_ID: u16 = 204;
 pub const SBE_SCHEMA_ID: u16 = 1;
 pub const SBE_SCHEMA_VERSION: u16 = 1;
@@ -84,31 +84,17 @@ pub mod encoder {
             self.get_buf_mut().put_i64_at(offset, value);
         }
 
-        /// primitive field 'symbolID'
-        /// - min value: 0
-        /// - max value: 65534
-        /// - null value: 65535
-        /// - characterEncoding: null
-        /// - semanticType: null
-        /// - encodedOffset: 10
-        /// - encodedLength: 2
-        #[inline]
-        pub fn symbol_id(&mut self, value: u16) {
-            let offset = self.offset + 10;
-            self.get_buf_mut().put_u16_at(offset, value);
-        }
-
         /// primitive field 'openPrice'
         /// - min value: 1.401298464324817E-45
         /// - max value: 3.4028234663852886E38
         /// - null value: NaN
         /// - characterEncoding: null
         /// - semanticType: null
-        /// - encodedOffset: 12
+        /// - encodedOffset: 10
         /// - encodedLength: 4
         #[inline]
         pub fn open_price(&mut self, value: f32) {
-            let offset = self.offset + 12;
+            let offset = self.offset + 10;
             self.get_buf_mut().put_f32_at(offset, value);
         }
 
@@ -118,11 +104,11 @@ pub mod encoder {
         /// - null value: NaN
         /// - characterEncoding: null
         /// - semanticType: null
-        /// - encodedOffset: 16
+        /// - encodedOffset: 14
         /// - encodedLength: 4
         #[inline]
         pub fn high_price(&mut self, value: f32) {
-            let offset = self.offset + 16;
+            let offset = self.offset + 14;
             self.get_buf_mut().put_f32_at(offset, value);
         }
 
@@ -132,11 +118,11 @@ pub mod encoder {
         /// - null value: NaN
         /// - characterEncoding: null
         /// - semanticType: null
-        /// - encodedOffset: 20
+        /// - encodedOffset: 18
         /// - encodedLength: 4
         #[inline]
         pub fn low_price(&mut self, value: f32) {
-            let offset = self.offset + 20;
+            let offset = self.offset + 18;
             self.get_buf_mut().put_f32_at(offset, value);
         }
 
@@ -146,11 +132,11 @@ pub mod encoder {
         /// - null value: NaN
         /// - characterEncoding: null
         /// - semanticType: null
-        /// - encodedOffset: 24
+        /// - encodedOffset: 22
         /// - encodedLength: 4
         #[inline]
         pub fn close_price(&mut self, value: f32) {
-            let offset = self.offset + 24;
+            let offset = self.offset + 22;
             self.get_buf_mut().put_f32_at(offset, value);
         }
 
@@ -160,14 +146,16 @@ pub mod encoder {
         /// - null value: NaN
         /// - characterEncoding: null
         /// - semanticType: null
-        /// - encodedOffset: 28
+        /// - encodedOffset: 26
         /// - encodedLength: 4
         #[inline]
         pub fn volume(&mut self, value: f32) {
-            let offset = self.offset + 28;
+            let offset = self.offset + 26;
             self.get_buf_mut().put_f32_at(offset, value);
         }
+
     }
+
 } // end encoder
 
 pub mod decoder {
@@ -252,38 +240,35 @@ pub mod decoder {
 
         /// primitive field - 'REQUIRED'
         #[inline]
-        pub fn symbol_id(&self) -> u16 {
-            self.get_buf().get_u16_at(self.offset + 10)
-        }
-
-        /// primitive field - 'REQUIRED'
-        #[inline]
         pub fn open_price(&self) -> f32 {
-            self.get_buf().get_f32_at(self.offset + 12)
+            self.get_buf().get_f32_at(self.offset + 10)
         }
 
         /// primitive field - 'REQUIRED'
         #[inline]
         pub fn high_price(&self) -> f32 {
-            self.get_buf().get_f32_at(self.offset + 16)
+            self.get_buf().get_f32_at(self.offset + 14)
         }
 
         /// primitive field - 'REQUIRED'
         #[inline]
         pub fn low_price(&self) -> f32 {
-            self.get_buf().get_f32_at(self.offset + 20)
+            self.get_buf().get_f32_at(self.offset + 18)
         }
 
         /// primitive field - 'REQUIRED'
         #[inline]
         pub fn close_price(&self) -> f32 {
-            self.get_buf().get_f32_at(self.offset + 24)
+            self.get_buf().get_f32_at(self.offset + 22)
         }
 
         /// primitive field - 'REQUIRED'
         #[inline]
         pub fn volume(&self) -> f32 {
-            self.get_buf().get_f32_at(self.offset + 28)
+            self.get_buf().get_f32_at(self.offset + 26)
         }
+
     }
+
 } // end decoder
+

@@ -1,4 +1,3 @@
-use crate::prelude::SymbolID;
 use crate::types::data_types::data_bar::DataBar;
 use chrono::{DateTime, Utc};
 use rust_decimal::Decimal;
@@ -17,10 +16,6 @@ impl DataBar {
 impl DataBar {
     pub fn date_time(&self) -> DateTime<Utc> {
         self.date_time
-    }
-
-    pub fn symbol(&self) -> SymbolID {
-        self.symbol
     }
 
     pub fn open(&self) -> Decimal {
