@@ -6,7 +6,7 @@ use sbe_bindings::{message_header_codec, ClientLoginEncoder, Encoder, WriteBuf};
 impl ClientLoginMessage {
     pub fn encode(&self) -> Result<(usize, Vec<u8>), SbeEncodeError> {
         // precise buffer size is 19 bytes for the entire message.
-        let mut buffer = vec![0u8; 11];
+        let mut buffer = vec![0u8; 12];
 
         let mut csg = ClientLoginEncoder::default();
 

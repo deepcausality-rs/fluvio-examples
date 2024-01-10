@@ -30,9 +30,9 @@ fn test_encode() {
     assert!(enc.is_ok());
 
     let (limit, buffer) = enc.unwrap();
-    assert_eq!(limit, 14);
+    assert_eq!(limit, 15);
 
-    let expected: Vec<u8> = vec![6, 0, 3, 0, 1, 0, 1, 0, 3, 1, 0, 1, 1, 0];
+    let expected: Vec<u8> = vec![7, 0, 201, 0, 1, 0, 1, 0, 201, 0, 1, 0, 1, 1, 0];
     let actual = buffer;
 
     assert_eq!(expected, actual);
@@ -40,7 +40,7 @@ fn test_encode() {
 
 #[test]
 fn test_decode() {
-    let encoded: Vec<u8> = vec![6, 0, 3, 0, 1, 0, 1, 0, 3, 1, 0, 1, 1, 0];
+    let encoded: Vec<u8> = vec![7, 0, 201, 0, 1, 0, 1, 0, 201, 0, 1, 0, 1, 1, 0];
     let buffer = encoded.as_slice();
 
     let message = StartDataMessage::from(buffer);

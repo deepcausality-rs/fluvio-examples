@@ -5,8 +5,8 @@ use crate::prelude::{SbeEncodeError, StopAllDataMessage};
 
 impl StopAllDataMessage {
     pub fn encode(&self) -> Result<(usize, Vec<u8>), SbeEncodeError> {
-        // precise buffer size is 10 bytes for the entire message.
-        let mut buffer = vec![0u8; 12];
+        // precise buffer size is 13 bytes for the entire message.
+        let mut buffer = vec![0u8; 13];
 
         let mut csg = StopAllDataMsgEncoder::default();
 

@@ -1,26 +1,19 @@
 use sbe_messages::prelude::MessageType;
 
 #[test]
-fn test_from_u8() {
-    let message_type = MessageType::from(0x1);
-    assert_eq!(message_type, MessageType::ClientLogin);
-
-    let message_type = MessageType::from(0x2);
-    assert_eq!(message_type, MessageType::ClientLogout);
-
-    let message_type = MessageType::from(0x3);
-    assert_eq!(message_type, MessageType::StartData);
-
-    let message_type = MessageType::from(0x4);
-    assert_eq!(message_type, MessageType::StopData);
-
-    let message_type = MessageType::from(0x5);
-    assert_eq!(message_type, MessageType::StopAllData);
-
-    let message_type = MessageType::from(0xff);
-    assert_eq!(message_type, MessageType::UnknownMessageType);
+fn test_from_u16() {
+    assert_eq!(MessageType::from(0_u16), MessageType::UnknownMessageType);
+    assert_eq!(MessageType::from(101_u16), MessageType::ClientLogin);
+    assert_eq!(MessageType::from(102_u16), MessageType::ClientLogout);
+    assert_eq!(MessageType::from(201_u16), MessageType::StartData);
+    assert_eq!(MessageType::from(202_u16), MessageType::StopData);
+    assert_eq!(MessageType::from(203_u16), MessageType::StopAllData);
+    assert_eq!(MessageType::from(204_u16), MessageType::DataBar);
+    assert_eq!(MessageType::from(205_u16), MessageType::FirstDataBar);
+    assert_eq!(MessageType::from(206_u16), MessageType::LastDataBar);
+    assert_eq!(MessageType::from(801_u16), MessageType::ClientError);
+    assert_eq!(MessageType::from(999_u16), MessageType::UnknownMessageType);
 }
-
 #[test]
 fn test_display() {
     let message_type = MessageType::ClientLogin;

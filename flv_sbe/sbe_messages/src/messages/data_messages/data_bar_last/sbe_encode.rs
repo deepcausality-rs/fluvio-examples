@@ -6,7 +6,7 @@ use sbe_bindings::{message_header_codec, Encoder, LastDataBarEncoder, WriteBuf};
 impl LastDataBar {
     pub fn encode(&self) -> Result<(usize, Vec<u8>), SbeEncodeError> {
         // precise buffer size is 12 bytes for the entire message.
-        let mut buffer = vec![0u8; 24];
+        let mut buffer = vec![0u8; 12];
 
         let mut csg = LastDataBarEncoder::default();
 

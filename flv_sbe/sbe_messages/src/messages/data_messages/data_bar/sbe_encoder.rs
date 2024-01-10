@@ -7,8 +7,8 @@ use sbe_bindings::{
 };
 
 pub fn encode_data_bar_message(bar: DataBar) -> Result<(usize, Vec<u8>), SbeEncodeError> {
-    // precise buffer size is xxx bytes for the entire message.
-    let mut buffer = vec![0u8; 39];
+    // precise buffer size is 40 bytes for the entire message.
+    let mut buffer = vec![0u8; 40];
 
     let mut csg = DataBarEncoder::default();
 

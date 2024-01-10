@@ -20,16 +20,16 @@ fn test_encode() {
     assert!(enc.is_ok());
 
     let (limit, buffer) = enc.unwrap();
-    assert_eq!(limit, 11);
+    assert_eq!(limit, 12);
 
-    let expected: Vec<u8> = vec![3, 0, 2, 0, 1, 0, 1, 0, 2, 22, 0];
+    let expected: Vec<u8> = vec![4, 0, 102, 0, 1, 0, 1, 0, 102, 0, 22, 0];
     let actual = buffer;
     assert_eq!(expected, actual);
 }
 
 #[test]
 fn test_decode() {
-    let encoded: Vec<u8> = vec![3, 0, 2, 0, 1, 0, 1, 0, 2, 22, 0];
+    let encoded: Vec<u8> = vec![4, 0, 102, 0, 1, 0, 1, 0, 102, 0, 22, 0];
     let buffer = encoded.as_slice();
 
     let message = ClientLogoutMessage::from(buffer);

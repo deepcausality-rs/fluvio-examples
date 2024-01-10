@@ -5,8 +5,8 @@ use crate::prelude::{SbeEncodeError, StartDataMessage};
 
 impl StartDataMessage {
     pub fn encode(&self) -> Result<(usize, Vec<u8>), SbeEncodeError> {
-        // precise buffer size is 12 bytes for the entire message.
-        let mut buffer = vec![0u8; 14];
+        // precise buffer size is 15 bytes for the entire message.
+        let mut buffer = vec![0u8; 15];
 
         let mut csg = StartDataMsgEncoder::default();
 

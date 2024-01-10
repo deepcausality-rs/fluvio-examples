@@ -84,38 +84,38 @@
     </types>
 
     <!--   CLIENT MESSAGE DEFINITIONS -->
-    <sbe:message name="ClientLogin" id="101" description="Message to start data stream">
+    <sbe:message name="ClientLogin" id="101">
         <field name="messageType" id="1" type="MessageType"/>
         <field name="clientID" id="2" type="ClientID"/>
     </sbe:message>
 
-    <sbe:message name="ClientLogout" id="102" description="Message to start data stream">
+    <sbe:message name="ClientLogout" id="102">
         <field name="messageType" id="1" type="MessageType"/>
         <field name="clientID" id="2" type="ClientID"/>
     </sbe:message>
 
     <!--   DATA MESSAGE DEFINITIONS -->
-    <sbe:message name="StartDataMsg" id="201" description="Message to start data stream">
+    <sbe:message name="StartDataMsg" id="201">
         <field name="messageType" id="1" type="MessageType"/>
         <field name="clientID" id="2" type="ClientID"/>
         <field name="exchangeID" id="3" type="ExchangeID"/>
         <field name="symbolID" id="4" type="SymbolID"/>
     </sbe:message>
 
-    <sbe:message name="StopDataMsg" id="202" description="Message to stop data stream">
+    <sbe:message name="StopDataMsg" id="202">
         <field name="messageType" id="1" type="MessageType"/>
         <field name="clientID" id="2" type="ClientID"/>
         <field name="exchangeID" id="3" type="ExchangeID"/>
         <field name="symbolID" id="4" type="SymbolID"/>
     </sbe:message>
 
-    <sbe:message name="StopAllDataMsg" id="203" description="Message to stop all data streams from an exchange">
+    <sbe:message name="StopAllDataMsg" id="203">
         <field name="messageType" id="1" type="MessageType"/>
         <field name="clientID" id="2" type="ClientID"/>
         <field name="exchangeID" id="3" type="ExchangeID"/>
     </sbe:message>
 
-    <sbe:message name="DataBar" id="204" description="Message containing an OHLCV Bar">
+    <sbe:message name="DataBar" id="204">
         <field name="messageType" id="1" type="MessageType"/>
         <field name="dateTime" id="2" type="Timestamp"/>
         <field name="symbolID" id="3" type="SymbolID"/>
