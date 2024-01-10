@@ -1,5 +1,5 @@
 use client_manager::ClientManager;
-use common::prelude::MessageProcessingError;
+use common::prelude::{ClientChannel, MessageProcessingError};
 use db_query_manager::QueryDBManager;
 use fluvio::dataplane::record::ConsumerRecord;
 use fluvio::{Offset, PartitionConsumer};
@@ -107,7 +107,12 @@ impl Server {
                 let start_data_msg = StartDataMessage::from(buffer);
                 let client_id = start_data_msg.client_id();
 
-                let client_data_channel = match self.get_client_data_channel(&self.client_manager, *client_id).await {
+                let client_data_channel = match self.get_client_channel(
+                    &self.client_manager,
+                    ClientChannel::DataChannel,
+                    *client_id,
+                ).await
+                {
                     Ok(channel) => channel,
                     Err(e) => {
                         // Send error message back to client instead of return
@@ -128,21 +133,6 @@ impl Server {
             _ => {
                 Ok(())
             }
-        }
-    }
-
-    // add this method parametric to return every channel based on enum parameter
-    async fn get_client_data_channel(
-        &self,
-        client_manager: &Arc<Mutex<ClientManager>>,
-        client_id: u16,
-    )
-        -> Result<String, MessageProcessingError>
-    {
-        let client_db = client_manager.lock().unwrap();
-        match client_db.get_client_data_channel(client_id) {
-            Ok(data_channel) => Ok(data_channel),
-            Err(e) => Err(MessageProcessingError(e.to_string())),
         }
     }
 }

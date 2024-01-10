@@ -1,9 +1,8 @@
+use crate::prelude::{ClientErrorMessage, MessageType};
 use sbe_bindings::client_error_codec::SBE_TEMPLATE_ID;
 use sbe_bindings::{ClientErrorDecoder, MessageHeaderDecoder, ReadBuf, SbeResult};
-use crate::prelude::{ClientErrorMessage, MessageType};
 
 pub fn decode_client_error_message(buffer: &[u8]) -> SbeResult<ClientErrorMessage> {
-
     let mut csg = ClientErrorDecoder::default();
     let buf = ReadBuf::new(buffer);
 

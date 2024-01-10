@@ -1,8 +1,8 @@
 //
 pub use crate::errors::*;
 //
-pub use crate::types::message_types::MessageType;
 pub use crate::types::client_error_types::ClientErrorType;
+pub use crate::types::message_types::MessageType;
 //
 pub use crate::messages::client_messages::client_login::ClientLoginMessage;
 pub use crate::messages::client_messages::client_logout::ClientLogoutMessage;

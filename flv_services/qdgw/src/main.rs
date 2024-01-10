@@ -1,6 +1,7 @@
 mod handle_clients;
 mod handle_data;
 mod service;
+mod utils;
 
 use std::net::SocketAddr;
 use std::sync::{Arc, Mutex};

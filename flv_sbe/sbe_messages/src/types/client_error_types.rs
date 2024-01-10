@@ -1,14 +1,14 @@
-use std::fmt::{Display, Formatter};
 use serde::{Deserialize, Serialize};
+use std::fmt::{Display, Formatter};
 
 /// Enum representing the different types of messages that can be sent over network.
 #[derive(
-Serialize, Deserialize, Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash,
+    Serialize, Deserialize, Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash,
 )]
 #[repr(u8)]
 pub enum ClientErrorType {
     #[default]
-    UnknownClientError =0_u8,
+    UnknownClientError = 0_u8,
     ClientAlreadyLoggedIn = 1_u8,
     ClientLogInError = 2_u8,
     ClientNotLoggedIn = 3_u8,
@@ -28,7 +28,7 @@ impl From<u8> for ClientErrorType {
     }
 }
 
-impl Display for ClientErrorType{
+impl Display for ClientErrorType {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(f, "{:?}", self)
     }

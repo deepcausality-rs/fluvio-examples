@@ -1,5 +1,5 @@
-use sbe_bindings::ClientErrorType;
 use crate::prelude::{ClientErrorMessage, MessageType};
+use sbe_bindings::ClientErrorType;
 
 impl ClientErrorMessage {
     pub fn message_type(&self) -> MessageType {

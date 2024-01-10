@@ -1,7 +1,7 @@
-use sbe_bindings::{ClientErrorEncoder, Encoder, message_header_codec, WriteBuf};
-use sbe_bindings::MessageType as SbeMessageType;
 use crate::errors::SbeEncodeError;
 use crate::prelude::ClientErrorMessage;
+use sbe_bindings::MessageType as SbeMessageType;
+use sbe_bindings::{message_header_codec, ClientErrorEncoder, Encoder, WriteBuf};
 
 impl ClientErrorMessage {
     pub fn encode(&self) -> Result<(usize, Vec<u8>), SbeEncodeError> {
@@ -28,5 +28,4 @@ impl ClientErrorMessage {
         let limit = csg.get_limit();
         Ok((limit, buffer))
     }
-
 }

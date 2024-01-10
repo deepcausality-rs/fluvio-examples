@@ -1,7 +1,6 @@
 use crate::prelude::ServiceID;
 use std::fmt;
 
-
 /// The MessageClientConfig struct represents the configuration for a message client.
 ///
 /// It contains the following fields:
@@ -102,7 +101,6 @@ impl MessageClientConfig {
     pub fn data_channel(&self) -> String {
         format!("{}-{}", self.name, "data")
     }
-
 
     /// Generates a channel name for the execution channel based on the client name.
     ///
