@@ -131,11 +131,14 @@ impl Server {
         }
     }
 
+    // add this method parametric to return every channel based on enum parameter
     async fn get_client_data_channel(
         &self,
         client_manager: &Arc<Mutex<ClientManager>>,
         client_id: u16,
-    ) -> Result<String, MessageProcessingError> {
+    )
+        -> Result<String, MessageProcessingError>
+    {
         let client_db = client_manager.lock().unwrap();
         match client_db.get_client_data_channel(client_id) {
             Ok(data_channel) => Ok(data_channel),

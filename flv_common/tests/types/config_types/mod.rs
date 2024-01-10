@@ -1,4 +1,6 @@
 #[cfg(test)]
+mod client_channel_tests;
+#[cfg(test)]
 mod db_config_tests;
 #[cfg(test)]
 mod message_client_config_tests;
@@ -12,3 +14,4 @@ mod environment_types_tests;
 mod metric_config_tests;
 #[cfg(test)]
 mod service_config_tests;
+
