@@ -44,7 +44,7 @@ fn test_decode() {
 fn test_display() {
     let bar = LastDataBar::new(42);
 
-    let expected = "LastDataBar { message_type: LastDataBar }";
+    let expected = "LastDataBar { message_type: LastDataBar, symbol_id: 42 }";
     let actual = format!("{}", bar);
 
     assert_eq!(expected, actual);

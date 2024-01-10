@@ -5,7 +5,7 @@ use sbe_bindings::{message_header_codec, Encoder, FirstDataBarEncoder, WriteBuf}
 
 impl FirstDataBar {
     pub fn encode(&self) -> Result<(usize, Vec<u8>), SbeEncodeError> {
-        let mut buffer = vec![0u8; 24];
+        let mut buffer = vec![0u8; 12];
 
         let mut csg = FirstDataBarEncoder::default();
 
