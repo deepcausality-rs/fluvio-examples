@@ -1,7 +1,7 @@
 use crate::error::QueryError;
 use crate::QueryDBManager;
 use chrono::{NaiveDateTime, TimeZone, Utc};
-use common::prelude::{TradeBar, ValidationError};
+use common::prelude::{TimeResolution, TradeBar, ValidationError};
 use rust_decimal::prelude::FromPrimitive;
 use rust_decimal::Decimal;
 use tokio_postgres::Row;
@@ -33,7 +33,7 @@ impl QueryDBManager {
             .try_get(2)
             .expect("[csv_utils/build_trade_bar_from_row]: Could not parse volume");
 
-        let date_time =  Utc.from_local_datetime(&timestamp).unwrap();
+        let date_time = Utc.from_local_datetime(&timestamp).unwrap();
 
         let price = Decimal::from_f64(p)
             .expect("[csv_utils/build_trade_bar_from_row]: Could not parse price from f64");
@@ -88,6 +88,28 @@ impl QueryDBManager {
     ///
     pub(crate) fn build_get_trades_query(&self, trade_table: &str) -> String {
         format!("SELECT timestamp, price, volume FROM {};", trade_table)
+    }
+
+    pub(crate) fn build_get_ohlcv_bars_query(
+        &self,
+        trade_table: &str,
+        time_resolution: &TimeResolution,
+    ) -> String {
+        format!(
+            "SELECT
+              timestamp datetime,
+              first(price) open,
+              max(price) high,
+              min(price) low,
+              last(price) close,
+              sum(volume) volume,
+
+            FROM {}
+            SAMPLE BY {}
+            ALIGN TO CALENDAR WITH OFFSET '00:00';",
+            trade_table,
+            time_resolution.to_string(),
+        )
     }
 
     /// Sanitizes the provided table name to prevent SQL injection attacks.

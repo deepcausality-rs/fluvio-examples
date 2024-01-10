@@ -1,5 +1,5 @@
 use chrono::Utc;
-use common::prelude::{DataBar};
+use common::prelude::DataBar;
 use rust_decimal::Decimal;
 
 #[test]

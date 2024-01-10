@@ -1,7 +1,3 @@
 use crate::QueryDBManager;
 
-impl QueryDBManager {
-
-
-
-}
+impl QueryDBManager {}

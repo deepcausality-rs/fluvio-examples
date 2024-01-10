@@ -1,7 +1,7 @@
 use crate::*;
 
-pub use encoder::DataBarEncoder;
 pub use decoder::DataBarDecoder;
+pub use encoder::DataBarEncoder;
 
 pub const SBE_BLOCK_LENGTH: u16 = 30;
 pub const SBE_TEMPLATE_ID: u16 = 204;
@@ -153,9 +153,7 @@ pub mod encoder {
             let offset = self.offset + 26;
             self.get_buf_mut().put_f32_at(offset, value);
         }
-
     }
-
 } // end encoder
 
 pub mod decoder {
@@ -267,8 +265,5 @@ pub mod decoder {
         pub fn volume(&self) -> f32 {
             self.get_buf().get_f32_at(self.offset + 26)
         }
-
     }
-
 } // end decoder
-

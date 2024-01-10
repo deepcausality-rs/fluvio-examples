@@ -1,7 +1,7 @@
 use crate::errors::SbeDecodeError;
 use crate::prelude::MessageType;
 use chrono::{DateTime, TimeZone, Utc};
-use common::prelude::{DataBar};
+use common::prelude::DataBar;
 use rust_decimal::prelude::FromPrimitive;
 use rust_decimal::Decimal;
 use sbe_bindings::data_bar_codec::SBE_TEMPLATE_ID;

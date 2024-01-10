@@ -1,8 +1,8 @@
 mod error;
+mod query_ohlcv;
 mod query_symbols;
 mod query_trades;
 mod query_utils;
-mod query_ohlcv;
 
 use common::prelude::DBConfig;
 use tokio_postgres::{Client, NoTls};

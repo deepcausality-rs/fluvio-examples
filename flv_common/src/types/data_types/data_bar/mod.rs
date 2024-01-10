@@ -1,7 +1,7 @@
 use chrono::{DateTime, Utc};
 use rust_decimal::Decimal;
-use std::fmt::Debug;
 use serde::{Deserialize, Serialize};
+use std::fmt::Debug;
 
 mod default;
 mod display;
