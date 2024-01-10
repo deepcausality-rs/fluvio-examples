@@ -1,6 +1,6 @@
 use crate::error::QueryError;
 use crate::QueryDBManager;
-use chrono::{TimeZone, Utc};
+use chrono::{NaiveDateTime, TimeZone, Utc};
 use common::prelude::{TradeBar, ValidationError};
 use rust_decimal::prelude::FromPrimitive;
 use rust_decimal::Decimal;
@@ -22,9 +22,8 @@ impl QueryDBManager {
     /// there was an issue parsing the data.
     ///
     pub(crate) fn build_trade_bar_from_row(&self, row: &Row) -> Result<TradeBar, QueryError> {
-        let timestamp = row
-            .try_get(0)
-            .expect("[QueryDBManager/build_trade_bar_from_row]: Could not get timestamp");
+        //
+        let timestamp = row.get::<usize, NaiveDateTime>(0);
 
         let p = row
             .try_get(1)
@@ -34,7 +33,7 @@ impl QueryDBManager {
             .try_get(2)
             .expect("[csv_utils/build_trade_bar_from_row]: Could not parse volume");
 
-        let date_time = Utc.timestamp_opt(timestamp, 0).unwrap();
+        let date_time =  Utc.from_local_datetime(&timestamp).unwrap();
 
         let price = Decimal::from_f64(p)
             .expect("[csv_utils/build_trade_bar_from_row]: Could not parse price from f64");
@@ -88,10 +87,7 @@ impl QueryDBManager {
     /// Returns a SQL query string to retrieve all timestamps, prices, and volumes from the given trade table.
     ///
     pub(crate) fn build_get_all_trades_query(&self, trade_table: &str) -> String {
-        format!(
-            "SELECT timestamp as date_time, price, volume FROM {};",
-            trade_table
-        )
+        format!("SELECT timestamp, price, volume FROM {};", trade_table)
     }
 
     /// Sanitizes the provided table name to prevent SQL injection attacks.

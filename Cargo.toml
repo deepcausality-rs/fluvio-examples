@@ -43,7 +43,7 @@ serde = { version = "1", features = ["derive"] }
 tokio = { version = "1", features = ["macros", "net", "rt-multi-thread", "signal"] }
 # Quest DB uses the postgres wire protocol for queries, which requires the postgres crate
 questdb-rs = { version = "3.1" }
-tokio-postgres = { version = "0.7", features = [ "with-chrono-0_4", "with-time-0_2"] }
+tokio-postgres = { version = "0.7", features = [ "with-chrono-0_4"] }
 warp = { version = "0.3", features = ["multipart"] }
 
 
