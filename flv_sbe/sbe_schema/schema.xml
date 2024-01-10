@@ -74,13 +74,6 @@
             <validValue name="ClientError">801</validValue>
         </enum>
 
-        <enum name="ClientErrorType" encodingType="uInt8NULL">
-            <validValue name="UnknownClientError">0</validValue>
-            <validValue name="ClientAlreadyLoggedIn">1</validValue>
-            <validValue name="ClientLogInError">2</validValue>
-            <validValue name="ClientNotLoggedIn">3</validValue>
-            <validValue name="ClientLogOutError">4</validValue>
-        </enum>
     </types>
 
     <!--   CLIENT MESSAGE DEFINITIONS -->
@@ -140,7 +133,7 @@
     <sbe:message name="ClientError" id="801" description="Message to start data stream">
         <field name="messageType" id="1" type="MessageType"/>
         <field name="clientID" id="2" type="ClientID"/>
-        <field name="clientErrorType" id="3" type="ClientErrorType"/>
+        <field name="clientErrorType" id="3" type="uInt8NULL"/>
     </sbe:message>
 
 </sbe:messageSchema>

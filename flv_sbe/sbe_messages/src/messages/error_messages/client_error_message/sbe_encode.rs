@@ -5,7 +5,7 @@ use sbe_bindings::{message_header_codec, ClientErrorEncoder, Encoder, WriteBuf};
 
 impl ClientErrorMessage {
     pub fn encode(&self) -> Result<(usize, Vec<u8>), SbeEncodeError> {
-        let mut buffer = vec![0u8; 24];
+        let mut buffer = vec![0u8; 13];
 
         let mut csg = ClientErrorEncoder::default();
 
@@ -22,7 +22,7 @@ impl ClientErrorMessage {
         let value = self.client_id;
         csg.client_id(value);
 
-        let value = self.client_error_type;
+        let value = self.client_error_type as u8;
         csg.client_error_type(value);
 
         let limit = csg.get_limit();

@@ -20,4 +20,3 @@ pub fn decode_first_data_bar_message(buffer: &[u8]) -> SbeResult<FirstDataBar> {
 
     Ok(message)
 }
-

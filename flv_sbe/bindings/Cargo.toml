@@ -8,5 +8,3 @@ edition = "2021"
 [lib]
 name = "sbe_bindings"
 path = "src/lib.rs"
-[dependencies]
-serde = { version = "1.0.195", features = ["derive"] }

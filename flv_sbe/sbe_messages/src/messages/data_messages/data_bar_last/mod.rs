@@ -1,7 +1,7 @@
+mod display;
+mod getters;
 mod sbe_decode;
 mod sbe_encode;
-mod getters;
-mod display;
 
 use crate::prelude::MessageType;
 use serde::{Deserialize, Serialize};

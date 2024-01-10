@@ -1,7 +1,7 @@
-use crate::prelude::MessageType;
-use sbe_bindings::ClientErrorType;
+use crate::prelude::{ClientErrorType, MessageType};
 use serde::{Deserialize, Serialize};
 
+mod display;
 mod getters;
 mod sbe_decode;
 mod sbe_encode;

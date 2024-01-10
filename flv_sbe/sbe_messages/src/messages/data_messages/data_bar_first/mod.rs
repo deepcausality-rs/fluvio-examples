@@ -1,7 +1,7 @@
-mod sbe_decode;
-mod sbe_encode;
 mod display;
 mod getters;
+mod sbe_decode;
+mod sbe_encode;
 
 use crate::prelude::MessageType;
 use serde::{Deserialize, Serialize};
@@ -26,7 +26,5 @@ impl From<&[u8]> for FirstDataBar {
     fn from(value: &[u8]) -> Self {
         sbe_decode::decode_first_data_bar_message(value)
             .expect("Failed to decode FirstDataBar message")
-
     }
 }
-

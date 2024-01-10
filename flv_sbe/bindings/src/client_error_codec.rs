@@ -84,11 +84,18 @@ pub mod encoder {
             self.get_buf_mut().put_u16_at(offset, value);
         }
 
-        /// REQUIRED enum
+        /// primitive field 'clientErrorType'
+        /// - min value: 0
+        /// - max value: 254
+        /// - null value: 255
+        /// - characterEncoding: null
+        /// - semanticType: null
+        /// - encodedOffset: 4
+        /// - encodedLength: 1
         #[inline]
-        pub fn client_error_type(&mut self, value: ClientErrorType) {
+        pub fn client_error_type(&mut self, value: u8) {
             let offset = self.offset + 4;
-            self.get_buf_mut().put_u8_at(offset, value as u8)
+            self.get_buf_mut().put_u8_at(offset, value);
         }
     }
 } // end encoder
@@ -173,10 +180,15 @@ pub mod decoder {
             self.get_buf().get_u16_at(self.offset + 2)
         }
 
-        /// REQUIRED enum
+        /// primitive field - 'OPTIONAL' { null_value: '255' }
         #[inline]
-        pub fn client_error_type(&self) -> ClientErrorType {
-            self.get_buf().get_u8_at(self.offset + 4).into()
+        pub fn client_error_type(&self) -> Option<u8> {
+            let value = self.get_buf().get_u8_at(self.offset + 4);
+            if value == 0xff_u8 {
+                None
+            } else {
+                Some(value)
+            }
         }
     }
 } // end decoder

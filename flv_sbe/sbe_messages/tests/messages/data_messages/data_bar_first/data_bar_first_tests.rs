@@ -19,7 +19,6 @@ fn test_encode() {
 
     assert_eq!(bar.message_type(), MessageType::FirstDataBar);
 
-
     let enc = bar.encode();
     assert!(enc.is_ok());
 
