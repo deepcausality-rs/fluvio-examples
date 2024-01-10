@@ -35,12 +35,7 @@ impl QueryDBManager {
 
         // Iterate over the rows, convert each row to a trade bar, and add it to the vector.
         for row in &result_rows {
-            // Convert the row to a trade bar
-            let trade = match self.build_trade_bar_from_row(row) {
-                Ok(trade) => trade,
-                Err(e) => return Err(e),
-            };
-
+            let trade = TradeBar::from(row);
             trades.push(trade);
         }
 

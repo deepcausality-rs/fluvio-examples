@@ -1,49 +1,8 @@
 use crate::error::QueryError;
 use crate::QueryDBManager;
-use chrono::{NaiveDateTime, TimeZone, Utc};
-use common::prelude::{TimeResolution, TradeBar, ValidationError};
-use rust_decimal::prelude::FromPrimitive;
-use rust_decimal::Decimal;
-use tokio_postgres::Row;
+use common::prelude::{TimeResolution, ValidationError};
 
 impl QueryDBManager {
-    /// Builds a TradeBar from a postgres Row.
-    ///
-    /// Gets the timestamp, price, and volume values from the row and creates a
-    /// TradeBar.
-    ///
-    /// # Arguments
-    ///
-    /// * `row` - The postgres Row to build the TradeBar from
-    ///
-    /// # Returns
-    ///
-    /// A Result containing the TradeBar if parsing succeeded, or a QueryError if
-    /// there was an issue parsing the data.
-    ///
-    pub(crate) fn build_trade_bar_from_row(&self, row: &Row) -> Result<TradeBar, QueryError> {
-        //
-        let timestamp = row.get::<usize, NaiveDateTime>(0);
-
-        let p = row
-            .try_get(1)
-            .expect("[csv_utils/build_trade_bar_from_row]: Could not parse price");
-
-        let v = row
-            .try_get(2)
-            .expect("[csv_utils/build_trade_bar_from_row]: Could not parse volume");
-
-        let date_time = Utc.from_local_datetime(&timestamp).unwrap();
-
-        let price = Decimal::from_f64(p)
-            .expect("[csv_utils/build_trade_bar_from_row]: Could not parse price from f64");
-
-        let volume = Decimal::from_f64(v)
-            .expect("[csv_utils/build_trade_bar_from_row]: Could not parse volume from f64");
-
-        Ok(TradeBar::new(date_time, price, volume))
-    }
-
     /// Utils that executes a SQL query against the database.
     ///
     /// # Arguments
