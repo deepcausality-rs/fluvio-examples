@@ -1,5 +1,6 @@
 mod error;
 mod query_symbols;
+mod query_trades;
 mod query_utils;
 
 use common::prelude::DBConfig;

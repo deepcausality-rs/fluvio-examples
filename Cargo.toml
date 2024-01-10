@@ -34,16 +34,16 @@ chrono = { version = "0.4", features = ["serde"] }
 config-file = "0.2"
 csv = "1.3"
 encoding_rs = "0.8"
-fluvio = { version = "0.21" , default-features = false, features = ["rustls"] }
+fluvio = { version = "0.21", default-features = false, features = ["rustls"] }
 futures = "0.3"
 lru = "0.12.1"
 # https://stackoverflow.com/questions/72594101/how-to-parse-a-postgresql-numeric-type-to-rust-native-ones-upon-request
-rust_decimal = {version = "1.33", features = ["db-postgres"]}
+rust_decimal = { version = "1.33", features = ["db-postgres"] }
 serde = { version = "1", features = ["derive"] }
 tokio = { version = "1", features = ["macros", "net", "rt-multi-thread", "signal"] }
 # Quest DB uses the postgres wire protocol for queries, which requires the postgres crate
-questdb-rs = {version = "3.1"}
-tokio-postgres = {version = "0.7"}
+questdb-rs = { version = "3.1" }
+tokio-postgres = { version = "0.7", features = [ "with-chrono-0_4", "with-time-0_2"] }
 warp = { version = "0.3", features = ["multipart"] }
 
 
