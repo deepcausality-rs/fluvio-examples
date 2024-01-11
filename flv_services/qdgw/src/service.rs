@@ -3,15 +3,19 @@ use common::prelude::{ClientChannel, MessageProcessingError};
 use db_query_manager::QueryDBManager;
 use fluvio::dataplane::record::ConsumerRecord;
 use fluvio::{Offset, PartitionConsumer};
+use futures::lock::Mutex;
 use futures::StreamExt;
 use sbe_messages::prelude::{
     ClientLoginMessage, ClientLogoutMessage, MessageType, StartDataMessage, StopAllDataMessage,
     StopDataMessage,
 };
 use std::future::Future;
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
 use symbol_manager::SymbolManager;
 use tokio::{pin, select};
+
+// Future Mutex implements sync + send and works well with tokio async
+// https://stackoverflow.com/questions/67277282/async-function-the-trait-stdmarkersend-is-not-implemented-for-stdsync
 
 pub struct Server {
     consumer: PartitionConsumer,
@@ -120,7 +124,11 @@ impl Server {
                     }
                 };
 
-                self.start_data(&client_data_channel, &start_data_msg).await
+                self.start_data(
+                    &self.query_manager,
+                    &client_data_channel,
+                    &start_data_msg
+                ).await
             }
             MessageType::StopData => {
                 let stop_data_msg = StopDataMessage::from(buffer);

@@ -1,8 +1,9 @@
 use crate::service::Server;
 use client_manager::ClientManager;
 use common::prelude::{MessageClientConfig, MessageProcessingError};
+use futures::lock::Mutex;
 use sbe_messages::prelude::{ClientLoginMessage, ClientLogoutMessage};
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
 
 impl Server {
     pub(crate) async fn client_login(
@@ -13,7 +14,7 @@ impl Server {
         // Remove debug print
         println!("[QDGW/handle_client::client_login]: {:?}", client_login_msg);
 
-        let mut client_db = client_manager.lock().unwrap();
+        let mut client_db = client_manager.lock().await.clone();
         let exists = client_db.check_client(client_login_msg.client_id());
 
         // Return a proper error message to the client if the client already exists
@@ -44,7 +45,7 @@ impl Server {
             client_logout_msg
         );
 
-        let mut client_db = client_manager.lock().unwrap();
+        let mut client_db = client_manager.lock().await.clone();
 
         let exists = client_db.check_client(client_logout_msg.client_id());
 

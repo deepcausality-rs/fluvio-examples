@@ -1,7 +1,8 @@
 use crate::service::Server;
 use client_manager::ClientManager;
 use common::prelude::{ClientChannel, MessageProcessingError};
-use std::sync::{Arc, Mutex};
+use futures::lock::Mutex;
+use std::sync::Arc;
 
 impl Server {
     /// Returns the channel name for the given client and channel type.
@@ -25,8 +26,8 @@ impl Server {
         client_channel: ClientChannel,
         client_id: u16,
     ) -> Result<String, MessageProcessingError> {
-        // Lock the ClientManager mutex
-        let client_db = client_manager.lock().unwrap();
+        // Lock the ClientManager
+        let client_db = client_manager.lock().await.clone();
 
         // Look up the channel
         let res = match client_channel {

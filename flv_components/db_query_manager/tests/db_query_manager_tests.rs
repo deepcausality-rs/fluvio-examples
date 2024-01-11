@@ -1,6 +1,6 @@
-use std::str::FromStr;
 use common::prelude::{DBConfig, TimeResolution};
 use db_query_manager::QueryDBManager;
+use std::str::FromStr;
 
 fn get_local_db_config() -> DBConfig {
     DBConfig::new(9009, "0.0.0.0".into())
@@ -86,7 +86,9 @@ async fn test_get_all_ohlcv_bars() {
     let time_resolution = &TimeResolution::FifteenMin;
 
     // Call method under test
-    let result = manager.get_all_ohlcv_bars(trade_table, time_resolution).await;
+    let result = manager
+        .get_all_ohlcv_bars(trade_table, time_resolution)
+        .await;
 
     // Verify result
     assert!(result.is_ok());

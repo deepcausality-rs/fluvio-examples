@@ -3,8 +3,9 @@ mod handle_data;
 mod service;
 mod utils;
 
+use futures::lock::Mutex;
 use std::net::SocketAddr;
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
 use warp::Filter;
 
 use crate::service::Server;
