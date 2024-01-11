@@ -1,15 +1,13 @@
-use sbe_bindings::{Encoder, LastTradeBarEncoder, message_header_codec, WriteBuf};
-use sbe_bindings::MessageType as SbeMessageType;
 use crate::errors::SbeEncodeError;
 use crate::prelude::LastTradeBar;
+use sbe_bindings::MessageType as SbeMessageType;
+use sbe_bindings::{message_header_codec, Encoder, LastTradeBarEncoder, WriteBuf};
 
 impl LastTradeBar {
     pub fn encode(&self) -> Result<(usize, Vec<u8>), SbeEncodeError> {
-
         let mut buffer = vec![0u8; 12];
 
         let mut csg = LastTradeBarEncoder::default();
-
 
         csg = csg.wrap(
             WriteBuf::new(buffer.as_mut_slice()),

@@ -1,10 +1,10 @@
-use sbe_bindings::{Encoder, FirstTradeBarEncoder, message_header_codec, WriteBuf};
 use sbe_bindings::MessageType as SbeMessageType;
+use sbe_bindings::{message_header_codec, Encoder, FirstTradeBarEncoder, WriteBuf};
 
 use crate::errors::SbeEncodeError;
 use crate::prelude::FirstTradeBar;
 
-impl FirstTradeBar{
+impl FirstTradeBar {
     pub fn encode(&self) -> Result<(usize, Vec<u8>), SbeEncodeError> {
         let mut buffer = vec![0u8; 12];
 
@@ -25,6 +25,5 @@ impl FirstTradeBar{
 
         let limit = csg.get_limit();
         Ok((limit, buffer))
-
     }
 }

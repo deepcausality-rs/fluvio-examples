@@ -1,6 +1,6 @@
-use sbe_bindings::{FirstTradeBarDecoder, MessageHeaderDecoder, ReadBuf, SbeResult};
-use sbe_bindings::first_trade_bar_codec::SBE_TEMPLATE_ID;
 use crate::prelude::{FirstTradeBar, MessageType};
+use sbe_bindings::first_trade_bar_codec::SBE_TEMPLATE_ID;
+use sbe_bindings::{FirstTradeBarDecoder, MessageHeaderDecoder, ReadBuf, SbeResult};
 
 pub fn decode_first_data_bar_message(buffer: &[u8]) -> SbeResult<FirstTradeBar> {
     let mut csg = FirstTradeBarDecoder::default();

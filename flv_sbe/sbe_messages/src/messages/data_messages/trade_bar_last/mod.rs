@@ -1,10 +1,10 @@
-use serde::{Deserialize, Serialize};
 use crate::prelude::MessageType;
+use serde::{Deserialize, Serialize};
 
-mod getters;
 mod display;
-mod sbe_encode;
+mod getters;
 mod sbe_decode;
+mod sbe_encode;
 
 #[derive(Serialize, Deserialize, Debug, Default, Clone, PartialEq)]
 pub struct LastTradeBar {
@@ -22,10 +22,9 @@ impl LastTradeBar {
     }
 }
 
-impl From<&[u8]> for  LastTradeBar{
+impl From<&[u8]> for LastTradeBar {
     fn from(value: &[u8]) -> Self {
         sbe_decode::decode_last_trade_bar_message(value)
             .expect("Failed to decode LastTradeBar message")
-
     }
 }
