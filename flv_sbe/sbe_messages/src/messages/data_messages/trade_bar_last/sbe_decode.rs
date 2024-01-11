@@ -1,0 +1,22 @@
+use crate::prelude::{LastTradeBar, MessageType};
+use sbe_bindings::last_trade_bar_codec::SBE_TEMPLATE_ID;
+use sbe_bindings::{LastTradeBarDecoder, MessageHeaderDecoder, ReadBuf, SbeResult};
+
+pub fn decode_last_trade_bar_message(buffer: &[u8]) -> SbeResult<LastTradeBar> {
+    let mut csg = LastTradeBarDecoder::default();
+    let buf = ReadBuf::new(buffer);
+
+    let header = MessageHeaderDecoder::default().wrap(buf, 0);
+    assert_eq!(SBE_TEMPLATE_ID, header.template_id());
+    csg = csg.header(header);
+
+    let sbe_message_type = csg.message_type();
+    let message_type = MessageType::from(sbe_message_type as u16);
+    assert_eq!(message_type, MessageType::LastTradeBar);
+
+    let symbol_id = csg.symbol_id();
+
+    let message = LastTradeBar::new(symbol_id);
+
+    Ok(message)
+}

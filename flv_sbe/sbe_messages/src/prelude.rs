@@ -1,19 +1,20 @@
 //
 pub use crate::errors::*;
-//
+// Message types
 pub use crate::types::client_error_types::ClientErrorType;
 pub use crate::types::message_types::MessageType;
-//
+// Client messages
 pub use crate::messages::client_messages::client_login::ClientLoginMessage;
 pub use crate::messages::client_messages::client_logout::ClientLogoutMessage;
-//
+// Data messages
 pub use crate::messages::data_messages::data_bar::SbeDataBar;
-
 pub use crate::messages::data_messages::data_bar_first::FirstDataBar;
 pub use crate::messages::data_messages::data_bar_last::LastDataBar;
 pub use crate::messages::data_messages::start_data::StartDataMessage;
 pub use crate::messages::data_messages::stop_all_data::StopAllDataMessage;
 pub use crate::messages::data_messages::stop_data::StopDataMessage;
 pub use crate::messages::data_messages::trade_bar::SbeTradeBar;
-//
+pub use crate::messages::data_messages::trade_bar_first::FirstTradeBar;
+pub use crate::messages::data_messages::trade_bar_last::LastTradeBar;
+// Error messages
 pub use crate::messages::error_messages::client_error_message::ClientErrorMessage;

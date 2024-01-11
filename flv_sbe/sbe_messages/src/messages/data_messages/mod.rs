@@ -5,3 +5,5 @@ pub mod start_data;
 pub mod stop_all_data;
 pub mod stop_data;
 pub mod trade_bar;
+pub mod trade_bar_first;
+pub mod trade_bar_last;
