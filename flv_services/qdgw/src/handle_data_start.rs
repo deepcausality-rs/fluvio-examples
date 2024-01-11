@@ -1,24 +1,60 @@
 use crate::service::Server;
-use common::prelude::MessageProcessingError;
+use common::prelude::{ClientChannel, MessageProcessingError};
 use db_query_manager::QueryDBManager;
 use fluvio::{Fluvio, RecordKey};
 use futures::lock::Mutex;
-use sbe_messages::prelude::{
-    FirstTradeBar, LastTradeBar, SbeTradeBar, StartDataMessage, StopAllDataMessage, StopDataMessage,
-};
+use sbe_messages::prelude::{FirstTradeBar, LastTradeBar, SbeTradeBar, StartDataMessage};
 use std::sync::Arc;
 
 impl Server {
+    pub(crate) async fn handle_start_data_message(
+        &self,
+        start_data_msg: &StartDataMessage,
+    ) -> Result<(), MessageProcessingError> {
+        //
+        let client_id = start_data_msg.client_id();
+        let exchange_id = *start_data_msg.exchange_id();
+        let symbol_id = start_data_msg.symbol_id();
+
+        let trade_table = match self.get_trade_table_name(exchange_id).await {
+            Ok(table) => table,
+            Err(e) => {
+                // Send error message back to client instead of return
+                return Err(e);
+            }
+        };
+
+        let client_data_channel = match self
+            .get_client_channel(ClientChannel::DataChannel, *client_id)
+            .await
+        {
+            Ok(channel) => channel,
+            Err(e) => {
+                // Send error message back to client instead of return
+                return Err(e);
+            }
+        };
+
+        self.start_data(
+            &self.query_manager,
+            &client_data_channel,
+            *symbol_id,
+            &trade_table,
+        )
+        .await
+    }
+
     pub(crate) async fn start_data(
         &self,
         query_manager: &Arc<Mutex<QueryDBManager>>,
         client_data_channel: &str,
-        start_data_msg: &StartDataMessage,
+        symbol_id: u16,
+        trade_table: &str,
     ) -> Result<(), MessageProcessingError> {
         // Remove debug print
         println!(
-            "[QDGW/handle::start_date]: start_data: {:?} on channel : {:?}",
-            start_data_msg, client_data_channel
+            "[QDGW/handle::start_date]:on channel : {:?}",
+            client_data_channel
         );
 
         let fluvio = Fluvio::connect().await.unwrap();
@@ -27,10 +63,6 @@ impl Server {
             .topic_producer(client_data_channel)
             .await
             .expect("Failed to create a producer");
-
-        // Replace these fields with dynamic configuration
-        let symbol_id = *start_data_msg.symbol_id();
-        let trade_table = "kraken_ethaed";
 
         // Lock query manager
         let mut q_manager = query_manager.lock().await;
@@ -78,29 +110,6 @@ impl Server {
             .await
             .expect("Failed to send Done!");
         producer.flush().await.expect("Failed to flush");
-
-        Ok(())
-    }
-
-    pub(crate) async fn stop_date(
-        &self,
-        stop_data_msg: &StopDataMessage,
-    ) -> Result<(), MessageProcessingError> {
-        // Remove debug print
-        println!("[QDGW/handle::stop_date]: stop_data: {:?}", stop_data_msg);
-
-        Ok(())
-    }
-
-    pub(crate) async fn stop_all_data(
-        &self,
-        stop_all_data_msg: &StopAllDataMessage,
-    ) -> Result<(), MessageProcessingError> {
-        // Remove debug print
-        println!(
-            "[QDGW/handle::stop_all_data]: stop_all_data: {:?}",
-            stop_all_data_msg
-        );
 
         Ok(())
     }

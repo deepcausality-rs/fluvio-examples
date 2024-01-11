@@ -10,7 +10,7 @@ fn test_new() {
 
     assert_eq!(message.message_type(), &MessageType::StartData);
     assert_eq!(message.client_id(), &1);
-    assert_eq!(message.exchange_id(), &ExchangeID::BinanceSpot);
+    assert_eq!(message.exchange_id(), &1);
     assert_eq!(message.symbol_id(), &symbol_id);
 }
 
@@ -23,7 +23,7 @@ fn test_encode() {
 
     assert_eq!(message.message_type(), &MessageType::StartData);
     assert_eq!(message.client_id(), &1);
-    assert_eq!(message.exchange_id(), &ExchangeID::BinanceSpot);
+    assert_eq!(message.exchange_id(), &1);
     assert_eq!(message.symbol_id(), &symbol_id);
 
     let enc = message.encode();
@@ -50,7 +50,7 @@ fn test_decode() {
 
     assert_eq!(message.client_id(), &1);
 
-    assert_eq!(message.exchange_id(), &ExchangeID::BinanceSpot);
+    assert_eq!(message.exchange_id(), &1);
     assert_eq!(message.symbol_id(), &symbol_id);
 }
 
@@ -81,7 +81,7 @@ fn test_exchange_id() {
     let symbol_id = SymbolID::BTCUSD as u16;
     let message = StartDataMessage::new(client_id, exchange_id, symbol_id);
 
-    assert_eq!(message.exchange_id(), &ExchangeID::BinanceSpot);
+    assert_eq!(message.exchange_id(), &1);
 }
 
 #[test]
@@ -101,7 +101,8 @@ fn test_display() {
     let symbol_id = SymbolID::BTCUSD as u16;
     let message = StartDataMessage::new(client_id, exchange_id, symbol_id);
 
-    let expected = "StartDataMessage[message_type: StartData, client_id: 1, exchange_id: BinanceSpot, symbol_id: 1]";
+    let expected =
+        "StartDataMessage[message_type: StartData, client_id: 1, exchange_id: 1, symbol_id: 1]";
     let actual = format!("{}", message);
     assert_eq!(expected, actual);
 }

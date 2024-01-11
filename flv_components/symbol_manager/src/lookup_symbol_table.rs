@@ -91,10 +91,7 @@ impl SymbolManager {
     ///
     /// assert_eq!(symbol_table_name, "kraken_symbols");
     /// ```
-    pub fn get_symbol_table(
-        &mut self,
-        exchange_id: u16,
-    ) -> Result<String, LookupError> {
+    pub fn get_symbol_table(&mut self, exchange_id: u16) -> Result<String, LookupError> {
         //
         let exchange_name = match self.get_exchange_name(exchange_id) {
             Ok(exchange) => exchange,

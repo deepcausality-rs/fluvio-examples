@@ -23,7 +23,7 @@ impl StartDataMessage {
         let value = self.client_id;
         csg.client_id(value);
 
-        let value = self.exchange_id as u8;
+        let value = self.exchange_id;
         csg.exchange_id(value);
 
         let value = self.symbol_id;

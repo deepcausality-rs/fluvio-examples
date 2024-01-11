@@ -1,8 +1,6 @@
 use crate::service::Server;
-use client_manager::ClientManager;
 use common::prelude::{ClientChannel, MessageProcessingError};
-use futures::lock::Mutex;
-use std::sync::Arc;
+
 
 impl Server {
     /// Returns the channel name for the given client and channel type.
@@ -22,12 +20,11 @@ impl Server {
     ///
     pub(crate) async fn get_client_channel(
         &self,
-        client_manager: &Arc<Mutex<ClientManager>>,
         client_channel: ClientChannel,
         client_id: u16,
     ) -> Result<String, MessageProcessingError> {
         // Lock the ClientManager
-        let client_db = client_manager.lock().await.clone();
+        let client_db = self.client_manager.lock().await.clone();
 
         // Look up the channel
         let res = match client_channel {
@@ -40,6 +37,36 @@ impl Server {
         // Return the channel, or an error if the lookup failed
         match res {
             Ok(channel) => Ok(channel),
+            Err(e) => Err(MessageProcessingError(e.to_string())),
+        }
+    }
+
+    /// Retrieves the trade table name for the given exchange ID.
+    ///
+    /// Locks the SymbolManager mutex and looks up the table name for the exchange.
+    ///
+    /// # Parameters
+    ///
+    /// - `symbol_manager` - The SymbolManager instance
+    /// - `exchange_id` - The exchange ID
+    ///
+    /// # Returns
+    ///
+    /// The name of the trade table as a `String`, or a `MessageProcessingError` if lookup fails.
+    ///
+    pub(crate) async fn get_trade_table_name(
+        &self,
+        exchange_id: u8,
+    ) -> Result<String, MessageProcessingError> {
+        // Lock the SymbolManager
+        let mut symbol_db = self.symbol_manager.lock().await;
+
+        // look up the table name
+        let res = symbol_db.get_symbol_table(exchange_id as u16);
+
+        // Return the table name, or an error if the lookup failed
+        match res {
+            Ok(table_name) => Ok(table_name),
             Err(e) => Err(MessageProcessingError(e.to_string())),
         }
     }

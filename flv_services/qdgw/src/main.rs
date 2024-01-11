@@ -1,5 +1,9 @@
+mod handle;
 mod handle_clients;
-mod handle_data;
+mod handle_data_start;
+mod handle_data_stop;
+mod handle_data_stop_all;
+mod handle_unknown_msg;
 mod service;
 mod utils;
 
@@ -55,7 +59,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let msg_config = cfg_manager.get_message_client_config();
     let service_topic = msg_config.control_channel();
 
-    // creates a new consumer for the topic
+    // Creates a new consumer for the topic
     let consumer = fluvio::consumer(&service_topic, 0)
         .await
         .expect("[QDGW]/main: Failed to create a message consumer");
@@ -68,7 +72,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .await
         .expect("[QDGW]/main: Failed to create QueryDBManager instance.");
 
-    // Move this to autoconfig later.
+    // Move this to autoconfig.
     let exchanges = vec![(1, "kraken".to_string()), (2, "bittrex".to_string())];
     let symbol_table = "kraken_symbols";
 

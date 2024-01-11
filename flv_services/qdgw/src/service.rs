@@ -1,14 +1,9 @@
 use client_manager::ClientManager;
-use common::prelude::{ClientChannel, MessageProcessingError};
+use common::prelude::MessageProcessingError;
 use db_query_manager::QueryDBManager;
-use fluvio::dataplane::record::ConsumerRecord;
 use fluvio::{Offset, PartitionConsumer};
 use futures::lock::Mutex;
 use futures::StreamExt;
-use sbe_messages::prelude::{
-    ClientLoginMessage, ClientLogoutMessage, MessageType, StartDataMessage, StopAllDataMessage,
-    StopDataMessage,
-};
 use std::future::Future;
 use std::sync::Arc;
 use symbol_manager::SymbolManager;
@@ -19,9 +14,9 @@ use tokio::{pin, select};
 
 pub struct Server {
     consumer: PartitionConsumer,
-    client_manager: Arc<Mutex<ClientManager>>,
-    query_manager: Arc<Mutex<QueryDBManager>>,
-    symbol_manager: Arc<Mutex<SymbolManager>>,
+    pub(crate) client_manager: Arc<Mutex<ClientManager>>,
+    pub(crate) query_manager: Arc<Mutex<QueryDBManager>>,
+    pub(crate) symbol_manager: Arc<Mutex<SymbolManager>>,
 }
 
 impl Server {
@@ -63,84 +58,25 @@ impl Server {
                     }
 
                     record = stream.next() => {
-
-                    if let Some(res) = record {
-                                 match res {
-                                     Ok(record) => {
-                                         match self.handle_record(&record).await{
-                                        Ok(()) => {},
-                                        Err(e) => {
-                                            return Err(e);
+                        if let Some(res) = record {
+                                     match res {
+                                         Ok(record) => {
+                                             match self.handle_record(&record).await{
+                                            Ok(()) => {},
+                                            Err(e) => {
+                                                return Err(e);
+                                            }
                                         }
-                                    }
-                                 },
-                                    Err(e) =>{
-                                         return Err(MessageProcessingError(e.to_string()));
-                                     }
+                                     },
+                                        Err(e) =>{
+                                             return Err(MessageProcessingError(e.to_string()));
+                                         }
+                                 }
                              }
-                         }
                 }// end stream.next()
             } // end select
         } // end loop
 
         Ok(())
-    }
-
-    async fn handle_record(&self, record: &ConsumerRecord) -> Result<(), MessageProcessingError> {
-        let value = record.get_value().to_vec();
-        let buffer = value.as_slice();
-        let message_type = MessageType::from(buffer[2] as u16);
-
-        match message_type {
-            MessageType::UnknownMessageType => Err(MessageProcessingError(
-                "[QDGW/handle::handle_record]:  Fluvio consumer record contained an unknown message type."
-                    .to_string(),
-            )),
-
-            MessageType::ClientLogin => {
-                let client_login_msg = ClientLoginMessage::from(buffer);
-                self.client_login(&self.client_manager, &client_login_msg).await
-            }
-
-            MessageType::ClientLogout => {
-                let client_logout_msg = ClientLogoutMessage::from(buffer);
-                self.client_logout(&self.client_manager, &client_logout_msg).await
-            }
-
-            MessageType::StartData => {
-                let start_data_msg = StartDataMessage::from(buffer);
-                let client_id = start_data_msg.client_id();
-
-                let client_data_channel = match self.get_client_channel(
-                    &self.client_manager,
-                    ClientChannel::DataChannel,
-                    *client_id,
-                ).await
-                {
-                    Ok(channel) => channel,
-                    Err(e) => {
-                        // Send error message back to client instead of return
-                        return Err(e);
-                    }
-                };
-
-                self.start_data(
-                    &self.query_manager,
-                    &client_data_channel,
-                    &start_data_msg
-                ).await
-            }
-            MessageType::StopData => {
-                let stop_data_msg = StopDataMessage::from(buffer);
-                self.stop_date(&stop_data_msg).await
-            }
-            MessageType::StopAllData => {
-                let stop_all_data_msg = StopAllDataMessage::from(buffer);
-                self.stop_all_data(&stop_all_data_msg).await
-            }
-            _ => {
-                Ok(())
-            }
-        }
     }
 }

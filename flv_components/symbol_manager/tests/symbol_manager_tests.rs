@@ -139,7 +139,8 @@ fn test_get_symbol_table() {
         SymbolManager::new(symbols, exchanges).expect("Failed to create symbol manager");
 
     let exchange_id = 1;
-    let symbol_table_name = symbol_manager.get_symbol_table(exchange_id)
+    let symbol_table_name = symbol_manager
+        .get_symbol_table(exchange_id)
         .expect("Failed to get symbol table name");
 
     assert_eq!(symbol_table_name, "kraken_symbols");

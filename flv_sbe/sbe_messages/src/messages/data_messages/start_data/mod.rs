@@ -11,13 +11,14 @@ mod sbe_encode;
 pub struct StartDataMessage {
     message_type: MessageType,
     client_id: u16,
-    exchange_id: ExchangeID,
+    exchange_id: u8,
     symbol_id: u16,
 }
 
 impl StartDataMessage {
     pub fn new(client_id: u16, exchange_id: ExchangeID, symbol_id: u16) -> Self {
         let message_type = MessageType::StartData;
+        let exchange_id = exchange_id as u8;
         Self {
             message_type,
             client_id,
