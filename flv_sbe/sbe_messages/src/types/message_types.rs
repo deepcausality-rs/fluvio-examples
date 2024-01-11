@@ -20,6 +20,9 @@ pub enum MessageType {
     DataBar = 204_u16,
     FirstDataBar = 205_u16,
     LastDataBar = 206_u16,
+    TradeBar = 207_u16,
+    FirstTradeBar = 208_u16,
+    LastTradeBar = 209_u16,
     // Error Message Types
     ClientError = 801_u16,
 }
@@ -38,6 +41,9 @@ impl From<u16> for MessageType {
             204_u16 => MessageType::DataBar,
             205_u16 => MessageType::FirstDataBar,
             206_u16 => MessageType::LastDataBar,
+            207_u16 => MessageType::TradeBar,
+            208_u16 => MessageType::FirstTradeBar,
+            209_u16 => MessageType::LastTradeBar,
             // Error Message Types
             801_u16 => MessageType::ClientError,
             _ => MessageType::UnknownMessageType,
@@ -56,6 +62,9 @@ impl Display for MessageType {
             MessageType::DataBar => write!(f, "DataBar"),
             MessageType::FirstDataBar => write!(f, "FirstDataBar"),
             MessageType::LastDataBar => write!(f, "LastDataBar"),
+            MessageType::TradeBar => write!(f, "TradeBar"),
+            MessageType::FirstTradeBar => write!(f, "FirstTradeBar"),
+            MessageType::LastTradeBar => write!(f, "LastTradeBar"),
             MessageType::UnknownMessageType => write!(f, "UnknownMessageType"),
             MessageType::ClientError => write!(f, "ClientError"),
         }

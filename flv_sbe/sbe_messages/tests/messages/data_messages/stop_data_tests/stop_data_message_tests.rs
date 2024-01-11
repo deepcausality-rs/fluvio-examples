@@ -5,27 +5,27 @@ use sbe_messages::prelude::{MessageType, StopDataMessage};
 fn test_new() {
     let client_id = 1;
     let exchange_id = ExchangeID::BinanceSpot;
-    let symbol_id = SymbolID::BTCUSD;
+    let symbol_id = SymbolID::BTCUSD as u16;
     let message = StopDataMessage::new(client_id, exchange_id, symbol_id);
 
     assert_eq!(message.message_type(), &MessageType::StopData);
     assert_eq!(message.client_id(), &1);
 
     assert_eq!(message.exchange_id(), &ExchangeID::BinanceSpot);
-    assert_eq!(message.symbol_id(), &SymbolID::BTCUSD);
+    assert_eq!(message.symbol_id(), &symbol_id);
 }
 
 #[test]
 fn test_encode() {
     let client_id = 1;
     let exchange_id = ExchangeID::BinanceSpot;
-    let symbol_id = SymbolID::BTCUSD;
+    let symbol_id = SymbolID::BTCUSD as u16;
     let message = StopDataMessage::new(client_id, exchange_id, symbol_id);
 
     assert_eq!(message.message_type(), &MessageType::StopData);
     assert_eq!(message.client_id(), &1);
     assert_eq!(message.exchange_id(), &ExchangeID::BinanceSpot);
-    assert_eq!(message.symbol_id(), &SymbolID::BTCUSD);
+    assert_eq!(message.symbol_id(), &symbol_id);
 
     let enc = message.encode();
     assert!(enc.is_ok());
@@ -40,20 +40,21 @@ fn test_encode() {
 
 #[test]
 fn test_decode() {
+    let symbol_id = SymbolID::BTCUSD as u16;
     let encoded: Vec<u8> = vec![7, 0, 202, 0, 1, 0, 1, 0, 202, 0, 1, 0, 1, 1, 0];
     let buffer = encoded.as_slice();
 
     let message = StopDataMessage::from(buffer);
     assert_eq!(message.message_type(), &MessageType::StopData);
     assert_eq!(message.exchange_id(), &ExchangeID::BinanceSpot);
-    assert_eq!(message.symbol_id(), &SymbolID::BTCUSD);
+    assert_eq!(message.symbol_id(), &symbol_id);
 }
 
 #[test]
 fn test_message_type() {
     let client_id = 1;
     let exchange_id = ExchangeID::BinanceSpot;
-    let symbol_id = SymbolID::BTCUSD;
+    let symbol_id = SymbolID::BTCUSD as u16;
     let message = StopDataMessage::new(client_id, exchange_id, symbol_id);
 
     assert_eq!(message.message_type(), &MessageType::StopData);
@@ -63,7 +64,7 @@ fn test_message_type() {
 fn test_message_client_id() {
     let client_id = 1;
     let exchange_id = ExchangeID::BinanceSpot;
-    let symbol_id = SymbolID::BTCUSD;
+    let symbol_id = SymbolID::BTCUSD as u16;
     let message = StopDataMessage::new(client_id, exchange_id, symbol_id);
 
     assert_eq!(message.client_id(), &1);
@@ -73,7 +74,7 @@ fn test_message_client_id() {
 fn test_exchange_id() {
     let client_id = 1;
     let exchange_id = ExchangeID::BinanceSpot;
-    let symbol_id = SymbolID::BTCUSD;
+    let symbol_id = SymbolID::BTCUSD as u16;
     let message = StopDataMessage::new(client_id, exchange_id, symbol_id);
 
     assert_eq!(message.exchange_id(), &ExchangeID::BinanceSpot);
@@ -83,20 +84,20 @@ fn test_exchange_id() {
 fn test_symbol_id() {
     let client_id = 1;
     let exchange_id = ExchangeID::BinanceSpot;
-    let symbol_id = SymbolID::BTCUSD;
+    let symbol_id = SymbolID::BTCUSD as u16;
     let message = StopDataMessage::new(client_id, exchange_id, symbol_id);
 
-    assert_eq!(message.symbol_id(), &SymbolID::BTCUSD);
+    assert_eq!(message.symbol_id(), &symbol_id);
 }
 
 #[test]
 fn test_display() {
     let client_id = 1;
     let exchange_id = ExchangeID::BinanceSpot;
-    let symbol_id = SymbolID::BTCUSD;
+    let symbol_id = SymbolID::BTCUSD as u16;
     let message = StopDataMessage::new(client_id, exchange_id, symbol_id);
 
-    let expected = "StopDataMessage[message_type: StopData, client_id: 1, exchange_id: BinanceSpot, symbol_id: BTCUSD]";
+    let expected = "StopDataMessage[message_type: StopData, client_id: 1, exchange_id: BinanceSpot, symbol_id: 1]";
     let actual = format!("{}", message);
     assert_eq!(expected, actual);
 }

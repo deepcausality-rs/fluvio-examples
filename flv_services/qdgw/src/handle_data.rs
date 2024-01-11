@@ -1,10 +1,10 @@
 use crate::service::Server;
-use common::prelude::{MessageProcessingError, TimeResolution};
+use common::prelude::MessageProcessingError;
 use db_query_manager::QueryDBManager;
 use fluvio::{Fluvio, RecordKey};
 use futures::lock::Mutex;
 use sbe_messages::prelude::{
-    FirstDataBar, LastDataBar, SbeDataBar, StartDataMessage, StopAllDataMessage, StopDataMessage,
+    FirstDataBar, LastDataBar, StartDataMessage, StopAllDataMessage, StopDataMessage,
 };
 use std::sync::Arc;
 
@@ -31,15 +31,12 @@ impl Server {
         // Replace these fields with dynamic configuration
         let symbol_id = 42; // start_data_msg.symbol_id();
         let trade_table = "kraken_ethaed";
-        let time_resolution = &TimeResolution::FifteenMin;
 
         // Lock query manager
         let mut q_manager = query_manager.lock().await;
 
         // Get all bars
-        let result = q_manager
-            .get_all_ohlcv_bars(trade_table, time_resolution)
-            .await;
+        let result = q_manager.get_all_trades(trade_table).await;
 
         // Handle error
         let bars = match result {
@@ -61,8 +58,10 @@ impl Server {
         producer.flush().await.expect("Failed to flush");
 
         for bar in bars {
-            let (_, buffer) =
-                SbeDataBar::encode_data_bar_message(bar).expect("Failed to encode bar");
+            let buffer = vec![0u8; 38];
+
+            // let (_, buffer) =
+            //     TradeBar::encode_data_bar_message(bar).expect("Failed to encode bar");
 
             producer
                 .send(RecordKey::NULL, buffer)

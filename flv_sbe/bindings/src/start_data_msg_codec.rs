@@ -84,11 +84,18 @@ pub mod encoder {
             self.get_buf_mut().put_u16_at(offset, value);
         }
 
-        /// REQUIRED enum
+        /// primitive field 'exchangeID'
+        /// - min value: 0
+        /// - max value: 254
+        /// - null value: 255
+        /// - characterEncoding: null
+        /// - semanticType: null
+        /// - encodedOffset: 4
+        /// - encodedLength: 1
         #[inline]
-        pub fn exchange_id(&mut self, value: ExchangeID) {
+        pub fn exchange_id(&mut self, value: u8) {
             let offset = self.offset + 4;
-            self.get_buf_mut().put_u8_at(offset, value as u8)
+            self.get_buf_mut().put_u8_at(offset, value);
         }
 
         /// primitive field 'symbolID'
@@ -187,10 +194,10 @@ pub mod decoder {
             self.get_buf().get_u16_at(self.offset + 2)
         }
 
-        /// REQUIRED enum
+        /// primitive field - 'REQUIRED'
         #[inline]
-        pub fn exchange_id(&self) -> ExchangeID {
-            self.get_buf().get_u8_at(self.offset + 4).into()
+        pub fn exchange_id(&self) -> u8 {
+            self.get_buf().get_u8_at(self.offset + 4)
         }
 
         /// primitive field - 'REQUIRED'

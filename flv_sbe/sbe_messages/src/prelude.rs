@@ -14,5 +14,6 @@ pub use crate::messages::data_messages::data_bar_last::LastDataBar;
 pub use crate::messages::data_messages::start_data::StartDataMessage;
 pub use crate::messages::data_messages::stop_all_data::StopAllDataMessage;
 pub use crate::messages::data_messages::stop_data::StopDataMessage;
+pub use crate::messages::data_messages::trade_bar::SbeTradeBar;
 //
 pub use crate::messages::error_messages::client_error_message::ClientErrorMessage;

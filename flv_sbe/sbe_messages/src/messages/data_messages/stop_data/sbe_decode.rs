@@ -1,5 +1,5 @@
 use crate::prelude::{MessageType, StopDataMessage};
-use common::prelude::{ExchangeID, SymbolID};
+use common::prelude::ExchangeID;
 use sbe_bindings::{MessageHeaderDecoder, ReadBuf, SbeResult, StopDataMsgDecoder};
 
 use sbe_bindings::stop_data_msg_codec::SBE_TEMPLATE_ID;
@@ -21,14 +21,13 @@ pub fn decode_stop_data_message(buffer: &[u8]) -> SbeResult<StopDataMessage> {
     let sbe_exchange_id = csg.exchange_id();
     let exchange_id = ExchangeID::from(sbe_exchange_id as i32);
 
-    let sbe_asset = csg.symbol_id();
-    let symbol = SymbolID::from(sbe_asset);
+    let symbol_id = csg.symbol_id();
 
     let message = StopDataMessage {
         message_type,
         client_id,
         exchange_id,
-        symbol_id: symbol,
+        symbol_id,
     };
 
     Ok(message)

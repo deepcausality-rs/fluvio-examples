@@ -1,5 +1,5 @@
 use crate::prelude::{MessageType, StartDataMessage};
-use common::prelude::{ExchangeID, SymbolID};
+use common::prelude::ExchangeID;
 
 impl StartDataMessage {
     pub fn message_type(&self) -> &MessageType {
@@ -11,7 +11,7 @@ impl StartDataMessage {
     pub fn exchange_id(&self) -> &ExchangeID {
         &self.exchange_id
     }
-    pub fn symbol_id(&self) -> &SymbolID {
+    pub fn symbol_id(&self) -> &u16 {
         &self.symbol_id
     }
 }

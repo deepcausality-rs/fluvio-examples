@@ -1,5 +1,5 @@
+use sbe_bindings::MessageType as SbeMessageType;
 use sbe_bindings::{message_header_codec, Encoder, StartDataMsgEncoder, WriteBuf};
-use sbe_bindings::{ExchangeID as SbeExchangeID, MessageType as SbeMessageType};
 
 use crate::prelude::{SbeEncodeError, StartDataMessage};
 
@@ -23,10 +23,10 @@ impl StartDataMessage {
         let value = self.client_id;
         csg.client_id(value);
 
-        let value = SbeExchangeID::from(self.exchange_id as u8);
+        let value = self.exchange_id as u8;
         csg.exchange_id(value);
 
-        let value = self.symbol_id as u16;
+        let value = self.symbol_id;
         csg.symbol_id(value);
 
         let limit = csg.get_limit();

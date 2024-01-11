@@ -35,6 +35,7 @@
     <!--    TYPE ALIAS DEFINITIONS -->
     <types>
         <type name="Currency" description="Currency" length="3" primitiveType="char"/>
+        <type name="ExchangeID" encodingType="uInt8NULL" primitiveType="uint8"/>
         <type name="ClientID" encodingType="uInt16NULL" primitiveType="uint16"/>
         <type name="SymbolID" encodingType="uInt16NULL" primitiveType="uint16"/>
         <type name="Timestamp" encodingType="Int64NULL" primitiveType="int64"/>
@@ -52,11 +53,6 @@
 
     <!--    ENUM DEFINITIONS -->
     <types>
-<!--        Exchange IDs-->
-        <enum name="ExchangeID" encodingType="uInt8NULL">
-            <validValue name="BNB" description="Binance Spot Exchange">1</validValue>
-            <validValue name="VEX" description="Virtual Exchange">2</validValue>
-        </enum>
 <!--        Message Types-->
         <enum name="MessageType" encodingType="uInt16NULL">
             <validValue name="UnknownMessageType">0</validValue>
@@ -70,10 +66,12 @@
             <validValue name="DataBar">204</validValue>
             <validValue name="FirstDataBar">205</validValue>
             <validValue name="LastDataBar">206</validValue>
+            <validValue name="TradeBar">207</validValue>
+            <validValue name="FirstTradeBar">208</validValue>
+            <validValue name="LastTradeBar">209</validValue>
 <!--            Error Message Types-->
             <validValue name="ClientError">801</validValue>
         </enum>
-
     </types>
 
     <!--   CLIENT MESSAGE DEFINITIONS -->
@@ -118,18 +116,36 @@
         <field name="volume" id="8" type="float"/>
     </sbe:message>
 
-    <sbe:message name="FirstDataBar" id="205" description="Message indicates the last OHLCV Bar was send">
+    <sbe:message name="FirstDataBar" id="205">
         <field name="messageType" id="1" type="MessageType"/>
         <field name="symbolID" id="2" type="SymbolID"/>
     </sbe:message>
 
-    <sbe:message name="LastDataBar" id="206" description="Message indicates the last OHLCV Bar was send">
+    <sbe:message name="LastDataBar" id="206">
         <field name="messageType" id="1" type="MessageType"/>
         <field name="symbolID" id="2" type="SymbolID"/>
     </sbe:message>
+
+    <sbe:message name="TradeBar" id="207">
+        <field name="messageType" id="1" type="MessageType"/>
+        <field name="dateTime" id="2" type="Timestamp"/>
+        <field name="price" id="3" type="float"/>
+        <field name="volume" id="4" type="float"/>
+    </sbe:message>
+
+    <sbe:message name="FirstTradeBar" id="208">
+        <field name="messageType" id="1" type="MessageType"/>
+        <field name="symbolID" id="2" type="SymbolID"/>
+    </sbe:message>
+
+    <sbe:message name="LastTradeBar" id="209">
+        <field name="messageType" id="1" type="MessageType"/>
+        <field name="symbolID" id="2" type="SymbolID"/>
+    </sbe:message>
+
 
     <!--  ERROR MESSAGE DEFINITIONS -->
-    <sbe:message name="ClientError" id="801" description="Message to start data stream">
+    <sbe:message name="ClientError" id="801">
         <field name="messageType" id="1" type="MessageType"/>
         <field name="clientID" id="2" type="ClientID"/>
         <field name="clientErrorType" id="3" type="uInt8NULL"/>

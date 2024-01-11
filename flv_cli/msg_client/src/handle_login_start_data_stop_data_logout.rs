@@ -43,7 +43,7 @@ async fn produce() -> Result<(), Box<dyn Error + Send>> {
     sleep(Duration::from_millis(20)).await;
 
     let exchange_id = ExchangeID::BinanceSpot;
-    let symbol_id = SymbolID::BTCUSD;
+    let symbol_id = SymbolID::BTCUSD as u16;
     let message = StartDataMessage::new(CLIENT_ID, exchange_id, symbol_id);
 
     let enc = message.encode();
