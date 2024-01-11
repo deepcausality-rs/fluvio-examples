@@ -1,2 +1,2 @@
-mod client_login_tests;
-mod client_logout_tests;
+mod client_login;
+mod client_logout;
