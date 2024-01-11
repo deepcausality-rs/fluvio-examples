@@ -10,5 +10,5 @@ pub fn get_config_file(path: &str) -> Result<ConfigFile, Box<dyn Error>> {
 }
 
 pub fn get_local_db_config() -> DBConfig {
-    DBConfig::new(9009, "0.0.0.0".into())
+    db_specs::prelude::get_local_db_config()
 }

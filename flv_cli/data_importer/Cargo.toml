@@ -28,6 +28,12 @@ path = "../../flv_components/db_quest_manager"
 version = "0.1.0"
 
 
+[dependencies.db_specs]
+path = "../../flv_specs/db_specs"
+version = "0.1.0"
+
+
+
 [dependencies]
 config-file = { workspace = true }
 csv = { workspace = true }

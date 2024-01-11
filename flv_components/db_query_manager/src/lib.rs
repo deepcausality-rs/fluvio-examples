@@ -35,7 +35,7 @@ impl QueryDBManager {
     ///
     /// #[tokio::main]
     /// async fn main() {
-    ///  let db_config =  DBConfig::new(9009, "0.0.0.0".into());
+    ///  let db_config =  DBConfig::new(9009, "0.0.0.0".into(), "exchanges".to_string());
     ///  let query_manager = QueryDBManager::new(db_config).await.expect("Failed to create db connection");
     /// }
     /// ```
@@ -77,7 +77,7 @@ impl QueryDBManager {
     ///
     /// #[tokio::main]
     /// async fn main() {
-    /// let db_config =  DBConfig::new(9009, "0.0.0.0".into());
+    ///  let db_config =  DBConfig::new(9009, "0.0.0.0".into(), "exchanges".to_string());
     /// let query_manager = QueryDBManager::new(db_config).await.expect("Failed to create db connection");
     ///
     /// if query_manager.is_close().await {
