@@ -18,9 +18,10 @@ impl SymbolManager {
     /// use common::prelude::DBConfig;
     /// use symbol_manager::SymbolManager;
     ///
+    ///  let exchanges = vec![(1, "kraken".to_string()), (2, "bittrex".to_string())];
     ///  let symbols =  vec![(1, "apeusdt".to_string()), (2, "btxusdt".to_string())];
     ///
-    ///  let mut symbol_manager = SymbolManager::new(symbols)
+    ///  let mut symbol_manager = SymbolManager::new(symbols, exchanges)
     ///         .expect("Failed to create symbol manager");
     ///
     /// let symbol = symbol_manager.get_symbol(1).expect("Failed to get symbol");
@@ -67,9 +68,10 @@ impl SymbolManager {
     /// use common::prelude::DBConfig;
     /// use symbol_manager::SymbolManager;
     ///
+    ///  let exchanges = vec![(1, "kraken".to_string()), (2, "bittrex".to_string())];
     ///  let symbols =  vec![(1, "apeusdt".to_string()), (2, "btxusdt".to_string())];
     ///
-    ///  let mut symbol_manager = SymbolManager::new(symbols)
+    ///  let mut symbol_manager = SymbolManager::new(symbols, exchanges)
     ///         .expect("Failed to create symbol manager");
     ///
     /// let id = symbol_manager.get_symbol_id("apeusdt").expect("Failed to get ID");
@@ -109,13 +111,14 @@ impl SymbolManager {
     ///
     /// # Example
     ///
-    /// ```
+    /// ```rust
     /// use common::prelude::DBConfig;
     /// use symbol_manager::SymbolManager;
     ///
+    ///  let exchanges = vec![(1, "kraken".to_string()), (2, "bittrex".to_string())];
     ///  let symbols =  vec![(1, "apeusdt".to_string()), (2, "btxusdt".to_string())];
     ///
-    ///  let mut symbol_manager = SymbolManager::new(symbols)
+    ///  let mut symbol_manager = SymbolManager::new(symbols, exchanges)
     ///         .expect("Failed to create symbol manager");
     ///
     /// let symbols = symbol_manager.get_all_symbols();
@@ -144,13 +147,14 @@ impl SymbolManager {
     ///
     /// # Example
     ///
-    /// ```
+    /// ```rust
     /// use common::prelude::DBConfig;
     /// use symbol_manager::SymbolManager;
     ///
+    ///  let exchanges = vec![(1, "kraken".to_string()), (2, "bittrex".to_string())];
     ///  let symbols =  vec![(1, "apeusdt".to_string()), (2, "btxusdt".to_string())];
     ///
-    ///  let mut symbol_manager = SymbolManager::new(symbols)
+    ///  let mut symbol_manager = SymbolManager::new(symbols, exchanges)
     ///         .expect("Failed to create symbol manager");
     ///
     ///  let result = symbol_manager.get_all_symbol_ids();

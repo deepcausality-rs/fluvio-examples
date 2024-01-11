@@ -69,6 +69,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .expect("[QDGW]/main: Failed to create QueryDBManager instance.");
 
     // Move this to autoconfig later.
+    let exchanges = vec![(1, "kraken".to_string()), (2, "bittrex".to_string())];
     let symbol_table = "kraken_symbols";
 
     let symbols = q_manager
@@ -78,7 +79,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let symbol_manager = async {
         Arc::new(Mutex::new(
-            SymbolManager::new(symbols)
+            SymbolManager::new(symbols, exchanges)
                 .expect("[QDGW]/main: Failed to create SymbolManager instance."),
         ))
     }

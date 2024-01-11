@@ -1,5 +1,9 @@
 use symbol_manager::SymbolManager;
 
+fn get_test_exchanges() -> Vec<(u16, String)> {
+    vec![(1, "kraken".to_string())]
+}
+
 fn get_test_symbols() -> Vec<(u16, String)> {
     vec![
         (1, "apeusdt".to_string()),
@@ -10,18 +14,22 @@ fn get_test_symbols() -> Vec<(u16, String)> {
 
 #[test]
 fn test_new() {
-    let db_config = get_test_symbols();
+    let exchanges = get_test_exchanges();
+    let symbols = get_test_symbols();
 
-    let symbol_manager = SymbolManager::new(db_config).expect("Failed to create symbol manager");
+    let symbol_manager =
+        SymbolManager::new(symbols, exchanges).expect("Failed to create symbol manager");
 
     assert_eq!(symbol_manager.number_of_symbols(), 3);
 }
 
 #[test]
 fn test_get_symbol() {
-    let db_config = get_test_symbols();
+    let exchanges = get_test_exchanges();
+    let symbols = get_test_symbols();
+
     let mut symbol_manager =
-        SymbolManager::new(db_config).expect("Failed to create symbol manager");
+        SymbolManager::new(symbols, exchanges).expect("Failed to create symbol manager");
 
     // Cache miss
     let symbol = symbol_manager.get_symbol(1).unwrap();
@@ -38,9 +46,10 @@ fn test_get_symbol() {
 
 #[test]
 fn test_get_symbol_id() {
-    let db_config = get_test_symbols();
+    let exchanges = get_test_exchanges();
+    let symbols = get_test_symbols();
     let mut symbol_manager =
-        SymbolManager::new(db_config).expect("Failed to create symbol manager");
+        SymbolManager::new(symbols, exchanges).expect("Failed to create symbol manager");
 
     // Cache miss
     let id = symbol_manager.get_symbol_id("apeusdt").unwrap();
@@ -51,18 +60,20 @@ fn test_get_symbol_id() {
     assert_eq!(id, 1);
 
     // ID not found for symbol
-    let result = symbol_manager.get_symbol_id("lalalcoin");
+    let result = symbol_manager.get_symbol_id("lalacoin");
     assert!(result.is_err());
     assert_eq!(
         result.unwrap_err().to_string(),
-        "LookupError: ID not found for Symbol: lalalcoin"
+        "LookupError: ID not found for Symbol: lalacoin"
     );
 }
 
 #[test]
 fn test_get_all_symbols() {
-    let db_config = get_test_symbols();
-    let symbol_manager = SymbolManager::new(db_config).expect("Failed to create symbol manager");
+    let exchanges = get_test_exchanges();
+    let symbols = get_test_symbols();
+    let symbol_manager =
+        SymbolManager::new(symbols, exchanges).expect("Failed to create symbol manager");
 
     let results = symbol_manager.get_all_symbols();
     assert!(results.is_ok());
@@ -74,9 +85,11 @@ fn test_get_all_symbols() {
 }
 
 #[test]
-fn test_get_all_get_all_symbol_ids() {
-    let db_config = get_test_symbols();
-    let symbol_manager = SymbolManager::new(db_config).expect("Failed to create symbol manager");
+fn test_get_all_symbol_ids() {
+    let exchanges = get_test_exchanges();
+    let symbols = get_test_symbols();
+    let symbol_manager =
+        SymbolManager::new(symbols, exchanges).expect("Failed to create symbol manager");
 
     let result = symbol_manager.get_all_symbol_ids();
     assert!(result.is_ok());
@@ -85,4 +98,35 @@ fn test_get_all_get_all_symbol_ids() {
 
     assert_eq!(ids.len(), 3);
     assert!(ids.contains(&3));
+}
+
+#[test]
+fn test_get_exchange_name() {
+    let exchanges = get_test_exchanges();
+    let symbols = get_test_symbols();
+    let mut symbol_manager =
+        SymbolManager::new(symbols, exchanges).expect("Failed to create symbol manager");
+
+    let exchange_id = 1;
+    let exchange_name = symbol_manager
+        .get_exchange_name(exchange_id)
+        .expect("Failed to get exchange name");
+
+    assert_eq!(exchange_name, "kraken");
+}
+
+#[test]
+fn test_get_symbol_table_name() {
+    let exchanges = get_test_exchanges();
+    let symbols = get_test_symbols();
+    let mut symbol_manager =
+        SymbolManager::new(symbols, exchanges).expect("Failed to create symbol manager");
+
+    let exchange_id = 1;
+    let symbol_id = 2;
+    let symbol_table_name = symbol_manager
+        .get_symbol_table_name(exchange_id, symbol_id)
+        .expect("Failed to get symbol table name");
+
+    assert_eq!(symbol_table_name, "kraken_btxusdt");
 }
