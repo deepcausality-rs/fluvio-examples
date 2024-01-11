@@ -4,7 +4,7 @@ use db_query_manager::QueryDBManager;
 use fluvio::{Fluvio, RecordKey};
 use futures::lock::Mutex;
 use sbe_messages::prelude::{
-    FirstDataBar, LastDataBar, StartDataMessage, StopAllDataMessage, StopDataMessage,
+    FirstTradeBar, LastTradeBar, SbeTradeBar, StartDataMessage, StopAllDataMessage, StopDataMessage,
 };
 use std::sync::Arc;
 
@@ -29,7 +29,7 @@ impl Server {
             .expect("Failed to create a producer");
 
         // Replace these fields with dynamic configuration
-        let symbol_id = 42; // start_data_msg.symbol_id();
+        let symbol_id = *start_data_msg.symbol_id();
         let trade_table = "kraken_ethaed";
 
         // Lock query manager
@@ -48,8 +48,10 @@ impl Server {
         };
 
         // Send first  bar message to inform the client that the data stream starts
-        let first_bar = FirstDataBar::new(symbol_id);
-        let (_, buffer) = first_bar.encode().expect("Failed to encode last data bar");
+        let first_bar = FirstTradeBar::new(symbol_id);
+        let (_, buffer) = first_bar
+            .encode()
+            .expect("Failed to encode first trade bar");
 
         producer
             .send(RecordKey::NULL, buffer)
@@ -58,10 +60,8 @@ impl Server {
         producer.flush().await.expect("Failed to flush");
 
         for bar in bars {
-            let buffer = vec![0u8; 38];
-
-            // let (_, buffer) =
-            //     TradeBar::encode_data_bar_message(bar).expect("Failed to encode bar");
+            let (_, buffer) =
+                SbeTradeBar::encode_data_bar_message(bar).expect("Failed to encode trade bar");
 
             producer
                 .send(RecordKey::NULL, buffer)
@@ -70,8 +70,8 @@ impl Server {
         }
 
         // Send last bar message to inform the client that the data stream has ended
-        let last_bar = LastDataBar::new(symbol_id);
-        let (_, buffer) = last_bar.encode().expect("Failed to encode last data bar");
+        let last_bar = LastTradeBar::new(symbol_id);
+        let (_, buffer) = last_bar.encode().expect("Failed to encode last trade bar");
 
         producer
             .send(RecordKey::NULL, buffer)
