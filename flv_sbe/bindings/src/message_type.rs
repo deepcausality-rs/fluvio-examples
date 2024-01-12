@@ -14,6 +14,7 @@ pub enum MessageType {
     FirstTradeBar = 0xd0_u16,
     LastTradeBar = 0xd1_u16,
     ClientError = 0x321_u16,
+    DataError = 0x322_u16,
     #[default]
     NullVal = 0xffff_u16,
 }
@@ -34,6 +35,7 @@ impl From<u16> for MessageType {
             0xd0_u16 => Self::FirstTradeBar,
             0xd1_u16 => Self::LastTradeBar,
             0x321_u16 => Self::ClientError,
+            0x322_u16 => Self::DataError,
             _ => Self::NullVal,
         }
     }

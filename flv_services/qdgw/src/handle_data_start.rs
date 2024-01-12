@@ -27,7 +27,6 @@ impl Server {
         {
             Ok(channel) => channel,
             Err(e) => {
-                // Send error message back to client instead of return
                 return Err(e);
             }
         };

@@ -71,6 +71,7 @@
             <validValue name="LastTradeBar">209</validValue>
 <!--            Error Message Types-->
             <validValue name="ClientError">801</validValue>
+            <validValue name="DataError">802</validValue>
         </enum>
     </types>
 
@@ -149,6 +150,12 @@
         <field name="messageType" id="1" type="MessageType"/>
         <field name="clientID" id="2" type="ClientID"/>
         <field name="clientErrorType" id="3" type="uInt8NULL"/>
+    </sbe:message>
+
+    <sbe:message name="DataError" id="802">
+        <field name="messageType" id="1" type="MessageType"/>
+        <field name="clientID" id="2" type="ClientID"/>
+        <field name="dataErrorType" id="3" type="uInt8NULL"/>
     </sbe:message>
 
 </sbe:messageSchema>

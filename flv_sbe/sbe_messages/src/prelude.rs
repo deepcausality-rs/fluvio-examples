@@ -2,6 +2,7 @@
 pub use crate::errors::*;
 // Message types
 pub use crate::types::client_error_types::ClientErrorType;
+pub use crate::types::data_error_types::DataErrorType;
 pub use crate::types::message_types::MessageType;
 // Client messages
 pub use crate::messages::client_messages::client_login::ClientLoginMessage;
@@ -18,3 +19,4 @@ pub use crate::messages::data_messages::trade_bar_first::FirstTradeBar;
 pub use crate::messages::data_messages::trade_bar_last::LastTradeBar;
 // Error messages
 pub use crate::messages::error_messages::client_error_message::ClientErrorMessage;
+pub use crate::messages::error_messages::data_error_message::DataErrorMessage;
