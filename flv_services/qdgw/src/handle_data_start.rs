@@ -55,7 +55,7 @@ impl Server {
         );
 
 
-        let client_control_channel = match self
+        let _client_control_channel = match self
             .get_client_channel(ClientChannel::ControlChannel, *client_id)
             .await
         {
