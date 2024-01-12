@@ -3,7 +3,7 @@ use common::prelude::MessageProcessingError;
 use sbe_messages::prelude::StopAllDataMessage;
 
 impl Server {
-    pub(crate) async fn stop_all_data(
+    pub(crate) async fn handle_stop_all_data(
         &self,
         stop_all_data_msg: &StopAllDataMessage,
     ) -> Result<(), MessageProcessingError> {

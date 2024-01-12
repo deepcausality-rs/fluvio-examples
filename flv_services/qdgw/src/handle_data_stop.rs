@@ -3,7 +3,7 @@ use common::prelude::MessageProcessingError;
 use sbe_messages::prelude::StopDataMessage;
 
 impl Server {
-    pub(crate) async fn stop_date(
+    pub(crate) async fn handle_stop_date(
         &self,
         stop_data_msg: &StopDataMessage,
     ) -> Result<(), MessageProcessingError> {

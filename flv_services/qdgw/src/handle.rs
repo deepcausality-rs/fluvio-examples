@@ -29,7 +29,7 @@ impl Server {
 
             MessageType::ClientLogout => {
                 let client_logout_msg = ClientLogoutMessage::from(buffer);
-                self.client_logout(&client_logout_msg).await
+                self.handle_client_logout(&client_logout_msg).await
             }
 
             MessageType::StartData => {
@@ -39,11 +39,11 @@ impl Server {
 
             MessageType::StopData => {
                 let stop_data_msg = StopDataMessage::from(buffer);
-                self.stop_date(&stop_data_msg).await
+                self.handle_stop_date(&stop_data_msg).await
             }
             MessageType::StopAllData => {
                 let stop_all_data_msg = StopAllDataMessage::from(buffer);
-                self.stop_all_data(&stop_all_data_msg).await
+                self.handle_stop_all_data(&stop_all_data_msg).await
             }
             _ => {
                 // Handle unknown message type

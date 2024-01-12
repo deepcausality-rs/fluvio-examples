@@ -126,7 +126,7 @@ impl Server {
         Ok(())
     }
 
-    /// Logs in a client by adding them to the client database.
+    /// Login a client by adding them to the client database.
     ///
     /// Locks the client manager, creates a config for the client,
     /// and attempts to add them to the database.
