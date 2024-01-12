@@ -1,11 +1,12 @@
 use crate::service::Server;
 use common::prelude::{ClientChannel, MessageProcessingError};
 use fluvio::{Fluvio, RecordKey};
-use sbe_messages::prelude::{DataErrorMessage, DataErrorType, FirstTradeBar, LastTradeBar, SbeTradeBar, StartDataMessage};
+use sbe_messages::prelude::{FirstTradeBar, LastTradeBar, SbeTradeBar, StartDataMessage, };
 
 // Rewrite this:
 // Handle all errors in the handler & return error messages to client
 // Construct a dedicated producer for the client control channel
+//
 // Only send data in the start_data
 // Create a second producer for the data channel
 //
@@ -33,17 +34,17 @@ impl Server {
         {
             Ok(channel) => channel,
             Err(e) => {
+                // Send error message back to client instead of return
                 return Err(e);
             }
         };
 
-        self.start_data(client_id, &client_data_channel, *symbol_id, &trade_table)
+        self.start_data(&client_data_channel, *symbol_id, &trade_table)
             .await
     }
-// pass in a reference to the data bars
+    // pass in a reference to the data bars
     pub(crate) async fn start_data(
         &self,
-        client_id: &u16,
         client_data_channel: &str,
         symbol_id: u16,
         trade_table: &str,
@@ -53,17 +54,6 @@ impl Server {
             "[QDGW/handle::start_date]:on channel : {:?}",
             client_data_channel
         );
-
-
-        let _client_control_channel = match self
-            .get_client_channel(ClientChannel::ControlChannel, *client_id)
-            .await
-        {
-            Ok(channel) => channel,
-            Err(e) => {
-                return Err(e);
-            }
-        };
 
         let fluvio = Fluvio::connect().await.unwrap();
 
@@ -83,20 +73,7 @@ impl Server {
             Ok(bars) => bars,
             Err(err) => {
                 println!("[QDGW/handle::start_date]: Error getting bars: {:?}", err);
-
-                let data_error_type = DataErrorType::DataUnavailableError;
-                let message = DataErrorMessage::new(symbol_id, data_error_type);
-
-                let enc = message.encode();
-                assert!(enc.is_ok());
-                let (_, buffer) = enc.unwrap();
-
-                producer
-                    .send(RecordKey::NULL, buffer)
-                    .await
-                    .expect("Failed to send DataError: DataUnavailableError!");
-                producer.flush().await.expect("Failed to flush");
-
+                return Err(MessageProcessingError("Failed to get bars".into()));
             }
         };
 

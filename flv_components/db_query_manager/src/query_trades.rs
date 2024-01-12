@@ -35,7 +35,7 @@ impl QueryDBManager {
     ///  let db_config =  DBConfig::new(9009, "0.0.0.0".into(), "exchanges".to_string());
     ///  let mut query_manager = QueryDBManager::new(db_config).await.expect("Failed to create db connection");
     ///
-    ///  let trades = query_manager.get_all_trades("kraken_xbtusd")
+    ///  let trades = query_manager.get_all_trades("kraken_ethaed")
     ///               .await.expect("Failed to get all trades");
     /// }
     /// ```
