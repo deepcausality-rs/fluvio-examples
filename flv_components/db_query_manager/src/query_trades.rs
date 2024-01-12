@@ -3,6 +3,42 @@ use crate::QueryDBManager;
 use common::prelude::TradeBar;
 
 impl QueryDBManager {
+    /// Retrieves all trade bars for the given symbol table from the database.
+    ///
+    /// # Arguments
+    ///
+    /// * `symbol_table` - The name of the symbol table to query
+    ///
+    /// # Returns
+    ///
+    /// A `Result` with a `Vec` of `TradeBar` structs if successful, or a `QueryError` if an error occurs.
+    ///
+    /// # Errors
+    ///
+    /// This function may return the following errors:
+    ///
+    /// - `QueryError::QueryFailed` if the query to the DB failed.
+    /// - `QueryError::EmptyTableName` if `table_name` is empty
+    /// - `QueryError::InvalidTableName` if `table_name` contains invalid characters
+    /// - `QueryError::TableNameTooLong` if `table_name` is longer than 64 characters
+    ///
+    /// See wrapped errors for more details.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use common::prelude::DBConfig;
+    /// use db_query_manager::QueryDBManager;
+    ///
+    /// #[tokio::main]
+    /// async fn main() {
+    ///  let db_config =  DBConfig::new(9009, "0.0.0.0".into(), "exchanges".to_string());
+    ///  let mut query_manager = QueryDBManager::new(db_config).await.expect("Failed to create db connection");
+    ///
+    ///  let trades = query_manager.get_all_trades("kraken_xbtusd")
+    ///               .await.expect("Failed to get all trades");
+    /// }
+    /// ```
     pub async fn get_all_trades(
         &mut self,
         symbol_table: &str,

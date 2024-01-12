@@ -1,7 +1,6 @@
 use crate::service::Server;
 use common::prelude::{ClientChannel, MessageProcessingError};
 
-
 impl Server {
     /// Returns the channel name for the given client and channel type.
     ///
