@@ -4,6 +4,25 @@ use fluvio::{Fluvio, RecordKey};
 use sbe_messages::prelude::{ClientErrorMessage, ClientErrorType, ClientLoginMessage};
 
 impl Server {
+    /// Handles a client login message by validating the client ID and logging them in.
+    ///
+    /// Gets the client's control channel, checks if they are already logged in, and logs them in if not.
+    /// Sends back any errors over the control channel.
+    ///
+    /// # Parameters
+    ///
+    /// - `client_login_msg`: The incoming ClientLoginMessage from the client
+    ///
+    /// # Returns
+    ///
+    /// Result with no value if successful, or a MessageProcessingError if an error occurs.
+    ///
+    /// # Errors
+    ///
+    /// - MessageProcessingError if there is an issue getting the client's control channel, checking their login status,
+    /// or logging them in.
+    ///
+    /// ```
     pub(crate) async fn handle_client_login(
         &self,
         client_login_msg: &ClientLoginMessage,
@@ -11,8 +30,10 @@ impl Server {
         // Remove debug print
         println!("[QDGW/handle_client::client_login]: {:?}", client_login_msg);
 
+        // Extract the client ID from the message
         let client_id = client_login_msg.client_id();
 
+        // Get the client's control channel to return error messages back to the client
         let client_control_channel = match self
             .get_client_channel(ClientChannel::ControlChannel, client_id)
             .await
@@ -23,17 +44,22 @@ impl Server {
             }
         };
 
+        // Connect to the Fluvio cluster
         let fluvio = Fluvio::connect().await.unwrap();
 
+        // Get the producer for the client's control channel
         let producer = fluvio
             .topic_producer(client_control_channel)
             .await
             .expect("Failed to create a producer");
 
+        // Check if the client is already logged in
         let exists = self.check_client_login(client_id).await;
 
+        // If the client is already logged in, return an error
+        // If not, proceed with client login
         match exists {
-            // Client already logged in, return an error
+            // Client already logged in, return an error back to the client
             Ok(exists) => match exists {
                 true => {
                     let client_error_type = ClientErrorType::ClientAlreadyLoggedIn;
@@ -75,7 +101,7 @@ impl Server {
                     }
                 }
             },
-            // Something went horribly wrong, log, and return an unknown error
+            // Something went horribly wrong, log the message, and return an unknown error
             Err(err) => {
                 println!(
                     "[QDGW/handle_client_login::handle_client_login] UnknownClientError: {:?}",
@@ -100,6 +126,25 @@ impl Server {
         Ok(())
     }
 
+    /// Logs in a client by adding them to the client database.
+    ///
+    /// Locks the client manager, creates a config for the client,
+    /// and attempts to add them to the database.
+    ///
+    /// # Parameters
+    ///
+    /// - `client_id`: The ID of the client to log in
+    ///
+    /// # Returns
+    ///
+    /// A Result with no value if the client was logged in successfully,
+    /// or a MessageProcessingError if there was an issue.
+    ///
+    /// # Errors
+    ///
+    /// - MessageProcessingError if there was an issue adding the client to the database.
+    ///
+    /// ```
     pub(crate) async fn client_login(&self, client_id: u16) -> Result<(), MessageProcessingError> {
         let mut client_db = self.client_manager.lock().await.clone();
         let config = MessageClientConfig::new(client_id);
