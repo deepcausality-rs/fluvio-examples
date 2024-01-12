@@ -1,5 +1,6 @@
 mod handle;
-mod handle_clients;
+mod handle_client_login;
+mod handle_client_logout;
 mod handle_data_start;
 mod handle_data_stop;
 mod handle_data_stop_all;

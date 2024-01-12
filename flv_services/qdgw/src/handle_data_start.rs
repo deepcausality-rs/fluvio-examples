@@ -1,10 +1,7 @@
 use crate::service::Server;
 use common::prelude::{ClientChannel, MessageProcessingError};
-use db_query_manager::QueryDBManager;
 use fluvio::{Fluvio, RecordKey};
-use futures::lock::Mutex;
 use sbe_messages::prelude::{FirstTradeBar, LastTradeBar, SbeTradeBar, StartDataMessage};
-use std::sync::Arc;
 
 impl Server {
     pub(crate) async fn handle_start_data_message(
@@ -35,18 +32,12 @@ impl Server {
             }
         };
 
-        self.start_data(
-            &self.query_manager,
-            &client_data_channel,
-            *symbol_id,
-            &trade_table,
-        )
-        .await
+        self.start_data(&client_data_channel, *symbol_id, &trade_table)
+            .await
     }
 
     pub(crate) async fn start_data(
         &self,
-        query_manager: &Arc<Mutex<QueryDBManager>>,
         client_data_channel: &str,
         symbol_id: u16,
         trade_table: &str,
@@ -65,7 +56,7 @@ impl Server {
             .expect("Failed to create a producer");
 
         // Lock query manager
-        let mut q_manager = query_manager.lock().await;
+        let mut q_manager = self.query_manager.lock().await;
 
         // Get all bars
         let result = q_manager.get_all_trades(trade_table).await;
