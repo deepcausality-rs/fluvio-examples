@@ -84,10 +84,11 @@ async fn test_get_all_ohlcv_bars() {
     // ethaed has only 43 records so this is a good and fast test
     let trade_table = "kraken_ethaed";
     let time_resolution = &TimeResolution::FifteenMin;
+    let symbol_id = 278;
 
     // Call method under test
     let result = manager
-        .get_all_ohlcv_bars(trade_table, time_resolution)
+        .get_all_ohlcv_bars(symbol_id, trade_table, time_resolution)
         .await;
 
     // Verify result

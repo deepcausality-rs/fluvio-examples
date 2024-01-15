@@ -37,4 +37,8 @@ impl OHLCVBar {
     pub fn volume(&self) -> Decimal {
         self.volume
     }
+
+    pub fn symbol_id(&self) -> u16 {
+        self.symbol_id
+    }
 }

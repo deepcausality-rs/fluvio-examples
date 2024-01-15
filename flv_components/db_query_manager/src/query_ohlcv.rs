@@ -29,6 +29,7 @@ impl QueryDBManager {
     /// - Returns an empty vector if there are no results.
     pub async fn get_all_ohlcv_bars(
         &mut self,
+        symbol_id: u16,
         symbol_table: &str,
         time_resolution: &TimeResolution,
     ) -> Result<Vec<OHLCVBar>, QueryError> {
@@ -60,7 +61,7 @@ impl QueryDBManager {
 
         // Iterate over the rows, convert each row to a data bar, and add the bar to the vector.
         for row in result_rows {
-            let trade_bar = OHLCVBar::from(&row);
+            let trade_bar = OHLCVBar::from_pg_row(&row, symbol_id);
             trades.push(trade_bar);
         }
 

@@ -112,7 +112,8 @@
 
     <sbe:message name="DataBar" id="204">
         <field name="messageType" id="1" type="MessageType"/>
-        <field name="dateTime" id="2" type="Timestamp"/>
+        <field name="symbolID" id="2" type="SymbolID"/>
+        <field name="dateTime" id="3" type="Timestamp"/>
         <field name="openPrice" id="4" type="float"/>
         <field name="highPrice" id="5" type="float"/>
         <field name="lowPrice" id="6" type="float"/>
@@ -132,9 +133,10 @@
 
     <sbe:message name="TradeBar" id="207">
         <field name="messageType" id="1" type="MessageType"/>
-        <field name="dateTime" id="2" type="Timestamp"/>
-        <field name="price" id="3" type="float"/>
-        <field name="volume" id="4" type="float"/>
+        <field name="symbolID" id="2" type="SymbolID"/>
+        <field name="dateTime" id="3" type="Timestamp"/>
+        <field name="price" id="4" type="float"/>
+        <field name="volume" id="5" type="float"/>
     </sbe:message>
 
     <sbe:message name="FirstTradeBar" id="208">

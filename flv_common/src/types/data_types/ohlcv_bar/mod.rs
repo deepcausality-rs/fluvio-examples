@@ -11,6 +11,7 @@ mod getters;
 
 #[derive(Debug, Eq, Clone, PartialEq, Serialize, Deserialize)]
 pub struct OHLCVBar {
+    symbol_id: u16,
     date_time: DateTime<Utc>,
     open: Decimal,
     high: Decimal,
@@ -35,6 +36,7 @@ impl OHLCVBar {
     ///
     /// A new DataBar instance with the provided field values.
     pub fn new(
+        symbol_id: u16,
         date_time: DateTime<Utc>,
         open: Decimal,
         high: Decimal,
@@ -43,6 +45,7 @@ impl OHLCVBar {
         volume: Decimal,
     ) -> Self {
         Self {
+            symbol_id,
             date_time,
             open,
             high,
@@ -53,7 +56,7 @@ impl OHLCVBar {
     }
 }
 
-impl From<&Row> for OHLCVBar {
+impl OHLCVBar {
     /// Creates a new DataBar instance by parsing the provided pg DB Row.
     ///
     /// Extracts the timestamp, open, high, low, close, and volume values
@@ -64,7 +67,7 @@ impl From<&Row> for OHLCVBar {
     /// The price fields are extracted as f64 values and converted to Decimal.
     ///
     /// Returns an error if any of the values cannot be parsed from the row.
-    fn from(row: &Row) -> Self {
+    pub fn from_pg_row(row: &Row, symbol_id: u16) -> OHLCVBar {
         let timestamp = row.get::<usize, NaiveDateTime>(0);
 
         let o = row
@@ -99,6 +102,13 @@ impl From<&Row> for OHLCVBar {
 
         let volume = Decimal::from_f64(v).expect("[DataBar]: Could not parse volume from f64");
 
-        Self::new(datetime, open, high, low, close, volume)
+        OHLCVBar::new(
+            symbol_id,
+            datetime,
+            open,
+            high,
+            low,
+            close,
+            volume)
     }
 }

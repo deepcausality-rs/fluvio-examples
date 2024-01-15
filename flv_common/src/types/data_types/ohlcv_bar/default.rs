@@ -5,6 +5,7 @@ use crate::prelude::OHLCVBar;
 impl Default for OHLCVBar {
     fn default() -> Self {
         Self {
+            symbol_id: 1,
             date_time: Utc::now(),
             open: Decimal::default(),
             high: Decimal::default(),
