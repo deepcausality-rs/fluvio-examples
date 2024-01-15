@@ -23,7 +23,6 @@ impl StartDataMessage {
         symbol_id: u16,
         data_type_id: DataType,
     ) -> Self {
-
         let message_type = MessageType::StartData;
 
         Self {
@@ -31,7 +30,7 @@ impl StartDataMessage {
             client_id,
             exchange_id,
             symbol_id,
-            data_type_id
+            data_type_id,
         }
     }
 }

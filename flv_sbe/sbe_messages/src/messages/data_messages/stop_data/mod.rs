@@ -24,7 +24,6 @@ impl StopDataMessage {
         exchange_id: ExchangeID,
         symbol_id: u16,
         data_type_id: DataType,
-
     ) -> Self {
         let message_type = MessageType::StopData;
         Self {

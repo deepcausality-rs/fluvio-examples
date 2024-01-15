@@ -106,14 +106,6 @@ impl OHLCVBar {
 
         let volume = Decimal::from_f64(v).expect("[DataBar]: Could not parse volume from f64");
 
-        OHLCVBar::new(
-            symbol_id,
-            datetime,
-            open,
-            high,
-            low,
-            close,
-            volume,
-        )
+        OHLCVBar::new(symbol_id, datetime, open, high, low, close, volume)
     }
 }

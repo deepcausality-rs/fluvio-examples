@@ -1,6 +1,6 @@
+use crate::prelude::OHLCVBar;
 use chrono::Utc;
 use rust_decimal::Decimal;
-use crate::prelude::OHLCVBar;
 
 impl Default for OHLCVBar {
     fn default() -> Self {

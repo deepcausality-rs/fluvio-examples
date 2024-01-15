@@ -1,6 +1,6 @@
+use crate::prelude::OHLCVBar;
 use std::fmt;
 use std::fmt::Display;
-use crate::prelude::OHLCVBar;
 
 impl Display for OHLCVBar {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {

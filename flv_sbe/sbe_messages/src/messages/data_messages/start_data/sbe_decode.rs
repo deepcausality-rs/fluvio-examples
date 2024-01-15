@@ -1,5 +1,5 @@
-use common::prelude::ExchangeID;
 use crate::prelude::{DataType, MessageType, StartDataMessage};
+use common::prelude::ExchangeID;
 use sbe_bindings::{MessageHeaderDecoder, ReadBuf, SbeResult, StartDataMsgDecoder};
 
 use sbe_bindings::start_data_msg_codec::SBE_TEMPLATE_ID;

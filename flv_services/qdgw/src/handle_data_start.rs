@@ -66,9 +66,7 @@ impl Server {
         let mut q_manager = self.query_manager.lock().await;
 
         // Get all bars
-        let result = q_manager
-            .get_all_trades(symbol_id, trade_table)
-            .await;
+        let result = q_manager.get_all_trades(symbol_id, trade_table).await;
 
         // Handle error
         let bars = match result {

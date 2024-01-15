@@ -1,6 +1,6 @@
+use crate::prelude::OHLCVBar;
 use chrono::{DateTime, Utc};
 use rust_decimal::Decimal;
-use crate::prelude::OHLCVBar;
 
 impl OHLCVBar {
     pub fn range_change(&self) -> Decimal {

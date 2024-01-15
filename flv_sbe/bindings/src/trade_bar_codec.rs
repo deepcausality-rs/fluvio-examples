@@ -1,7 +1,7 @@
 use crate::*;
 
-pub use encoder::TradeBarEncoder;
 pub use decoder::TradeBarDecoder;
+pub use encoder::TradeBarEncoder;
 
 pub const SBE_BLOCK_LENGTH: u16 = 20;
 pub const SBE_TEMPLATE_ID: u16 = 207;
@@ -125,9 +125,7 @@ pub mod encoder {
             let offset = self.offset + 16;
             self.get_buf_mut().put_f32_at(offset, value);
         }
-
     }
-
 } // end encoder
 
 pub mod decoder {
@@ -227,8 +225,5 @@ pub mod decoder {
         pub fn volume(&self) -> f32 {
             self.get_buf().get_f32_at(self.offset + 16)
         }
-
     }
-
 } // end decoder
-

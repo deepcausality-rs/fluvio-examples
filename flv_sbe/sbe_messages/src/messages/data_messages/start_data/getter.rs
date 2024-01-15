@@ -1,5 +1,5 @@
-use common::prelude::ExchangeID;
 use crate::prelude::{DataType, MessageType, StartDataMessage};
+use common::prelude::ExchangeID;
 
 impl StartDataMessage {
     pub fn message_type(&self) -> &MessageType {

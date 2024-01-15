@@ -28,12 +28,7 @@ impl TradeBar {
     /// # Returns
     ///
     /// A new TradeBar instance with the given date_time, price and volume.
-    pub fn new(
-        symbol_id: u16,
-        date_time: DateTime<Utc>,
-        price: Decimal,
-        volume: Decimal,
-    ) -> Self {
+    pub fn new(symbol_id: u16, date_time: DateTime<Utc>, price: Decimal, volume: Decimal) -> Self {
         Self {
             symbol_id,
             date_time,

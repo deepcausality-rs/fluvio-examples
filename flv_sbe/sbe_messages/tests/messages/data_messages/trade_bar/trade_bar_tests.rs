@@ -37,14 +37,20 @@ fn test_encode_data_bar_message() {
     assert!(!encoded.is_empty()); // Assert non-empty encoded message
 
     let actual = encoded;
-    let expected: Vec<u8> = vec![20, 0, 207, 0, 1, 0, 1, 0, 207, 0, 1, 0, 64, 22, 164, 168, 122, 220, 5, 0, 0, 0, 200, 66, 0, 0, 200, 66];
+    let expected: Vec<u8> = vec![
+        20, 0, 207, 0, 1, 0, 1, 0, 207, 0, 1, 0, 64, 22, 164, 168, 122, 220, 5, 0, 0, 0, 200, 66,
+        0, 0, 200, 66,
+    ];
 
     assert_eq!(expected, actual);
 }
 
 #[test]
 fn test_decode_trade_bar_message() {
-    let encoded: Vec<u8> =  vec![20, 0, 207, 0, 1, 0, 1, 0, 207, 0, 1, 0, 64, 22, 164, 168, 122, 220, 5, 0, 0, 0, 200, 66, 0, 0, 200, 66];
+    let encoded: Vec<u8> = vec![
+        20, 0, 207, 0, 1, 0, 1, 0, 207, 0, 1, 0, 64, 22, 164, 168, 122, 220, 5, 0, 0, 0, 200, 66,
+        0, 0, 200, 66,
+    ];
 
     let message = SbeTradeBar::decode_trade_bar_message(&encoded).unwrap();
 

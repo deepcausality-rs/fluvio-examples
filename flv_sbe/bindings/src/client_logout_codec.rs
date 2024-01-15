@@ -1,7 +1,7 @@
 use crate::*;
 
-pub use encoder::ClientLogoutEncoder;
 pub use decoder::ClientLogoutDecoder;
+pub use encoder::ClientLogoutEncoder;
 
 pub const SBE_BLOCK_LENGTH: u16 = 4;
 pub const SBE_TEMPLATE_ID: u16 = 102;
@@ -83,9 +83,7 @@ pub mod encoder {
             let offset = self.offset + 2;
             self.get_buf_mut().put_u16_at(offset, value);
         }
-
     }
-
 } // end encoder
 
 pub mod decoder {
@@ -167,8 +165,5 @@ pub mod decoder {
         pub fn client_id(&self) -> u16 {
             self.get_buf().get_u16_at(self.offset + 2)
         }
-
     }
-
 } // end decoder
-
