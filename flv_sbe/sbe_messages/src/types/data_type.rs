@@ -21,8 +21,8 @@ pub enum DataType {
     UnknownDataType = 0_u8,
     TradeData = 1_u8,
     OHLCVData = 2_u8,
-    OrderBookData = 3_u8,
-    QuoteData = 4_u8,
+    // OrderBookData = 3_u8,
+    // QuoteData = 4_u8,
 }
 
 impl From<u8> for DataType {
@@ -48,8 +48,8 @@ impl From<u8> for DataType {
             0_u8 => DataType::UnknownDataType,
             1_u8 => DataType::TradeData,
             2_u8 => DataType::OHLCVData,
-            3_u8 => DataType::OrderBookData,
-            4_u8 => DataType::QuoteData,
+            // 3_u8 => DataType::OrderBookData,
+            // 4_u8 => DataType::QuoteData,
             _ => DataType::UnknownDataType,
         }
     }
