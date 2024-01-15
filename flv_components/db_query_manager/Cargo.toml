@@ -13,12 +13,10 @@ name = "db_query_manager"
 path = "src/lib.rs"
 
 
-[dependencies.common]
-path = "../../flv_common"
-version = "0.1.0"
-
-
 [dependencies]
+# Internal crates
+common = { workspace = true }
+# External crates
 chrono = { workspace = true }
 rust_decimal = { workspace = true }
 tokio-postgres =  { workspace = true }

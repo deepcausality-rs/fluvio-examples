@@ -13,42 +13,16 @@ name = "qdgw"
 path = "src/main.rs"
 
 
-[dependencies.common]
-path = "../../flv_common"
-version = "0.1.0"
-
-
-[dependencies.client_manager]
-path = "../../flv_components/client_manager"
-version = "0.1.0"
-
-
-[dependencies.config_manager]
-path = "../../flv_components/config_manager"
-version = "0.1.0"
-
-
-[dependencies.db_query_manager]
-path = "../../flv_components/db_query_manager"
-version = "0.1.0"
-
-
-[dependencies.symbol_manager]
-path = "../../flv_components/symbol_manager"
-version = "0.1.0"
-
-
-[dependencies.sbe_messages]
-path = "../../flv_sbe/sbe_messages"
-version = "0.1.0"
-
-
-[dependencies.service_utils]
-path = "../../flv_service_utils"
-version = "0.1.0"
-
-
 [dependencies]
+# Internal crates
+common = {workspace = true}
+client_manager = {workspace = true}
+config_manager = {workspace = true}
+db_query_manager = {workspace = true}
+symbol_manager = {workspace = true}
+sbe_messages = {workspace = true}
+service_utils = {workspace = true}
+# External crates
 autometrics = { workspace = true }
 fluvio = { workspace = true }
 futures = { workspace = true }

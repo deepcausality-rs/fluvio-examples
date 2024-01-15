@@ -15,17 +15,11 @@ name = "sbe_messages"
 path = "src/lib.rs"
 
 
-[dependencies.sbe_bindings]
-path = "../bindings"
-version = "0.1.0"
-
-
-[dependencies.common]
-path = "../../flv_common"
-version = "0.1.0"
-
-
 [dependencies]
+# Internal crates
+common = { workspace = true }
+sbe_bindings = { workspace = true }
+# External crates
 rust_decimal = { workspace = true }
 serde = { workspace = true }
 chrono = { workspace = true }

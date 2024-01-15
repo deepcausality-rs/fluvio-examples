@@ -13,11 +13,9 @@ name = "db_quest_manager"
 path = "src/lib.rs"
 
 
-[dependencies.common]
-path = "../../flv_common"
-version = "0.1.0"
-
-
 [dependencies]
+# Internal crates
+common = { workspace = true }
+# External crates
 questdb-rs =  { workspace = true }
 rust_decimal =  { workspace = true }

@@ -67,7 +67,7 @@ impl QueryDBManager {
             SAMPLE BY {}
             ALIGN TO CALENDAR WITH OFFSET '00:00';",
             trade_table,
-            time_resolution.to_string(),
+            time_resolution,
         )
     }
 

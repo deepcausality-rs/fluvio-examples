@@ -1,7 +1,7 @@
 use crate::service::Server;
 use common::prelude::{ClientChannel, MessageProcessingError};
 use fluvio::{Fluvio, RecordKey};
-use sbe_messages::prelude::{FirstTradeBar, LastTradeBar, SbeTradeBar, StartDataMessage, };
+use sbe_messages::prelude::{FirstTradeBar, LastTradeBar, SbeTradeBar, StartDataMessage};
 
 // Rewrite this:
 // Handle all errors in the handler & return error messages to client

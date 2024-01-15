@@ -18,18 +18,11 @@ name = "msg_manager"
 path = "src/lib.rs"
 
 
-[dependencies.common]
-path = "../../flv_common"
-version = "0.1.0"
-
-
-[dependencies.sbe_messages]
-path = "../../flv_sbe/sbe_messages"
-version = "0.1.0"
-
-
 [dependencies]
+# Internal crates
+common = { workspace = true }
+sbe_messages = { workspace = true }
+# External crates
 futures = { workspace = true }
 tokio = { workspace = true }
 fluvio = { workspace = true }
-

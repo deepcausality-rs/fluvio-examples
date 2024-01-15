@@ -13,19 +13,8 @@ name = "config_manager"
 path = "src/lib.rs"
 
 
-[dependencies.common]
-path = "../../flv_common"
-version = "0.1.0"
-
-
-[dependencies.db_specs]
-path = "../../flv_specs/db_specs"
-version = "0.1.0"
-
-
-[dependencies.service_specs]
-path = "../../flv_specs/service_specs"
-version = "0.1.0"
-
-
 [dependencies]
+# Internal crates
+common = { workspace = true }
+db_specs = { workspace = true }
+service_specs = { workspace = true }

@@ -27,8 +27,24 @@ readme = "README.md"
 repository = "https://github.com/marvin-hansen/quant-engine"
 authors = ["Marvin Hansen <marvin.hansen@gmail.com>"]
 
-
+# Building a Monorepo with Rust
+# https://earthly.dev/blog/rust-monorepo/
 [workspace.dependencies]
+#
+# Internal crates
+common = {path = "flv_common" }
+client_manager = {path = "flv_components/client_manager" }
+config_manager = {path = "flv_components/config_manager" }
+db_query_manager = { path = "flv_components/db_query_manager" }
+db_quest_manager = {path = "flv_components/db_quest_manager" }
+symbol_manager = {path = "flv_components/symbol_manager" }
+sbe_bindings = {path = "flv_sbe/bindings" }
+sbe_messages = {path = "flv_sbe/sbe_messages" }
+service_utils = { path = "flv_service_utils" }
+db_specs = { path = "flv_specs/db_specs" }
+service_specs = {path = "flv_specs/service_specs" }
+#
+# External crates
 autometrics = { version = "1", features = ["prometheus-exporter"] }
 chrono = { version = "0.4", features = ["serde"] }
 config-file = "0.2"

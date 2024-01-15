@@ -18,23 +18,12 @@ name = "lib_import"
 path = "src/lib/mod.rs"
 
 
-[dependencies.common]
-path = "../../flv_common"
-version = "0.1.0"
-
-
-[dependencies.db_quest_manager]
-path = "../../flv_components/db_quest_manager"
-version = "0.1.0"
-
-
-[dependencies.db_specs]
-path = "../../flv_specs/db_specs"
-version = "0.1.0"
-
-
-
 [dependencies]
+# Internal crates
+common = { workspace = true }
+db_quest_manager = { workspace = true }
+db_specs = { workspace = true }
+# External crates
 config-file = { workspace = true }
 csv = { workspace = true }
 chrono = { workspace = true }
