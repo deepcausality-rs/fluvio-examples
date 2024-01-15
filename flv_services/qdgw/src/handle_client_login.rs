@@ -149,9 +149,9 @@ impl Server {
         let mut client_db = self.client_manager.lock().await.clone();
         let config = MessageClientConfig::new(client_id);
 
-        return match client_db.add_client(client_id, config) {
+        match client_db.add_client(client_id, config) {
             Ok(_) => Ok(()),
             Err(e) => Err(MessageProcessingError(e.to_string())),
-        };
+        }
     }
 }
