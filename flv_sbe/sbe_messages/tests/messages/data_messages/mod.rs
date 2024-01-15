@@ -1,4 +1,4 @@
-mod data_bar;
+mod ohlcv_bar;
 mod data_bar_first;
 mod data_bar_last;
 mod start_data;

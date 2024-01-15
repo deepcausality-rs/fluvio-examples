@@ -1,5 +1,5 @@
 use chrono::Utc;
-use common::prelude::DataBar;
+use common::prelude::OHLCVBar;
 use rust_decimal::Decimal;
 
 #[test]
@@ -11,7 +11,7 @@ fn test_new() {
     let close = Decimal::default();
     let volume = Decimal::default();
 
-    let data_bar = DataBar::new(date_time, open, high, low, close, volume);
+    let data_bar = OHLCVBar::new(date_time, open, high, low, close, volume);
 
     assert_eq!(data_bar.date_time(), date_time);
     assert_eq!(data_bar.open(), open);
@@ -29,7 +29,7 @@ fn test_default() {
     let close = Decimal::default();
     let volume = Decimal::default();
 
-    let default_bar = DataBar::default();
+    let default_bar = OHLCVBar::default();
 
     assert_eq!(default_bar.open(), open);
     assert_eq!(default_bar.high(), high);

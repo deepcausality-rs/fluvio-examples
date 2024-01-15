@@ -1,6 +1,6 @@
 use crate::error::QueryError;
 use crate::QueryDBManager;
-use common::prelude::{DataBar, TimeResolution};
+use common::prelude::{OHLCVBar, TimeResolution};
 
 impl QueryDBManager {
     /// Retrieves all OHLCV data bars for the given symbol table and time resolution.
@@ -31,7 +31,7 @@ impl QueryDBManager {
         &mut self,
         symbol_table: &str,
         time_resolution: &TimeResolution,
-    ) -> Result<Vec<DataBar>, QueryError> {
+    ) -> Result<Vec<OHLCVBar>, QueryError> {
         // Sanitize table name input to prevent SQL injection.
         let sanitized_name = match self.sanitize_table_name(symbol_table) {
             Ok(name) => name,
@@ -60,7 +60,7 @@ impl QueryDBManager {
 
         // Iterate over the rows, convert each row to a data bar, and add the bar to the vector.
         for row in result_rows {
-            let trade_bar = DataBar::from(&row);
+            let trade_bar = OHLCVBar::from(&row);
             trades.push(trade_bar);
         }
 

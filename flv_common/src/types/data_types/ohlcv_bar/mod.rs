@@ -10,7 +10,7 @@ mod display;
 mod getters;
 
 #[derive(Debug, Eq, Clone, PartialEq, Serialize, Deserialize)]
-pub struct DataBar {
+pub struct OHLCVBar {
     date_time: DateTime<Utc>,
     open: Decimal,
     high: Decimal,
@@ -19,7 +19,7 @@ pub struct DataBar {
     volume: Decimal,
 }
 
-impl DataBar {
+impl OHLCVBar {
     /// Creates a new DataBar with the provided field values.
     ///
     /// # Parameters
@@ -53,7 +53,7 @@ impl DataBar {
     }
 }
 
-impl From<&Row> for DataBar {
+impl From<&Row> for OHLCVBar {
     /// Creates a new DataBar instance by parsing the provided pg DB Row.
     ///
     /// Extracts the timestamp, open, high, low, close, and volume values

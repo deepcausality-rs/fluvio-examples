@@ -3,7 +3,7 @@ use common::prelude::{ExchangeID, MessageClientConfig, SymbolID};
 use fluvio::Offset;
 use futures::StreamExt;
 use sbe_messages::prelude::{
-    ClientLoginMessage, ClientLogoutMessage, MessageType, SbeDataBar, StartDataMessage,
+    ClientLoginMessage, ClientLogoutMessage, MessageType, SbeOHLCVBar, StartDataMessage,
 };
 use std::error::Error;
 use std::time::Duration;
@@ -90,7 +90,7 @@ async fn consume() -> Result<(), Box<dyn Error + Send>> {
             break;
         }
 
-        let bar = SbeDataBar::decode_data_bar_message(buffer).expect("Failed to decode data bar");
+        let bar = SbeOHLCVBar::decode_data_bar_message(buffer).expect("Failed to decode data bar");
         println!("[zmq manager]: Message type: {}", message_type);
         println!("[zmq manager]: Message: \n {}", bar);
     }

@@ -1,12 +1,12 @@
 use crate::prelude::SbeEncodeError;
-use common::prelude::DataBar;
+use common::prelude::OHLCVBar;
 use rust_decimal::prelude::ToPrimitive;
 
 use sbe_bindings::{
     message_header_codec, DataBarEncoder, Encoder, MessageType as SbeMessageType, WriteBuf,
 };
 
-pub fn encode_data_bar_message(bar: DataBar) -> Result<(usize, Vec<u8>), SbeEncodeError> {
+pub fn encode_data_bar_message(bar: OHLCVBar) -> Result<(usize, Vec<u8>), SbeEncodeError> {
     // precise buffer size is 38 bytes for the entire message.
     let mut buffer = vec![0u8; 38];
 

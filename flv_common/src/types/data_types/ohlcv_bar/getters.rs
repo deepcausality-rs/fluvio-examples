@@ -1,8 +1,8 @@
-use crate::types::data_types::data_bar::DataBar;
 use chrono::{DateTime, Utc};
 use rust_decimal::Decimal;
+use crate::prelude::OHLCVBar;
 
-impl DataBar {
+impl OHLCVBar {
     pub fn range_change(&self) -> Decimal {
         self.close - self.open
     }
@@ -13,7 +13,7 @@ impl DataBar {
     }
 }
 
-impl DataBar {
+impl OHLCVBar {
     pub fn date_time(&self) -> DateTime<Utc> {
         self.date_time
     }

@@ -1,8 +1,8 @@
-use crate::types::data_types::data_bar::DataBar;
 use std::fmt;
 use std::fmt::Display;
+use crate::prelude::OHLCVBar;
 
-impl Display for DataBar {
+impl Display for OHLCVBar {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(
             f,

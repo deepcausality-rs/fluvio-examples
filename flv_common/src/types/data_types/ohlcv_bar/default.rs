@@ -1,8 +1,8 @@
-use crate::types::data_types::data_bar::DataBar;
 use chrono::Utc;
 use rust_decimal::Decimal;
+use crate::prelude::OHLCVBar;
 
-impl Default for DataBar {
+impl Default for OHLCVBar {
     fn default() -> Self {
         Self {
             date_time: Utc::now(),

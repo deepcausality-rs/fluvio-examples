@@ -1,13 +1,13 @@
 use crate::errors::SbeDecodeError;
 use crate::prelude::MessageType;
 use chrono::{DateTime, TimeZone, Utc};
-use common::prelude::DataBar;
+use common::prelude::OHLCVBar;
 use rust_decimal::prelude::FromPrimitive;
 use rust_decimal::Decimal;
 use sbe_bindings::data_bar_codec::SBE_TEMPLATE_ID;
 use sbe_bindings::{DataBarDecoder, MessageHeaderDecoder, ReadBuf};
 
-pub fn decode_data_bar_message(buffer: &[u8]) -> Result<DataBar, SbeDecodeError> {
+pub fn decode_data_bar_message(buffer: &[u8]) -> Result<OHLCVBar, SbeDecodeError> {
     let mut csg = DataBarDecoder::default();
     let buf = ReadBuf::new(buffer);
 
@@ -40,7 +40,7 @@ pub fn decode_data_bar_message(buffer: &[u8]) -> Result<DataBar, SbeDecodeError>
     let sbe_volume = csg.volume();
     let volume = Decimal::from_f32(sbe_volume).expect("[FileManager]: Failed to parse volume");
 
-    let data_bar = DataBar::new(date_time, open, high, low, close, volume);
+    let data_bar = OHLCVBar::new(date_time, open, high, low, close, volume);
 
     Ok(data_bar)
 }

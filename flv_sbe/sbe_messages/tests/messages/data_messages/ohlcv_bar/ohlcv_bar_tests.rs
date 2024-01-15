@@ -1,11 +1,11 @@
-use common::prelude::DataBar;
-use sbe_messages::prelude::SbeDataBar;
+use common::prelude::OHLCVBar;
+use sbe_messages::prelude::SbeOHLCVBar;
 
 #[test]
 fn test_encode_data_bar_message() {
-    let bar = DataBar::default(); // Create a sample DataBar
+    let bar = OHLCVBar::default(); // Create a sample DataBar
 
-    let result = SbeDataBar::encode_data_bar_message(bar);
+    let result = SbeOHLCVBar::encode_data_bar_message(bar);
 
     assert!(result.is_ok()); // Assert encode passes
 
@@ -17,13 +17,13 @@ fn test_encode_data_bar_message() {
 #[test]
 fn test_decode_data_bar_message() {
     // Encode a sample DataBar
-    let bar = DataBar::default();
-    let (size, encoded) = SbeDataBar::encode_data_bar_message(bar.clone()).unwrap();
+    let bar = OHLCVBar::default();
+    let (size, encoded) = SbeOHLCVBar::encode_data_bar_message(bar.clone()).unwrap();
     assert_eq!(size, 38); // Assert encoded message size matches expected
     assert!(!encoded.is_empty()); // Assert non-empty encoded message
 
     // Decode the encoded message
-    let result = SbeDataBar::decode_data_bar_message(&encoded);
+    let result = SbeOHLCVBar::decode_data_bar_message(&encoded);
 
     assert!(result.is_ok()); // Assert decode passes
 
