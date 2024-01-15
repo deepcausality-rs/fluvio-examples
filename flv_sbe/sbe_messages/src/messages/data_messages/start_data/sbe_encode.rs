@@ -6,7 +6,7 @@ use crate::prelude::{SbeEncodeError, StartDataMessage};
 impl StartDataMessage {
     pub fn encode(&self) -> Result<(usize, Vec<u8>), SbeEncodeError> {
         // precise buffer size is 15 bytes for the entire message.
-        let mut buffer = vec![0u8; 15];
+        let mut buffer = vec![0u8; 16];
 
         let mut csg = StartDataMsgEncoder::default();
 
@@ -23,11 +23,14 @@ impl StartDataMessage {
         let value = self.client_id;
         csg.client_id(value);
 
-        let value = self.exchange_id;
+        let value = self.exchange_id as u8;
         csg.exchange_id(value);
 
         let value = self.symbol_id;
         csg.symbol_id(value);
+
+        let value = self.data_type_id as u8;
+        csg.data_type_id(value);
 
         let limit = csg.get_limit();
         Ok((limit, buffer))

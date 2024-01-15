@@ -6,7 +6,7 @@ use crate::prelude::{SbeEncodeError, StopDataMessage};
 impl StopDataMessage {
     pub fn encode(&self) -> Result<(usize, Vec<u8>), SbeEncodeError> {
         // Exact buffer size is 14 bytes for the entire message
-        let mut buffer = vec![0u8; 15];
+        let mut buffer = vec![0u8; 16];
 
         let mut csg = StopDataMsgEncoder::default();
 
@@ -23,11 +23,14 @@ impl StopDataMessage {
         let value = self.client_id;
         csg.client_id(value);
 
-        let value = self.exchange_id;
+        let value = self.exchange_id as u8;
         csg.exchange_id(value);
 
         let value = self.symbol_id;
         csg.symbol_id(value);
+
+        let value = self.data_type_id as u8;
+        csg.data_type_id(value);
 
         // Limit contains the exact number of bytes required to encode the message
         // Use this value to determine the size of the buffer

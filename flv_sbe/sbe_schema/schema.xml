@@ -35,8 +35,9 @@
     <!--    TYPE ALIAS DEFINITIONS -->
     <types>
         <type name="Currency" description="Currency" length="3" primitiveType="char"/>
-        <type name="ExchangeID" encodingType="uInt8NULL" primitiveType="uint8"/>
         <type name="ClientID" encodingType="uInt16NULL" primitiveType="uint16"/>
+        <type name="DataTypeID" encodingType="uInt8NULL" primitiveType="uint8"/>
+        <type name="ExchangeID" encodingType="uInt8NULL" primitiveType="uint8"/>
         <type name="SymbolID" encodingType="uInt16NULL" primitiveType="uint16"/>
         <type name="Timestamp" encodingType="Int64NULL" primitiveType="int64"/>
     </types>
@@ -92,6 +93,7 @@
         <field name="clientID" id="2" type="ClientID"/>
         <field name="exchangeID" id="3" type="ExchangeID"/>
         <field name="symbolID" id="4" type="SymbolID"/>
+        <field name="dataTypeID" id="5" type="DataTypeID"/>
     </sbe:message>
 
     <sbe:message name="StopDataMsg" id="202">
@@ -99,6 +101,7 @@
         <field name="clientID" id="2" type="ClientID"/>
         <field name="exchangeID" id="3" type="ExchangeID"/>
         <field name="symbolID" id="4" type="SymbolID"/>
+        <field name="dataTypeID" id="5" type="DataTypeID"/>
     </sbe:message>
 
     <sbe:message name="StopAllDataMsg" id="203">

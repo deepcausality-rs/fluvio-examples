@@ -2,9 +2,7 @@ use crate::utils;
 use common::prelude::{ExchangeID, MessageClientConfig, SymbolID};
 use fluvio::Offset;
 use futures::StreamExt;
-use sbe_messages::prelude::{
-    ClientLoginMessage, ClientLogoutMessage, MessageType, SbeOHLCVBar, StartDataMessage,
-};
+use sbe_messages::prelude::{ClientLoginMessage, ClientLogoutMessage, DataType, MessageType, SbeOHLCVBar, StartDataMessage};
 use std::error::Error;
 use std::time::Duration;
 use tokio::time::sleep;
@@ -44,7 +42,13 @@ async fn produce() -> Result<(), Box<dyn Error + Send>> {
 
     let exchange_id = ExchangeID::BinanceSpot;
     let symbol_id = SymbolID::BTCUSD as u16;
-    let message = StartDataMessage::new(CLIENT_ID, exchange_id, symbol_id);
+    let data_type = DataType::TradeData;
+    let message = StartDataMessage::new(
+        CLIENT_ID,
+        exchange_id,
+        symbol_id,
+        data_type,
+    );
 
     let enc = message.encode();
     let (_, buffer) = enc.unwrap();

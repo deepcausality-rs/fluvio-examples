@@ -17,7 +17,7 @@ impl Server {
     ) -> Result<(), MessageProcessingError> {
         //
         let client_id = start_data_msg.client_id();
-        let exchange_id = *start_data_msg.exchange_id();
+        let exchange_id = *start_data_msg.exchange_id() as u8;
         let symbol_id = start_data_msg.symbol_id();
 
         let trade_table = match self.get_trade_table_name(exchange_id).await {

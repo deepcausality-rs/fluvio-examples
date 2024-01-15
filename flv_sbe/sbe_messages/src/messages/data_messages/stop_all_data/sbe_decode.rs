@@ -20,7 +20,7 @@ pub fn decode_stop_all_data_message(buffer: &[u8]) -> SbeResult<StopAllDataMessa
     let client_id = csg.client_id();
 
     let sbe_exchange_id = csg.exchange_id();
-    let exchange_id = ExchangeID::from(sbe_exchange_id as i32);
+    let exchange_id = ExchangeID::from(sbe_exchange_id);
 
     let message = StopAllDataMessage {
         message_type,

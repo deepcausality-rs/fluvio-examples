@@ -1,4 +1,5 @@
-use crate::prelude::{MessageType, StartDataMessage};
+use common::prelude::ExchangeID;
+use crate::prelude::{DataType, MessageType, StartDataMessage};
 use sbe_bindings::{MessageHeaderDecoder, ReadBuf, SbeResult, StartDataMsgDecoder};
 
 use sbe_bindings::start_data_msg_codec::SBE_TEMPLATE_ID;
@@ -16,14 +17,16 @@ pub fn decode_start_data_message(buffer: &[u8]) -> SbeResult<StartDataMessage> {
     assert_eq!(message_type, MessageType::StartData);
 
     let client_id = csg.client_id();
-    let exchange_id = csg.exchange_id();
+    let exchange_id = ExchangeID::from(csg.exchange_id());
     let symbol_id = csg.symbol_id();
+    let data_type_id = DataType::from(csg.data_type_id());
 
     let message = StartDataMessage {
         message_type,
         client_id,
         exchange_id,
         symbol_id,
+        data_type_id,
     };
 
     Ok(message)

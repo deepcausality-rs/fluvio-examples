@@ -11,14 +11,14 @@ pub enum ExchangeID {
     VEX = 3_u8,
 }
 
-impl From<i32> for ExchangeID {
+impl From<u8> for ExchangeID {
     #[inline]
-    fn from(v: i32) -> Self {
+    fn from(v: u8) -> Self {
         match v {
-            0xff_i32 => Self::NullVal,
-            0x1_i32 => Self::BinanceSpot,
-            0x2_i32 => Self::COINBASE,
-            0x3_i32 => Self::VEX,
+            0 => Self::NullVal,
+            1 => Self::BinanceSpot,
+            2 => Self::COINBASE,
+            3 => Self::VEX,
             _ => Self::NullVal,
         }
     }
