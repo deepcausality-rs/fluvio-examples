@@ -21,20 +21,21 @@ pub struct OHLCVBar {
 }
 
 impl OHLCVBar {
-    /// Creates a new DataBar with the provided field values.
+    /// Creates a new OHLCVBar instance with the provided parameters.
     ///
     /// # Parameters
     ///
-    /// * `date_time` - DateTime in UTC for the bar timestamp
-    /// * `open` - Open price for the bar as a Decimal
-    /// * `high` - High price for the bar as a Decimal
-    /// * `low` - Low price for the bar as a Decimal
-    /// * `close` - Close price for the bar as a Decimal
-    /// * `volume` - Volume for the bar as a Decimal
+    /// - `symbol_id` - The symbol ID this bar is for
+    /// - `date_time` - The date/time of this bar
+    /// - `open` - The opening price
+    /// - `high` - The high price
+    /// - `low` - The low price
+    /// - `close` - The closing price
+    /// - `volume` - The volume traded
     ///
     /// # Returns
     ///
-    /// A new DataBar instance with the provided field values.
+    /// A new OHLCVBar instance with the provided fields populated.
     pub fn new(
         symbol_id: u16,
         date_time: DateTime<Utc>,
@@ -57,16 +58,19 @@ impl OHLCVBar {
 }
 
 impl OHLCVBar {
-    /// Creates a new DataBar instance by parsing the provided pg DB Row.
+    /// Creates a new OHLCVBar instance from a postgres database row.
     ///
-    /// Extracts the timestamp, open, high, low, close, and volume values
-    /// from the row and uses them to construct a new DataBar.
+    /// Parses the timestamp, open, high, low, close, and volume values from the
+    /// provided row and uses them to construct a new OHLCVBar instance.
     ///
-    /// The timestamp is extracted as a NaiveDateTime and converted to a DateTime in UTC.
+    /// # Parameters
     ///
-    /// The price fields are extracted as f64 values and converted to Decimal.
+    /// - `row` - The database row containing the OHLCV data
+    /// - `symbol_id` - The symbol ID this bar is for
     ///
-    /// Returns an error if any of the values cannot be parsed from the row.
+    /// # Returns
+    ///
+    /// A new OHLCVBar instance populated with the data parsed from the row.
     pub fn from_pg_row(row: &Row, symbol_id: u16) -> OHLCVBar {
         let timestamp = row.get::<usize, NaiveDateTime>(0);
 
@@ -109,6 +113,7 @@ impl OHLCVBar {
             high,
             low,
             close,
-            volume)
+            volume,
+        )
     }
 }

@@ -58,9 +58,10 @@ async fn test_get_all_trades() {
     // trade table name
     // ethaed has only 43 records so this is a good and fast test
     let trade_table = "kraken_ethaed";
+    let symbol_id = 278; // 278 = ethaed on Kraken
 
     // Call method under test
-    let result = manager.get_all_trades(trade_table).await;
+    let result = manager.get_all_trades(symbol_id, trade_table).await;
 
     // Verify result
     assert!(result.is_ok());

@@ -7,7 +7,7 @@ use sbe_bindings::{
 };
 
 pub fn encode_data_bar_message(bar: TradeBar) -> Result<(usize, Vec<u8>), SbeEncodeError> {
-    // precise buffer size is 26 bytes for the entire message.
+    // precise buffer size is 28 bytes for the entire message.
     let mut buffer = vec![0u8; 28];
 
     let mut csg = TradeBarEncoder::default();
@@ -18,6 +18,9 @@ pub fn encode_data_bar_message(bar: TradeBar) -> Result<(usize, Vec<u8>), SbeEnc
 
     let value = SbeMessageType::TradeBar;
     csg.message_type(value);
+
+    let symbol_id = bar.symbol_id();
+    csg.symbol_id(symbol_id);
 
     let date_time = bar.date_time().timestamp_micros();
     csg.date_time(date_time);

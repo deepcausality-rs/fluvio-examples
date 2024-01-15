@@ -19,6 +19,8 @@ pub fn decode_trade_bar_message(buffer: &[u8]) -> Result<TradeBar, SbeDecodeErro
     let message_type = MessageType::from(sbe_message_type as u16);
     assert_eq!(message_type, MessageType::TradeBar);
 
+    let symbol_id = csg.symbol_id();
+
     let sbe_date_time = csg.date_time();
     let date_time: DateTime<Utc> = Utc.timestamp_micros(sbe_date_time).unwrap();
 
@@ -28,7 +30,7 @@ pub fn decode_trade_bar_message(buffer: &[u8]) -> Result<TradeBar, SbeDecodeErro
     let sbe_volume = csg.volume();
     let volume = Decimal::from_f32(sbe_volume).expect("[FileManager]: Failed to parse volume");
 
-    let trade_bar = TradeBar::new(date_time, price, volume);
+    let trade_bar = TradeBar::new(symbol_id, date_time, price, volume);
 
     Ok(trade_bar)
 }

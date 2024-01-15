@@ -93,7 +93,8 @@ where
                 let volume = Decimal::from_f64(v)
                     .expect("[csv_utils/read_csv_lines]: Could not parse volume from f64");
 
-                let trade_bar = TradeBar::new(date_time, price, volume);
+                // Symbol ID is set to zero because it is not used during DB import.
+                let trade_bar = TradeBar::new(0, date_time, price, volume);
 
                 content.push(trade_bar);
             }

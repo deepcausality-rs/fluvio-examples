@@ -67,7 +67,7 @@ impl Server {
 
         // Get all bars
         let result = q_manager
-            .get_all_trades(trade_table)
+            .get_all_trades(symbol_id, trade_table)
             .await;
 
         // Handle error

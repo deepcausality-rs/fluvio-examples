@@ -35,12 +35,13 @@ impl QueryDBManager {
     ///  let db_config =  DBConfig::new(9009, "0.0.0.0".into(), "exchanges".to_string());
     ///  let mut query_manager = QueryDBManager::new(db_config).await.expect("Failed to create db connection");
     ///
-    ///  let trades = query_manager.get_all_trades("kraken_ethaed")
+    ///  let trades = query_manager.get_all_trades(278, "kraken_ethaed")
     ///               .await.expect("Failed to get all trades");
     /// }
     /// ```
     pub async fn get_all_trades(
         &mut self,
+        symbol_id: u16,
         symbol_table: &str,
     ) -> Result<Vec<TradeBar>, QueryError> {
         // Sanitize table name input to prevent SQL injection.
@@ -71,7 +72,7 @@ impl QueryDBManager {
 
         // Iterate over the rows, convert each row to a trade bar, and add it to the vector.
         for row in &result_rows {
-            let trade = TradeBar::from(row);
+            let trade = TradeBar::from_pg_row(symbol_id, row);
             trades.push(trade);
         }
 

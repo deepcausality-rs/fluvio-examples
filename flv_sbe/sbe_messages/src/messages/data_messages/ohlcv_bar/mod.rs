@@ -15,10 +15,31 @@ impl SbeOHLCVBar {
 }
 
 impl SbeOHLCVBar {
+    /// Encodes an OHLCVBar into an SBE message buffer.
+    ///
+    /// # Parameters
+    ///
+    /// - `bar` - The OHLCVBar to encode
+    ///
+    /// # Returns
+    ///
+    /// A Result containing:
+    ///
+    /// - The size of the encoded message
+    /// - The encoded message buffer
     pub fn encode_data_bar_message(bar: OHLCVBar) -> Result<(usize, Vec<u8>), SbeEncodeError> {
         sbe_encoder::encode_data_bar_message(bar)
     }
 
+    /// Decodes an SBE message buffer into an OHLCVBar.
+    ///
+    /// # Parameters
+    ///
+    /// - `buffer` - The SBE encoded message buffer
+    ///
+    /// # Returns
+    ///
+    /// A Result containing the decoded OHLCVBar or a decoding error.
     pub fn decode_data_bar_message(buffer: &[u8]) -> Result<OHLCVBar, SbeDecodeError> {
         sbe_decoder::decode_data_bar_message(buffer)
     }
