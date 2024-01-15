@@ -1,6 +1,6 @@
 pub mod ohlcv_bar;
-pub mod data_bar_first;
-pub mod data_bar_last;
+pub mod ohlcv_bar_first;
+pub mod ohlcv_bar_last;
 pub mod start_data;
 pub mod stop_all_data;
 pub mod stop_data;

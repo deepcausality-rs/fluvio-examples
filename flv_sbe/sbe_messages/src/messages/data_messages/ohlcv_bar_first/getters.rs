@@ -1,6 +1,6 @@
-use crate::prelude::{LastDataBar, MessageType};
+use crate::prelude::{FirstOHLCVBar, MessageType};
 
-impl LastDataBar {
+impl FirstOHLCVBar {
     pub fn message_type(&self) -> MessageType {
         self.message_type
     }

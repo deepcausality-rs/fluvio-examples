@@ -1,7 +1,7 @@
-use crate::prelude::LastDataBar;
+use crate::prelude::LastOHCLVBar;
 use std::fmt;
 
-impl fmt::Display for LastDataBar {
+impl fmt::Display for LastOHCLVBar {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(
             f,

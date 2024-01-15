@@ -1,8 +1,8 @@
-use crate::prelude::{FirstDataBar, MessageType};
+use crate::prelude::{FirstOHLCVBar, MessageType};
 use sbe_bindings::first_data_bar_codec::SBE_TEMPLATE_ID;
 use sbe_bindings::{FirstDataBarDecoder, MessageHeaderDecoder, ReadBuf, SbeResult};
 
-pub fn decode_first_data_bar_message(buffer: &[u8]) -> SbeResult<FirstDataBar> {
+pub fn decode_first_data_bar_message(buffer: &[u8]) -> SbeResult<FirstOHLCVBar> {
     let mut csg = FirstDataBarDecoder::default();
     let buf = ReadBuf::new(buffer);
 
@@ -16,7 +16,7 @@ pub fn decode_first_data_bar_message(buffer: &[u8]) -> SbeResult<FirstDataBar> {
 
     let symbol_id = csg.symbol_id();
 
-    let message = FirstDataBar::new(symbol_id);
+    let message = FirstOHLCVBar::new(symbol_id);
 
     Ok(message)
 }

@@ -1,7 +1,7 @@
-use crate::prelude::FirstDataBar;
+use crate::prelude::FirstOHLCVBar;
 use std::fmt;
 
-impl fmt::Display for FirstDataBar {
+impl fmt::Display for FirstOHLCVBar {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(
             f,

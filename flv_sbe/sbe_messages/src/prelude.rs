@@ -3,14 +3,15 @@ pub use crate::errors::*;
 // Message types
 pub use crate::types::client_error_types::ClientErrorType;
 pub use crate::types::data_error_types::DataErrorType;
+pub use crate::types::data_type::DataType;
 pub use crate::types::message_types::MessageType;
 // Client messages
 pub use crate::messages::client_messages::client_login::ClientLoginMessage;
 pub use crate::messages::client_messages::client_logout::ClientLogoutMessage;
 // Data messages
 pub use crate::messages::data_messages::ohlcv_bar::SbeOHLCVBar;
-pub use crate::messages::data_messages::data_bar_first::FirstDataBar;
-pub use crate::messages::data_messages::data_bar_last::LastDataBar;
+pub use crate::messages::data_messages::ohlcv_bar_first::FirstOHLCVBar;
+pub use crate::messages::data_messages::ohlcv_bar_last::LastOHCLVBar;
 pub use crate::messages::data_messages::start_data::StartDataMessage;
 pub use crate::messages::data_messages::stop_all_data::StopAllDataMessage;
 pub use crate::messages::data_messages::stop_data::StopDataMessage;
