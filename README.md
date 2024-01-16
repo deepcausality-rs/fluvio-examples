@@ -2,38 +2,45 @@
 
 ## ⚡ Status: **Progressing...**
 
-This project is early stage and under **active development** meaning things break overnight. 
+This project is early stage and under **active development** meaning things break overnight.
 
 ### 👉 **Fluvio**
 
-Fluvio is an open-source data streaming platform with in-flight computation capabilities to aggregate, correlate, and transform data records in real-time as they move through the network. Read more on the [Fluvio website](https://www.fluvio.io). 
+Fluvio is an open-source data streaming platform with in-flight computation capabilities to aggregate, correlate, and
+transform data records in real-time as they move through the network. Read more on
+the [Fluvio website](https://www.fluvio.io).
 
 ### 👉 **DeepCausality**
 
-DeepCausality is a hyper-geometric computational causality library that enables fast and deterministic context-aware reasoning over complex multi-stage causality models. Deep Causality adds only minimal overhead and thus is suitable for real-time applications. Read more on the [DeepCausality website](https://www.deepcausality.com).
-
+DeepCausality is a hyper-geometric computational causality library that enables fast and deterministic context-aware
+reasoning over complex multi-stage causality models. Deep Causality adds only minimal overhead and thus is suitable for
+real-time applications. Read more on the [DeepCausality website](https://www.deepcausality.com).
 
 ### 👉 **QuestDB**
 
-QuestDB is an open-source high performance time series database with enhanced SQL analytics for time series data. Read more on the [QuestDB website](https://questdb.io).
-
+QuestDB is an open-source high performance time series database with enhanced SQL analytics for time series data. Read
+more on the [QuestDB website](https://questdb.io).
 
 ### 👉 **Example Project**
 
-This project is a simple example of how to use Fluvio and DeepCausality to build a real-time causal inference pipeline. Specifically, the project illustrates:
+This project is a simple example of how to use Fluvio and DeepCausality to build a real-time causal inference pipeline.
+Specifically, the project illustrates:
 
-1) How to replay and resample trade data. 
+1) How to replay and resample trade data.
 2) How to analyze trade data in real-time using causal inference.
 3) How to pass forward causal inference results to downstream systems via Fluvio's in-flight computation.
 
 ### 👉 **Technologies used:**
-* [SBE (Simple Binary Encoding) ](https://github.com/real-logic/simple-binary-encoding)for binary message encoding & decoding.
+
+* [SBE (Simple Binary Encoding) ](https://github.com/real-logic/simple-binary-encoding)for binary message encoding &
+  decoding.
 * [QuestDB](https://github.com/questdb/questdb) to store and query nearly 1 billion trade data from 695 crypto markets.
-* [DeepCausality](https://github.com/deepcausality-rs/deep_causality/tree/main) to process trade bars in flight as they pass through the message bus.
+* [DeepCausality](https://github.com/deepcausality-rs/deep_causality/tree/main) to process trade bars in flight as they
+  pass through the message bus.
 * [Fluvio](https://github.com/infinyon/fluvio) as message bus and in-flight compute system.
 
-The careful reader may have noticed that this system amounts to an event based back-testing facility and 
-that is exactly what's demonstrated in this project. 
+The careful reader may have noticed that this system amounts to an event based back-testing facility and
+that is exactly what's demonstrated in this project.
 
 ## 📚 Docs
 
@@ -77,8 +84,11 @@ The scripts called by each make command are located in the [script folder.](scri
 
 ## ⭐ Import Data
 
-Please first download either the full or the quarterly trade tick data from the Kraken exchange. See the [import data guide](doc/import_data.md) for detailed instructions. Make sure the unzipped data folder is in the [data folder.](data) *and* the absolute path to
-the data folder is set in the [import_data.toml config file](import_config.toml). This is crucial to make the data import work. To start the data import, run in a terminal: 
+Please first download either the full or the quarterly trade tick data from the Kraken exchange. See
+the [import data guide](doc/import_data.md) for detailed instructions. Make sure the unzipped data folder is in
+the [data folder.](data) *and* the absolute path to
+the data folder is set in the [import_data.toml config file](import_config.toml). This is crucial to make the data
+import work. To start the data import, run in a terminal:
 
 ```bash
 make import
@@ -115,14 +125,47 @@ For more details on how to analyze the data, please see the following guide:
 
 * [Data analysis with SQL](doc/analyze_data.md)
 
+## Optional: Start Autometrics
+
+Autometrics is an observability micro-framework built for developers.
+It makes it easy to instrument any function with the most useful metrics: request rate, error rate, and latency.
+
+Install the autometrics cli:
+
+* MacOS: brew install autometrics-dev/tap/am
+* Linux ARM64: curl -L https://github.com/autometrics-dev/am/releases/latest/download/am-linux-aarch64 -o am
+* Linux Intel/AMD: curl -L https://github.com/autometrics-dev/am/releases/latest/download/am-linux-x86_64 -o am
+
+# make it executable with chmod
+chmod u+x am
+
+On Linux, make sure the binary is in your shell path.
+
+For more details, see the [documentation](https://docs.autometrics.dev/local-development#getting-started-with-am)
+and the [github repo](https://github.com/autometrics-dev/autometrics-rs).
+
+Run in a dedicated terminal to start autometrics:
+
+```bash
+    am start :8080
+```
+
+You can now navigate to http://localhost:6789 to see the autometrics explorer.
+You can also see the Prometheus at http://localhost:9090. 
+
+Note, if you already have a prometheus installation or simply don't want metrics, the QDGW works perfectly
+fine without autometrics. 
+
 ## 🚀 Start the Quant Data Gateway (QDGW)
 
 Please ensure that:
+
 1) Fluvio is up and running
 2) QuestDB is up and running
 3) Tick data are imported
+   Optional: Start autometrics:
 
-Run in a dedicated terminal: 
+Run in a dedicated terminal:
 
 ```bash
     make run
@@ -151,7 +194,7 @@ Because the dataset contains so many symbols (695) and the message bus relies en
 binary encoding, we need to map textual symbols to their numeric IDs.
 
 The symbol manager provides methods to convert symbols and numeric IDs back
-and forth, which helps to implement clients efficiently. 
+and forth, which helps to implement clients efficiently.
 
 For more details on the symbol mapping and how to query the DB,
 please see the following guide:
@@ -163,12 +206,13 @@ please see the following guide:
 This project is licensed under the Apache Licence.
 See the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgment 
+## 🙏 Acknowledgment
 
-The author expresses his gratitude to the [infinyon team](https://infinyon.com/about/#) behind the [Fluvio platform](https://fluvio.io/).
-
+The author expresses his gratitude to the [infinyon team](https://infinyon.com/about/#) behind
+the [Fluvio platform](https://fluvio.io/).
 
 ## 💻 Author
+
 * [Marvin Hansen](https://github.com/marvin-hansen)
 * Github GPG key ID: 369D5A0B210D39BC
 * GPG Fingerprint: 4B18 F7B2 04B9 7A72 967E 663E 369D 5A0B 210D 39BC
