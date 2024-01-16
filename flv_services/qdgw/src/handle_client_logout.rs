@@ -1,3 +1,4 @@
+use autometrics::autometrics;
 use crate::service::Server;
 use common::prelude::{ClientChannel, MessageProcessingError};
 use fluvio::{Fluvio, RecordKey};
@@ -22,6 +23,7 @@ impl Server {
     /// - MessageProcessingError if there is an issue getting the client's control channel, checking their login status,
     /// or logging them out.
     ///
+    #[autometrics]
     pub(crate) async fn handle_client_logout(
         &self,
         client_logout_msg: &ClientLogoutMessage,
@@ -97,7 +99,7 @@ impl Server {
                     producer
                         .send(RecordKey::NULL, buffer)
                         .await
-                        .expect("Failed to send ClientError: ClientAlreadyLoggedIn!");
+                        .expect("Failed to send ClientError: ClientNotLoggedIn!");
                     producer.flush().await.expect("Failed to flush");
                 }
             },

@@ -51,7 +51,7 @@ fn test_display() {
     let error_type = DataErrorType::DataTypeNotKnownError;
     let message = DataErrorMessage::new(client_id, error_type);
 
-    let expected = "DataErrorMessage { message_type: DataError, client_id: 1, data_error_type: DataNotKnownError }";
+    let expected = "DataErrorMessage { message_type: DataError, client_id: 1, data_error_type: DataTypeNotKnownError }";
     let actual = format!("{}", message);
 
     assert_eq!(expected, actual);

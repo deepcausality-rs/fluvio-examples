@@ -1,7 +1,8 @@
 use crate::service::Server;
 use common::prelude::{ClientChannel, MessageClientConfig, MessageProcessingError};
-use fluvio::{Fluvio, RecordKey};
-use sbe_messages::prelude::{ClientErrorMessage, ClientErrorType, ClientLoginMessage};
+use fluvio::Fluvio;
+use sbe_messages::prelude::{ClientErrorType, ClientLoginMessage};
+use autometrics::autometrics;
 
 impl Server {
     /// Handles a client login message by validating the client ID and logging them in.
@@ -23,6 +24,7 @@ impl Server {
     /// or logging them in.
     ///
     /// ```
+    #[autometrics]
     pub(crate) async fn handle_client_login(
         &self,
         client_login_msg: &ClientLoginMessage,
@@ -66,16 +68,15 @@ impl Server {
             Ok(exists) => match exists {
                 true => {
                     let client_error_type = ClientErrorType::ClientAlreadyLoggedIn;
-                    let message = ClientErrorMessage::new(client_id, client_error_type);
-                    let enc = message.encode();
-                    assert!(enc.is_ok());
-                    let (_, buffer) = enc.unwrap();
-
-                    producer
-                        .send(RecordKey::NULL, buffer)
+                    match self
+                        .send_client_error(&producer, client_id, client_error_type)
                         .await
-                        .expect("Failed to send ClientError: ClientAlreadyLoggedIn!");
-                    producer.flush().await.expect("Failed to flush");
+                    {
+                        Ok(_) => {}
+                        Err(err) => {
+                            println!("[QDGW/handle_client_login::handle_client_login] ClientAlreadyLoggedIn: {:?}", err);
+                        }
+                    }
                 }
                 // Client not logged in, proceed with login
                 false => {
@@ -84,22 +85,18 @@ impl Server {
                     match res {
                         Ok(_) => {}
                         Err(err) => {
-                            println!(
-                                "[QDGW/handle_client_login::handle_client_login] ClientLogInError: {:?}",
-                                err.to_string()
-                            );
+                            println!("[QDGW/handle_client_login::handle_client_login] ClientLogInError: {:?}", err.to_string());
 
                             let client_error_type = ClientErrorType::ClientLogInError;
-                            let message = ClientErrorMessage::new(client_id, client_error_type);
-                            let enc = message.encode();
-                            assert!(enc.is_ok());
-                            let (_, buffer) = enc.unwrap();
-
-                            producer
-                                .send(RecordKey::NULL, buffer)
+                            match self
+                                .send_client_error(&producer, client_id, client_error_type)
                                 .await
-                                .expect("Failed to send ClientError: ClientLogInError!");
-                            producer.flush().await.expect("Failed to flush");
+                            {
+                                Ok(_) => {}
+                                Err(err) => {
+                                    println!("[QDGW/handle_client_login::handle_client_login] ClientLogInError: {:?}", err.to_string());
+                                }
+                            }
                         }
                     }
                 }
@@ -112,17 +109,15 @@ impl Server {
                 );
 
                 let client_error_type = ClientErrorType::UnknownClientError;
-                let message = ClientErrorMessage::new(client_id, client_error_type);
-                let enc = message.encode();
-                assert!(enc.is_ok());
-
-                let (_, buffer) = enc.unwrap();
-
-                producer
-                    .send(RecordKey::NULL, buffer)
+                match self
+                    .send_client_error(&producer, client_id, client_error_type)
                     .await
-                    .expect("Failed to send ClientError: UnknownClientError!");
-                producer.flush().await.expect("Failed to flush");
+                {
+                    Ok(_) => {}
+                    Err(err) => {
+                        println!("[QDGW/handle_client_login::handle_client_login] UnknownClientError: {:?}", err.to_string());
+                    }
+                }
             }
         }
 

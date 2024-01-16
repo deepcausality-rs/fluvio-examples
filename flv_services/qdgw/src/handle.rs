@@ -7,6 +7,26 @@ use sbe_messages::prelude::{
 };
 
 impl Server {
+    /// Handles a consumer record received from the Fluvio message bus.
+    ///
+    /// Parses the message type and delegates to the appropriate handler.
+    ///
+    /// # Parameters
+    ///
+    /// * `record` - The Fluvio consumer record to handle
+    ///
+    /// # Returns
+    ///
+    /// Returns a `Result` with `()` if successful, otherwise returns a
+    /// `MessageProcessingError` on failure.
+    ///
+    /// # Errors
+    ///
+    /// Can fail with a `MessageProcessingError` if:
+    ///
+    /// - An unknown message type is received
+    /// - Any of the delegated handlers fail
+    ///
     pub(crate) async fn handle_record(
         &self,
         record: &ConsumerRecord,
@@ -17,11 +37,6 @@ impl Server {
         let message_type = MessageType::from(buffer[2] as u16);
 
         match message_type {
-            MessageType::UnknownMessageType => Err(MessageProcessingError(
-                "[QDGW/handle::handle_record]:  Fluvio consumer record contained an unknown message type."
-                    .to_string(),
-            )),
-
             MessageType::ClientLogin => {
                 let client_login_msg = ClientLoginMessage::from(buffer);
                 self.handle_client_login(&client_login_msg).await
@@ -46,8 +61,10 @@ impl Server {
                 self.handle_stop_all_data(&stop_all_data_msg).await
             }
             _ => {
-                // Handle unknown message type
-                Ok(())
+                Err(MessageProcessingError(
+                    "[QDGW/handle::handle_record]:  Fluvio consumer record contained an unknown message type."
+                        .to_string(),
+                ))
             }
         }
     }

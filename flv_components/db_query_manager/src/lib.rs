@@ -1,4 +1,3 @@
-
 pub mod error;
 mod query_ohlcv;
 mod query_symbols;
