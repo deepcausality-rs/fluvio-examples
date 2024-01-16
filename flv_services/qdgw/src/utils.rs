@@ -33,6 +33,9 @@ impl Server {
             ClientChannel::HeartbeatChannel => client_db.get_client_heartbeat_channel(client_id),
         };
 
+        // Unlock the ClientManager
+        drop(client_db);
+
         // Return the channel, or an error if the lookup failed
         match res {
             Ok(channel) => Ok(channel),
@@ -63,6 +66,9 @@ impl Server {
         // look up the table name
         let res = symbol_db.get_symbol_table(exchange_id as u16);
 
+        // Unlock the SymbolManager
+        drop(symbol_db);
+
         // Return the table name, or an error if the lookup failed
         match res {
             Ok(table_name) => Ok(table_name),
@@ -90,6 +96,7 @@ impl Server {
     ) -> Result<bool, MessageProcessingError> {
         let client_db = self.client_manager.lock().await.clone();
         let exists = client_db.check_client(client_id);
+        drop(client_db);
 
         Ok(exists)
     }

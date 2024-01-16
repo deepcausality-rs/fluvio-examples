@@ -28,7 +28,10 @@ impl Server {
         client_login_msg: &ClientLoginMessage,
     ) -> Result<(), MessageProcessingError> {
         // Remove debug print
-        println!("[QDGW/handle_client::client_login]: {:?}", client_login_msg);
+        println!(
+            "[QDGW/handle_client::handle_client_login]: {:?}",
+            &client_login_msg
+        );
 
         // Extract the client ID from the message
         let client_id = client_login_msg.client_id();

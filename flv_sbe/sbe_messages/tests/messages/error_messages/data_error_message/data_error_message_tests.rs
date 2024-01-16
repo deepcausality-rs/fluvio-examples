@@ -3,7 +3,7 @@ use sbe_messages::prelude::{DataErrorMessage, DataErrorType, MessageType};
 #[test]
 fn test_new() {
     let client_id = 1;
-    let error_type = DataErrorType::DataNotKnownError;
+    let error_type = DataErrorType::DataTypeNotKnownError;
     let message = DataErrorMessage::new(client_id, error_type);
 
     assert_eq!(message.message_type(), MessageType::DataError);
@@ -14,7 +14,7 @@ fn test_new() {
 #[test]
 fn test_encode() {
     let client_id = 1;
-    let error_type = DataErrorType::DataNotKnownError;
+    let error_type = DataErrorType::DataTypeNotKnownError;
     let message = DataErrorMessage::new(client_id, error_type);
 
     assert_eq!(message.message_type(), MessageType::DataError);
@@ -39,7 +39,7 @@ fn test_decode() {
     let message = DataErrorMessage::from(buffer);
 
     let client_id = 1;
-    let error_type = DataErrorType::DataNotKnownError;
+    let error_type = DataErrorType::DataTypeNotKnownError;
     assert_eq!(message.message_type(), MessageType::DataError);
     assert_eq!(message.client_id(), client_id);
     assert_eq!(message.data_error_type(), error_type);
@@ -48,7 +48,7 @@ fn test_decode() {
 #[test]
 fn test_display() {
     let client_id = 1;
-    let error_type = DataErrorType::DataNotKnownError;
+    let error_type = DataErrorType::DataTypeNotKnownError;
     let message = DataErrorMessage::new(client_id, error_type);
 
     let expected = "DataErrorMessage { message_type: DataError, client_id: 1, data_error_type: DataNotKnownError }";

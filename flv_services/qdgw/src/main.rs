@@ -7,6 +7,7 @@ mod handle_data_stop_all;
 mod handle_unknown_msg;
 mod service;
 mod utils;
+mod utils_data;
 
 use futures::lock::Mutex;
 use std::net::SocketAddr;
