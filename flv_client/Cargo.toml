@@ -14,3 +14,11 @@ path = "src/lib/mod.rs"
 
 
 [dependencies]
+# Internal crates
+client_utils = { workspace = true }
+common = { workspace = true }
+sbe_messages = { workspace = true }
+# External crates
+futures = { workspace = true }
+tokio = { workspace = true }
+fluvio = { workspace = true }
