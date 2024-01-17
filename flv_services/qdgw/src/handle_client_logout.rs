@@ -1,5 +1,5 @@
-use autometrics::autometrics;
 use crate::service::Server;
+use autometrics::autometrics;
 use common::prelude::{ClientChannel, MessageProcessingError};
 use fluvio::{Fluvio, RecordKey};
 use sbe_messages::prelude::{ClientErrorMessage, ClientErrorType, ClientLogoutMessage};

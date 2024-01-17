@@ -1,5 +1,5 @@
-use autometrics::autometrics;
 use crate::service::Server;
+use autometrics::autometrics;
 use common::prelude::MessageProcessingError;
 use sbe_messages::prelude::StopAllDataMessage;
 

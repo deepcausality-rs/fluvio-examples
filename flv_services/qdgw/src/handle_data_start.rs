@@ -1,5 +1,5 @@
-use autometrics::autometrics;
 use crate::service::Server;
+use autometrics::autometrics;
 use common::prelude::{ClientChannel, MessageProcessingError, TimeResolution};
 use fluvio::Fluvio;
 use sbe_messages::prelude::{ClientErrorType, DataErrorType, DataType, StartDataMessage};

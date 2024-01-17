@@ -1,8 +1,8 @@
 use crate::service::Server;
+use autometrics::autometrics;
 use common::prelude::{ClientChannel, MessageClientConfig, MessageProcessingError};
 use fluvio::Fluvio;
 use sbe_messages::prelude::{ClientErrorType, ClientLoginMessage};
-use autometrics::autometrics;
 
 impl Server {
     /// Handles a client login message by validating the client ID and logging them in.
