@@ -1,4 +1,4 @@
-use crate::utils;
+use crate::utils as client_utils;
 use common::prelude::{ExchangeID, MessageClientConfig, SymbolID};
 use fluvio::Offset;
 use futures::StreamExt;
@@ -30,13 +30,13 @@ pub async fn handle() -> Result<(), Box<dyn Error>> {
 
 async fn produce() -> Result<(), Box<dyn Error + Send>> {
     let service_topic = "qdgw-control";
-    let producer = utils::get_producer(service_topic).await;
+    let producer = client_utils::get_producer(service_topic).await;
 
     let message = ClientLoginMessage::new(CLIENT_ID);
 
     let enc = message.encode();
     let (_, buffer) = enc.unwrap();
-    utils::send_message(&producer, buffer)
+    client_utils::send_message(&producer, buffer)
         .await
         .expect("Failed to send message!");
 
@@ -49,7 +49,7 @@ async fn produce() -> Result<(), Box<dyn Error + Send>> {
 
     let enc = message.encode();
     let (_, buffer) = enc.unwrap();
-    utils::send_message(&producer, buffer)
+    client_utils::send_message(&producer, buffer)
         .await
         .expect("Failed to send message!");
 
@@ -61,7 +61,7 @@ async fn produce() -> Result<(), Box<dyn Error + Send>> {
     assert!(enc.is_ok());
 
     let (_, buffer) = enc.unwrap();
-    utils::send_message(&producer, buffer)
+    client_utils::send_message(&producer, buffer)
         .await
         .expect("Failed to send message!");
 
@@ -73,7 +73,7 @@ async fn consume() -> Result<(), Box<dyn Error + Send>> {
 
     let topic = client_config.data_channel();
 
-    let consumer = utils::get_consumer(&topic).await;
+    let consumer = client_utils::get_consumer(&topic).await;
 
     let mut stream = consumer
         .stream(Offset::end())

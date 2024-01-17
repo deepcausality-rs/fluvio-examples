@@ -1,5 +1,5 @@
 [package]
-name = "client_login_errors"
+name = "client_utils"
 version = "0.1.0"
 edition.workspace = true
 rust-version.workspace = true
@@ -8,14 +8,13 @@ repository.workspace = true
 authors.workspace = true
 
 
-[[bin]]
-name = "client_login_errors"
-path = "src/main.rs"
+[lib]
+name = "client_utils"
+path = "src/lib.rs"
 
 
 [dependencies]
 # Internal crates
-client_utils = { workspace = true }
 common = { workspace = true }
 sbe_messages = { workspace = true }
 # External crates

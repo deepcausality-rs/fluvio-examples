@@ -6,6 +6,7 @@ members = [
     "flv_cli/data_importer",
     "flv_cli/msg_client",
     "flv_client_examples/errors/client_login_errors",
+    "flv_client_examples/errors/client_utils",
     "flv_common",
     "flv_components/client_manager",
     "flv_components/config_manager",
@@ -44,6 +45,9 @@ sbe_messages = {path = "flv_sbe/sbe_messages" }
 service_utils = { path = "flv_service_utils" }
 db_specs = { path = "flv_specs/db_specs" }
 service_specs = {path = "flv_specs/service_specs" }
+#
+# Internal Example crates
+client_utils = { path = "flv_client_examples/errors/client_utils" }
 #
 # External crates
 autometrics = { version = "1", features = ["prometheus-exporter"] }
