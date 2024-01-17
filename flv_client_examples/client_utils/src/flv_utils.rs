@@ -1,4 +1,4 @@
-use fluvio::{Fluvio, PartitionConsumer, RecordKey, TopicProducer};
+use fluvio::{Fluvio, FluvioAdmin, PartitionConsumer, RecordKey, TopicProducer};
 use std::error::Error;
 
 pub async fn send_message(producer: &TopicProducer, buffer: Vec<u8>) -> Result<(), Box<dyn Error>> {
@@ -10,6 +10,12 @@ pub async fn send_message(producer: &TopicProducer, buffer: Vec<u8>) -> Result<(
     producer.flush().await.expect("Failed to flush");
 
     Ok(())
+}
+
+// Note that this may fail if you are not authorized as a Fluvio administrator
+// for the cluster you are connected to.
+pub async fn get_admin() -> FluvioAdmin {
+    FluvioAdmin::connect().await.unwrap()
 }
 
 pub async fn get_producer(topic: &str) -> TopicProducer {
