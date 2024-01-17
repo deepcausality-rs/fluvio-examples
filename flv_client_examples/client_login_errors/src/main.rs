@@ -1,7 +1,7 @@
 use client_utils::flv_utils::{create_topic, delete_topic};
+use fluvio::FluvioAdmin;
 use std::error::Error;
 use std::process;
-use fluvio::FluvioAdmin;
 
 mod handle;
 mod handle_login_error;
@@ -31,14 +31,18 @@ async fn run() -> Result<(), Box<dyn Error>> {
     let name = "test-topic";
 
     // Create a new topic
-    create_topic(&admin, name).await.expect("Failed to create topic");
+    create_topic(&admin, name)
+        .await
+        .expect("Failed to create topic");
 
     // Login to the gateway.
 
     // Logout from the gateway.
 
     // Delete topic before shutting down the client
-    delete_topic(&admin, name).await.expect("Failed to delete topic");
+    delete_topic(&admin, name)
+        .await
+        .expect("Failed to delete topic");
 
     Ok(())
 }

@@ -1,4 +1,4 @@
-use fluvio::metadata::objects::{CommonCreateRequest};
+use fluvio::metadata::objects::CommonCreateRequest;
 use fluvio::metadata::topic::TopicSpec;
 use fluvio::{Fluvio, FluvioAdmin, PartitionConsumer, RecordKey, TopicProducer};
 use std::error::Error;
@@ -37,7 +37,6 @@ pub async fn send_message(producer: &TopicProducer, buffer: Vec<u8>) -> Result<(
 /// Returns a Result with `()` on success, or an error on failure.
 ///
 pub async fn create_topic(admin: &FluvioAdmin, topic_name: &str) -> Result<(), Box<dyn Error>> {
-
     // Define a new topic
     let name = topic_name.to_string();
     let dry_run = false;
@@ -71,8 +70,10 @@ pub async fn create_topic(admin: &FluvioAdmin, topic_name: &str) -> Result<(), B
 /// Returns a Result with `()` on success, or an error on failure.
 ///
 pub async fn delete_topic(admin: &FluvioAdmin, topic_name: &str) -> Result<(), Box<dyn Error>> {
-
-    admin.delete::<TopicSpec>(topic_name.to_string()).await.expect("Failed to delete topic");
+    admin
+        .delete::<TopicSpec>(topic_name.to_string())
+        .await
+        .expect("Failed to delete topic");
 
     Ok(())
 }
