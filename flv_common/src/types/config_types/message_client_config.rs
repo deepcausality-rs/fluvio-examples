@@ -102,6 +102,15 @@ impl MessageClientConfig {
         format!("{}-{}", self.name, "data")
     }
 
+    /// Generates a channel name for the error channel based on the client name.
+    ///
+    /// # Returns
+    ///
+    /// A String in the format: "{client_name}-error".
+    pub fn error_channel(&self) -> String {
+        format!("{}-{}", self.name, "error")
+    }
+
     /// Generates a channel name for the execution channel based on the client name.
     ///
     /// # Returns
