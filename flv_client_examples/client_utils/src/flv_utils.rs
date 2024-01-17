@@ -1,5 +1,4 @@
-use fluvio::metadata::objects::{CommonCreateRequest, DeleteRequest};
-use fluvio::metadata::topic::config::TopicConfig;
+use fluvio::metadata::objects::{CommonCreateRequest};
 use fluvio::metadata::topic::TopicSpec;
 use fluvio::{Fluvio, FluvioAdmin, PartitionConsumer, RecordKey, TopicProducer};
 use std::error::Error;
@@ -26,21 +25,18 @@ pub async fn send_message(producer: &TopicProducer, buffer: Vec<u8>) -> Result<(
     Ok(())
 }
 
-/// Creates a new topic with the given name on the Fluvio cluster.
+/// Creates a new topic with the given name using the provided Fluvio admin client.
 ///
 /// # Arguments
 ///
-/// * `topic_name` - The name for the new topic to create.
+/// * `admin` - A reference to the Fluvio admin client to use.
+/// * `topic_name` - The name for the new topic.
 ///
 /// # Returns
 ///
 /// Returns a Result with `()` on success, or an error on failure.
 ///
-pub async fn create_topic(topic_name: &str) -> Result<(), Box<dyn Error>> {
-    // Instantiate the admin client
-    let admin = FluvioAdmin::connect()
-        .await
-        .expect("Failed to connect to Fluvio admin API");
+pub async fn create_topic(admin: &FluvioAdmin, topic_name: &str) -> Result<(), Box<dyn Error>> {
 
     // Define a new topic
     let name = topic_name.to_string();
@@ -63,27 +59,20 @@ pub async fn create_topic(topic_name: &str) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-pub async fn delete_topic(topic_name: &str) -> Result<(), Box<dyn Error>> {
-    // Instantiate the admin client
-    let admin = FluvioAdmin::connect()
-        .await
-        .expect("Failed to connect to Fluvio admin API");
+/// Deletes the Fluvio topic with the given name using the provided admin client.
+///
+/// # Arguments
+///
+/// * `admin` - A reference to the Fluvio admin client to use.
+/// * `topic_name` - The name of the topic to delete.
+///
+/// # Returns
+///
+/// Returns a Result with `()` on success, or an error on failure.
+///
+pub async fn delete_topic(admin: &FluvioAdmin, topic_name: &str) -> Result<(), Box<dyn Error>> {
 
-    let name = topic_name.to_string();
-
-    let topic_config = TopicConfig::default();
-
-    let topic_specs = TopicSpec::from(topic_config);
-
-    let delete_topic_request: DeleteRequest<TopicSpec> = DeleteRequest::new(name);
-
-    // Delete the topic
-    admin
-        .delete(delete_topic_request)
-        .await
-        .expect("Failed to delete topic");
-    //
-    //^^^^^^ cannot infer type for type parameter `S` declared on the method `delete`
+    admin.delete::<TopicSpec>(topic_name.to_string()).await.expect("Failed to delete topic");
 
     Ok(())
 }
