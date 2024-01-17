@@ -1,8 +1,8 @@
-use fluvio::{Fluvio, FluvioAdmin, PartitionConsumer, RecordKey, TopicProducer};
-use std::error::Error;
 use fluvio::metadata::objects::{CommonCreateRequest, DeleteRequest};
 use fluvio::metadata::topic::config::TopicConfig;
 use fluvio::metadata::topic::TopicSpec;
+use fluvio::{Fluvio, FluvioAdmin, PartitionConsumer, RecordKey, TopicProducer};
+use std::error::Error;
 
 /// Sends a message to the given Fluvio topic producer.
 ///
@@ -37,7 +37,6 @@ pub async fn send_message(producer: &TopicProducer, buffer: Vec<u8>) -> Result<(
 /// Returns a Result with `()` on success, or an error on failure.
 ///
 pub async fn create_topic(topic_name: &str) -> Result<(), Box<dyn Error>> {
-
     // Instantiate the admin client
     let admin = FluvioAdmin::connect()
         .await
@@ -56,7 +55,8 @@ pub async fn create_topic(topic_name: &str) -> Result<(), Box<dyn Error>> {
     let topic_specs = TopicSpec::new_computed(1, 1, None);
 
     // Create the topic
-    admin.create_with_config(common_request, topic_specs)
+    admin
+        .create_with_config(common_request, topic_specs)
         .await
         .expect("Failed to create topic");
 
@@ -64,7 +64,6 @@ pub async fn create_topic(topic_name: &str) -> Result<(), Box<dyn Error>> {
 }
 
 pub async fn delete_topic(topic_name: &str) -> Result<(), Box<dyn Error>> {
-
     // Instantiate the admin client
     let admin = FluvioAdmin::connect()
         .await
@@ -72,16 +71,17 @@ pub async fn delete_topic(topic_name: &str) -> Result<(), Box<dyn Error>> {
 
     let name = topic_name.to_string();
 
-
     let topic_config = TopicConfig::default();
 
     let topic_specs = TopicSpec::from(topic_config);
 
     let delete_topic_request: DeleteRequest<TopicSpec> = DeleteRequest::new(name);
 
-
     // Delete the topic
-    admin.delete(delete_topic_request).await.expect("Failed to delete topic");
+    admin
+        .delete(delete_topic_request)
+        .await
+        .expect("Failed to delete topic");
     //
     //^^^^^^ cannot infer type for type parameter `S` declared on the method `delete`
 
