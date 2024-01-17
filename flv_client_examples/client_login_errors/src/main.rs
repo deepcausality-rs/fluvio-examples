@@ -32,6 +32,7 @@ async fn run() -> Result<(), Box<dyn Error>> {
     //
 
     // Logout from the gateway.
+    //
 
     // Close client connection.
     close(&admin, &client_config)
@@ -48,19 +49,19 @@ async fn connect(
     println!("Setup Client Connection!");
 
     // Create client topics:
-    // 1. client_id-control - For receiving control messages from the QD gateway.
+    // 1. client_id-control - For receiving control messages from the gateway.
     let control_topic = &client_config.control_channel();
     create_topic(&admin, control_topic)
         .await
         .expect("Failed to create control topic");
 
-    // 2. client_id-data - For receiving data messages from the QD gateway.
+    // 2. client_id-data - For receiving data messages from the gateway.
     let data_topic = &client_config.data_channel();
     create_topic(&admin, data_topic)
         .await
         .expect("Failed to create data topic");
 
-    // 3. client_id-error - For receiving error messages from the QD gateway.
+    // 3. client_id-error - For receiving error messages from the gateway.
     let err_topic = &client_config.error_channel();
     create_topic(&admin, err_topic).await.expect("Failed to create data topic");
 
