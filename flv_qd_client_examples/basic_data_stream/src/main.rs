@@ -1,4 +1,4 @@
-use common::prelude::{ExchangeID, MessageClientConfig};
+use common::prelude::{MessageClientConfig};
 use qd_client::QDClient;
 use std::time::Duration;
 use tokio::time::sleep;
