@@ -40,6 +40,8 @@
         <type name="ExchangeID" encodingType="uInt8NULL" primitiveType="uint8"/>
         <type name="SymbolID" encodingType="uInt16NULL" primitiveType="uint16"/>
         <type name="Timestamp" encodingType="Int64NULL" primitiveType="int64"/>
+        <type name="TimeResolution" encodingType="uInt8NULL" primitiveType="uint8"/>
+
     </types>
 
 <!--    MESSAGE HEADER DEFINITION -->
@@ -93,7 +95,8 @@
         <field name="clientID" id="2" type="ClientID"/>
         <field name="exchangeID" id="3" type="ExchangeID"/>
         <field name="symbolID" id="4" type="SymbolID"/>
-        <field name="dataTypeID" id="5" type="DataTypeID"/>
+        <field name="timeResolution" id="5" type="TimeResolution"/>
+        <field name="dataTypeID" id="6" type="DataTypeID"/>
     </sbe:message>
 
     <sbe:message name="StopDataMsg" id="202">

@@ -1,7 +1,7 @@
 use crate::*;
 
-pub use decoder::ClientErrorDecoder;
 pub use encoder::ClientErrorEncoder;
+pub use decoder::ClientErrorDecoder;
 
 pub const SBE_BLOCK_LENGTH: u16 = 5;
 pub const SBE_TEMPLATE_ID: u16 = 801;
@@ -97,7 +97,9 @@ pub mod encoder {
             let offset = self.offset + 4;
             self.get_buf_mut().put_u8_at(offset, value);
         }
+
     }
+
 } // end encoder
 
 pub mod decoder {
@@ -190,5 +192,8 @@ pub mod decoder {
                 Some(value)
             }
         }
+
     }
+
 } // end decoder
+
