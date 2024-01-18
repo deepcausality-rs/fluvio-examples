@@ -1,4 +1,4 @@
-use common::prelude::{ExchangeID, SymbolID};
+use common::prelude::{ExchangeID, SymbolID, TimeResolution};
 use sbe_messages::prelude::{DataType, MessageType, StartDataMessage};
 
 fn get_message() -> StartDataMessage {
@@ -6,7 +6,8 @@ fn get_message() -> StartDataMessage {
     let exchange_id = ExchangeID::BinanceSpot;
     let symbol_id = SymbolID::BTCUSD as u16;
     let data_type = DataType::TradeData;
-    StartDataMessage::new(client_id, exchange_id, symbol_id, data_type)
+    let time_resolution = TimeResolution::NoValue; // TimeResolution only applies to OHLCV data type
+    StartDataMessage::new(client_id, exchange_id, symbol_id, time_resolution, data_type)
 }
 
 #[test]
@@ -16,11 +17,13 @@ fn test_new() {
     let exchange_id = ExchangeID::BinanceSpot;
     let symbol_id = SymbolID::BTCUSD as u16;
     let data_type = DataType::TradeData;
+    let time_resolution = TimeResolution::NoValue;
 
     assert_eq!(message.message_type(), &MessageType::StartData);
     assert_eq!(message.client_id(), &1);
     assert_eq!(message.exchange_id(), &exchange_id);
     assert_eq!(message.symbol_id(), &symbol_id);
+    assert_eq!(message.time_resolution(), &time_resolution);
     assert_eq!(message.data_type_id(), &data_type);
 }
 
@@ -30,21 +33,23 @@ fn test_encode() {
 
     let exchange_id = ExchangeID::BinanceSpot;
     let symbol_id = SymbolID::BTCUSD as u16;
+    let time_resolution = TimeResolution::NoValue;
     let data_type = DataType::TradeData;
 
     assert_eq!(message.message_type(), &MessageType::StartData);
     assert_eq!(message.client_id(), &1);
     assert_eq!(message.exchange_id(), &exchange_id);
     assert_eq!(message.symbol_id(), &symbol_id);
+    assert_eq!(message.time_resolution(), &time_resolution);
     assert_eq!(message.data_type_id(), &data_type);
 
     let enc = message.encode();
     assert!(enc.is_ok());
 
     let (limit, buffer) = enc.unwrap();
-    assert_eq!(limit, 16);
+    assert_eq!(limit,17);
 
-    let expected: Vec<u8> = vec![8, 0, 201, 0, 1, 0, 1, 0, 201, 0, 1, 0, 1, 1, 0, 1];
+    let expected: Vec<u8> = vec![9, 0, 201, 0, 1, 0, 1, 0, 201, 0, 1, 0, 1, 1, 0, 0, 1];
     let actual = buffer;
 
     assert_eq!(expected, actual);
@@ -52,19 +57,21 @@ fn test_encode() {
 
 #[test]
 fn test_decode() {
-    let encoded: Vec<u8> = vec![8, 0, 201, 0, 1, 0, 1, 0, 201, 0, 1, 0, 1, 1, 0, 1];
+    let encoded: Vec<u8> = vec![9, 0, 201, 0, 1, 0, 1, 0, 201, 0, 1, 0, 1, 1, 0, 0, 1];
     let buffer = encoded.as_slice();
 
     let message = StartDataMessage::from(buffer);
 
     let exchange_id = ExchangeID::BinanceSpot;
     let symbol_id = SymbolID::BTCUSD as u16;
+    let time_resolution = TimeResolution::NoValue;
     let data_type = DataType::TradeData;
 
     assert_eq!(message.message_type(), &MessageType::StartData);
     assert_eq!(message.client_id(), &1);
     assert_eq!(message.exchange_id(), &exchange_id);
     assert_eq!(message.symbol_id(), &symbol_id);
+    assert_eq!(message.time_resolution(), &time_resolution);
     assert_eq!(message.data_type_id(), &data_type);
 }
 
@@ -99,10 +106,27 @@ fn test_symbol_id() {
 }
 
 #[test]
+fn test_time_resolution() {
+    let message = get_message();
+    let time_resolution = TimeResolution::NoValue;
+
+    assert_eq!(message.time_resolution(), &time_resolution);
+}
+
+#[test]
 fn test_display() {
     let message = get_message();
 
-    let expected = "StartDataMessage[message_type: StartData, client_id: 1, exchange_id: BinanceSpot, symbol_id: 1 data_type: TradeData]";
+    let expected = format!(
+        "StartDataMessage[message_type: {}, client_id: {}, exchange_id: {}, symbol_id: {} time_resolution: {} data_type: {}]",
+        message.message_type(),
+        message.client_id(),
+        message.exchange_id(),
+        message.symbol_id(),
+        message.time_resolution(),
+        message.data_type_id()
+    );
+
     let actual = format!("{}", message);
     assert_eq!(expected, actual);
 }

@@ -17,7 +17,7 @@ impl StartDataMessage {
     pub fn data_type_id(&self) -> &DataType {
         &self.data_type_id
     }
-    pub fn time_resolution(&self) -> TimeResolution {
-        self.time_resolution
+    pub fn time_resolution(&self) -> &TimeResolution {
+        &self.time_resolution
     }
 }
