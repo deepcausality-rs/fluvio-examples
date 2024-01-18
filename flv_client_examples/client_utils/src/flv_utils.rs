@@ -3,8 +3,6 @@ use fluvio::metadata::topic::TopicSpec;
 use fluvio::{Fluvio, FluvioAdmin, PartitionConsumer, RecordKey, TopicProducer};
 use std::error::Error;
 
-
-
 /// Sends a message to the given Fluvio topic producer.
 ///
 /// # Arguments

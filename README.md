@@ -176,7 +176,7 @@ which should show:
 ``` 
     ||  QDGW  ||
     ==========================================
-    Listening on topic: qdgw-control
+    Listening on TOPIC: qdgw-control
     Metrics on endpoint: 0.0.0.0:8080/metrics
     ==========================================
 ```

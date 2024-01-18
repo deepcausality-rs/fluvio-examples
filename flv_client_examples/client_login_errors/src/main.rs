@@ -63,7 +63,9 @@ async fn connect(
 
     // 3. client_id-error - For receiving error messages from the gateway.
     let err_topic = &client_config.error_channel();
-    create_topic(&admin, err_topic).await.expect("Failed to create data topic");
+    create_topic(&admin, err_topic)
+        .await
+        .expect("Failed to create data topic");
 
     Ok(())
 }
