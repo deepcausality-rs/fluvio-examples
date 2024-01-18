@@ -21,6 +21,8 @@ async fn main() {
         .await
         .expect("Failed to create QD Gateway client");
 
+    // client.start_trade_data().await.expect("Failed to start trade data");
+
     // Wait a moment ..
     sleep(Duration::from_secs(5)).await;
 

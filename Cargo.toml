@@ -4,7 +4,6 @@ resolver = "2"
 
 members = [
     "flv_cli/data_importer",
-    "flv_cli/msg_client",
     "flv_qd_client",
     "flv_qd_client_examples/basic_data_stream",
     "flv_common",
