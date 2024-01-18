@@ -25,8 +25,8 @@ impl QDClient {
     ) -> Result<(), Box<dyn Error + Send>> {
         // Create message
         let data_type = DataType::TradeData;
-        // let time_resolution = TimeResolution::NoValue;
-        let message = StartDataMessage::new(self.client_id, exchange_id, symbol_id, data_type);
+        let time_resolution = TimeResolution::NoValue; // Time resolution will be ignored for TradeData hence NoValue.
+        let message = StartDataMessage::new(self.client_id, exchange_id, symbol_id, time_resolution, data_type);
 
         // Encode message
         let (_, buffer) = message
@@ -61,11 +61,11 @@ impl QDClient {
         &self,
         exchange_id: ExchangeID,
         symbol_id: u16,
-        _time_resolution: TimeResolution,
+        time_resolution: TimeResolution,
     ) -> Result<(), Box<dyn Error + Send>> {
         // Create message
         let data_type = DataType::OHLCVData;
-        let message = StartDataMessage::new(self.client_id, exchange_id, symbol_id, data_type);
+        let message = StartDataMessage::new(self.client_id, exchange_id, symbol_id, time_resolution, data_type);
 
         // Encode message
         let (_, buffer) = message

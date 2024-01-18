@@ -1,5 +1,5 @@
 use crate::utils as client_utils;
-use common::prelude::{ExchangeID, MessageClientConfig, SymbolID};
+use common::prelude::{ExchangeID, MessageClientConfig, SymbolID, TimeResolution};
 use fluvio::Offset;
 use futures::StreamExt;
 use sbe_messages::prelude::{
@@ -45,7 +45,8 @@ async fn produce() -> Result<(), Box<dyn Error + Send>> {
     let exchange_id = ExchangeID::BinanceSpot;
     let symbol_id = SymbolID::BTCUSD as u16;
     let data_type = DataType::TradeData;
-    let message = StartDataMessage::new(CLIENT_ID, exchange_id, symbol_id, data_type);
+    let time_resolution = TimeResolution::NoValue; // Time resolution will be ignored for TradeData hence NoValue.
+    let message = StartDataMessage::new(CLIENT_ID, exchange_id, symbol_id, time_resolution, data_type);
 
     let enc = message.encode();
     let (_, buffer) = enc.unwrap();

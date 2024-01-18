@@ -1,6 +1,6 @@
 use crate::service::Server;
 use autometrics::autometrics;
-use common::prelude::{ClientChannel, MessageProcessingError, TimeResolution};
+use common::prelude::{ClientChannel, MessageProcessingError};
 use fluvio::Fluvio;
 use sbe_messages::prelude::{ClientErrorType, DataErrorType, DataType, StartDataMessage};
 
@@ -223,7 +223,7 @@ impl Server {
                 }
             }
             DataType::OHLCVData => {
-                let time_resolution = &TimeResolution::FifteenMin;
+                let time_resolution = &start_data_msg.time_resolution();
 
                 // Handle query error error
                 let ohlcv_bars = match self

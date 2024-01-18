@@ -1,5 +1,5 @@
 use crate::prelude::{DataType, MessageType};
-use common::prelude::ExchangeID;
+use common::prelude::{ExchangeID, TimeResolution};
 use serde::{Deserialize, Serialize};
 
 mod display;
@@ -13,6 +13,7 @@ pub struct StartDataMessage {
     client_id: u16,
     exchange_id: ExchangeID,
     symbol_id: u16,
+    time_resolution: TimeResolution,
     data_type_id: DataType,
 }
 
@@ -21,6 +22,7 @@ impl StartDataMessage {
         client_id: u16,
         exchange_id: ExchangeID,
         symbol_id: u16,
+        time_resolution: TimeResolution,
         data_type_id: DataType,
     ) -> Self {
         let message_type = MessageType::StartData;
@@ -30,6 +32,7 @@ impl StartDataMessage {
             client_id,
             exchange_id,
             symbol_id,
+            time_resolution,
             data_type_id,
         }
     }
