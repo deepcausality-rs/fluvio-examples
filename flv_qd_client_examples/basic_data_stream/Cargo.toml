@@ -1,0 +1,25 @@
+[package]
+name = "basic_data_stream"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+readme.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+
+[[bin]]
+name = "basic_data_stream"
+path = "src/main.rs"
+
+
+[dependencies]
+# Intrnal crates
+common = { workspace = true }
+qd_client = { workspace = true }
+sbe_messages = { workspace = true }
+
+# External crates
+futures = {workspace = true}
+tokio = { workspace = true }
+fluvio = { workspace = true }

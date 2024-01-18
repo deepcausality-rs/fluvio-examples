@@ -14,7 +14,7 @@ pub struct LastOHCLVBar {
 
 impl LastOHCLVBar {
     pub fn new(symbol_id: u16) -> Self {
-        let message_type = MessageType::LastDataBar;
+        let message_type = MessageType::LastOHLCBar;
         Self {
             message_type,
             symbol_id,

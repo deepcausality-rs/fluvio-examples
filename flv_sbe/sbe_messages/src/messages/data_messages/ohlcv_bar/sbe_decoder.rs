@@ -17,7 +17,7 @@ pub fn decode_data_bar_message(buffer: &[u8]) -> Result<OHLCVBar, SbeDecodeError
 
     let sbe_message_type = csg.message_type();
     let message_type = MessageType::from(sbe_message_type as u16);
-    assert_eq!(message_type, MessageType::DataBar);
+    assert_eq!(message_type, MessageType::OHLCBar);
 
     let symbol_id = csg.symbol_id();
 

@@ -92,7 +92,7 @@ async fn consume() -> Result<(), Box<dyn Error + Send>> {
         let buffer = value.as_slice();
 
         let message_type = MessageType::from(buffer[2] as u16);
-        if message_type == MessageType::LastDataBar {
+        if message_type == MessageType::LastOHLCBar {
             println!("[zmq manager]: Last data bar.");
             println!("[zmq manager]: EXIT NOW");
             break;

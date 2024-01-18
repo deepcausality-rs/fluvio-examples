@@ -5,7 +5,8 @@ resolver = "2"
 members = [
     "flv_cli/data_importer",
     "flv_cli/msg_client",
-    "flv_client",
+    "flv_qd_client",
+    "flv_qd_client_examples/basic_data_stream",
     "flv_common",
     "flv_components/client_manager",
     "flv_components/config_manager",
@@ -39,14 +40,12 @@ config_manager = {path = "flv_components/config_manager" }
 db_query_manager = { path = "flv_components/db_query_manager" }
 db_quest_manager = {path = "flv_components/db_quest_manager" }
 symbol_manager = {path = "flv_components/symbol_manager" }
+qd_client = { path = "flv_qd_client" }
 sbe_bindings = {path = "flv_sbe/bindings" }
 sbe_messages = {path = "flv_sbe/sbe_messages" }
 service_utils = { path = "flv_service_utils" }
 db_specs = { path = "flv_specs/db_specs" }
 service_specs = {path = "flv_specs/service_specs" }
-#
-# Internal Example crates
-client_utils = { path = "flv_client_examples/client_utils" }
 #
 # External crates
 autometrics = { version = "1", features = ["prometheus-exporter"] }

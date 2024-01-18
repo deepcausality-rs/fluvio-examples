@@ -58,11 +58,9 @@ impl QDClient {
     ///
     pub async fn new(
         client_id: u16,
+        client_config: MessageClientConfig,
         consumer: Result<(), Box<dyn Error + Send>>,
     ) -> Result<Self, Box<dyn Error + Send>> {
-        // Create a new client configuration.
-        let client_config = MessageClientConfig::new(client_id);
-
         // Get Fluvio admin.
         let admin = flv_utils::get_admin()
             .await

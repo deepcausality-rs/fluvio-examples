@@ -14,7 +14,7 @@ pub struct FirstOHLCVBar {
 
 impl FirstOHLCVBar {
     pub fn new(symbol_id: u16) -> Self {
-        let message_type = MessageType::FirstDataBar;
+        let message_type = MessageType::FirstOHLCBar;
         Self {
             message_type,
             symbol_id,
