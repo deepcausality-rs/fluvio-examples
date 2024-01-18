@@ -6,8 +6,6 @@ members = [
     "flv_cli/data_importer",
     "flv_cli/msg_client",
     "flv_client",
-    "flv_client_examples/client_login_errors",
-    "flv_client_examples/client_utils",
     "flv_common",
     "flv_components/client_manager",
     "flv_components/config_manager",
