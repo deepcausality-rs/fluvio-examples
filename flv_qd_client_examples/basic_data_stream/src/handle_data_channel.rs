@@ -1,7 +1,7 @@
 use common::prelude::MessageClientConfig;
 use fluvio::Offset;
 use futures::StreamExt;
-use sbe_messages::prelude::{MessageType};
+use sbe_messages::prelude::MessageType;
 use std::error::Error;
 
 pub(crate) async fn handle_data_channel(
