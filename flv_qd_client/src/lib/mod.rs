@@ -135,7 +135,22 @@ impl QDClient {
     }
 }
 
-pub(crate) async fn handle_channel(
+/// Handles incoming messages on a topic channel.
+///
+/// # Arguments
+///
+/// * `channel_topic` - The topic to subscribe to.
+/// * `event_handler` - The callback to process each message.
+///
+/// For each message received on the topic, this:
+///
+/// - Creates a Fluvio consumer for the topic.
+/// - Gets a stream for the consumer.
+/// - Loops through records in the stream.
+/// - Extracts the message bytes.
+/// - Calls the `event_handler` with the message buffer.
+///
+async fn handle_channel(
     channel_topic: &str,
     event_handler: fn(buffer: Vec<u8>) -> Result<(), Box<dyn Error + Send>>,
 ) -> Result<(), Box<dyn Error + Send>> {
