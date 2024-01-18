@@ -31,8 +31,6 @@ pub(crate) async fn create_topics(
     admin: &FluvioAdmin,
     client_config: &MessageClientConfig,
 ) -> Result<(), Box<dyn Error>> {
-    println!("Setup Client Connection!");
-
     // Create client topics:
     // 1. client_id-control - For receiving control messages from the gateway.
     let control_topic = &client_config.control_channel();

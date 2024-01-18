@@ -1,5 +1,6 @@
 use common::prelude::MessageClientConfig;
-use fluvio::{FluvioAdmin, TopicProducer};
+use fluvio::{FluvioAdmin, Offset, TopicProducer};
+use futures::StreamExt;
 use std::error::Error;
 use std::time::Duration;
 use tokio::time::sleep;
@@ -36,30 +37,27 @@ impl QDClient {
     /// # Arguments
     ///
     /// * `client_id` - The unique ID for this client.
-    /// * `consumer` - A closure that runs the message consumer.
+    /// * `client_config` - The client configuration.
+    /// * `data_handler` - The event handler for data messages.
+    /// * `err_handler` - The event handler for error messages.
     ///
     /// # Returns
     ///
     /// Returns a `Result` with the `QDClient` instance on success, or an `Error` on failure.
-    /// The client will be already logged in to the gateway on success.
     ///
-    /// This constructor does the following:
+    /// This does the following:
     ///
-    /// - Creates a `MessageClientConfig` with the client ID.
-    /// - Gets a `FluvioAdmin` client.
-    /// - Gets a `TopicProducer` for the gateway topic.
-    /// - Creates the client topics:
-    ///   1. `client_id-control` - For receiving control messages from the gateway.///
-    ///   2. `client_id-data` - For receiving data messages from the gateway.///
-    ///   3. `client_id-error` - For receiving error messages from the gateway.
-    /// - Spawns the `consumer` closure as a Tokio task.
+    /// - Gets a `FluvioAdmin` client and `TopicProducer` for the gateway.
+    /// - Creates the client topics using `flv_utils::create_topics()`.
+    /// - Spawns the `data_handler` and `err_handler` callbacks as tasks.
     /// - Constructs the `QDClient`.
     /// - Logs in the client by calling `login()`.
     ///
     pub async fn new(
         client_id: u16,
         client_config: MessageClientConfig,
-        consumer: Result<(), Box<dyn Error + Send>>,
+        data_handler: fn(buffer: Vec<u8>) -> Result<(), Box<dyn Error + Send>>,
+        err_handler: fn(buffer: Vec<u8>) -> Result<(), Box<dyn Error + Send>>,
     ) -> Result<Self, Box<dyn Error + Send>> {
         // Get Fluvio admin.
         let admin = flv_utils::get_admin()
@@ -76,9 +74,18 @@ impl QDClient {
             .await
             .expect("[QDClient/new]: Failed to create topics");
 
-        // Start the consumer as Tokio task.
+        // Start the data handler as Tokio task.
+        let data_topic = client_config.data_channel();
         tokio::spawn(async move {
-            if let Err(e) = consumer {
+            if let Err(e) = handle_channel(&data_topic, data_handler).await {
+                eprintln!("[QDClient/new]: Consumer connection error: {}", e);
+            }
+        });
+
+        // Start the error handler as Tokio task.
+        let err_topic = client_config.error_channel();
+        tokio::spawn(async move {
+            if let Err(e) = handle_channel(&err_topic, err_handler).await {
                 eprintln!("[QDClient/new]: Consumer connection error: {}", e);
             }
         });
@@ -126,4 +133,30 @@ impl QDClient {
 
         Ok(())
     }
+}
+
+pub(crate) async fn handle_channel(
+    channel_topic: &str,
+    event_handler: fn(buffer: Vec<u8>) -> Result<(), Box<dyn Error + Send>>,
+) -> Result<(), Box<dyn Error + Send>> {
+    // Create consumer for channel topic.
+    let consumer = fluvio::consumer(channel_topic, 0)
+        .await
+        .expect("Failed to create a consumer for data topic");
+
+    // Create stream for consumer.
+    let mut stream = consumer
+        .stream(Offset::end())
+        .await
+        .expect("Failed to create a stream");
+
+    // Consume records from the stream and process with the event handler.
+    while let Some(Ok(record)) = stream.next().await {
+        let value = record.get_value().to_vec();
+        let buffer = value.as_slice();
+
+        event_handler(buffer.to_vec())?;
+    }
+
+    Ok(())
 }
