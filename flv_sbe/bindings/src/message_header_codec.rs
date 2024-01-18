@@ -1,7 +1,7 @@
 use crate::*;
 
-pub use encoder::MessageHeaderEncoder;
 pub use decoder::MessageHeaderDecoder;
+pub use encoder::MessageHeaderEncoder;
 
 pub const ENCODED_LENGTH: usize = 8;
 
@@ -14,7 +14,10 @@ pub mod encoder {
         offset: usize,
     }
 
-    impl<'a, P> Writer<'a> for MessageHeaderEncoder<P> where P: Writer<'a> + Default {
+    impl<'a, P> Writer<'a> for MessageHeaderEncoder<P>
+    where
+        P: Writer<'a> + Default,
+    {
         #[inline]
         fn get_buf_mut(&mut self) -> &mut WriteBuf<'a> {
             if let Some(parent) = self.parent.as_mut() {
@@ -25,7 +28,10 @@ pub mod encoder {
         }
     }
 
-    impl<'a, P> MessageHeaderEncoder<P> where P: Writer<'a> + Default {
+    impl<'a, P> MessageHeaderEncoder<P>
+    where
+        P: Writer<'a> + Default,
+    {
         pub fn wrap(mut self, parent: P, offset: usize) -> Self {
             self.parent = Some(parent);
             self.offset = offset;
@@ -92,9 +98,8 @@ pub mod encoder {
             let offset = self.offset + 6;
             self.get_buf_mut().put_u16_at(offset, value);
         }
-
     }
-} // end encoder mod 
+} // end encoder mod
 
 pub mod decoder {
     use super::*;
@@ -105,14 +110,20 @@ pub mod decoder {
         offset: usize,
     }
 
-    impl<'a, P> Reader<'a> for MessageHeaderDecoder<P> where P: Reader<'a> + Default {
+    impl<'a, P> Reader<'a> for MessageHeaderDecoder<P>
+    where
+        P: Reader<'a> + Default,
+    {
         #[inline]
         fn get_buf(&self) -> &ReadBuf<'a> {
             self.parent.as_ref().expect("parent missing").get_buf()
         }
     }
 
-    impl<'a, P> MessageHeaderDecoder<P> where P: Reader<'a> + Default {
+    impl<'a, P> MessageHeaderDecoder<P>
+    where
+        P: Reader<'a> + Default,
+    {
         pub fn wrap(mut self, parent: P, offset: usize) -> Self {
             self.parent = Some(parent);
             self.offset = offset;
@@ -147,6 +158,5 @@ pub mod decoder {
         pub fn version(&self) -> u16 {
             self.get_buf().get_u16_at(self.offset + 6)
         }
-
     }
-} // end decoder mod 
+} // end decoder mod

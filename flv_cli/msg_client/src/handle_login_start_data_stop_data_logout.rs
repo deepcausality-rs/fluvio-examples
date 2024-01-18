@@ -46,7 +46,13 @@ async fn produce() -> Result<(), Box<dyn Error + Send>> {
     let symbol_id = SymbolID::BTCUSD as u16;
     let data_type = DataType::TradeData;
     let time_resolution = TimeResolution::NoValue; // Time resolution will be ignored for TradeData hence NoValue.
-    let message = StartDataMessage::new(CLIENT_ID, exchange_id, symbol_id, time_resolution, data_type);
+    let message = StartDataMessage::new(
+        CLIENT_ID,
+        exchange_id,
+        symbol_id,
+        time_resolution,
+        data_type,
+    );
 
     let enc = message.encode();
     let (_, buffer) = enc.unwrap();

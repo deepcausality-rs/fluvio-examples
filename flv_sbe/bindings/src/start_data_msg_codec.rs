@@ -1,7 +1,7 @@
 use crate::*;
 
-pub use encoder::StartDataMsgEncoder;
 pub use decoder::StartDataMsgDecoder;
+pub use encoder::StartDataMsgEncoder;
 
 pub const SBE_BLOCK_LENGTH: u16 = 9;
 pub const SBE_TEMPLATE_ID: u16 = 201;
@@ -139,9 +139,7 @@ pub mod encoder {
             let offset = self.offset + 8;
             self.get_buf_mut().put_u8_at(offset, value);
         }
-
     }
-
 } // end encoder
 
 pub mod decoder {
@@ -247,8 +245,5 @@ pub mod decoder {
         pub fn data_type_id(&self) -> u8 {
             self.get_buf().get_u8_at(self.offset + 8)
         }
-
     }
-
 } // end decoder
-

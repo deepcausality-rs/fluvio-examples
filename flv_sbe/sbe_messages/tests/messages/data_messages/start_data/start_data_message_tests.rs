@@ -7,7 +7,13 @@ fn get_message() -> StartDataMessage {
     let symbol_id = SymbolID::BTCUSD as u16;
     let data_type = DataType::TradeData;
     let time_resolution = TimeResolution::NoValue; // TimeResolution only applies to OHLCV data type
-    StartDataMessage::new(client_id, exchange_id, symbol_id, time_resolution, data_type)
+    StartDataMessage::new(
+        client_id,
+        exchange_id,
+        symbol_id,
+        time_resolution,
+        data_type,
+    )
 }
 
 #[test]
@@ -47,7 +53,7 @@ fn test_encode() {
     assert!(enc.is_ok());
 
     let (limit, buffer) = enc.unwrap();
-    assert_eq!(limit,17);
+    assert_eq!(limit, 17);
 
     let expected: Vec<u8> = vec![9, 0, 201, 0, 1, 0, 1, 0, 201, 0, 1, 0, 1, 1, 0, 0, 1];
     let actual = buffer;
