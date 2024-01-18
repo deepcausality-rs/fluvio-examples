@@ -8,9 +8,9 @@ fn test_from_u16() {
     assert_eq!(MessageType::from(201_u16), MessageType::StartData);
     assert_eq!(MessageType::from(202_u16), MessageType::StopData);
     assert_eq!(MessageType::from(203_u16), MessageType::StopAllData);
-    assert_eq!(MessageType::from(204_u16), MessageType::OHLCBar);
-    assert_eq!(MessageType::from(205_u16), MessageType::FirstOHLCBar);
-    assert_eq!(MessageType::from(206_u16), MessageType::LastOHLCBar);
+    assert_eq!(MessageType::from(204_u16), MessageType::OHLCVBar);
+    assert_eq!(MessageType::from(205_u16), MessageType::FirstOHLCVBar);
+    assert_eq!(MessageType::from(206_u16), MessageType::LastOHLCVBar);
     assert_eq!(MessageType::from(801_u16), MessageType::ClientError);
     assert_eq!(MessageType::from(999_u16), MessageType::UnknownMessageType);
 }

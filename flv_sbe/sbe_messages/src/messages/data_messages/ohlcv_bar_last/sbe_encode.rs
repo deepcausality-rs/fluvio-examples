@@ -1,9 +1,9 @@
 use crate::errors::SbeEncodeError;
-use crate::prelude::LastOHCLVBar;
+use crate::prelude::LastOHLCVBar;
 use sbe_bindings::MessageType as SbeMessageType;
 use sbe_bindings::{message_header_codec, Encoder, LastDataBarEncoder, WriteBuf};
 
-impl LastOHCLVBar {
+impl LastOHLCVBar {
     pub fn encode(&self) -> Result<(usize, Vec<u8>), SbeEncodeError> {
         // precise buffer size is 12 bytes for the entire message.
         let mut buffer = vec![0u8; 12];

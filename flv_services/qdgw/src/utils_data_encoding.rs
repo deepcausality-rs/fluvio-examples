@@ -1,7 +1,7 @@
 use crate::service::Server;
 use common::prelude::MessageProcessingError;
 use sbe_messages::prelude::{
-    DataErrorType, DataType, FirstOHLCVBar, FirstTradeBar, LastOHCLVBar, LastTradeBar,
+    DataErrorType, DataType, FirstOHLCVBar, FirstTradeBar, LastOHLCVBar, LastTradeBar,
 };
 
 impl Server {
@@ -95,7 +95,7 @@ impl Server {
             }
             DataType::OHLCVData => {
                 // Encode last bar message
-                let last_ohlcv_bar = LastOHCLVBar::new(symbol_id);
+                let last_ohlcv_bar = LastOHLCVBar::new(symbol_id);
                 match last_ohlcv_bar.encode() {
                     Ok((_, buf)) => Ok(buf),
                     Err(e) => Err((

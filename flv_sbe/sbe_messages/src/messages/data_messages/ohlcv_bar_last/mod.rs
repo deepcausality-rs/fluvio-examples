@@ -7,14 +7,14 @@ use crate::prelude::MessageType;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug, Default, Clone, PartialEq)]
-pub struct LastOHCLVBar {
+pub struct LastOHLCVBar {
     message_type: MessageType,
     symbol_id: u16,
 }
 
-impl LastOHCLVBar {
+impl LastOHLCVBar {
     pub fn new(symbol_id: u16) -> Self {
-        let message_type = MessageType::LastOHLCBar;
+        let message_type = MessageType::LastOHLCVBar;
         Self {
             message_type,
             symbol_id,
@@ -22,7 +22,7 @@ impl LastOHCLVBar {
     }
 }
 
-impl From<&[u8]> for LastOHCLVBar {
+impl From<&[u8]> for LastOHLCVBar {
     #[inline]
     fn from(value: &[u8]) -> Self {
         sbe_decode::decode_last_data_bar_message(value)

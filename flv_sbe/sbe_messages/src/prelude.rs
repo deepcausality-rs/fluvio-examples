@@ -11,7 +11,7 @@ pub use crate::messages::client_messages::client_logout::ClientLogoutMessage;
 // Data messages
 pub use crate::messages::data_messages::ohlcv_bar::SbeOHLCVBar;
 pub use crate::messages::data_messages::ohlcv_bar_first::FirstOHLCVBar;
-pub use crate::messages::data_messages::ohlcv_bar_last::LastOHCLVBar;
+pub use crate::messages::data_messages::ohlcv_bar_last::LastOHLCVBar;
 pub use crate::messages::data_messages::start_data::StartDataMessage;
 pub use crate::messages::data_messages::stop_all_data::StopAllDataMessage;
 pub use crate::messages::data_messages::stop_data::StopDataMessage;

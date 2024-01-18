@@ -27,9 +27,11 @@ async fn main() {
 }
 
 async fn consumer(client_config: MessageClientConfig) -> Result<(), Box<dyn Error + Send>> {
+    //
     let consume_data_handle = tokio::spawn(handle_data_channel::handle_data_channel(
         client_config.clone(),
     ));
+    //
     let consume_err_handle = tokio::spawn(handle_error_channel::handle_error_channel(
         client_config.clone(),
     ));

@@ -4,20 +4,20 @@ use sbe_messages::prelude::{FirstOHLCVBar, MessageType};
 fn test_new() {
     let bar = FirstOHLCVBar::new(42);
 
-    assert_eq!(bar.message_type(), MessageType::FirstOHLCBar);
+    assert_eq!(bar.message_type(), MessageType::FirstOHLCVBar);
 }
 #[test]
 fn test_message_type() {
     let bar = FirstOHLCVBar::new(42);
 
-    assert_eq!(bar.message_type(), MessageType::FirstOHLCBar);
+    assert_eq!(bar.message_type(), MessageType::FirstOHLCVBar);
 }
 
 #[test]
 fn test_encode() {
     let bar = FirstOHLCVBar::new(42);
 
-    assert_eq!(bar.message_type(), MessageType::FirstOHLCBar);
+    assert_eq!(bar.message_type(), MessageType::FirstOHLCVBar);
 
     let enc = bar.encode();
     assert!(enc.is_ok());
@@ -37,14 +37,14 @@ fn test_decode() {
     let buffer = encoded.as_slice();
 
     let message = FirstOHLCVBar::from(buffer);
-    assert_eq!(message.message_type(), MessageType::FirstOHLCBar);
+    assert_eq!(message.message_type(), MessageType::FirstOHLCVBar);
 }
 
 #[test]
 fn test_display() {
     let bar = FirstOHLCVBar::new(42);
 
-    let expected = "FirstDataBar { message_type: FirstDataBar, symbol_id: 42 }";
+    let expected = "FirstOHLCVBar { message_type: FirstOHLCVBar, symbol_id: 42 }";
     let actual = format!("{}", bar);
 
     assert_eq!(expected, actual);

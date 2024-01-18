@@ -1,6 +1,6 @@
-use crate::prelude::{LastOHCLVBar, MessageType};
+use crate::prelude::{LastOHLCVBar, MessageType};
 
-impl LastOHCLVBar {
+impl LastOHLCVBar {
     pub fn message_type(&self) -> MessageType {
         self.message_type
     }

@@ -25,9 +25,9 @@ pub(crate) async fn handle_data_channel(
 
         match message_type {
             // Handle OHLC bars
-            MessageType::FirstOHLCBar => {}
-            MessageType::OHLCBar => {}
-            MessageType::LastOHLCBar => {}
+            MessageType::FirstOHLCVBar => {}
+            MessageType::OHLCVBar => {}
+            MessageType::LastOHLCVBar => {}
             // Handle trade bars
             MessageType::FirstTradeBar => {}
             MessageType::TradeBar => {}
