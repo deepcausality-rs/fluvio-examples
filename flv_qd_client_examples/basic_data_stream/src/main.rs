@@ -1,4 +1,4 @@
-use common::prelude::{ExchangeID, MessageClientConfig};
+use common::prelude::{ExchangeID, MessageClientConfig, TimeResolution};
 use qd_client::QDClient;
 use std::time::Duration;
 use tokio::time::sleep;
@@ -8,8 +8,7 @@ mod handle_error_channel;
 
 const CLIENT_ID: u16 = 42;
 
-const ETH_AED: u16 = 278;
-//  278 = ethaed on Kraken
+const ETH_AED: u16 = 278; //  278 = ethaed on Kraken
 
 #[tokio::main]
 async fn main() {
@@ -25,9 +24,17 @@ async fn main() {
     println!("basic_data_stream/main: Start streaming trade data for ETH/AED");
     let exchange_id = ExchangeID::Kraken;
     let symbol_id = ETH_AED;
-    client.start_trade_data(exchange_id, symbol_id)
+    client
+        .start_trade_data(exchange_id, symbol_id)
         .await
         .expect("Failed to start trade data");
+
+    println!("basic_data_stream/main: Start streaming 5 MIN OHLCV data for ETH/AED");
+    let time_resolution = TimeResolution::FiveMin;
+    client
+        .start_ohlcv_data(exchange_id, symbol_id, time_resolution)
+        .await
+        .expect("Failed to start OHLCV data");
 
     println!("basic_data_stream/main: Wait a moment ...");
     sleep(Duration::from_secs(5)).await;

@@ -21,7 +21,7 @@ impl Server {
     /// - `DataErrorType::DataEncodingError` if encoding fails
     /// - The underlying encoding error wrapped in `MessageProcessingError`
     ///
-    pub(crate) async fn encode_first_trade_bar(
+    pub(crate) async fn encode_first_bar(
         &self,
         date_type: &DataType,
         symbol_id: u16,
@@ -72,7 +72,7 @@ impl Server {
     /// - `DataErrorType::DataEncodingError` if encoding fails
     /// - The underlying encoding error wrapped in `MessageProcessingError`
     ///
-    pub(crate) async fn encode_last_trade_bar(
+    pub(crate) async fn encode_last_bar(
         &self,
         date_type: &DataType,
         symbol_id: u16,

@@ -147,11 +147,7 @@ impl Server {
         // Unlock the client_data_producers hashmap
         drop(client_data_producers);
 
-        println!(
-            "[client_login]: Client {:?} logged in successfully",
-            client_id
-        );
-
+        // println!("[client_login]: Client {:?} logged in successfully", client_id);
         Ok(())
     }
 }

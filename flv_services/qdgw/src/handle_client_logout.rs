@@ -147,11 +147,7 @@ impl Server {
         // Unlock the client_manager
         drop(client_db);
 
-        println!(
-            "[client_logout]: Client {:?} logged out successfully",
-            client_id
-        );
-
+        // println!("[client_logout]: Client {:?} logged out successfully", client_id);
         Ok(())
     }
 }

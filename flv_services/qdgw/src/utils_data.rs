@@ -26,9 +26,6 @@ impl Server {
         // Get all bars
         let result = q_manager.get_all_trades(symbol_id, trade_table).await;
 
-        // Unlock / drop query manager
-        drop(q_manager);
-
         match result {
             Ok(bars) => Ok(bars),
             Err(e) => Err(e),

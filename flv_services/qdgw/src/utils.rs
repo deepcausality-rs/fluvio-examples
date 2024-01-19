@@ -17,13 +17,14 @@ impl Server {
     ///
     pub(crate) async fn get_trade_table_name(
         &self,
-        exchange_id: u8,
+        exchange_id: u16,
+        symbol_id: u16,
     ) -> Result<String, MessageProcessingError> {
         // Lock the SymbolManager
         let mut symbol_db = self.symbol_manager.lock().await;
 
         // look up the table name
-        let res = symbol_db.get_symbol_table(exchange_id as u16);
+        let res = symbol_db.get_symbol_table_name(exchange_id as u16, symbol_id);
 
         // Unlock the SymbolManager
         drop(symbol_db);
