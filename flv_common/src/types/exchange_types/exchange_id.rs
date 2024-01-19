@@ -6,9 +6,7 @@ use std::fmt::{Display, Formatter};
 pub enum ExchangeID {
     #[default]
     NullVal = 0_u8,
-    BinanceSpot = 1_u8,
-    COINBASE = 2_u8,
-    VEX = 3_u8,
+    Kraken = 1_u8,
 }
 
 impl From<u8> for ExchangeID {
@@ -16,9 +14,7 @@ impl From<u8> for ExchangeID {
     fn from(v: u8) -> Self {
         match v {
             0 => Self::NullVal,
-            1 => Self::BinanceSpot,
-            2 => Self::COINBASE,
-            3 => Self::VEX,
+            1 => Self::Kraken,
             _ => Self::NullVal,
         }
     }
@@ -28,9 +24,7 @@ impl Display for ExchangeID {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             ExchangeID::NullVal => write!(f, "NullVal"),
-            ExchangeID::BinanceSpot => write!(f, "BinanceSpot"),
-            ExchangeID::COINBASE => write!(f, "COINBASE"),
-            ExchangeID::VEX => write!(f, "VEX"),
+            ExchangeID::Kraken => write!(f, "Kraken"),
         }
     }
 }

@@ -3,9 +3,7 @@ use common::prelude::ExchangeID;
 #[test]
 fn test_from_valid_values() {
     assert_eq!(ExchangeID::from(0x0), ExchangeID::NullVal);
-    assert_eq!(ExchangeID::from(0x1), ExchangeID::BinanceSpot);
-    assert_eq!(ExchangeID::from(0x2), ExchangeID::COINBASE);
-    assert_eq!(ExchangeID::from(0x3), ExchangeID::VEX);
+    assert_eq!(ExchangeID::from(0x1), ExchangeID::Kraken);
 }
 
 #[test]
@@ -20,13 +18,7 @@ fn test_null_val() {
 }
 
 #[test]
-fn test_binance() {
-    let exchange_id = ExchangeID::BinanceSpot;
-    assert_eq!(format!("{}", exchange_id), "BinanceSpot");
-}
-
-#[test]
-fn test_vex() {
-    let exchange_id = ExchangeID::VEX;
-    assert_eq!(format!("{}", exchange_id), "VEX");
+fn test_kraken() {
+    let exchange_id = ExchangeID::Kraken;
+    assert_eq!(format!("{}", exchange_id), "Kraken");
 }
