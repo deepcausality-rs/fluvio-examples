@@ -61,6 +61,7 @@ impl ConfigManager {
         // Get vector of all supported exchanges
         let exchanges = utils::get_all_exchanges();
 
+        // Get vector of all exchange ID/name pairs
         let exchanges_id_names = utils::get_all_exchanges_ids_names();
 
         // Get hashmap of symbol tables for all supported exchanges

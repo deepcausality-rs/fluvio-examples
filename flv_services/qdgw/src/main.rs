@@ -63,12 +63,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let msg_config = cfg_manager.message_client_config();
     let service_topic = msg_config.control_channel();
 
-    // Creates a new consumer for the topic
+    // Creates a new consumer for the service topic: "qdgw-control".
     let consumer = fluvio::consumer(&service_topic, 0)
         .await
-        .expect("[QDGW]/main: Failed to create a message consumer");
+        .expect("[QDGW]/main: Failed to create a message consumer for topic: qdgw-control.");
 
-    // We have to use Arc/Mutex here to allow multi-threaded access those manager instances.
+    // Wrap ClientManager into Arc/Mutex to allow multi-threaded access.
     let client_manager = Arc::new(Mutex::new(ClientManager::new()));
 
     // Get the symbol table for the default exchange.
@@ -76,7 +76,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let exchanges = cfg_manager.exchanges_id_names().to_owned();
     let exchange_symbol_table = cfg_manager
         .get_symbol_table(default_exchange)
-        .expect("Failed to get symbol table");
+        .expect("[QDGW]/main: Failed to get symbol table for default exchange.");
 
     // Create a new QueryDBManager instance.
     let db_config = cfg_manager.db_config();
@@ -131,7 +131,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         Ok(_) => {}
         Err(e) => {
             println!(
-                "[QDGW]/main: Failed to start Fluvio and HTTP server: {:?}",
+                "[QDGW]/main: Failed to start Fluvio and HTTP/Metric server: {:?}",
                 e
             );
         }

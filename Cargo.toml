@@ -29,8 +29,7 @@ readme = "README.md"
 repository = "https://github.com/marvin-hansen/quant-engine"
 authors = ["Marvin Hansen <marvin.hansen@gmail.com>"]
 
-# Building a Monorepo with Rust
-# https://earthly.dev/blog/rust-monorepo/
+
 [workspace.dependencies]
 #
 # Internal crates
