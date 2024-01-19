@@ -17,7 +17,7 @@ use std::path::Path;
 /// # Returns
 ///
 /// A Result containing a Vec of TradeBar objects parsed from the CSV file,
-/// or a Box<Error> if there was an issue reading it.
+/// or a `Box<Error>` if there was an issue reading it.
 ///
 /// # Errors
 ///
@@ -47,7 +47,7 @@ pub fn read_csv_file(path: &str) -> Result<Vec<TradeBar>, Box<dyn Error>> {
 /// # Returns
 ///
 /// A Result containing a Vec of TradeBar objects parsed from the CSV data,
-/// or a Box<Error> if there was an issue reading or parsing the file.
+/// or a `Box<Error>` if there was an issue reading or parsing the file.
 ///
 /// # Remarks
 ///

@@ -3,7 +3,6 @@ use std::fmt::{Display, Formatter};
 use serde::{Deserialize, Serialize};
 
 /// An u8 encoded Enum that represents the unique ID of a service.
-///
 #[derive(Serialize, Deserialize, Debug, Default, Copy, Clone, Eq, PartialEq)]
 #[repr(u8)]
 pub enum ServiceID {
@@ -25,7 +24,6 @@ impl ServiceID {
 impl From<u8> for ServiceID {
     /// Converts a raw byte value into a `ServiceID`.
     /// Unknown message type results in NullVal
-    /// ```
     #[inline]
     fn from(v: u8) -> Self {
         match v {
