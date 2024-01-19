@@ -231,7 +231,7 @@ You can now navigate to http://localhost:6789 to see the autometrics explorer.
 
 The autometrics dashboard shows by default the top five endpoints by the number of requests. As you run the example code, the number of requests will increase over time, as shown in the plot below. You can inspect more detailed metrics for each function in the function tab.
 
-![autometrics_dashboard.png](doc%2Fimg%2Fautometrics_dashboard.png)
+![autometrics_dashboard.png](doc/img/autometrics_dashboard.png)
 
 Note, if you already have a prometheus installation or simply don't want metrics, the QDGW works perfectly fine without autometrics.
 
