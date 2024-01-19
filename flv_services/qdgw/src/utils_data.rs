@@ -1,8 +1,6 @@
 use crate::service::Server;
-use common::prelude::{ClientChannel, MessageProcessingError, OHLCVBar, TimeResolution, TradeBar};
+use common::prelude::{OHLCVBar, TimeResolution, TradeBar};
 use db_query_manager::error::QueryError;
-use fluvio::RecordKey;
-use sbe_messages::prelude::DataErrorType;
 
 impl Server {
     /// Gets all trade bars for the given symbol id and trade table.
@@ -71,48 +69,5 @@ impl Server {
             Ok(bars) => Ok(bars),
             Err(e) => Err(e),
         }
-    }
-
-    /// Sends the provided data buffer to the given producer.
-    ///
-    /// # Parameters
-    ///
-    /// * `producer` - The topic producer to send the data to.
-    /// * `buffer` - The data buffer to send.
-    ///
-    /// # Returns
-    ///
-    /// Returns a `Result` with `()` if successful, otherwise returns a
-    /// `(DataErrorType, MessageProcessingError)` tuple containing:
-    ///
-    /// - `DataErrorType::DataSendError`
-    /// - The underlying send error wrapped in `MessageProcessingError`
-    ///
-    pub(crate) async fn send_data(
-        &self,
-        client_id: u16,
-        buffer: Vec<u8>,
-    ) -> Result<(), (DataErrorType, MessageProcessingError)> {
-        // Get the producer for the error channel
-        let producer = self
-            .get_channel_producer(ClientChannel::ErrorChannel, client_id)
-            .await
-            .expect("[send_error]: Failed to get error channel producer");
-
-        // Send the data
-        match producer.send(RecordKey::NULL, buffer).await {
-            Ok(_) => {}
-            Err(e) => {
-                return Err((
-                    DataErrorType::DataSendError,
-                    MessageProcessingError(e.to_string()),
-                ));
-            }
-        }
-
-        // Flush the producer
-        producer.flush().await.expect("Failed to flush");
-
-        Ok(())
     }
 }

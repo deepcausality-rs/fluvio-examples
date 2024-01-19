@@ -1,4 +1,4 @@
-use common::prelude::MessageClientConfig;
+use common::prelude::{ExchangeID, MessageClientConfig};
 use qd_client::QDClient;
 use std::time::Duration;
 use tokio::time::sleep;
@@ -22,13 +22,12 @@ async fn main() {
         .await
         .expect("basic_data_stream/main: Failed to create QD Gateway client");
 
-    // println!("basic_data_stream/main: Start streaming trade data for ETH/AED");
-    // Add Kraken to ExchangeID
-    // let exchange_id = ExchangeID::Kraken;
-    // let symbol_id = ETH_AED;
-    // client.start_trade_data(exchange_id, symbol_id)
-    //     .await
-    //     .expect("Failed to start trade data");
+    println!("basic_data_stream/main: Start streaming trade data for ETH/AED");
+    let exchange_id = ExchangeID::Kraken;
+    let symbol_id = ETH_AED;
+    client.start_trade_data(exchange_id, symbol_id)
+        .await
+        .expect("Failed to start trade data");
 
     println!("basic_data_stream/main: Wait a moment ...");
     sleep(Duration::from_secs(5)).await;

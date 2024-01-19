@@ -1,9 +1,10 @@
 use client_manager::ClientManager;
 use common::prelude::MessageProcessingError;
 use db_query_manager::QueryDBManager;
-use fluvio::{Offset, PartitionConsumer};
+use fluvio::{Offset, PartitionConsumer, TopicProducer};
 use futures::lock::Mutex;
 use futures::StreamExt;
+use std::collections::HashMap;
 use std::future::Future;
 use std::sync::Arc;
 use symbol_manager::SymbolManager;
@@ -17,6 +18,8 @@ pub struct Server {
     pub(crate) client_manager: Arc<Mutex<ClientManager>>,
     pub(crate) query_manager: Arc<Mutex<QueryDBManager>>,
     pub(crate) symbol_manager: Arc<Mutex<SymbolManager>>,
+    //
+    pub(crate) client_data_producers: Arc<Mutex<HashMap<u16, TopicProducer>>>,
 }
 
 impl Server {
@@ -26,11 +29,14 @@ impl Server {
         query_manager: Arc<Mutex<QueryDBManager>>,
         symbol_manager: Arc<Mutex<SymbolManager>>,
     ) -> Self {
+        let client_data_producers = Arc::new(Mutex::new(HashMap::new()));
+
         Self {
             consumer,
             client_manager,
             query_manager,
             symbol_manager,
+            client_data_producers,
         }
     }
 }

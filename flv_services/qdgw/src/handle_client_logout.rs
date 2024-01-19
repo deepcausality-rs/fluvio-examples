@@ -129,11 +129,28 @@ impl Server {
     /// - MessageProcessingError if there was an issue removing the client from the database.
     ///
     pub(crate) async fn client_logout(&self, client_id: u16) -> Result<(), MessageProcessingError> {
+        // lock the client_data_producers hashmap
+        let mut client_data_producers = self.client_data_producers.lock().await;
+
+        // Remove the client's data producer from the hashmap
+        client_data_producers.remove(&client_id);
+
+        // Unlock the client_data_producers hashmap
+        drop(client_data_producers);
+
+        // Lock the client_manager
         let mut client_db = self.client_manager.lock().await;
+
+        // Remove the client from the client client_manager
         client_db.remove_client(client_id);
+
+        // Unlock the client_manager
         drop(client_db);
 
-        // println!("[::client_logout]: Client logged out successfully");
+        println!(
+            "[client_logout]: Client {:?} logged out successfully",
+            client_id
+        );
 
         Ok(())
     }

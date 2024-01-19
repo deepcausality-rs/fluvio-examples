@@ -1,6 +1,6 @@
 use crate::service::Server;
 use autometrics::autometrics;
-use common::prelude::{MessageClientConfig, MessageProcessingError};
+use common::prelude::{ClientChannel, MessageClientConfig, MessageProcessingError};
 use sbe_messages::prelude::{ClientErrorType, ClientLoginMessage};
 
 impl Server {
@@ -112,18 +112,46 @@ impl Server {
     ///
     /// ```
     pub(crate) async fn client_login(&self, client_id: u16) -> Result<(), MessageProcessingError> {
+        // Lock the client_manager
         let mut client_db = self.client_manager.lock().await;
+
+        // Create a new config for the client
         let config = MessageClientConfig::new(client_id);
 
+        // Add the client to the client_manager
         match client_db.add_client(client_id, config) {
             Ok(_) => {
                 // println!("[::client_login]: Client logged in successfully");
-                Ok(())
             }
             Err(e) => {
-                // println!("[::client_login]: Failed to add client to the database");
-                Err(MessageProcessingError(e.to_string()))
+                println!("[::client_login]: Failed to add client to client_manager");
+                return Err(MessageProcessingError(e.to_string()));
             }
         }
+
+        // Unlock the client_manager
+        drop(client_db);
+
+        // create a new client topic producer for the client
+        let producer = self
+            .get_channel_producer(ClientChannel::DataChannel, client_id)
+            .await
+            .expect("[send_error]: Failed to get error channel producer");
+
+        // lock the client_data_producers hashmap
+        let mut client_data_producers = self.client_data_producers.lock().await;
+
+        // add the client data producer to the hashmap
+        client_data_producers.insert(client_id, producer);
+
+        // Unlock the client_data_producers hashmap
+        drop(client_data_producers);
+
+        println!(
+            "[client_login]: Client {:?} logged in successfully",
+            client_id
+        );
+
+        Ok(())
     }
 }

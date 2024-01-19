@@ -1,6 +1,6 @@
 use crate::service::Server;
 use common::prelude::{MessageProcessingError, OHLCVBar};
-use sbe_messages::prelude::{DataErrorType, SbeOHLCVBar};
+use sbe_messages::prelude::DataErrorType;
 
 impl Server {
     /// Sends a stream of OHLCV bar data to the client.
@@ -9,7 +9,7 @@ impl Server {
     ///
     /// # Parameters
     ///
-    /// * `client_data_channel` - The Fluvio topic name to send the data to
+    /// * `client_id` - The client ID to send the data to
     /// * `first_bar` - Encoded bytes of the first bar message
     /// * `data_bars` - The OHLCV bars to send
     /// * `last_bar` - Encoded bytes of the last bar message
@@ -27,37 +27,23 @@ impl Server {
         last_bar: Vec<u8>,
     ) -> Result<(), (DataErrorType, MessageProcessingError)> {
         // Send first  bar message to inform the client that the data stream starts
-        match self.send_data(client_id, first_bar).await {
+        match self.send_single_data(client_id, first_bar).await {
             Ok(_) => {}
             Err(e) => {
                 return Err(e);
             }
         }
 
-        // Send all trade bars to the client
-        for bar in data_bars.to_vec() {
-            // Encode bar message
-            let (_, buffer) = match SbeOHLCVBar::encode_data_bar_message(bar) {
-                Ok(enc) => enc,
-                Err(e) => {
-                    return Err((
-                        DataErrorType::DataEncodingError,
-                        MessageProcessingError(e.to_string()),
-                    ));
-                }
-            };
-
-            // Send bar message to client
-            match self.send_data(client_id, buffer).await {
-                Ok(_) => {}
-                Err(e) => {
-                    return Err(e);
-                }
+        // Send the OHLCV bar data vector in bulk to the client
+        match self.send_bulk_ohlcv_data(client_id, data_bars).await {
+            Ok(_) => {}
+            Err(e) => {
+                return Err(e);
             }
         }
 
         // Send the last bar message to inform the client that the data stream has ended
-        match self.send_data(client_id, last_bar).await {
+        match self.send_single_data(client_id, last_bar).await {
             Ok(_) => {}
             Err(e) => {
                 return Err(e);
