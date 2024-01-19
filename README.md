@@ -1,9 +1,5 @@
 # Fluvio DeepCausality Example Project
 
-## ⚡ Status: **Progressing...**
-
-This project is early stage and under **active development** meaning things break overnight.
-
 ### 👉 **Fluvio**
 
 Fluvio is an open-source data streaming platform with in-flight computation capabilities to aggregate, correlate, and
