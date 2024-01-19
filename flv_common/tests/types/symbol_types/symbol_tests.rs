@@ -6,7 +6,7 @@ fn get_new_symbol() -> Symbol {
     Symbol::new(
         "BTCUSD".to_string(),
         "BTC-USD".to_string(),
-        ExchangeID::BinanceSpot,
+        ExchangeID::Kraken,
         "BTC".to_string(),
         "USD".to_string(),
         Decimal::from_str("0.000001").unwrap(),
@@ -32,7 +32,7 @@ fn test_symbol_id_exchange() {
 fn test_exchange_id() {
     let symbol = get_new_symbol();
 
-    assert_eq!(symbol.exchange_id(), &ExchangeID::BinanceSpot);
+    assert_eq!(symbol.exchange_id(), &ExchangeID::Kraken);
 }
 
 #[test]

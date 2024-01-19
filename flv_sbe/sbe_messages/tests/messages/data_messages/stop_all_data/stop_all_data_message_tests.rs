@@ -4,23 +4,23 @@ use sbe_messages::prelude::{MessageType, StopAllDataMessage};
 #[test]
 fn test_new() {
     let client_id = 1;
-    let exchange_id = ExchangeID::BinanceSpot;
+    let exchange_id = ExchangeID::Kraken;
     let message = StopAllDataMessage::new(client_id, exchange_id);
 
     assert_eq!(message.message_type(), &MessageType::StopAllData);
     assert_eq!(message.client_id(), &1);
-    assert_eq!(message.exchange_id(), &ExchangeID::BinanceSpot);
+    assert_eq!(message.exchange_id(), &ExchangeID::Kraken);
 }
 
 #[test]
 fn test_encode() {
     let client_id = 1;
-    let exchange_id = ExchangeID::BinanceSpot;
+    let exchange_id = ExchangeID::Kraken;
     let message = StopAllDataMessage::new(client_id, exchange_id);
 
     assert_eq!(message.message_type(), &MessageType::StopAllData);
     assert_eq!(message.client_id(), &1);
-    assert_eq!(message.exchange_id(), &ExchangeID::BinanceSpot);
+    assert_eq!(message.exchange_id(), &ExchangeID::Kraken);
 
     let enc = message.encode();
     assert!(enc.is_ok());
@@ -42,13 +42,13 @@ fn test_decode() {
     let message = StopAllDataMessage::from(buffer);
     assert_eq!(message.message_type(), &MessageType::StopAllData);
     assert_eq!(message.client_id(), &1);
-    assert_eq!(message.exchange_id(), &ExchangeID::BinanceSpot);
+    assert_eq!(message.exchange_id(), &ExchangeID::Kraken);
 }
 
 #[test]
 fn test_message_type() {
     let client_id = 1;
-    let exchange_id = ExchangeID::BinanceSpot;
+    let exchange_id = ExchangeID::Kraken;
     let message = StopAllDataMessage::new(client_id, exchange_id);
 
     assert_eq!(message.message_type(), &MessageType::StopAllData);
@@ -57,7 +57,7 @@ fn test_message_type() {
 #[test]
 fn test_message_client_id() {
     let client_id = 1;
-    let exchange_id = ExchangeID::BinanceSpot;
+    let exchange_id = ExchangeID::Kraken;
     let message = StopAllDataMessage::new(client_id, exchange_id);
 
     assert_eq!(message.client_id(), &1);
@@ -66,20 +66,20 @@ fn test_message_client_id() {
 #[test]
 fn test_exchange_id() {
     let client_id = 1;
-    let exchange_id = ExchangeID::BinanceSpot;
+    let exchange_id = ExchangeID::Kraken;
     let message = StopAllDataMessage::new(client_id, exchange_id);
 
-    assert_eq!(message.exchange_id(), &ExchangeID::BinanceSpot);
+    assert_eq!(message.exchange_id(), &ExchangeID::Kraken);
 }
 
 #[test]
 fn test_display() {
     let client_id = 1;
-    let exchange_id = ExchangeID::BinanceSpot;
+    let exchange_id = ExchangeID::Kraken;
     let message = StopAllDataMessage::new(client_id, exchange_id);
 
     let expected =
-        "StopAllDataMessage[message_type: StopAllData, client_id: 1, exchange_id: BinanceSpot]";
+        "StopAllDataMessage[message_type: StopAllData, client_id: 1, exchange_id: Kraken]";
     let actual = format!("{}", message);
     assert_eq!(expected, actual);
 }

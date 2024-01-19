@@ -3,7 +3,7 @@ use sbe_messages::prelude::{DataType, MessageType, StopDataMessage};
 
 fn get_message() -> StopDataMessage {
     let client_id = 1;
-    let exchange_id = ExchangeID::BinanceSpot;
+    let exchange_id = ExchangeID::Kraken;
     let symbol_id = SymbolID::BTCUSD as u16;
     let data_type = DataType::TradeData;
 
@@ -14,7 +14,7 @@ fn get_message() -> StopDataMessage {
 fn test_new() {
     let message = get_message();
 
-    let exchange_id = ExchangeID::BinanceSpot;
+    let exchange_id = ExchangeID::Kraken;
     let symbol_id = SymbolID::BTCUSD as u16;
     let data_type = DataType::TradeData;
 
@@ -29,7 +29,7 @@ fn test_new() {
 fn test_encode() {
     let message = get_message();
 
-    let exchange_id = ExchangeID::BinanceSpot;
+    let exchange_id = ExchangeID::Kraken;
     let symbol_id = SymbolID::BTCUSD as u16;
     let data_type = DataType::TradeData;
 
@@ -57,7 +57,7 @@ fn test_decode() {
 
     let message = StopDataMessage::from(buffer);
 
-    let exchange_id = ExchangeID::BinanceSpot;
+    let exchange_id = ExchangeID::Kraken;
     let symbol_id = SymbolID::BTCUSD as u16;
     let data_type = DataType::TradeData;
 
@@ -86,7 +86,7 @@ fn test_message_client_id() {
 fn test_exchange_id() {
     let message = get_message();
 
-    let exchange_id = ExchangeID::BinanceSpot;
+    let exchange_id = ExchangeID::Kraken;
 
     assert_eq!(message.exchange_id(), &exchange_id);
 }
@@ -104,7 +104,7 @@ fn test_symbol_id() {
 fn test_display() {
     let message = get_message();
 
-    let expected = "StopDataMessage[message_type: StopData, client_id: 1, exchange_id: BinanceSpot, symbol_id: 1, data_type: TradeData]";
+    let expected = "StopDataMessage[message_type: StopData, client_id: 1, exchange_id: Kraken, symbol_id: 1, data_type: TradeData]";
     let actual = format!("{}", message);
     assert_eq!(expected, actual);
 }

@@ -3,7 +3,7 @@ use sbe_messages::prelude::{DataType, MessageType, StartDataMessage};
 
 fn get_message() -> StartDataMessage {
     let client_id = 1;
-    let exchange_id = ExchangeID::BinanceSpot;
+    let exchange_id = ExchangeID::Kraken;
     let symbol_id = SymbolID::BTCUSD as u16;
     let data_type = DataType::TradeData;
     let time_resolution = TimeResolution::NoValue; // TimeResolution only applies to OHLCV data type
@@ -20,7 +20,7 @@ fn get_message() -> StartDataMessage {
 fn test_new() {
     let message = get_message();
 
-    let exchange_id = ExchangeID::BinanceSpot;
+    let exchange_id = ExchangeID::Kraken;
     let symbol_id = SymbolID::BTCUSD as u16;
     let data_type = DataType::TradeData;
     let time_resolution = TimeResolution::NoValue;
@@ -37,7 +37,7 @@ fn test_new() {
 fn test_encode() {
     let message = get_message();
 
-    let exchange_id = ExchangeID::BinanceSpot;
+    let exchange_id = ExchangeID::Kraken;
     let symbol_id = SymbolID::BTCUSD as u16;
     let time_resolution = TimeResolution::NoValue;
     let data_type = DataType::TradeData;
@@ -68,7 +68,7 @@ fn test_decode() {
 
     let message = StartDataMessage::from(buffer);
 
-    let exchange_id = ExchangeID::BinanceSpot;
+    let exchange_id = ExchangeID::Kraken;
     let symbol_id = SymbolID::BTCUSD as u16;
     let time_resolution = TimeResolution::NoValue;
     let data_type = DataType::TradeData;
@@ -98,7 +98,7 @@ fn test_message_client_id() {
 #[test]
 fn test_exchange_id() {
     let message = get_message();
-    let exchange_id = ExchangeID::BinanceSpot;
+    let exchange_id = ExchangeID::Kraken;
 
     assert_eq!(message.exchange_id(), &exchange_id);
 }
