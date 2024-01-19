@@ -8,7 +8,9 @@ mod handle_error_channel;
 
 const CLIENT_ID: u16 = 42;
 
-const ETH_AED: u16 = 278; //  278 = ethaed on Kraken
+const ETH_AED: u16 = 278; //  278 = ETHAED on Kraken
+
+const OP_USD: u16 = 653; // 250 = OPR/USD on Kraken
 
 #[tokio::main]
 async fn main() {
@@ -21,7 +23,10 @@ async fn main() {
         .await
         .expect("basic_data_stream/main: Failed to create QD Gateway client");
 
-    println!("basic_data_stream/main: Start streaming trade data for ETH/AED");
+    println!(
+        "basic_data_stream/main: Start streaming trade data for ETH/AED with symbol id: {}",
+        ETH_AED
+    );
     let exchange_id = ExchangeID::Kraken;
     let symbol_id = ETH_AED;
     client
@@ -32,7 +37,12 @@ async fn main() {
     println!("basic_data_stream/main: Wait a moment to let stream complete...");
     sleep(Duration::from_secs(1)).await;
 
-    println!("basic_data_stream/main: Start streaming 5 MIN OHLCV data for ETH/AED");
+    println!(
+        "basic_data_stream/main: Start streaming 5 MIN OHLCV data for OP/USD with symbol id: {}",
+        OP_USD
+    );
+    let exchange_id = ExchangeID::Kraken;
+    let symbol_id = OP_USD;
     let time_resolution = TimeResolution::FiveMin;
     client
         .start_ohlcv_data(exchange_id, symbol_id, time_resolution)

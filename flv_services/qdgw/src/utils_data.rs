@@ -59,9 +59,6 @@ impl Server {
             .get_all_ohlcv_bars(symbol_id, trade_table, time_resolution)
             .await;
 
-        // Unlock / drop query manager
-        drop(q_manager);
-
         match result {
             Ok(bars) => Ok(bars),
             Err(e) => Err(e),

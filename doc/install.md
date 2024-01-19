@@ -127,6 +127,25 @@ Which should show:
     ✅ 0 topics using 0 B
 ```
 
+## Optional: Install Autometrics
+
+Autometrics is an observability micro-framework built for developers.
+It makes it easy to instrument any function with the most useful metrics: request rate, error rate, and latency.
+
+Install the autometrics cli:
+
+* MacOS: brew install autometrics-dev/tap/am
+* Linux ARM64: curl -L https://github.com/autometrics-dev/am/releases/latest/download/am-linux-aarch64 -o am
+* Linux Intel/AMD: curl -L https://github.com/autometrics-dev/am/releases/latest/download/am-linux-x86_64 -o am
+
+# make it executable with chmod
+chmod u+x am
+
+On Linux, make sure the binary is in your shell path.
+
+For more details, see the [documentation](https://docs.autometrics.dev/local-development#getting-started-with-am)
+and the [github repo](https://github.com/autometrics-dev/autometrics-rs).
+
 ## 🛠️ Cargo & Make
 
 Cargo works as expected, but in addition to cargo, a makefile exists
