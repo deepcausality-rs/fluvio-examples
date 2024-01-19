@@ -29,6 +29,9 @@ async fn main() {
         .await
         .expect("Failed to start trade data");
 
+    println!("basic_data_stream/main: Wait a moment to let stream complete...");
+    sleep(Duration::from_secs(1)).await;
+
     println!("basic_data_stream/main: Start streaming 5 MIN OHLCV data for ETH/AED");
     let time_resolution = TimeResolution::FiveMin;
     client
@@ -36,7 +39,7 @@ async fn main() {
         .await
         .expect("Failed to start OHLCV data");
 
-    println!("basic_data_stream/main: Wait a moment ...");
+    println!("basic_data_stream/main: Wait a moment to let stream complete...");
     sleep(Duration::from_secs(5)).await;
 
     println!("basic_data_stream/main: Closing client");
