@@ -27,6 +27,27 @@ use symbol_manager::SymbolManager;
 
 const SVC_ID: ServiceID = ServiceID::QDGW;
 
+/// The main entry point for the qdgw service.
+///
+/// This will:
+///
+/// - Initialize Prometheus metrics exporter
+/// - Create ConfigManager instance for autoconfiguration
+/// - Configure Prometheus metrics HTTP server
+/// - Create Fluvio consumer for control topic
+/// - Initialize ClientManager
+/// - Get symbol table and symbols for the default exchange
+/// - Create QueryDBManager and SymbolManager for the default exchange
+/// - Create Server instance
+/// - Spawn tasks for HTTP server and Fluvio server
+/// - Print service start messages
+///
+/// On shutdown:
+///
+/// - Prints service stop message
+/// - Shuts down HTTP server
+/// - Shuts down Fluvio server
+///
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Initialize the metrics exporter.
