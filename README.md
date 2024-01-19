@@ -70,14 +70,15 @@ After all dependencies have been installed, the following commands are ready to 
 ```
     make build   	Builds the code base incrementally (fast) for dev.
     make check   	Checks the code base for security vulnerabilities.
+    make example     	Runs the example code in flv_qd_client_examples.
     make fix   		Fixes linting issues as reported by clippy.
     make import   	Imports tick data from CSV into QuestDB.
     make format   	Formats call code according to cargo fmt style.
     make setup   	Tests and installs all make script dependencies.
     make run   		Runs the binary defined in scripts/run.sh.
-    make update   	Update rust, pull latest from git remote, and build the project.
+    make update   	Update rust, update and build the project.
     make test   	Tests across all crates.
-    make sbe   		Generates Rust bindings for SBE messages define in spec/sbe.
+    make sbe   		Generates Rust bindings for SBE messages from the SBE schema.
 ```
 
 The scripts called by each make command are located in the [script folder.](scripts)
@@ -125,36 +126,6 @@ For more details on how to analyze the data, please see the following guide:
 
 * [Data analysis with SQL](doc/analyze_data.md)
 
-## Optional: Start Autometrics
-
-Autometrics is an observability micro-framework built for developers.
-It makes it easy to instrument any function with the most useful metrics: request rate, error rate, and latency.
-
-Install the autometrics cli:
-
-* MacOS: brew install autometrics-dev/tap/am
-* Linux ARM64: curl -L https://github.com/autometrics-dev/am/releases/latest/download/am-linux-aarch64 -o am
-* Linux Intel/AMD: curl -L https://github.com/autometrics-dev/am/releases/latest/download/am-linux-x86_64 -o am
-
-# make it executable with chmod
-chmod u+x am
-
-On Linux, make sure the binary is in your shell path.
-
-For more details, see the [documentation](https://docs.autometrics.dev/local-development#getting-started-with-am)
-and the [github repo](https://github.com/autometrics-dev/autometrics-rs).
-
-Run in a dedicated terminal to start autometrics:
-
-```bash
-    am start :8080
-```
-
-You can now navigate to http://localhost:6789 to see the autometrics explorer.
-You can also see the Prometheus at http://localhost:9090. 
-
-Note, if you already have a prometheus installation or simply don't want metrics, the QDGW works perfectly
-fine without autometrics. 
 
 ## 🚀 Start the Quant Data Gateway (QDGW)
 
@@ -184,9 +155,86 @@ which should show:
 When you want to shut down the QDGW, just press `ctrl+c`, which then
 gracefully shutdowns the gateway.
 
-## ⚙️ Start the client
+## ⚙️ Run the example client 
 
-@TODO
+Run in a dedicated terminal:
+
+```bash
+    make example
+```
+
+which will show:
+
+``` 
+--------------------------------
+Select the number of the example to run:
+--------------------------------
+base: Basic Data Stream Example
+quit: Exit
+--------------------------------
+
+1) base
+2) quit
+#?
+```
+
+Just type 1 for the base example, and press enter, to start the data streaming from the gateway to the sample client. 
+
+```
+Running `target/release/basic_data_stream`
+basic_data_stream/main: Starting client: QDClient
+basic_data_stream/main: Start streaming trade data for ETH/AED with symbol id: 278
+basic_data_stream/main: Wait a moment to let stream complete...
+FirstTradeBar { message_type: FirstTradeBar, symbol_id: 278 }
+TradeBar { symbol_id: 278, date_time: 2022-08-09T11:34:47Z, price: 6306.1, volume: 0.00231 }
+TradeBar { symbol_id: 278, date_time: 2022-08-09T11:36:11Z, price: 6313.5, volume: 0.00078025 }
+...
+LastTradeBar { message_type: LastTradeBar, symbol_id: 278 }
+basic_data_stream/main: Start streaming 5 MIN OHLCV data for ETH/AED
+basic_data_stream/main: Wait a moment to let stream complete...
+FirstOHLCVBar { message_type: FirstOHLCVBar, symbol_id: 278 }
+OHLCVBar { symbol_id: 278, date_time: 2022-08-09T11:30:00Z, open: 6306.1, high: 6306.1, low: 6306.1, close: 6306.1, volume: 0.00231 }
+OHLCVBar { symbol_id: 278, date_time: 2022-08-09T11:35:00Z, open: 6313.5, high: 6313.5, low: 6298.6, close: 6302.4, volume: 0.00533591 }
+```
+
+## Optional: Start Autometrics
+
+Autometrics is an observability micro-framework that makes it easy to instrument any function with the most useful metrics: request rate, error rate, and latency.
+
+Run in a dedicated terminal to start autometrics:
+
+```bash
+    am start :8080
+```
+
+which should show:
+
+``` 
+am start :8080
+Checking if provided metrics endpoints work...
+Now sampling the following endpoints for metrics: http://localhost:8080/metrics
+Using Prometheus version: 2.47.2
+Starting prometheus
+
+  am v0.6.0   press ctrl + c to shutdown
+
+  Explorer         http://127.0.0.1:6789
+  Prometheus       http://127.0.0.1:9090/prometheus
+```
+
+It is important to start the gateway first, and autometrics second, otherwise autometrics fails to connect to the metrics endpoint and will not collect data. If that ever happens, just shhut down autometrics with `ctrl+c`, ensure that the gateway
+is running, and
+start autometrics on port 8080.
+
+
+You can now navigate to http://localhost:6789 to see the autometrics explorer.
+
+The autometrics dashboard shows by default the top five endpoints by the number of requests. As you run the example code, the number of requests will increase over time, as shown in the plot below. You can inspect more detailed metrics for each function in the function tab.
+
+![autometrics_dashboard.png](doc%2Fimg%2Fautometrics_dashboard.png)
+
+Note, if you already have a prometheus installation or simply don't want metrics, the QDGW works perfectly fine without autometrics.
+
 
 ## ✨ Symbol Mapping
 
