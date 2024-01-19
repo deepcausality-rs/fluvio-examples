@@ -96,10 +96,7 @@ impl Server {
         // Send a ClientNotLoggedIn Error, if not logged in.
         if !exists {
             let client_error_type = ClientErrorType::ClientNotLoggedIn;
-            match self
-                .send_client_error(&producer, client_id, client_error_type)
-                .await
-            {
+            match self.send_client_error(client_id, client_error_type).await {
                 Ok(_) => {}
                 Err(err) => {
                     println!("[QDGW/handle::handle_start_data_message]: Failed to send DataTableNotFound error: {}", err);

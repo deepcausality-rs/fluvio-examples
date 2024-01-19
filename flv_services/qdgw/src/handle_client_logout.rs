@@ -1,9 +1,8 @@
 use crate::service::Server;
 use autometrics::autometrics;
 use common::prelude::{ClientChannel, MessageProcessingError};
-use fluvio::{Fluvio, RecordKey};
-use log::debug;
-use sbe_messages::prelude::{ClientErrorMessage, ClientErrorType, ClientLogoutMessage};
+use fluvio::Fluvio;
+use sbe_messages::prelude::{ClientErrorType, ClientLogoutMessage};
 
 impl Server {
     /// Handles a client logout message by validating the client ID and logging them out.
@@ -35,11 +34,10 @@ impl Server {
             client_logout_msg
         );
 
-        debug!("Bla");
-        // Extract the client ID from the message
+        println!("::handle_client_logout]: Extract the client ID from the message");
         let client_id = client_logout_msg.client_id();
 
-        // Get the client's control channel to return error messages back to the client
+        println!("::handle_client_logout]: Get the client's control channel to send messages back to the client");
         let client_control_channel = match self
             .get_client_channel(ClientChannel::ControlChannel, client_id)
             .await
@@ -50,59 +48,50 @@ impl Server {
             }
         };
 
-        // Connect to the Fluvio cluster
+        println!("::handle_client_logout]: Connect to the Fluvio cluster");
         let fluvio = Fluvio::connect().await.unwrap();
 
-        // Get the producer for the client's control channel
+        println!("::handle_client_logout]: Get the producer for the client's control channel");
         let producer = fluvio
             .topic_producer(client_control_channel)
             .await
             .expect("Failed to create a producer");
 
-        // Check if the client is logged in
+        println!("::handle_client_logout]: Check if the client is logged in");
         let exists = self.check_client_login(client_id).await;
 
         match exists {
             Ok(exists) => match exists {
-                // client exists, proceed with logout
                 true => {
-                    let res = self.client_logout(client_id).await;
+                    println!("[::handle_client_logout]: Client is logged in, proceed with logout");
 
+                    let res = self.client_logout(client_id).await;
                     match res {
                         Ok(_) => {}
                         Err(err) => {
-                            println!(
-                                "[QDGW/handle_client_logout::handle_client_logout] ClientLogOutError: {:?}",
-                                err.to_string()
-                            );
+                            println!("[QDGW/handle_client_logout::handle_client_logout] ClientLogOutError: {:?}", err);
 
                             let client_error_type = ClientErrorType::ClientLogOutError;
-                            let message = ClientErrorMessage::new(client_id, client_error_type);
-                            let enc = message.encode();
-                            assert!(enc.is_ok());
-                            let (_, buffer) = enc.unwrap();
-
-                            producer
-                                .send(RecordKey::NULL, buffer)
-                                .await
-                                .expect("Failed to send ClientError: ClientLogInError!");
-                            producer.flush().await.expect("Failed to flush");
+                            match self
+                                .send_client_error(client_id, client_error_type)
+                                .await {
+                                Ok(_) => {}
+                                Err(err) => println!("[QDGW/handle_client_login::handle_client_login] ClientLogInError: {:?}", err.to_string()),
+                            }
                         }
                     }
                 }
                 // client does not exist, return an ClientNotLoggedIn error to the client
                 false => {
-                    let client_error_type = ClientErrorType::ClientNotLoggedIn;
-                    let message = ClientErrorMessage::new(client_id, client_error_type);
-                    let enc = message.encode();
-                    assert!(enc.is_ok());
-                    let (_, buffer) = enc.unwrap();
+                    println!("[::handle_client_logout]: Client is not logged in, return an ClientNotLoggedIn error to the client");
 
-                    producer
-                        .send(RecordKey::NULL, buffer)
-                        .await
-                        .expect("Failed to send ClientError: ClientNotLoggedIn!");
-                    producer.flush().await.expect("Failed to flush");
+                    let client_error_type = ClientErrorType::ClientNotLoggedIn;
+                    match self.send_client_error(client_id, client_error_type).await {
+                        Ok(_) => {}
+                        Err(err) => {
+                            println!("[QDGW/handle_client_login::handle_client_login] ClientAlreadyLoggedIn: {:?}", err);
+                        }
+                    }
                 }
             },
             // Something went horribly wrong, log the message, and return an unknown error
@@ -113,17 +102,12 @@ impl Server {
                 );
 
                 let client_error_type = ClientErrorType::UnknownClientError;
-                let message = ClientErrorMessage::new(client_id, client_error_type);
-                let enc = message.encode();
-                assert!(enc.is_ok());
-
-                let (_, buffer) = enc.unwrap();
-
-                producer
-                    .send(RecordKey::NULL, buffer)
-                    .await
-                    .expect("Failed to send ClientError: UnknownClientError!");
-                producer.flush().await.expect("Failed to flush");
+                match self.send_client_error(client_id, client_error_type).await {
+                    Ok(_) => {}
+                    Err(err) => {
+                        println!("[QDGW/handle_client_login::handle_client_login] UnknownClientError: {:?}", err.to_string());
+                    }
+                }
             }
         }
 
@@ -148,8 +132,11 @@ impl Server {
     /// - MessageProcessingError if there was an issue removing the client from the database.
     ///
     pub(crate) async fn client_logout(&self, client_id: u16) -> Result<(), MessageProcessingError> {
-        let mut client_db = self.client_manager.lock().await.clone();
+        let mut client_db = self.client_manager.lock().await;
         client_db.remove_client(client_id);
+        drop(client_db);
+
+        println!("[::client_logout]: Client logged out successfully");
 
         Ok(())
     }

@@ -56,6 +56,7 @@ encoding_rs = "0.8"
 fluvio = { version = "0.21", default-features = false, features = ["rustls"] }
 futures = "0.3"
 lru = "0.12.1"
+log = "0.4.20"
 # https://stackoverflow.com/questions/72594101/how-to-parse-a-postgresql-numeric-type-to-rust-native-ones-upon-request
 rust_decimal = { version = "1.33", features = ["db-postgres"] }
 serde = { version = "1", features = ["derive"] }

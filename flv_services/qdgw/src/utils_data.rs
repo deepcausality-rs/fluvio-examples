@@ -1,7 +1,7 @@
 use crate::service::Server;
-use common::prelude::{MessageProcessingError, OHLCVBar, TimeResolution, TradeBar};
+use common::prelude::{ClientChannel, MessageProcessingError, OHLCVBar, TimeResolution, TradeBar};
 use db_query_manager::error::QueryError;
-use fluvio::{RecordKey, TopicProducer};
+use fluvio::{Fluvio, RecordKey, TopicProducer};
 use sbe_messages::prelude::{ClientErrorMessage, ClientErrorType, DataErrorMessage, DataErrorType};
 
 impl Server {
@@ -54,16 +54,41 @@ impl Server {
     ///
     pub(crate) async fn send_client_error(
         &self,
-        producer: &TopicProducer,
         client_id: u16,
         client_error: ClientErrorType,
     ) -> Result<(), MessageProcessingError> {
+        println!("[send_client_error]: Get the client's control channel to send messages back to the client");
+        let client_control_channel = match self
+            .get_client_channel(ClientChannel::ControlChannel, client_id)
+            .await
+        {
+            Ok(channel) => {
+                println!("[send_client_error]: Got the client's control channel");
+                channel
+            }
+            Err(e) => {
+                println!("[send_client_error]: Failed to get the client's control channel");
+                return Err(e);
+            }
+        };
+
+        println!("[send_client_error]: Connect to the Fluvio cluster");
+        let fluvio = Fluvio::connect().await.unwrap();
+
+        println!("[send_client_error]: Get the producer for the client's control channel");
+        let producer = fluvio
+            .topic_producer(client_control_channel)
+            .await
+            .expect("[send_client_error]: Failed to create a producer");
+
+        println!("[send_client_error]: Construct the ClientErrorMessage");
         let message = ClientErrorMessage::new(client_id, client_error);
         let enc = message.encode();
         assert!(enc.is_ok());
         let (_, buffer) = enc.unwrap();
 
-        self.send_error(producer, buffer).await?;
+        println!("[send_client_error]: Send the ClientErrorMessage");
+        self.send_error(&producer, buffer).await?;
 
         Ok(())
     }

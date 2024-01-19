@@ -110,8 +110,6 @@ pub(crate) async fn delete_topics(
     admin: &FluvioAdmin,
     client_config: &MessageClientConfig,
 ) -> Result<(), Box<dyn Error>> {
-    println!("Close Client Connection!");
-
     // 1. client_id-control
     let control_topic = &client_config.control_channel();
     delete_topic(&admin, control_topic)

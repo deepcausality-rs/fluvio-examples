@@ -1,46 +1,38 @@
 use crate::service::Server;
-use common::prelude::{ClientChannel, MessageProcessingError};
+use common::prelude::{ClientChannel, MessageClientConfig, MessageProcessingError};
 
 impl Server {
-    /// Returns the channel name for the given client and channel type.
+    /// Get the Fluvio channel name for the given client channel type and ID.
     ///
-    /// Locks the ClientManager mutex and looks up the appropriate channel based on
-    /// the ClientChannel enum.
+    /// Uses the MessageClientConfig to look up the channel name based on the
+    /// provided ClientChannel enum variant and client ID.
     ///
     /// # Parameters
     ///
-    /// - `client_manager` - The ClientManager instance
-    /// - `client_channel` - The ClientChannel enum specifying the channel type
-    /// - `client_id` - The id of the client
+    /// - `client_channel` - The ClientChannel enum variant
+    /// - `client_id` - The client ID
     ///
     /// # Returns
     ///
-    /// The name of the channel as a String, or a MessageProcessingError if the lookup fails.
+    /// The channel name string for the given channel and ID.
+    /// Returns a MessageProcessingError if lookup fails.
     ///
     pub(crate) async fn get_client_channel(
         &self,
         client_channel: ClientChannel,
         client_id: u16,
     ) -> Result<String, MessageProcessingError> {
-        // Lock the ClientManager
-        let client_db = self.client_manager.lock().await.clone();
+        let client_config = MessageClientConfig::new(client_id);
 
         // Look up the channel
-        let res = match client_channel {
-            ClientChannel::DataChannel => client_db.get_client_data_channel(client_id),
-            ClientChannel::ControlChannel => client_db.get_client_control_channel(client_id),
-            ClientChannel::ExecutionChannel => client_db.get_client_execution_channel(client_id),
-            ClientChannel::HeartbeatChannel => client_db.get_client_heartbeat_channel(client_id),
+        let channel = match client_channel {
+            ClientChannel::DataChannel => client_config.data_channel(),
+            ClientChannel::ControlChannel => client_config.control_channel(),
+            ClientChannel::ExecutionChannel => client_config.execution_channel(),
+            ClientChannel::HeartbeatChannel => client_config.heartbeat_channel(),
         };
 
-        // Unlock the ClientManager
-        drop(client_db);
-
-        // Return the channel, or an error if the lookup failed
-        match res {
-            Ok(channel) => Ok(channel),
-            Err(e) => Err(MessageProcessingError(e.to_string())),
-        }
+        Ok(channel)
     }
 
     /// Retrieves the trade table name for the given exchange ID.
@@ -96,7 +88,6 @@ impl Server {
     ) -> Result<bool, MessageProcessingError> {
         let client_db = self.client_manager.lock().await.clone();
         let exists = client_db.check_client(client_id);
-        drop(client_db);
 
         Ok(exists)
     }

@@ -1,9 +1,9 @@
-
-
 #[cfg(test)]
 mod tests {
     use common::prelude::ExchangeID;
-    use exchange_specs::prelude::{get_all_exchanges, get_all_exchanges_ids_names, get_exchange_symbol_tables};
+    use exchange_specs::prelude::{
+        get_all_exchanges, get_all_exchanges_ids_names, get_exchange_symbol_tables,
+    };
 
     const KRK_SYMBOL_TABLE: &str = "kraken_symbols";
 
@@ -20,7 +20,10 @@ mod tests {
         let id_names = get_all_exchanges_ids_names();
 
         assert_eq!(id_names.len(), 1);
-        assert_eq!(id_names[0], (ExchangeID::Kraken as u16, "kraken".to_string()));
+        assert_eq!(
+            id_names[0],
+            (ExchangeID::Kraken as u16, "kraken".to_string())
+        );
     }
 
     #[test]

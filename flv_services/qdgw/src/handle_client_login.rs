@@ -1,7 +1,6 @@
 use crate::service::Server;
 use autometrics::autometrics;
-use common::prelude::{ClientChannel, MessageClientConfig, MessageProcessingError};
-use fluvio::Fluvio;
+use common::prelude::{MessageClientConfig, MessageProcessingError};
 use sbe_messages::prelude::{ClientErrorType, ClientLoginMessage};
 
 impl Server {
@@ -35,51 +34,29 @@ impl Server {
             &client_login_msg
         );
 
-        // Extract the client ID from the message
+        println!("::handle_client_login]: Extract the client ID from the message");
         let client_id = client_login_msg.client_id();
 
-        // Get the client's control channel to return error messages back to the client
-        let client_control_channel = match self
-            .get_client_channel(ClientChannel::ControlChannel, client_id)
-            .await
-        {
-            Ok(channel) => channel,
-            Err(e) => {
-                return Err(e);
-            }
-        };
-
-        // Connect to the Fluvio cluster
-        let fluvio = Fluvio::connect().await.unwrap();
-
-        // Get the producer for the client's control channel
-        let producer = fluvio
-            .topic_producer(client_control_channel)
-            .await
-            .expect("Failed to create a producer");
-
-        // Check if the client is already logged in
+        println!("::handle_client_login]: Check if the client is already logged in");
         let exists = self.check_client_login(client_id).await;
 
         // If the client is already logged in, return an error
         // If not, proceed with client login
         match exists {
-            // Client already logged in, return an error back to the client
             Ok(exists) => match exists {
                 true => {
+                    println!("::handle_client_login]: Client already logged in, return an error back to the client");
                     let client_error_type = ClientErrorType::ClientAlreadyLoggedIn;
-                    match self
-                        .send_client_error(&producer, client_id, client_error_type)
-                        .await
-                    {
+                    match self.send_client_error(client_id, client_error_type).await {
                         Ok(_) => {}
                         Err(err) => {
                             println!("[QDGW/handle_client_login::handle_client_login] ClientAlreadyLoggedIn: {:?}", err);
                         }
                     }
                 }
-                // Client not logged in, proceed with login
+                //
                 false => {
+                    println!("::handle_client_login]: Client not logged in, proceed with login");
                     let res = self.client_login(client_id).await;
 
                     match res {
@@ -88,10 +65,7 @@ impl Server {
                             println!("[QDGW/handle_client_login::handle_client_login] ClientLogInError: {:?}", err.to_string());
 
                             let client_error_type = ClientErrorType::ClientLogInError;
-                            match self
-                                .send_client_error(&producer, client_id, client_error_type)
-                                .await
-                            {
+                            match self.send_client_error(client_id, client_error_type).await {
                                 Ok(_) => {}
                                 Err(err) => {
                                     println!("[QDGW/handle_client_login::handle_client_login] ClientLogInError: {:?}", err.to_string());
@@ -103,16 +77,10 @@ impl Server {
             },
             // Something went horribly wrong, log the message, and return an unknown error
             Err(err) => {
-                println!(
-                    "[QDGW/handle_client_login::handle_client_login] UnknownClientError: {:?}",
-                    err.to_string()
-                );
+                println!("[QDGW/handle_client_login::handle_client_login] UnknownClientError: {:?}", err);
 
                 let client_error_type = ClientErrorType::UnknownClientError;
-                match self
-                    .send_client_error(&producer, client_id, client_error_type)
-                    .await
-                {
+                match self.send_client_error(client_id, client_error_type).await {
                     Ok(_) => {}
                     Err(err) => {
                         println!("[QDGW/handle_client_login::handle_client_login] UnknownClientError: {:?}", err.to_string());
@@ -144,12 +112,18 @@ impl Server {
     ///
     /// ```
     pub(crate) async fn client_login(&self, client_id: u16) -> Result<(), MessageProcessingError> {
-        let mut client_db = self.client_manager.lock().await.clone();
+        let mut client_db = self.client_manager.lock().await;
         let config = MessageClientConfig::new(client_id);
 
         match client_db.add_client(client_id, config) {
-            Ok(_) => Ok(()),
-            Err(e) => Err(MessageProcessingError(e.to_string())),
+            Ok(_) => {
+                println!("[::client_login]: Client logged in successfully");
+                Ok(())
+            }
+            Err(e) => {
+                println!("[::client_login]: Failed to add client to the database");
+                Err(MessageProcessingError(e.to_string()))
+            }
         }
     }
 }

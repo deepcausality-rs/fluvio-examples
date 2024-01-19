@@ -15,14 +15,14 @@ const ETH_AED: u16 = 278;
 async fn main() {
     let client_config = MessageClientConfig::new(CLIENT_ID);
 
-    // Create a QD Gateway client
+    println!("basic_data_stream/main: Starting client: QDClient");
     let data_handler = handle_data_channel::handle_data_event;
     let error_handler = handle_error_channel::handle_error_event;
     let client = QDClient::new(CLIENT_ID, client_config, data_handler, error_handler)
         .await
-        .expect("Failed to create QD Gateway client");
+        .expect("basic_data_stream/main: Failed to create QD Gateway client");
 
-    // Start streaming trade data
+    // println!("basic_data_stream/main: Start streaming trade data for ETH/AED");
     // Add Kraken to ExchangeID
     // let exchange_id = ExchangeID::Kraken;
     // let symbol_id = ETH_AED;
@@ -30,9 +30,9 @@ async fn main() {
     //     .await
     //     .expect("Failed to start trade data");
 
-    // Wait a moment ..
+    println!("basic_data_stream/main: Wait a moment ...");
     sleep(Duration::from_secs(5)).await;
 
-    // Close the client
+    println!("basic_data_stream/main: Closing client");
     client.close().await.expect("Failed to close client");
 }
