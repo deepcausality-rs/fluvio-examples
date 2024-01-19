@@ -1,7 +1,6 @@
 use crate::service::Server;
 use autometrics::autometrics;
-use common::prelude::{ClientChannel, MessageProcessingError};
-use fluvio::Fluvio;
+use common::prelude::MessageProcessingError;
 use sbe_messages::prelude::{ClientErrorType, DataErrorType, DataType, StartDataMessage};
 
 impl Server {
@@ -46,48 +45,6 @@ impl Server {
         let symbol_id = *start_data_msg.symbol_id();
         let data_type = start_data_msg.data_type_id();
 
-        // Get the client's control channel to return error messages back to the client
-        let client_control_channel = match self
-            .get_client_channel(ClientChannel::ControlChannel, client_id)
-            .await
-        {
-            Ok(channel) => channel,
-            Err(e) => {
-                return Err(e);
-            }
-        };
-
-        // Connect to the Fluvio cluster
-        let fluvio = Fluvio::connect().await.unwrap();
-
-        // Get the producer for the client's control channel
-        let producer = fluvio
-            .topic_producer(client_control_channel)
-            .await
-            .expect("[QDGW/handle::handle_start_data_message]: Failed to create a producer");
-
-        // Get the clients data channel to send data back to the client.
-        let client_data_channel = match self
-            .get_client_channel(ClientChannel::DataChannel, client_id)
-            .await
-        {
-            Ok(channel) => channel,
-            Err(err) => {
-                let data_error = DataErrorType::DataChannelError;
-                match self.send_data_error(&producer, client_id, data_error).await {
-                    Ok(_) => {}
-                    Err(err) => {
-                        println!("[QDGW/handle::handle_start_data_message]: Failed to send error message: {}", err);
-                    }
-                }
-
-                return Err(MessageProcessingError(format!(
-                    "Failed to get client data channel: {}",
-                    err
-                )));
-            }
-        };
-
         // Check if the client is logged in
         let exists = self.check_client_login(client_id).await.expect(
             "[QDGW/handle::handle_start_data_message]: Failed to check if client is logged in",
@@ -110,7 +67,7 @@ impl Server {
             Ok(table) => table,
             Err(err) => {
                 let data_err = DataErrorType::DataTableNotFound;
-                match self.send_data_error(&producer, client_id, data_err).await {
+                match self.send_data_error(client_id, data_err).await {
                     Ok(_) => {}
                     Err(err) => {
                         println!("[QDGW/handle::handle_start_data_message]: Failed to send DataTableNotFound error: {}", err);
@@ -127,7 +84,7 @@ impl Server {
         let first_bar = match self.encode_first_trade_bar(data_type, symbol_id).await {
             Ok(bar) => bar,
             Err((data_err, err)) => {
-                match self.send_data_error(&producer, client_id, data_err).await {
+                match self.send_data_error(client_id, data_err).await {
                     Ok(_) => {}
                     Err(err) => {
                         println!(
@@ -147,7 +104,7 @@ impl Server {
         let last_bar = match self.encode_last_trade_bar(data_type, symbol_id).await {
             Ok(bar) => bar,
             Err((data_err, err)) => {
-                match self.send_data_error(&producer, client_id, data_err).await {
+                match self.send_data_error(client_id, data_err).await {
                     Ok(_) => {}
                     Err(err) => {
                         println!(
@@ -166,7 +123,7 @@ impl Server {
         match data_type {
             DataType::UnknownDataType => {
                 let data_err = DataErrorType::DataTypeNotKnownError;
-                match self.send_data_error(&producer, client_id, data_err).await {
+                match self.send_data_error(client_id, data_err).await {
                     Ok(_) => {}
                     Err(err) => {
                         println!(
@@ -185,7 +142,7 @@ impl Server {
                     Ok(bars) => bars,
                     Err(err) => {
                         let data_err = DataErrorType::DataUnavailableError;
-                        match self.send_data_error(&producer, client_id, data_err).await {
+                        match self.send_data_error(client_id, data_err).await {
                             Ok(_) => {}
                             Err(err) => {
                                 println!("[QDGW/handle::handle_start_data_message]: Failed to get last bar: {}", err);
@@ -200,12 +157,12 @@ impl Server {
                 };
 
                 match self
-                    .start_trade_data(client_data_channel, first_bar, &trade_bars, last_bar)
+                    .start_trade_data(client_id, first_bar, &trade_bars, last_bar)
                     .await
                 {
                     Ok(_) => {}
                     Err((data_err, err)) => {
-                        match self.send_data_error(&producer, client_id, data_err).await {
+                        match self.send_data_error(client_id, data_err).await {
                             Ok(_) => {}
                             Err(err) => {
                                 println!("[QDGW/handle::handle_start_data_message]: Failed to get last bar: {}", err);
@@ -230,7 +187,7 @@ impl Server {
                     Ok(bars) => bars,
                     Err(err) => {
                         let data_err = DataErrorType::DataUnavailableError;
-                        match self.send_data_error(&producer, client_id, data_err).await {
+                        match self.send_data_error(client_id, data_err).await {
                             Ok(_) => {}
                             Err(err) => {
                                 println!("[QDGW/handle::handle_start_data_message]: Failed to get last bar: {}", err);
@@ -245,12 +202,12 @@ impl Server {
                 };
 
                 match self
-                    .start_ohlcv_data(client_data_channel, first_bar, &ohlcv_bars, last_bar)
+                    .start_ohlcv_data(client_id, first_bar, &ohlcv_bars, last_bar)
                     .await
                 {
                     Ok(_) => {}
                     Err((data_err, err)) => {
-                        match self.send_data_error(&producer, client_id, data_err).await {
+                        match self.send_data_error(client_id, data_err).await {
                             Ok(_) => {}
                             Err(err) => {
                                 println!("[QDGW/handle::handle_start_data_message]: Failed to get last bar: {}", err);

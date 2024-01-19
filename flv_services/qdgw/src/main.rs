@@ -10,6 +10,8 @@ mod service;
 mod utils;
 mod utils_data;
 mod utils_data_encoding;
+mod utils_error;
+mod utils_fluvio;
 
 use futures::lock::Mutex;
 use std::net::SocketAddr;

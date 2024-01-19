@@ -1,40 +1,7 @@
 use crate::service::Server;
-use common::prelude::{ClientChannel, MessageClientConfig, MessageProcessingError};
+use common::prelude::MessageProcessingError;
 
 impl Server {
-    /// Get the Fluvio channel name for the given client channel type and ID.
-    ///
-    /// Uses the MessageClientConfig to look up the channel name based on the
-    /// provided ClientChannel enum variant and client ID.
-    ///
-    /// # Parameters
-    ///
-    /// - `client_channel` - The ClientChannel enum variant
-    /// - `client_id` - The client ID
-    ///
-    /// # Returns
-    ///
-    /// The channel name string for the given channel and ID.
-    /// Returns a MessageProcessingError if lookup fails.
-    ///
-    pub(crate) async fn get_client_channel(
-        &self,
-        client_channel: ClientChannel,
-        client_id: u16,
-    ) -> Result<String, MessageProcessingError> {
-        let client_config = MessageClientConfig::new(client_id);
-
-        // Look up the channel
-        let channel = match client_channel {
-            ClientChannel::DataChannel => client_config.data_channel(),
-            ClientChannel::ControlChannel => client_config.control_channel(),
-            ClientChannel::ExecutionChannel => client_config.execution_channel(),
-            ClientChannel::HeartbeatChannel => client_config.heartbeat_channel(),
-        };
-
-        Ok(channel)
-    }
-
     /// Retrieves the trade table name for the given exchange ID.
     ///
     /// Locks the SymbolManager mutex and looks up the table name for the exchange.

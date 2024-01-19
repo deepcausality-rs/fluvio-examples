@@ -1,6 +1,5 @@
 use crate::service::Server;
 use common::prelude::{MessageProcessingError, OHLCVBar};
-use fluvio::Fluvio;
 use sbe_messages::prelude::{DataErrorType, SbeOHLCVBar};
 
 impl Server {
@@ -20,33 +19,15 @@ impl Server {
     /// Returns a `Result` with `()` if successful, otherwise returns a
     /// `(DataErrorType, MessageProcessingError)` tuple on failure to:
     ///
-    /// - Connect to Fluvio
-    /// - Create the producer
-    /// - Send any of the messages
-    ///
     pub(crate) async fn start_ohlcv_data(
         &self,
-        client_data_channel: String,
+        client_id: u16,
         first_bar: Vec<u8>,
         data_bars: &Vec<OHLCVBar>,
         last_bar: Vec<u8>,
     ) -> Result<(), (DataErrorType, MessageProcessingError)> {
-        // Connect to the fluvio cluster
-        let fluvio = Fluvio::connect().await.unwrap();
-
-        // Create a producer for the client data channel
-        let producer = match fluvio.topic_producer(client_data_channel).await {
-            Ok(producer) => producer,
-            Err(e) => {
-                return Err((
-                    DataErrorType::UnknownDataError,
-                    MessageProcessingError(e.to_string()),
-                ));
-            }
-        };
-
         // Send first  bar message to inform the client that the data stream starts
-        match self.send_data(&producer, first_bar).await {
+        match self.send_data(client_id, first_bar).await {
             Ok(_) => {}
             Err(e) => {
                 return Err(e);
@@ -67,7 +48,7 @@ impl Server {
             };
 
             // Send bar message to client
-            match self.send_data(&producer, buffer).await {
+            match self.send_data(client_id, buffer).await {
                 Ok(_) => {}
                 Err(e) => {
                     return Err(e);
@@ -76,7 +57,7 @@ impl Server {
         }
 
         // Send the last bar message to inform the client that the data stream has ended
-        match self.send_data(&producer, last_bar).await {
+        match self.send_data(client_id, last_bar).await {
             Ok(_) => {}
             Err(e) => {
                 return Err(e);

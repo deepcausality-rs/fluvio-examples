@@ -1,156 +1,10 @@
 use crate::service::Server;
 use common::prelude::{ClientChannel, MessageProcessingError, OHLCVBar, TimeResolution, TradeBar};
 use db_query_manager::error::QueryError;
-use fluvio::{Fluvio, RecordKey, TopicProducer};
-use sbe_messages::prelude::{ClientErrorMessage, ClientErrorType, DataErrorMessage, DataErrorType};
+use fluvio::RecordKey;
+use sbe_messages::prelude::DataErrorType;
 
 impl Server {
-    /// Sends the provided data buffer to the given producer.
-    ///
-    /// # Parameters
-    ///
-    /// * `producer` - The topic producer to send the data to.
-    /// * `buffer` - The data buffer to send.
-    ///
-    /// # Returns
-    ///
-    /// Returns a `Result` with `()` if successful, otherwise returns a
-    /// `(DataErrorType, MessageProcessingError)` tuple containing:
-    ///
-    /// - `DataErrorType::DataSendError`
-    /// - The underlying send error wrapped in `MessageProcessingError`
-    ///
-    pub(crate) async fn send_data(
-        &self,
-        producer: &TopicProducer,
-        buffer: Vec<u8>,
-    ) -> Result<(), (DataErrorType, MessageProcessingError)> {
-        match producer.send(RecordKey::NULL, buffer).await {
-            Ok(_) => {}
-            Err(e) => {
-                return Err((
-                    DataErrorType::DataSendError,
-                    MessageProcessingError(e.to_string()),
-                ));
-            }
-        }
-        producer.flush().await.expect("Failed to flush");
-
-        Ok(())
-    }
-
-    /// Sends a ClientError message to the given producer.
-    ///
-    /// # Parameters
-    ///
-    /// * `producer` - The topic producer to send the message on
-    /// * `client_id` - The id of the client the error is for
-    /// * `client_error` - The ClientErrorType to send
-    ///
-    /// # Returns
-    ///
-    /// Returns a `Result` with `()` if successful, otherwise returns a
-    /// `MessageProcessingError` on failure to send.
-    ///
-    pub(crate) async fn send_client_error(
-        &self,
-        client_id: u16,
-        client_error: ClientErrorType,
-    ) -> Result<(), MessageProcessingError> {
-        println!("[send_client_error]: Get the client's control channel to send messages back to the client");
-        let client_control_channel = match self
-            .get_client_channel(ClientChannel::ControlChannel, client_id)
-            .await
-        {
-            Ok(channel) => {
-                println!("[send_client_error]: Got the client's control channel");
-                channel
-            }
-            Err(e) => {
-                println!("[send_client_error]: Failed to get the client's control channel");
-                return Err(e);
-            }
-        };
-
-        println!("[send_client_error]: Connect to the Fluvio cluster");
-        let fluvio = Fluvio::connect().await.unwrap();
-
-        println!("[send_client_error]: Get the producer for the client's control channel");
-        let producer = fluvio
-            .topic_producer(client_control_channel)
-            .await
-            .expect("[send_client_error]: Failed to create a producer");
-
-        println!("[send_client_error]: Construct the ClientErrorMessage");
-        let message = ClientErrorMessage::new(client_id, client_error);
-        let enc = message.encode();
-        assert!(enc.is_ok());
-        let (_, buffer) = enc.unwrap();
-
-        println!("[send_client_error]: Send the ClientErrorMessage");
-        self.send_error(&producer, buffer).await?;
-
-        Ok(())
-    }
-
-    /// Sends a DataError message to the given producer.
-    ///
-    /// # Parameters
-    ///
-    /// * `producer` - The topic producer to send the message on
-    /// * `client_id` - The id of the client the error is for
-    /// * `data_error` - The DataErrorType to send
-    ///
-    /// # Returns
-    ///
-    /// Returns a `Result` with `()` if successful, otherwise returns a
-    /// `MessageProcessingError` on failure to send.
-    ///
-    pub(crate) async fn send_data_error(
-        &self,
-        producer: &TopicProducer,
-        client_id: u16,
-        data_error: DataErrorType,
-    ) -> Result<(), MessageProcessingError> {
-        let message = DataErrorMessage::new(client_id, data_error);
-        let enc = message.encode();
-        assert!(enc.is_ok());
-        let (_, buffer) = enc.unwrap();
-
-        self.send_error(producer, buffer).await?;
-
-        Ok(())
-    }
-
-    /// Sends an error message to the given producer.
-    ///
-    /// # Parameters
-    ///
-    /// * `producer` - The topic producer to send the message on
-    /// * `error_buffer` - The encoded error message bytes to send
-    ///
-    /// # Returns
-    ///
-    /// Returns a `Result` with `()` if successful, otherwise returns a
-    /// `MessageProcessingError` on failure to send.
-    ///
-    pub(crate) async fn send_error(
-        &self,
-        producer: &TopicProducer,
-        error_buffer: Vec<u8>,
-    ) -> Result<(), MessageProcessingError> {
-        producer
-            .send(RecordKey::NULL, error_buffer)
-            .await
-            .expect("Failed to send DataError: DataUnavailableError!");
-        producer
-            .flush()
-            .await
-            .expect("Failed to flush to message bus.");
-
-        Ok(())
-    }
-
     /// Gets all trade bars for the given symbol id and trade table.
     ///
     /// # Parameters
@@ -217,5 +71,48 @@ impl Server {
             Ok(bars) => Ok(bars),
             Err(e) => Err(e),
         }
+    }
+
+    /// Sends the provided data buffer to the given producer.
+    ///
+    /// # Parameters
+    ///
+    /// * `producer` - The topic producer to send the data to.
+    /// * `buffer` - The data buffer to send.
+    ///
+    /// # Returns
+    ///
+    /// Returns a `Result` with `()` if successful, otherwise returns a
+    /// `(DataErrorType, MessageProcessingError)` tuple containing:
+    ///
+    /// - `DataErrorType::DataSendError`
+    /// - The underlying send error wrapped in `MessageProcessingError`
+    ///
+    pub(crate) async fn send_data(
+        &self,
+        client_id: u16,
+        buffer: Vec<u8>,
+    ) -> Result<(), (DataErrorType, MessageProcessingError)> {
+        // Get the producer for the error channel
+        let producer = self
+            .get_channel_producer(ClientChannel::ErrorChannel, client_id)
+            .await
+            .expect("[send_error]: Failed to get error channel producer");
+
+        // Send the data
+        match producer.send(RecordKey::NULL, buffer).await {
+            Ok(_) => {}
+            Err(e) => {
+                return Err((
+                    DataErrorType::DataSendError,
+                    MessageProcessingError(e.to_string()),
+                ));
+            }
+        }
+
+        // Flush the producer
+        producer.flush().await.expect("Failed to flush");
+
+        Ok(())
     }
 }

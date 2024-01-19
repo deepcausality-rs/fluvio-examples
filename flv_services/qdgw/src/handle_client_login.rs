@@ -29,15 +29,12 @@ impl Server {
         client_login_msg: &ClientLoginMessage,
     ) -> Result<(), MessageProcessingError> {
         // Remove debug print
-        println!(
-            "[QDGW/handle_client::handle_client_login]: {:?}",
-            &client_login_msg
-        );
+        // println!("[QDGW/handle_client::handle_client_login]:");
 
-        println!("::handle_client_login]: Extract the client ID from the message");
+        // println!("::handle_client_login]: Extract the client ID from the message");
         let client_id = client_login_msg.client_id();
 
-        println!("::handle_client_login]: Check if the client is already logged in");
+        // println!("::handle_client_login]: Check if the client is already logged in");
         let exists = self.check_client_login(client_id).await;
 
         // If the client is already logged in, return an error
@@ -45,7 +42,7 @@ impl Server {
         match exists {
             Ok(exists) => match exists {
                 true => {
-                    println!("::handle_client_login]: Client already logged in, return an error back to the client");
+                    // println!("::handle_client_login]: Client already logged in, return an error back to the client");
                     let client_error_type = ClientErrorType::ClientAlreadyLoggedIn;
                     match self.send_client_error(client_id, client_error_type).await {
                         Ok(_) => {}
@@ -56,7 +53,7 @@ impl Server {
                 }
                 //
                 false => {
-                    println!("::handle_client_login]: Client not logged in, proceed with login");
+                    // println!("::handle_client_login]: Client not logged in, proceed with login");
                     let res = self.client_login(client_id).await;
 
                     match res {
@@ -77,7 +74,10 @@ impl Server {
             },
             // Something went horribly wrong, log the message, and return an unknown error
             Err(err) => {
-                println!("[QDGW/handle_client_login::handle_client_login] UnknownClientError: {:?}", err);
+                println!(
+                    "[QDGW/handle_client_login::handle_client_login] UnknownClientError: {:?}",
+                    err
+                );
 
                 let client_error_type = ClientErrorType::UnknownClientError;
                 match self.send_client_error(client_id, client_error_type).await {
@@ -117,11 +117,11 @@ impl Server {
 
         match client_db.add_client(client_id, config) {
             Ok(_) => {
-                println!("[::client_login]: Client logged in successfully");
+                // println!("[::client_login]: Client logged in successfully");
                 Ok(())
             }
             Err(e) => {
-                println!("[::client_login]: Failed to add client to the database");
+                // println!("[::client_login]: Failed to add client to the database");
                 Err(MessageProcessingError(e.to_string()))
             }
         }

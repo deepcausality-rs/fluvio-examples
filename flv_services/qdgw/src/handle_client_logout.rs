@@ -29,15 +29,12 @@ impl Server {
         client_logout_msg: &ClientLogoutMessage,
     ) -> Result<(), MessageProcessingError> {
         // Remove debug print
-        println!(
-            "[QDGW/handle_client::client_logout]: {:?}",
-            client_logout_msg
-        );
+        // println!("[QDGW/handle_client::client_logout]");
 
-        println!("::handle_client_logout]: Extract the client ID from the message");
+        // println!("::handle_client_logout]: Extract the client ID from the message");
         let client_id = client_logout_msg.client_id();
 
-        println!("::handle_client_logout]: Get the client's control channel to send messages back to the client");
+        // println!("::handle_client_logout]: Get the client's control channel to send messages back to the client");
         let client_control_channel = match self
             .get_client_channel(ClientChannel::ControlChannel, client_id)
             .await
@@ -48,28 +45,28 @@ impl Server {
             }
         };
 
-        println!("::handle_client_logout]: Connect to the Fluvio cluster");
+        // println!("::handle_client_logout]: Connect to the Fluvio cluster");
         let fluvio = Fluvio::connect().await.unwrap();
 
-        println!("::handle_client_logout]: Get the producer for the client's control channel");
+        // println!("::handle_client_logout]: Get the producer for the client's control channel");
         let producer = fluvio
             .topic_producer(client_control_channel)
             .await
             .expect("Failed to create a producer");
 
-        println!("::handle_client_logout]: Check if the client is logged in");
+        // println!("::handle_client_logout]: Check if the client is logged in");
         let exists = self.check_client_login(client_id).await;
 
         match exists {
             Ok(exists) => match exists {
                 true => {
-                    println!("[::handle_client_logout]: Client is logged in, proceed with logout");
+                    // println!("[::handle_client_logout]: Client is logged in, proceed with logout");
 
                     let res = self.client_logout(client_id).await;
                     match res {
                         Ok(_) => {}
                         Err(err) => {
-                            println!("[QDGW/handle_client_logout::handle_client_logout] ClientLogOutError: {:?}", err);
+                            // println!("[QDGW/handle_client_logout::handle_client_logout] ClientLogOutError: {:?}", err);
 
                             let client_error_type = ClientErrorType::ClientLogOutError;
                             match self
@@ -83,7 +80,7 @@ impl Server {
                 }
                 // client does not exist, return an ClientNotLoggedIn error to the client
                 false => {
-                    println!("[::handle_client_logout]: Client is not logged in, return an ClientNotLoggedIn error to the client");
+                    // println!("[::handle_client_logout]: Client is not logged in, return an ClientNotLoggedIn error to the client");
 
                     let client_error_type = ClientErrorType::ClientNotLoggedIn;
                     match self.send_client_error(client_id, client_error_type).await {
@@ -136,7 +133,7 @@ impl Server {
         client_db.remove_client(client_id);
         drop(client_db);
 
-        println!("[::client_logout]: Client logged out successfully");
+        // println!("[::client_logout]: Client logged out successfully");
 
         Ok(())
     }

@@ -17,8 +17,9 @@ use std::fmt;
 pub enum ClientChannel {
     DataChannel = 0,
     ControlChannel = 1,
-    ExecutionChannel = 2,
-    HeartbeatChannel = 3,
+    ErrorChannel = 2,
+    ExecutionChannel = 3,
+    HeartbeatChannel = 4,
 }
 
 impl fmt::Display for ClientChannel {
@@ -26,6 +27,7 @@ impl fmt::Display for ClientChannel {
         match *self {
             ClientChannel::DataChannel => write!(f, "DataChannel"),
             ClientChannel::ControlChannel => write!(f, "ControlChannel"),
+            ClientChannel::ErrorChannel => write!(f, "ErrorChannel"),
             ClientChannel::ExecutionChannel => write!(f, "ExecutionChannel"),
             ClientChannel::HeartbeatChannel => write!(f, "HeartbeatChannel"),
         }
