@@ -3,7 +3,7 @@ use db_query_manager::QueryDBManager;
 use std::str::FromStr;
 
 fn get_local_db_config() -> DBConfig {
-    DBConfig::new(9009, "0.0.0.0".to_string(), "exchanges".to_string())
+    DBConfig::new(9009, "0.0.0.0".to_string())
 }
 
 #[tokio::test]

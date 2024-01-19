@@ -2,6 +2,7 @@ use crate::service::Server;
 use autometrics::autometrics;
 use common::prelude::{ClientChannel, MessageProcessingError};
 use fluvio::{Fluvio, RecordKey};
+use log::debug;
 use sbe_messages::prelude::{ClientErrorMessage, ClientErrorType, ClientLogoutMessage};
 
 impl Server {
@@ -34,6 +35,7 @@ impl Server {
             client_logout_msg
         );
 
+        debug!("Bla");
         // Extract the client ID from the message
         let client_id = client_logout_msg.client_id();
 

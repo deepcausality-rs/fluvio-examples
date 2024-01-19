@@ -59,13 +59,13 @@ pub(crate) fn get_service_config(id: &ServiceID) -> ServiceConfig {
 }
 
 pub(crate) fn get_all_exchanges() -> Vec<ExchangeID> {
-    exchange_specs::get_all_exchanges()
+    exchange_specs::prelude::get_all_exchanges()
 }
 
 pub(crate) fn get_all_exchanges_ids_names() -> Vec<(u16, String)> {
-    exchange_specs::get_all_exchanges_ids_names()
+    exchange_specs::prelude::get_all_exchanges_ids_names()
 }
 
 pub(crate) fn get_exchange_symbol_tables() -> HashMap<ExchangeID, String> {
-    exchange_specs::get_exchange_symbol_tables()
+    exchange_specs::prelude::get_exchange_symbol_tables()
 }

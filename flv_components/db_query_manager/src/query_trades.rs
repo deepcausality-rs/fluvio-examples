@@ -32,7 +32,7 @@ impl QueryDBManager {
     ///
     /// #[tokio::main]
     /// async fn main() {
-    ///  let db_config =  DBConfig::new(9009, "0.0.0.0".into(), "exchanges".to_string());
+    ///  let db_config =  DBConfig::new(9009, "0.0.0.0".into());
     ///  let mut query_manager = QueryDBManager::new(db_config).await.expect("Failed to create db connection");
     ///
     ///  let trades = query_manager.get_all_trades(278, "kraken_ethaed")
