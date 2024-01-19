@@ -16,8 +16,6 @@ pub struct DBConfig {
     port: u16,
     /// DNS resolvable name of the host to connect to.
     host: String,
-    /// Name of the database table containing all the exchanges.
-    exchange_table_name: String,
     /// ILP Buffer size before flushing to the server.
     buffer_size: usize,
     //
@@ -36,7 +34,6 @@ impl DBConfig {
     ///
     /// * `port` - The port number to connect to the database
     /// * `host` - The hostname of the database server
-    /// * `exchange_table_name` - The name of the exchange table in the database
     ///
     /// # Returns
     ///
@@ -47,13 +44,12 @@ impl DBConfig {
     /// ```rust
     /// use common::prelude::DBConfig;
     ///
-    /// let config = DBConfig::new(9009, "localhost".to_string(), "exchanges".to_string());
+    /// let config = DBConfig::new(9009, "localhost".to_string());
     /// ```
-    pub fn new(port: u16, host: String, exchange_table_name: String) -> Self {
+    pub fn new(port: u16, host: String) -> Self {
         Self {
             port,
             host,
-            exchange_table_name,
             buffer_size: BUFFER_SIZE,
         }
     }
@@ -67,10 +63,6 @@ impl DBConfig {
 
     pub fn host(&self) -> &String {
         &self.host
-    }
-
-    pub fn exchange_table_name(&self) -> &str {
-        &self.exchange_table_name
     }
 
     pub fn buffer_size(&self) -> usize {
@@ -88,10 +80,6 @@ impl DBConfig {
 
 impl Display for DBConfig {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        write!(
-            f,
-            "DBConfig {{ port: {}, host: {}, exchange_table_name: {} }}",
-            self.port, self.host, self.exchange_table_name
-        )
+        write!(f, "DBConfig {{ port: {}, host: {} }}", self.port, self.host,)
     }
 }

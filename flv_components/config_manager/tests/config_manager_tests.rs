@@ -9,7 +9,7 @@ fn test_get_svc_id() {
 
     let svc_id = ServiceID::Default;
     let config = ConfigManager::new(svc_id);
-    assert_eq!(svc_id, config.get_svc_id());
+    assert_eq!(svc_id, config.svc_id());
 }
 
 #[test]
@@ -18,7 +18,7 @@ fn test_get_env_type() {
 
     let svc_id = ServiceID::Default;
     let config = ConfigManager::new(svc_id);
-    assert_eq!(EnvironmentType::Local, config.get_env_type());
+    assert_eq!(EnvironmentType::Local, config.env_type());
 }
 
 #[test]
@@ -29,7 +29,7 @@ fn test_get_db_config() {
     let config = ConfigManager::new(svc_id);
     let db_config = get_local_db_config();
 
-    assert_eq!(db_config, config.get_db_config());
+    assert_eq!(db_config, config.db_config());
 }
 
 #[test]
@@ -40,7 +40,7 @@ fn test_get_svc_config() {
     let config = ConfigManager::new(svc_id);
 
     let svc_config = ServiceConfig::default();
-    assert_eq!(svc_config, config.get_svc_config());
+    assert_eq!(svc_config, config.svc_config());
 }
 
 #[test]
@@ -50,7 +50,7 @@ fn test_get_message_client_config() {
     let svc_id = ServiceID::default();
     let config = ConfigManager::new(svc_id);
     let expected = MessageClientConfig::from_svc_id(svc_id);
-    assert_eq!(expected, config.get_message_client_config());
+    assert_eq!(expected, config.message_client_config());
 }
 
 #[test]
@@ -60,5 +60,5 @@ fn test_get_svc_metric_config() {
     let svc_config = ServiceConfig::default();
     let config = ConfigManager::new(ServiceID::default());
     let expected = svc_config.metrics().to_owned();
-    assert_eq!(expected, config.get_svc_metric_config());
+    assert_eq!(expected, config.svc_metric_config());
 }

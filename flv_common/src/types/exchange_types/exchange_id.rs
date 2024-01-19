@@ -1,7 +1,18 @@
 use serde::{Deserialize, Serialize};
 use std::fmt::{Display, Formatter};
 
-#[derive(Serialize, Deserialize, Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
+/// The ExchangeID enum represents supported exchange identifiers.
+///
+/// The variants are:
+///
+/// - NullVal - A null or unset value, default variant.
+/// - Kraken - The Kraken exchange.
+///
+/// The enum is represented as a u8 under the hood.
+///
+#[derive(
+    Serialize, Deserialize, Clone, Copy, Debug, Default, Hash, PartialEq, Eq, PartialOrd, Ord,
+)]
 #[repr(u8)]
 pub enum ExchangeID {
     #[default]
@@ -10,6 +21,20 @@ pub enum ExchangeID {
 }
 
 impl From<u8> for ExchangeID {
+    /// Create an ExchangeID from a u8 value.
+    ///
+    /// # Parameters
+    ///
+    /// * `v` - The u8 value to convert to an ExchangeID
+    ///
+    /// # Returns
+    ///
+    /// Returns the corresponding ExchangeID for the provided u8:
+    ///
+    /// - 0 -> ExchangeID::NullVal
+    /// - 1 -> ExchangeID::Kraken
+    ///
+    /// If the u8 does not match a valid mapping, returns ExchangeID::NullVal.
     #[inline]
     fn from(v: u8) -> Self {
         match v {

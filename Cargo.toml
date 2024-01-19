@@ -17,6 +17,7 @@ members = [
     "flv_service_utils",
     "flv_services/qdgw",
     "flv_specs/db_specs",
+    "flv_specs/exchange_specs",
     "flv_specs/service_specs",
 ]
 
@@ -44,6 +45,7 @@ sbe_bindings = {path = "flv_sbe/bindings" }
 sbe_messages = {path = "flv_sbe/sbe_messages" }
 service_utils = { path = "flv_service_utils" }
 db_specs = { path = "flv_specs/db_specs" }
+exchange_specs = { path = "flv_specs/exchange_specs" }
 service_specs = {path = "flv_specs/service_specs" }
 #
 # External crates

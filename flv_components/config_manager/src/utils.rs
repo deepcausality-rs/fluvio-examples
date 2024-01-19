@@ -1,6 +1,7 @@
-use common::prelude::{DBConfig, EnvironmentType, ServiceConfig, ServiceID};
+use common::prelude::{DBConfig, EnvironmentType, ExchangeID, ServiceConfig, ServiceID};
 use db_specs::prelude::{get_cluster_db_config, get_local_db_config};
 use service_specs::prelude::get_qdgw_service_config;
+use std::collections::HashMap;
 use std::env;
 use std::path::Path;
 
@@ -55,4 +56,16 @@ pub(crate) fn get_service_config(id: &ServiceID) -> ServiceConfig {
         ServiceID::QDGW => get_qdgw_service_config(),
         ServiceID::Default => ServiceConfig::default(),
     }
+}
+
+pub(crate) fn get_all_exchanges() -> Vec<ExchangeID> {
+    exchange_specs::get_all_exchanges()
+}
+
+pub(crate) fn get_all_exchanges_ids_names() -> Vec<(u16, String)> {
+    exchange_specs::get_all_exchanges_ids_names()
+}
+
+pub(crate) fn get_exchange_symbol_tables() -> HashMap<ExchangeID, String> {
+    exchange_specs::get_exchange_symbol_tables()
 }

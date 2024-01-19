@@ -1,4 +1,4 @@
-use common::prelude::{MessageClientConfig};
+use common::prelude::MessageClientConfig;
 use qd_client::QDClient;
 use std::time::Duration;
 use tokio::time::sleep;
@@ -10,7 +10,6 @@ const CLIENT_ID: u16 = 42;
 
 const ETH_AED: u16 = 278;
 //  278 = ethaed on Kraken
-
 
 #[tokio::main]
 async fn main() {
@@ -25,7 +24,7 @@ async fn main() {
 
     // Start streaming trade data
     // Add Kraken to ExchangeID
-    // let exchange_id = ExchangeID::COINBASE;
+    // let exchange_id = ExchangeID::Kraken;
     // let symbol_id = ETH_AED;
     // client.start_trade_data(exchange_id, symbol_id)
     //     .await

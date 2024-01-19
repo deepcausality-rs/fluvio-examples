@@ -36,7 +36,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let cfg_manager = async { ConfigManager::new(SVC_ID) }.await;
 
     // Configure the metrics endpoint.
-    let metric_config = cfg_manager.get_svc_metric_config();
+    let metric_config = cfg_manager.svc_metric_config();
     let metrics_host = metric_config.metric_host();
     let metrics_port = metric_config.metric_port();
     let metrics_uri = metric_config.metric_uri();
@@ -60,7 +60,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let web_handle = tokio::spawn(web_server);
 
     // Autoconfigures message channel
-    let msg_config = cfg_manager.get_message_client_config();
+    let msg_config = cfg_manager.message_client_config();
     let service_topic = msg_config.control_channel();
 
     // Creates a new consumer for the topic
@@ -71,20 +71,26 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // We have to use Arc/Mutex here to allow multi-threaded access those manager instances.
     let client_manager = Arc::new(Mutex::new(ClientManager::new()));
 
-    let db_config = cfg_manager.get_db_config();
-    let mut q_manager = QueryDBManager::new(db_config)
+    // Get the symbol table for the default exchange.
+    let default_exchange = cfg_manager.default_exchange();
+    let exchanges = cfg_manager.exchanges_id_names().to_owned();
+    let exchange_symbol_table = cfg_manager
+        .get_symbol_table(default_exchange)
+        .expect("Failed to get symbol table");
+
+    // Create a new QueryDBManager instance.
+    let db_config = cfg_manager.db_config();
+    let mut q_manager = QueryDBManager::new(db_config.clone())
         .await
         .expect("[QDGW]/main: Failed to create QueryDBManager instance.");
 
-    // Move this to autoconfig.
-    let exchanges = vec![(1, "kraken".to_string()), (2, "bittrex".to_string())];
-    let symbol_table = "kraken_symbols";
-
+    // Get all symbols for the default exchange.
     let symbols = q_manager
-        .get_all_symbols_with_ids(symbol_table)
+        .get_all_symbols_with_ids(&exchange_symbol_table)
         .await
         .expect("[QDGW]/main: Failed to get all symbols for SymbolManager.");
 
+    // Create a new SymbolManager instance.
     let symbol_manager = async {
         Arc::new(Mutex::new(
             SymbolManager::new(symbols, exchanges)
@@ -93,6 +99,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
     .await;
 
+    // Wrap the QueryDBManager instance into an Arc/Mutex to allow multi-threaded access.
     let query_manager = Arc::new(Mutex::new(q_manager));
 
     //Creates a new server
@@ -109,6 +116,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         &metrics_addr,
         &metrics_uri,
     );
+
+    // Free up some memory before starting the service,
+    drop(db_config);
+    drop(cfg_manager);
+    drop(msg_config);
+    drop(service_topic);
+    drop(metrics_host);
+    drop(metrics_uri);
+    drop(metrics_addr);
 
     //Starts both servers concurrently.
     match tokio::try_join!(web_handle, service_handle) {
