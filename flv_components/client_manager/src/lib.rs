@@ -24,6 +24,14 @@ impl ClientManager {
     /// # Returns
     ///
     /// A new ClientManager instance.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use client_manager::ClientManager;
+    ///
+    ///   let manager = ClientManager::new();
+    /// ```
     pub fn new() -> Self {
         Self {
             clients: HashMap::new(),

@@ -19,9 +19,7 @@ fn test_get_client_control_channel() {
     let mut manager = ClientManager::new();
     let id = 100;
     let config = MessageClientConfig::new(id);
-    manager
-        .add_client(id, config.clone())
-        .expect("Failed to add client");
+    manager.add_client(id, config.clone()).expect("Failed to add client");
 
     let result = manager.get_client_control_channel(id);
 
@@ -58,6 +56,27 @@ fn test_get_client_data_channel() {
 }
 
 #[test]
+fn test_get_client_heartbeat_channel() {
+    let mut manager = ClientManager::new();
+    let id = 100;
+    let config = MessageClientConfig::new(id);
+    manager
+        .add_client(id, config.clone())
+        .expect("Failed to add client");
+
+    let result = manager.get_client_heartbeat_channel(id);
+    assert!(result.is_ok());
+    assert_eq!(result.unwrap(), config.clone().heartbeat_channel());
+
+    let result = manager.get_client_heartbeat_channel(2);
+    assert!(result.is_err());
+    assert_eq!(
+        result.unwrap_err().to_string(),
+        "MessageClientConfigError: Client id 2 does not exist"
+    );
+}
+
+#[test]
 fn test_get_client_execution_channel() {
     let mut manager = ClientManager::new();
     let id = 100;
@@ -79,7 +98,7 @@ fn test_get_client_execution_channel() {
 }
 
 #[test]
-fn test_get_client() {
+fn test_get_client_config() {
     let mut manager = ClientManager::new();
     let id = 100;
     let config = MessageClientConfig::new(id);
@@ -87,8 +106,22 @@ fn test_get_client() {
         .add_client(id, config)
         .expect("Failed to add client");
 
-    let res = manager.get_client_config(id);
+    let res = manager
+        .get_client_config(id);
+
     assert!(res.is_ok());
+}
+
+#[test]
+fn test_check_client() {
+    let mut manager = ClientManager::new();
+
+    let id = 23;
+    let config = MessageClientConfig::new(id);
+    manager.add_client(id, config).unwrap();
+
+    assert!(manager.check_client(id));
+    assert!(!manager.check_client(89));
 }
 
 #[test]

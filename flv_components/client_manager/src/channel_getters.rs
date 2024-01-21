@@ -12,6 +12,23 @@ impl ClientManager {
     ///
     ///  Result with the control channel string if the client exists.
     ///  Err with a custom error if the client does not exist.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use client_manager::ClientManager;
+    /// use common::prelude::MessageClientConfig;
+    ///
+    ///   let mut manager = ClientManager::new();
+    ///
+    ///   let id = 100;
+    ///     let config = MessageClientConfig::new(id);
+    ///     manager.add_client(id, config.clone()).expect("Failed to add client");
+    ///
+    ///     let result = manager.get_client_control_channel(id);
+    ///
+    ///     assert!(result.is_ok());
+    /// ```
     pub fn get_client_control_channel(&self, id: u16) -> Result<String, MessageClientConfigError> {
         match self.get_client_config(id) {
             Ok(client_config) => Ok(client_config.control_channel().clone()),
@@ -32,6 +49,23 @@ impl ClientManager {
     ///
     ///  Result with the data channel string if the client exists.
     ///  Err with a custom error if the client does not exist.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use client_manager::ClientManager;
+    /// use common::prelude::MessageClientConfig;
+    ///
+    ///   let mut manager = ClientManager::new();
+    ///
+    ///   let id = 100;
+    ///     let config = MessageClientConfig::new(id);
+    ///     manager.add_client(id, config.clone()).expect("Failed to add client");
+    ///
+    ///     let result = manager.get_client_data_channel(id);
+    ///
+    ///     assert!(result.is_ok());
+    /// ```
     pub fn get_client_data_channel(&self, id: u16) -> Result<String, MessageClientConfigError> {
         match self.get_client_config(id) {
             Ok(client_config) => Ok(client_config.data_channel().clone()),
@@ -52,6 +86,23 @@ impl ClientManager {
     ///
     ///  Result with the execution channel string if the client exists.
     ///  Err with a custom error if the client does not exist.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use client_manager::ClientManager;
+    /// use common::prelude::MessageClientConfig;
+    ///
+    ///   let mut manager = ClientManager::new();
+    ///
+    ///   let id = 100;
+    ///     let config = MessageClientConfig::new(id);
+    ///     manager.add_client(id, config.clone()).expect("Failed to add client");
+    ///
+    ///     let result = manager.get_client_execution_channel(id);
+    ///
+    ///     assert!(result.is_ok());
+    /// ```
     pub fn get_client_execution_channel(
         &self,
         id: u16,
@@ -75,6 +126,23 @@ impl ClientManager {
     ///
     /// Result with the heartbeat channel string if the client exists.
     /// Err with a custom error if the client does not exist.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use client_manager::ClientManager;
+    /// use common::prelude::MessageClientConfig;
+    ///
+    ///   let mut manager = ClientManager::new();
+    ///
+    ///   let id = 100;
+    ///     let config = MessageClientConfig::new(id);
+    ///     manager.add_client(id, config.clone()).expect("Failed to add client");
+    ///
+    ///     let result = manager.get_client_heartbeat_channel(id);
+    ///
+    ///     assert!(result.is_ok());
+    /// ```
     pub fn get_client_heartbeat_channel(
         &self,
         id: u16,
