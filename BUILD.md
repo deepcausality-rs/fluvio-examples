@@ -14,8 +14,10 @@ if the automatic install fails, the script will show a link with further install
 After all dependencies have been installed, the following commands are ready to use.
 
 ```
+make
     make build   	Builds the code base incrementally (fast) for dev.
     make check   	Checks the code base for security vulnerabilities.
+    make doc   		Generates documentation for the code base and open its in a browser.
     make example     	Runs the example code in flv_qd_client_examples.
     make fix   		Fixes linting issues as reported by clippy.
     make import   	Imports tick data from CSV into QuestDB.

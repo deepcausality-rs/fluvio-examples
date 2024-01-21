@@ -3,9 +3,9 @@ SHELL := /usr/bin/env bash
 
 .PHONY: help
 help:
-	@echo ' '
 	@echo '    make build   	Builds the code base incrementally (fast) for dev.'
 	@echo '    make check   	Checks the code base for security vulnerabilities.'
+	@echo '    make doc   		Generates documentation for the code base and open its in a browser.'
 	@echo '    make example     	Runs the example code in flv_qd_client_examples.'
 	@echo '    make fix   		Fixes linting issues as reported by clippy.'
 	@echo '    make import   	Imports tick data from CSV into QuestDB.'
@@ -37,6 +37,11 @@ check:
 .PHONY: clean
 clean:
 	@source scripts/clean.sh
+
+
+.PHONY: doc
+doc:
+	@source scripts/doc.sh
 
 
 .PHONY: example
