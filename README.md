@@ -6,7 +6,7 @@ This project is a simple example of how to use Fluvio and DeepCausality to build
 a real-time causal inference pipeline. Specifically, the project illustrates:
 
 1) How to replay and resample trade data.
-2) How to analyze trade data in real-time using causal inference.
+2) How to stream SBE Encoded trade data in real-time using Fluvios message system.
 3) How to pass forward causal inference results to downstream systems via Fluvio's in-flight computation.
 
 ### 👉 **Fluvio**
@@ -26,23 +26,14 @@ real-time applications. Read more on the [DeepCausality website](https://www.dee
 QuestDB is an open-source high performance time series database with enhanced SQL analytics for time series data. Read
 more on the [QuestDB website](https://questdb.io).
 
+### 👉 **SBE: Simple Binary Encoding**
 
-### 👉 **Technologies used:**
-
-* [SBE (Simple Binary Encoding) ](https://github.com/real-logic/simple-binary-encoding)for binary message encoding &
-  decoding.
-* [QuestDB](https://github.com/questdb/questdb) to store and query nearly 1 billion trade data from 695 crypto markets.
-* [DeepCausality](https://github.com/deepcausality-rs/deep_causality/tree/main) to process trade bars in flight as they
-  pass through the message bus.
-* [Fluvio](https://github.com/infinyon/fluvio) as message bus and in-flight compute system.
-
-The careful reader may have noticed that this system amounts to an event based back-testing facility and
-that is exactly what's demonstrated in this project.
+Simple Binary Encoding is a highly efficient fixed sized binary codec used for  message encoding & decoding. Read more on the [SBE GitHub repo](https://github.com/real-logic/simple-binary-encoding) and on the [FIX community standard page](https://www.fixtrading.org/standards/sbe/). Note, the SBE Rust bindings are generated with the [official SBE tool.](https://github.com/real-logic/simple-binary-encoding/wiki/Sbe-Tool-Guide)
 
 ## 🚀 Get started
 
-1. Clone this repo:
-2. Install all requirements. See the [installation guide](doc/install.md)
+1. Clone this repo: ```git clone https://github.com/marvin-hansen/fluvio-examples.git```
+2. Install all requirements ([installation guide](doc/install.md)) and import test data ([import guide](doc/import_data.md)).
 3. Start the QD gateway and run the example code. 
 
 
