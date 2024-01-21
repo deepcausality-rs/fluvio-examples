@@ -1,11 +1,12 @@
 use common::prelude::MessageClientConfig;
-use fluvio::{FluvioAdmin, Offset, TopicProducer};
+use fluvio::{FluvioAdmin, Offset};
 use futures::StreamExt;
 use std::error::Error;
 use std::time::Duration;
 use tokio::time::sleep;
 use utils::flv_utils;
 
+mod handle_events;
 mod send_login;
 mod send_logout;
 mod send_start_data;
@@ -29,7 +30,8 @@ pub struct QDClient {
     client_id: u16,
     admin: FluvioAdmin,
     client_config: MessageClientConfig,
-    producer: TopicProducer,
+    producer: fluvio::TopicProducer,
+    consumer: fluvio::PartitionConsumer,
 }
 
 impl QDClient {
@@ -57,40 +59,44 @@ impl QDClient {
     pub async fn new(
         client_id: u16,
         client_config: MessageClientConfig,
-        data_handler: fn(buffer: Vec<u8>) -> Result<(), Box<dyn Error + Send>>,
-        err_handler: fn(buffer: Vec<u8>) -> Result<(), Box<dyn Error + Send>>,
+        // data_handler: fn(buffer: Vec<u8>) -> Result<(), Box<dyn Error + Send>>,
+        // err_handler: Box<EventCallback>,
     ) -> Result<Self, Box<dyn Error + Send>> {
         // Get Fluvio admin.
         let admin = flv_utils::get_admin()
             .await
             .expect("[QDClient/new]: Failed to get admin");
 
-        // Get Fluvio producer for the gateway control topic.
+        // Get a producer for the gateway control topic.
         let producer = flv_utils::get_producer(TOPIC)
             .await
-            .expect("[QDClient/new]: Failed to get producer");
+            .expect("[QDClient/new]: Failed to get producer for gateway topic");
 
         // Create client topics
         flv_utils::create_topics(&admin, &client_config)
             .await
             .expect("[QDClient/new]: Failed to create topics");
 
-        // Start the data handler as Tokio task.
-        let data_topic = client_config.data_channel();
+        // Create consumer for channel topic.
+        let consumer = fluvio::consumer(TOPIC, 0)
+            .await
+            .expect("Failed to create a consumer for data topic");
 
-        tokio::spawn(async move {
-            if let Err(e) = handle_channel(&data_topic, data_handler).await {
-                eprintln!("[QDClient/new]: Consumer connection error: {}", e);
-            }
-        });
+        // // Start the data handler as Tokio task.
+        // let data_topic = client_config.data_channel();
+        // tokio::spawn(async move {
+        //     if let Err(e) = handle_channel(&data_topic, data_handler).await {
+        //         eprintln!("[QDClient/new]: Consumer connection error: {}", e);
+        //     }
+        // });
 
         // Start the error handler as Tokio task.
-        let err_topic = client_config.error_channel();
-        tokio::spawn(async move {
-            if let Err(e) = handle_channel(&err_topic, err_handler).await {
-                eprintln!("[QDClient/new]: Consumer connection error: {}", e);
-            }
-        });
+        // let err_topic = client_config.error_channel();
+        // tokio::spawn(async move {
+        //     if let Err(e) = handle_channel(&err_topic, err_handler).await {
+        //         eprintln!("[QDClient/new]: Consumer connection error: {}", e);
+        //     }
+        // });
 
         // Create client.
         let client = Self {
@@ -98,16 +104,64 @@ impl QDClient {
             admin,
             client_config,
             producer,
+            consumer,
         };
 
-        // login to the gateway.
+        // login to the QD gateway and register the clients data channel
+        // to receive data streamed from the gateway.
         client
             .login()
             .await
-            .expect("[QDClient/new]: Failed to log in");
+            .expect("[QDClient/new]: Failed to log in to the QD Gateway");
 
         Ok(client)
     }
+}
+
+/// Handles incoming messages on a topic channel.
+///
+/// # Arguments
+///
+/// * `channel_topic` - The topic to subscribe to.
+/// * `on_event` - The callback to process each message.
+///
+/// For each message received on the topic, this:
+///
+/// - Creates a Fluvio consumer for the topic.
+/// - Gets a stream for the consumer.
+/// - Loops through records in the stream.
+/// - Extracts the message bytes.
+/// - Calls the `event_handler` with the message buffer.
+///
+async fn handle_channel(
+    channel_topic: &str,
+    event_handler: fn(buffer: Vec<u8>) -> Result<(), Box<dyn Error + Send>>,
+    // on_event: fn(Vec<u8>) -> EventCallback,
+) -> Result<(), Box<dyn Error + Send>> {
+    // Create consumer for channel topic.
+    let consumer = fluvio::consumer(channel_topic, 0)
+        .await
+        .expect("Failed to create a consumer for data topic");
+
+    // Create stream for consumer.
+    let mut stream = consumer
+        .stream(Offset::end())
+        .await
+        .expect("Failed to create a stream");
+
+    // Consume records from the stream and process with the event handler.
+    while let Some(Ok(record)) = stream.next().await {
+        let value = record.get_value().to_vec();
+        let buffer = value.as_slice();
+
+        event_handler(buffer.to_vec())?;
+
+        // on_event(buffer.to_vec())
+        //     .await
+        //     .expect("Failed to process event");
+    }
+
+    Ok(())
 }
 
 impl QDClient {
@@ -135,45 +189,4 @@ impl QDClient {
 
         Ok(())
     }
-}
-
-/// Handles incoming messages on a topic channel.
-///
-/// # Arguments
-///
-/// * `channel_topic` - The topic to subscribe to.
-/// * `event_handler` - The callback to process each message.
-///
-/// For each message received on the topic, this:
-///
-/// - Creates a Fluvio consumer for the topic.
-/// - Gets a stream for the consumer.
-/// - Loops through records in the stream.
-/// - Extracts the message bytes.
-/// - Calls the `event_handler` with the message buffer.
-///
-async fn handle_channel(
-    channel_topic: &str,
-    event_handler: fn(buffer: Vec<u8>) -> Result<(), Box<dyn Error + Send>>,
-) -> Result<(), Box<dyn Error + Send>> {
-    // Create consumer for channel topic.
-    let consumer = fluvio::consumer(channel_topic, 0)
-        .await
-        .expect("Failed to create a consumer for data topic");
-
-    // Create stream for consumer.
-    let mut stream = consumer
-        .stream(Offset::end())
-        .await
-        .expect("Failed to create a stream");
-
-    // Consume records from the stream and process with the event handler.
-    while let Some(Ok(record)) = stream.next().await {
-        let value = record.get_value().to_vec();
-        let buffer = value.as_slice();
-
-        event_handler(buffer.to_vec())?;
-    }
-
-    Ok(())
 }

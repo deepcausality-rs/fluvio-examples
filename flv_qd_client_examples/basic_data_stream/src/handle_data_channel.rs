@@ -3,10 +3,9 @@ use sbe_messages::prelude::{
 };
 use std::error::Error;
 
-pub fn handle_data_event(raw_event: Vec<u8>) -> Result<(), Box<dyn Error + Send>> {
+pub async fn handle_data_event(buffer: &[u8]) -> () {
     // The third byte of the buffer is always the message type.
-    let message_type = MessageType::from(raw_event[2] as u16);
-    let buffer = raw_event.as_slice();
+    let message_type = MessageType::from(buffer[2] as u16);
 
     match message_type {
         // Handle OHLC bars
@@ -39,5 +38,5 @@ pub fn handle_data_event(raw_event: Vec<u8>) -> Result<(), Box<dyn Error + Send>
         _ => {}
     }
 
-    Ok(())
+    // Ok(())
 }

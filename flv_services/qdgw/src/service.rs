@@ -76,7 +76,7 @@ impl Server {
     ///
     pub async fn run(
         self,
-        signal: impl Future<Output=()> + Send + 'static,
+        signal: impl Future<Output = ()> + Send + 'static,
     ) -> Result<(), MessageProcessingError> {
         // When call .await on a &mut _ reference, pin the future. https://docs.rs/tokio/latest/tokio/macro.pin.html#examples
         let signal_future = signal;

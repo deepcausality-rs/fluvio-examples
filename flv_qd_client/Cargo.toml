@@ -21,3 +21,4 @@ sbe_messages = { workspace = true }
 futures = {workspace = true}
 tokio = { workspace = true }
 fluvio = { workspace = true }
+async-stream = "0.3.5"
