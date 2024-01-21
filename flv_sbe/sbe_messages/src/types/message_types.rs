@@ -60,7 +60,7 @@ pub enum MessageType {
     DataError = 802_u16,
 }
 
-/// Implements From<u16> trait to convert u16 to MessageType.
+/// Implements `From<u16>` to convert u16 to MessageType.
 ///
 /// # Arguments
 ///

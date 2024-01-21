@@ -12,7 +12,7 @@ impl ClientLoginMessage {
     ///
     /// # Returns
     ///
-    /// (usize, Vec<u8>) - Tuple of encoded size and byte buffer
+    /// (usize, `Vec<u8>`) - Tuple of encoded size and byte buffer
     ///
     /// # Errors
     ///

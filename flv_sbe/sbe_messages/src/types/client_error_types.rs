@@ -36,7 +36,7 @@ pub enum ClientErrorType {
 }
 
 impl From<u8> for ClientErrorType {
-    /// Implements From<u8> trait to convert u8 to ClientErrorType.
+    /// Implements `From<u8>` trait to convert u8 to ClientErrorType.
     ///
     /// # Arguments
     ///

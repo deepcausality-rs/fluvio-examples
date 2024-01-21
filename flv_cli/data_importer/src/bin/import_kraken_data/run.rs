@@ -25,7 +25,7 @@ const META_DATA_TABLE: &str = "kraken_symbols";
 ///
 /// # Returns
 ///
-/// Result<(), Box<dyn Error>>
+/// `Result<(), Box<dyn Error>>`
 ///
 pub fn run() -> Result<(), Box<dyn Error>> {
     let start = Instant::now();

@@ -53,7 +53,7 @@ make
     make sbe   		Generates Rust bindings from the SBE schema.
 ```
 
-The scripts called by each make command are located in the [script folder.](scripts)
+The scripts called by each make command are located in the [script folder.](../scripts)
 
 
 ## Install QuestDB

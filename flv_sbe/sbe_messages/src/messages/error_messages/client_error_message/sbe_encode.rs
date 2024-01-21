@@ -11,7 +11,7 @@ use sbe_bindings::{message_header_codec, ClientErrorEncoder, Encoder, WriteBuf};
 ///
 /// # Returns
 ///
-/// (usize, Vec<u8>) - Tuple containing encoded size and byte buffer
+/// (usize, `Vec<u8>`) - Tuple containing encoded size and byte buffer
 ///
 /// # Errors
 ///
