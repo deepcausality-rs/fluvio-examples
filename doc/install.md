@@ -1,5 +1,61 @@
 # Installation
 
+
+## Install, Rust, Make and Cargo Tools 
+
+### Rust
+
+Make sure, you have Rust version 1.75 or higher installed. The official install 
+guide is online at: https://www.rust-lang.org/tools/install. Also, ensure you have Rust nightly installed via cargo:
+
+```bash 
+    rustup toolchain install nightly
+```
+ Please keep Rust default on stable. Nightly is only used by some tools
+that are configured via command line arguments to use nightly. To ensure your on the stable toolchain of Rust, run the following command:
+
+```bash 
+    rustup default stable
+```
+
+### Make
+
+Make sure, you have Make installed. On Linux, you can install them with the package manager of your linux distribution. [Details in this article](https://ioflood.com/blog/install-make-command-linux/#:~:text=In%20most%20Linux%20distributions%2C%20the,command%20sudo%20yum%20install%20make%20.).  On MacOS you can use homebrew and simply [install the formula](https://formulae.brew.sh/formula/make).
+
+### Cargo Tools
+
+Cargo works as expected, but in addition to cargo, a makefile exists
+that abstracts over several additional tools you may have to install
+before all make commands work. To do so, please run the following command:
+
+```bash 
+    make setup
+```
+
+The make install command tests and tries to install all required developer dependencies.
+if the automatic install fails, the script the  will show you installation instructions.
+
+After all dependencies have been installed, the following commands are ready to use.
+
+```
+make
+    make build   	Builds the code base incrementally (fast) for dev.
+    make check   	Checks the code base for security vulnerabilities.
+    make doc   		Builds, tests, and opens api docs in a browser.
+    make example     	Runs the example code in flv_qd_client_examples.
+    make fix   		Fixes linting issues as reported by clippy.
+    make import   	Imports tick data from CSV into QuestDB.
+    make format   	Formats call code according to cargo fmt style.
+    make setup   	Tests and installs all make script dependencies.
+    make run   		Runs the binary defined in scripts/run.sh.
+    make update   	Update rust, update and build the project.
+    make test   	Tests across all crates.
+    make sbe   		Generates Rust bindings from the SBE schema.
+```
+
+The scripts called by each make command are located in the [script folder.](scripts)
+
+
 ## Install QuestDB
 
 QuestDB documentation: https://questdb.io/docs/

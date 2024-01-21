@@ -5,7 +5,7 @@ SHELL := /usr/bin/env bash
 help:
 	@echo '    make build   	Builds the code base incrementally (fast) for dev.'
 	@echo '    make check   	Checks the code base for security vulnerabilities.'
-	@echo '    make doc   		Generates documentation for the code base and open its in a browser.'
+	@echo '    make doc   		Builds, tests, and opens api docs in a browser.'
 	@echo '    make example     	Runs the example code in flv_qd_client_examples.'
 	@echo '    make fix   		Fixes linting issues as reported by clippy.'
 	@echo '    make import   	Imports tick data from CSV into QuestDB.'
@@ -14,7 +14,7 @@ help:
 	@echo '    make run   		Runs the binary defined in scripts/run.sh.'
 	@echo '    make update   	Update rust, update and build the project.'
 	@echo '    make test   	Tests across all crates.'
-	@echo '    make sbe   		Generates Rust bindings for SBE messages from the SBE schema.'
+	@echo '    make sbe   		Generates Rust bindings from the SBE schema.'
 
 # "---------------------------------------------------------"
 # "---------------------------------------------------------"

@@ -17,7 +17,7 @@ After all dependencies have been installed, the following commands are ready to 
 make
     make build   	Builds the code base incrementally (fast) for dev.
     make check   	Checks the code base for security vulnerabilities.
-    make doc   		Generates documentation for the code base and open its in a browser.
+    make doc   		Builds, tests, and opens api docs in a browser.
     make example     	Runs the example code in flv_qd_client_examples.
     make fix   		Fixes linting issues as reported by clippy.
     make import   	Imports tick data from CSV into QuestDB.
@@ -26,7 +26,7 @@ make
     make run   		Runs the binary defined in scripts/run.sh.
     make update   	Update rust, update and build the project.
     make test   	Tests across all crates.
-    make sbe   		Generates Rust bindings for SBE messages from the SBE schema.
+    make sbe   		Generates Rust bindings from the SBE schema.
 ```
 
 The scripts called by each make command are located in the [script folder.](scripts)

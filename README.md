@@ -1,5 +1,14 @@
 # Fluvio DeepCausality Example Project
 
+## Overview
+ 
+This project is a simple example of how to use Fluvio and DeepCausality to build 
+a real-time causal inference pipeline. Specifically, the project illustrates:
+
+1) How to replay and resample trade data.
+2) How to analyze trade data in real-time using causal inference.
+3) How to pass forward causal inference results to downstream systems via Fluvio's in-flight computation.
+
 ### 👉 **Fluvio**
 
 Fluvio is an open-source data streaming platform with in-flight computation capabilities to aggregate, correlate, and
@@ -17,14 +26,6 @@ real-time applications. Read more on the [DeepCausality website](https://www.dee
 QuestDB is an open-source high performance time series database with enhanced SQL analytics for time series data. Read
 more on the [QuestDB website](https://questdb.io).
 
-### 👉 **Example Project**
-
-This project is a simple example of how to use Fluvio and DeepCausality to build a real-time causal inference pipeline.
-Specifically, the project illustrates:
-
-1) How to replay and resample trade data.
-2) How to analyze trade data in real-time using causal inference.
-3) How to pass forward causal inference results to downstream systems via Fluvio's in-flight computation.
 
 ### 👉 **Technologies used:**
 
@@ -38,48 +39,31 @@ Specifically, the project illustrates:
 The careful reader may have noticed that this system amounts to an event based back-testing facility and
 that is exactly what's demonstrated in this project.
 
+## 🚀 Get started
+
+1. Clone this repo:
+2. Install all requirements. See the [installation guide](doc/install.md)
+3. Start the QD gateway and run the example code. 
+
+
 ## 📚 Docs
 
 * [Installation](doc/install.md)
 * [Data import](doc/import_data.md)
 * [Data analysis with SQL](doc/analyze_data.md)
 
+Generate the API documentation with:
+
+```bash 
+    make doc
+```
+
+This builds and opens the api documentation in your browser. Most crates have its  methods documented. The components
+usually have code examples in the docs. If you find an error or missing documentation, please fill an issue or submit a PR.
+
 ## 📦 Installation
 
 See the [installation guide ](doc/install.md)for detailed instructions.
-
-## 🛠️ Cargo & Make
-
-Cargo works as expected, but in addition to cargo, a makefile exists
-that abstracts over several additional tools you may have to install
-before all make commands work. To do so, please run the following command:
-
-```bash 
-    make setup
-```
-
-The make install command tests and tries to install all required developer dependencies.
-if the automatic install fails, the script will show a link with further installation instructions.
-
-After all dependencies have been installed, the following commands are ready to use.
-
-```
-make
-    make build   	Builds the code base incrementally (fast) for dev.
-    make check   	Checks the code base for security vulnerabilities.
-    make doc   		Generates documentation for the code base and open its in a browser.
-    make example     	Runs the example code in flv_qd_client_examples.
-    make fix   		Fixes linting issues as reported by clippy.
-    make import   	Imports tick data from CSV into QuestDB.
-    make format   	Formats call code according to cargo fmt style.
-    make setup   	Tests and installs all make script dependencies.
-    make run   		Runs the binary defined in scripts/run.sh.
-    make update   	Update rust, update and build the project.
-    make test   	Tests across all crates.
-    make sbe   		Generates Rust bindings for SBE messages from the SBE schema.
-```
-
-The scripts called by each make command are located in the [script folder.](scripts)
 
 ## ⭐ Import Data
 
@@ -246,6 +230,27 @@ For more details on the symbol mapping and how to query the DB,
 please see the following guide:
 
 * [Symbol mapping](doc/symbol_mapping.md)
+
+## 🛠️ Make
+
+Make sure all cargo tools are installed, as described in the [installation guide](doc/install.md). After all tools have been installed, the following commands are ready to use.
+```
+make
+    make build   	Builds the code base incrementally (fast) for dev.
+    make check   	Checks the code base for security vulnerabilities.
+    make doc   		Builds, tests, and opens api docs in a browser.
+    make example     	Runs the example code in flv_qd_client_examples.
+    make fix   		Fixes linting issues as reported by clippy.
+    make import   	Imports tick data from CSV into QuestDB.
+    make format   	Formats call code according to cargo fmt style.
+    make setup   	Tests and installs all make script dependencies.
+    make run   		Runs the binary defined in scripts/run.sh.
+    make update   	Update rust, update and build the project.
+    make test   	Tests across all crates.
+    make sbe   		Generates Rust bindings from the SBE schema.
+```
+
+The scripts called by each make command are located in the [script folder.](scripts)
 
 ## 📜 Licence
 
