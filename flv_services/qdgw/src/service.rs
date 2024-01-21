@@ -54,7 +54,6 @@ impl Server {
             .await
             .expect("Failed to create a consumer for data topic");
 
-
         // Creates a stream of messages from the topic.
         let mut stream = consumer
             .stream(Offset::end())

@@ -121,7 +121,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let service_topic = msg_config.control_channel();
 
     //Creates a new server
-    let server = Server::new(service_topic.clone(), client_manager, query_manager, symbol_manager);
+    let server = Server::new(
+        service_topic.clone(),
+        client_manager,
+        query_manager,
+        symbol_manager,
+    );
 
     //Creates a new Tokio task for the server.
     let signal = shutdown_utils::signal_handler("Fluvio connector");

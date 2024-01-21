@@ -19,7 +19,9 @@ fn test_get_client_control_channel() {
     let mut manager = ClientManager::new();
     let id = 100;
     let config = MessageClientConfig::new(id);
-    manager.add_client(id, config.clone()).expect("Failed to add client");
+    manager
+        .add_client(id, config.clone())
+        .expect("Failed to add client");
 
     let result = manager.get_client_control_channel(id);
 
@@ -106,8 +108,7 @@ fn test_get_client_config() {
         .add_client(id, config)
         .expect("Failed to add client");
 
-    let res = manager
-        .get_client_config(id);
+    let res = manager.get_client_config(id);
 
     assert!(res.is_ok());
 }

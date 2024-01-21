@@ -6,7 +6,6 @@ use sbe_bindings::{
     Encoder, MessageType as SbeMessageType, TradeBarEncoder, WriteBuf, ENCODED_LENGTH,
 };
 
-
 /// Encodes a TradeBar message to a byte buffer.
 ///
 /// # Arguments

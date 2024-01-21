@@ -143,7 +143,6 @@ impl ClientManager {
         self.clients.contains_key(&id)
     }
 
-
     /// Removes a client by id.
     ///
     /// Takes a `u16` representing the client id to remove.

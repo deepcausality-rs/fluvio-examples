@@ -15,7 +15,6 @@ fn test_display() {
     assert_eq!(format!("{}", heartbeat), "HeartbeatChannel");
 }
 
-
 #[test]
 fn test_from_u8() {
     assert_eq!(ClientChannel::from(0), ClientChannel::DataChannel);

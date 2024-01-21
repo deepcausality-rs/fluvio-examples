@@ -13,7 +13,7 @@ use std::fmt::{Display, Formatter};
 ///
 /// The enum is represented as a `u8` under the hood.
 #[derive(
-Serialize, Deserialize, Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash,
+    Serialize, Deserialize, Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash,
 )]
 #[repr(u8)]
 pub enum DataType {
