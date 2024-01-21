@@ -28,6 +28,16 @@ impl QuestDBManager {
     /// It uses these to create a new Sender via the SenderBuilder.
     /// The Sender is used to insert data into QuestDB via the ILP protocol.
     ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use common::prelude::DBConfig;
+    /// use db_quest_manager::QuestDBManager;
+    ///
+    ///  let db_config =  DBConfig::new(9009, "0.0.0.0".into());
+    ///  let manager = QuestDBManager::new(db_config);
+    ///
+    /// ```
     pub fn new(db_config: DBConfig) -> Self {
         let host = db_config.host();
         let port = db_config.port();
@@ -89,6 +99,10 @@ impl QuestDBManager {
     /// The trade bars are inserted in batches based on the configured buffer size.
     /// Timestamps are extracted from the `TradeBar` and converted to nanoseconds.
     /// Price and volume decimal values are converted to `f64`.
+    ///
+    /// Example:
+    ///
+    /// See file: `flv_cli/data_importer/src/bin/import_kraken_data/run.rs`
     ///
     pub fn insert_trade_bars(
         &mut self,

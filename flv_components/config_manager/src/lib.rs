@@ -52,8 +52,12 @@ impl ConfigManager {
     /// # Example
     ///
     /// ```rust
+    /// use std::env;
     /// use common::prelude::ServiceID;
     /// use config_manager::ConfigManager;
+    ///     // Set environment variable for testing purposes
+    ///     // Usually this would be read from the environment or the .env file.
+    ///     env::set_var("ENV", "Local");
     ///
     ///     let svc_id = ServiceID::Default;
     ///     let config_manager = ConfigManager::new(svc_id);
