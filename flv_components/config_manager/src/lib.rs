@@ -25,26 +25,40 @@ pub struct ConfigManager {
 }
 
 impl ConfigManager {
-    /// Create a new ConfigManager instance.
+    /// Creates a new ConfigManager instance.
     ///
-    /// This will:
+    /// Detects the environment type, gets the DB and service configs,
+    /// default exchange, supported exchanges, exchange ID/name pairs,
+    /// and exchange symbol tables.
     ///
-    /// - Detect the environment type
-    /// - Get the DB config for the environment
-    /// - Get the service config for the provided service ID
-    /// - Set default exchange to Kraken
-    /// - Get all supported exchanges
-    /// - Get exchange ID/name pairs
-    /// - Get symbol tables for exchanges
+    /// Populates a new ConfigManager with this data.
     ///
-    /// # Parameters
+    /// # Arguments
     ///
-    /// * `svc_id` - The ServiceID for this service
+    /// * `svc_id` - The service ID for this instance
     ///
     /// # Returns
     ///
-    /// A ConfigManager instance initialized with all configuration.
+    /// A ConfigManager instance configured with:
     ///
+    /// - The detected environment
+    /// - DB config for the environment
+    /// - Service config for the ID
+    /// - Default exchange
+    /// - Supported exchanges
+    /// - Exchange ID/name pairs
+    /// - Exchange symbol tables
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use common::prelude::ServiceID;
+    /// use config_manager::ConfigManager;
+    ///
+    ///     let svc_id = ServiceID::Default;
+    ///     let config_manager = ConfigManager::new(svc_id);
+    ///     assert_eq!(svc_id, config_manager.svc_id());
+    /// ```
     pub fn new(svc_id: ServiceID) -> Self {
         // Detect environment type
         let env_type = utils::get_env_type();

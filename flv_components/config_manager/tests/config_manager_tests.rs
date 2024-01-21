@@ -8,8 +8,8 @@ fn test_get_svc_id() {
     env::set_var("ENV", "Local");
 
     let svc_id = ServiceID::Default;
-    let config = ConfigManager::new(svc_id);
-    assert_eq!(svc_id, config.svc_id());
+    let config_manager = ConfigManager::new(svc_id);
+    assert_eq!(svc_id, config_manager.svc_id());
 }
 
 #[test]
