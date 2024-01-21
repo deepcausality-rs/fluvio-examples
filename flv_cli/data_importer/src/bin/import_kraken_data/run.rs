@@ -6,6 +6,27 @@ use std::time::Instant;
 const CONFIG_FILE_NAME: &str = "import_config.toml";
 const META_DATA_TABLE: &str = "kraken_symbols";
 
+/// Runs the Kraken data import process.
+///
+/// # Steps:
+///
+/// - Initialize start time and verbosity flag
+/// - Load import config
+/// - Get database config
+/// - Connect to QuestDB
+/// - Get all CSV files in data folder
+/// - Loop through each file:
+///   - Parse CSV to TradeBars
+///   - Insert TradeBars into QuestDB table
+///   - Update imported files count
+/// - Print output:
+///   - Total files vs imported
+///   - Duration
+///
+/// # Returns
+///
+/// Result<(), Box<dyn Error>>
+///
 pub fn run() -> Result<(), Box<dyn Error>> {
     let start = Instant::now();
     let vrb = true;

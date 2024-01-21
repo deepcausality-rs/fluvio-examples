@@ -100,7 +100,7 @@ impl QuestDBManager {
     /// Timestamps are extracted from the `TradeBar` and converted to nanoseconds.
     /// Price and volume decimal values are converted to `f64`.
     ///
-    /// Example:
+    /// # Example:
     ///
     /// See file: `flv_cli/data_importer/src/bin/import_kraken_data/run.rs`
     ///
