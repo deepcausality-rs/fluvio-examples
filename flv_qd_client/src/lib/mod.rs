@@ -77,6 +77,7 @@ impl QDClient {
 
         // Start the data handler as Tokio task.
         let data_topic = client_config.data_channel();
+
         tokio::spawn(async move {
             if let Err(e) = handle_channel(&data_topic, data_handler).await {
                 eprintln!("[QDClient/new]: Consumer connection error: {}", e);

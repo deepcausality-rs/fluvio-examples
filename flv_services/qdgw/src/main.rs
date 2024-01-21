@@ -82,15 +82,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     //Creates a new Tokio task for the HTTP web server.
     let web_handle = tokio::spawn(web_server);
 
-    // Autoconfigures message channel
-    let msg_config = cfg_manager.message_client_config();
-    let service_topic = msg_config.control_channel();
-
-    // Creates a new consumer for the service topic: "qdgw-control".
-    let consumer = fluvio::consumer(&service_topic, 0)
-        .await
-        .expect("[QDGW]/main: Failed to create a message consumer for topic: qdgw-control.");
-
     // Wrap ClientManager into Arc/Mutex to allow multi-threaded access.
     let client_manager = Arc::new(Mutex::new(ClientManager::new()));
 
@@ -125,8 +116,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Wrap the QueryDBManager instance into an Arc/Mutex to allow multi-threaded access.
     let query_manager = Arc::new(Mutex::new(q_manager));
 
+    // Autoconfigures message channel
+    let msg_config = cfg_manager.message_client_config();
+    let service_topic = msg_config.control_channel();
+
     //Creates a new server
-    let server = Server::new(consumer, client_manager, query_manager, symbol_manager);
+    let server = Server::new(service_topic.clone(), client_manager, query_manager, symbol_manager);
 
     //Creates a new Tokio task for the server.
     let signal = shutdown_utils::signal_handler("Fluvio connector");
@@ -144,7 +139,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     drop(db_config);
     drop(cfg_manager);
     drop(msg_config);
-    drop(service_topic);
     drop(metrics_host);
     drop(metrics_uri);
     drop(metrics_addr);
