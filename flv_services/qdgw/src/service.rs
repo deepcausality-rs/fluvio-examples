@@ -18,7 +18,7 @@ pub struct Server {
     pub(crate) client_manager: Arc<Mutex<ClientManager>>,
     pub(crate) query_manager: Arc<Mutex<QueryDBManager>>,
     pub(crate) symbol_manager: Arc<Mutex<SymbolManager>>,
-    //
+    // Store a data producer for each client on login to send data back to the client
     pub(crate) client_data_producers: Arc<Mutex<HashMap<u16, TopicProducer>>>,
 }
 
@@ -50,6 +50,12 @@ impl Server {
         let signal_future = signal;
         pin!(signal_future);
 
+        //
+        // Somehow we need to keep the consumer alive
+        // otherwise the consumer close the connection with the following error:
+        //
+        // connection error: connection closed
+        //
         let consumer = fluvio::consumer(&self.channel_topic, 0)
             .await
             .expect("Failed to create a consumer for data topic");
