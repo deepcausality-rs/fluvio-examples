@@ -110,7 +110,6 @@ impl Server {
     ///
     /// - MessageProcessingError if there was an issue adding the client to the database.
     ///
-    /// ```
     pub(crate) async fn client_login(&self, client_id: u16) -> Result<(), MessageProcessingError> {
         // Lock the client_manager
         let mut client_db = self.client_manager.lock().await;

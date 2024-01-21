@@ -49,7 +49,6 @@ impl Server {
     /// A `Result` with a `bool` indicating whether the client is logged in, or a
     /// `MessageProcessingError` if there was an issue checking the client status.
     ///
-    /// ```
     pub(crate) async fn check_client_login(
         &self,
         client_id: u16,
