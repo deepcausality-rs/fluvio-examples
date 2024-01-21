@@ -2,7 +2,25 @@ use std::fmt::{Display, Formatter};
 
 use serde::{Deserialize, Serialize};
 
-/// An u8 encoded Enum that represents the unique ID of a service.
+/// ServiceID enum definition.
+///
+/// Encodes the unique ID of a service as a u8.
+///
+/// # Variants
+///
+/// `Default` - Default value, ID = 0
+/// `QDGW` - Quote Data Gateway service, ID = 1
+///
+/// # Implements
+///
+/// `Serialize`, `Deserialize` - Serde serialization
+/// `Debug`, `Default`, `Copy`, `Clone`, `Eq`, `PartialEq` - Rust defaults
+/// `Display` - Custom Display impl
+///
+/// # Notes
+///
+/// `#[repr(u8)]` encodes as u8 for serialization.
+///
 #[derive(Serialize, Deserialize, Debug, Default, Copy, Clone, Eq, PartialEq)]
 #[repr(u8)]
 pub enum ServiceID {
@@ -12,18 +30,53 @@ pub enum ServiceID {
 }
 
 impl ServiceID {
+    /// Returns the raw u8 ID value for the ServiceID variant.
+    ///
+    /// # Arguments
+    ///
+    /// None
+    ///
+    /// # Returns
+    ///
+    /// `u8` - The raw enum variant value cast to u8
     pub fn id(&self) -> u8 {
         *self as u8
     }
 
+    /// Returns the string name for the ServiceID variant.
+    ///
+    /// Calls to_string() to convert the Display impl to a String.
+    ///
+    /// # Arguments
+    ///
+    /// None
+    ///
+    /// # Returns
+    ///
+    /// `String` - The string name of the variant
     pub fn name(&self) -> String {
         self.to_string()
     }
 }
 
 impl From<u8> for ServiceID {
-    /// Converts a raw byte value into a `ServiceID`.
-    /// Unknown message type results in NullVal
+    /// Implements the From trait to convert a u8 to a ServiceID.
+    ///
+    /// Matches on the u8 value:
+    ///
+    /// 0x0 -> Default
+    /// 0x1 -> QDGW
+    ///
+    /// Unknown values default to Default.
+    ///
+    /// # Arguments
+    ///
+    /// * `v` - u8 value to convert
+    ///
+    /// # Returns
+    ///
+    /// ServiceID variant
+    ///
     #[inline]
     fn from(v: u8) -> Self {
         match v {
@@ -35,6 +88,24 @@ impl From<u8> for ServiceID {
 }
 
 impl ServiceID {
+    /// Converts a string to a ServiceID variant.
+    ///
+    /// Matches on the string value:
+    ///
+    /// "Default" -> Default
+    /// "QDGW" -> QDGW
+    ///
+    /// Unknown strings return None.
+    ///
+    /// # Arguments
+    ///
+    /// * `n` - String to convert
+    ///
+    /// # Returns
+    ///
+    /// `Option<ServiceID>` - Some(variant) on match, None if no match
+    ///
+    #[inline]
     pub fn from_string(n: &str) -> Option<ServiceID> {
         match n {
             "Default" => Some(ServiceID::Default),

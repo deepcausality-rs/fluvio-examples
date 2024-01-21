@@ -24,6 +24,7 @@ const TOPIC: &str = "qdgw-control";
 /// * `admin` - The FluvioAdmin client for administering topics.
 /// * `client_config` - The client configuration.
 /// * `producer` - The producer for sending messages to the gateway topic.
+///
 pub struct QDClient {
     client_id: u16,
     admin: FluvioAdmin,
@@ -45,7 +46,7 @@ impl QDClient {
     ///
     /// Returns a `Result` with the `QDClient` instance on success, or an `Error` on failure.
     ///
-    /// This does the following:
+    /// # Note, the constructor does the following:
     ///
     /// - Gets a `FluvioAdmin` client and `TopicProducer` for the gateway.
     /// - Creates the client topics using `flv_utils::create_topics()`.

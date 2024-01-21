@@ -1,6 +1,21 @@
 use std::error::Error;
 use std::fmt;
 
+/// InitError custom error type.
+///
+/// Contains a single String field to hold the error message.
+///
+/// # Fields
+///
+/// `String` - The error message
+///
+/// # Implements
+///
+/// `Debug` - Formatted debug output
+/// `Clone` - Clone support
+/// `Error` - std::error::Error impl
+/// `Display` - Formatted display output
+///
 #[derive(Debug, Clone)]
 pub struct InitError(pub String);
 
@@ -19,6 +34,21 @@ impl fmt::Display for InitError {
     }
 }
 
+/// LookupError custom error type.
+///
+/// Contains a single String field to hold the error message.
+///
+/// # Fields
+///
+/// `String` - The error message
+///
+/// # Implements
+///
+/// `Debug` - Formatted debug output
+/// `Clone` - Clone support
+/// `Error` - std::error::Error impl
+/// `Display` - Formatted display output
+///
 #[derive(Debug, Clone)]
 pub struct LookupError(pub String);
 
@@ -37,6 +67,21 @@ impl fmt::Display for LookupError {
     }
 }
 
+/// MessageProcessingError custom error type.
+///
+/// Contains a single String field to hold the error message.
+///
+/// # Fields
+///
+/// `String` - The error message
+///
+/// # Implements
+///
+/// `Debug` - Formatted debug output
+/// `Clone` - Clone support
+/// `Error` - std::error::Error impl
+/// `Display` - Formatted display output
+//
 #[derive(Debug, Clone)]
 pub struct MessageProcessingError(pub String);
 
@@ -49,6 +94,21 @@ impl fmt::Display for MessageProcessingError {
     }
 }
 
+/// MessageClientConfigError custom error type.
+///
+/// Contains a single String field to hold the error message.
+///
+/// # Fields
+///
+/// `String` - The error message
+///
+/// # Implements
+///
+/// `Debug` - Formatted debug output
+/// `Clone` - Clone support
+/// `Error` - std::error::Error impl
+/// `Display` - Formatted display output
+///
 #[derive(Debug, Clone)]
 pub struct MessageClientConfigError(pub String);
 
@@ -60,6 +120,21 @@ impl fmt::Display for MessageClientConfigError {
     }
 }
 
+/// ValidationError custom error type.
+///
+/// Contains a single String field to hold the error message.
+///
+/// # Fields
+///
+/// `String` - The error message
+///
+/// # Implements
+///
+/// `Debug` - Formatted debug output
+/// `Clone` - Clone support
+/// `Error` - std::error::Error impl
+/// `Display` - Formatted display output
+///
 #[derive(Debug, Clone)]
 pub struct ValidationError(pub String);
 

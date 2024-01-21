@@ -14,3 +14,13 @@ fn test_display() {
     let heartbeat = ClientChannel::HeartbeatChannel;
     assert_eq!(format!("{}", heartbeat), "HeartbeatChannel");
 }
+
+
+#[test]
+fn test_from_u8() {
+    assert_eq!(ClientChannel::from(0), ClientChannel::DataChannel);
+    assert_eq!(ClientChannel::from(1), ClientChannel::ControlChannel);
+    assert_eq!(ClientChannel::from(2), ClientChannel::ErrorChannel);
+    assert_eq!(ClientChannel::from(3), ClientChannel::ExecutionChannel);
+    assert_eq!(ClientChannel::from(4), ClientChannel::HeartbeatChannel);
+}

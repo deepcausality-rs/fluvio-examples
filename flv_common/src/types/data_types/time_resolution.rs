@@ -33,6 +33,22 @@ pub enum TimeResolution {
 }
 
 impl From<u8> for TimeResolution {
+    /// Implements the From trait to convert a u8 to a TimeResolution.
+    ///
+    /// Matches the u8 value to the corresponding TimeResolution variant:
+    ///
+    /// 0 -> NoValue
+    /// 1 -> OneMin
+    /// 2 -> FiveMin
+    /// etc.
+    ///
+    /// # Arguments
+    ///
+    /// * `v` - u8 value to convert
+    ///
+    /// # Returns
+    ///
+    /// TimeResolution variant
     #[inline]
     fn from(v: u8) -> Self {
         match v {

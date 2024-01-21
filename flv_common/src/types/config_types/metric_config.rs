@@ -9,6 +9,18 @@ pub struct MetricConfig {
 }
 
 impl MetricConfig {
+    /// Creates a new MetricConfig instance.
+    ///
+    /// # Arguments
+    ///
+    /// * `metric_uri` - Metrics URI string
+    /// * `metric_host` - Metrics host string
+    /// * `metric_port` - Metrics port u16
+    ///
+    /// # Returns
+    ///
+    /// MetricConfig instance
+    ///
     pub fn new(metric_uri: String, metric_host: String, metric_port: u16) -> Self {
         Self {
             metric_uri,
@@ -19,6 +31,18 @@ impl MetricConfig {
 }
 
 impl Default for MetricConfig {
+    /// Returns a default MetricConfig instance.
+    ///
+    /// Sets the following default values:
+    ///
+    /// - metric_host = "0.0.0.0"
+    /// - metric_uri = "metrics"
+    /// - metric_port = 8080 (default Prometheus port)
+    ///
+    /// # Returns
+    ///
+    /// Default MetricConfig instance
+    ///
     fn default() -> Self {
         let metric_host = "0.0.0.0".to_string();
         let metric_uri = "metrics".to_string();

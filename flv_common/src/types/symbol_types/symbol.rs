@@ -4,6 +4,25 @@ use std::fmt;
 
 use crate::prelude::ExchangeID;
 
+/// Symbol struct definition.
+///
+/// Holds symbol metadata and specifications.
+///
+/// # Fields
+///
+/// `symbol_id_global` - Global unique symbol ID
+/// `symbol_id_exchange` - Exchange specific symbol ID
+/// `exchange_id` - ExchangeID enum
+/// `asset_base_exchange` - Base asset symbol on exchange
+/// `asset_quote_exchange` - Quote asset symbol on exchange
+/// `price_precision` - Price decimal precision
+/// `size_precision` - Size/volume decimal precision
+///
+/// # Implements
+///
+/// `Serialize`, `Deserialize` - Serde serialization
+/// `Debug`, `Default`, `Clone`, `Eq`, `PartialEq` - Rust defaults
+///
 #[derive(Serialize, Deserialize, Debug, Default, Clone, Eq, PartialEq)]
 pub struct Symbol {
     symbol_id_global: String,
@@ -16,6 +35,22 @@ pub struct Symbol {
 }
 
 impl Symbol {
+    /// Creates a new Symbol instance.
+    ///
+    /// # Arguments
+    ///
+    /// * `symbol_id_global` - Global unique symbol ID
+    /// * `symbol_id_exchange` - Exchange specific symbol ID
+    /// * `exchange_id` - ExchangeID enum
+    /// * `asset_base_exchange` - Base asset symbol on exchange
+    /// * `asset_quote_exchange` - Quote asset symbol on exchange
+    /// * `price_precision` - Price decimal precision
+    /// * `size_precision` - Size/volume decimal precision
+    ///
+    /// # Returns
+    ///
+    /// Symbol instance
+    ///
     pub fn new(
         symbol_id_global: String,
         symbol_id_exchange: String,

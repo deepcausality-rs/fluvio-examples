@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::fmt::{Display, Error, Formatter};
 
 use crate::prelude::{MetricConfig, ServiceID};
+
 #[derive(Serialize, Deserialize, Debug, Default, Clone, Eq, PartialEq)]
 pub struct ServiceConfig {
     /// Unique Service ID.
@@ -31,6 +32,27 @@ pub struct ServiceConfig {
 }
 
 impl ServiceConfig {
+    /// Creates a new ServiceConfig instance.
+    ///
+    /// # Arguments
+    ///
+    /// * `svc_id` - Service ID enum
+    /// * `name` - Service name string
+    /// * `version` - Service version u8
+    /// * `online` - Whether service is online bool
+    /// * `description` - Service description string
+    /// * `local_host` - Local host string
+    /// * `local_port` - Local port u16 vector
+    /// * `cluster_host` - Cluster host string
+    /// * `cluster_port` - Cluster port u16 vector
+    /// * `health_check_uri` - Health check URI string
+    /// * `dependencies` - Optional dependency ServiceID vector
+    /// * `metrics` - Metrics configuration
+    ///
+    /// # Returns
+    ///
+    /// ServiceConfig instance
+    ///
     #[allow(clippy::too_many_arguments)]
     pub fn new(
         svc_id: ServiceID,
@@ -105,17 +127,17 @@ impl ServiceConfig {
 impl Display for ServiceConfig {
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
         write!(f, "ServiceConfig[id: {}, name: {}, version: {}, online: {}, description: {}, local_host: {}, local_port: {:?}, cluster_host: {}, cluster_port: {:?}, health_check_uri: {}, dependencies: {:?}, metrics: {}]",
-           self.svc_id(),
-           self.name(),
-           self.version(),
-           self.online(),
-           self.description(),
-           self.local_host(),
-           self.local_port(),
-           self.cluster_host(),
-           self.cluster_port(),
-           self.health_check_uri(),
-           self.dependencies(),
-           self.metrics())
+               self.svc_id(),
+               self.name(),
+               self.version(),
+               self.online(),
+               self.description(),
+               self.local_host(),
+               self.local_port(),
+               self.cluster_host(),
+               self.cluster_port(),
+               self.health_check_uri(),
+               self.dependencies(),
+               self.metrics())
     }
 }
