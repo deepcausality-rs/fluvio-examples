@@ -13,6 +13,20 @@ pub struct LastTradeBar {
 }
 
 impl LastTradeBar {
+    /// Creates a new LastTradeBar instance.
+    ///
+    /// # Arguments
+    ///
+    /// * `symbol_id` - Symbol ID for the bar
+    ///
+    /// # Returns
+    ///
+    /// New LastTradeBar instance
+    ///
+    /// # Remarks
+    ///
+    /// Sets message_type to LastTradeBar
+    ///
     pub fn new(symbol_id: u16) -> Self {
         let message_type = MessageType::LastTradeBar;
         Self {
@@ -23,6 +37,25 @@ impl LastTradeBar {
 }
 
 impl From<&[u8]> for LastTradeBar {
+    /// Decodes a LastTradeBar message from a byte buffer.
+    ///
+    /// # Arguments
+    ///
+    /// * `value` - Byte buffer containing encoded LastTradeBar message
+    ///
+    /// # Returns
+    ///
+    /// Decoded LastTradeBar on success
+    ///
+    /// # Errors
+    ///
+    /// Returns Err if decoding fails
+    ///
+    /// # Remarks
+    ///
+    /// Calls sbe_decode::decode_last_trade_bar_message to decode message
+    ///
+    #[inline]
     fn from(value: &[u8]) -> Self {
         sbe_decode::decode_last_trade_bar_message(value)
             .expect("Failed to decode LastTradeBar message")

@@ -4,6 +4,34 @@ use sbe_bindings::{message_header_codec, Encoder, StartDataMsgEncoder, WriteBuf}
 use crate::prelude::{SbeEncodeError, StartDataMessage};
 
 impl StartDataMessage {
+    /// Encodes a StartDataMessage to a byte buffer.
+    ///
+    /// # Arguments
+    ///
+    /// * `self` - StartDataMessage to encode
+    ///
+    /// # Returns
+    ///
+    /// (usize, Vec<u8>) - Tuple containing encoded size and byte buffer
+    ///
+    /// # Errors
+    ///
+    /// Returns Err if encoding fails
+    ///
+    /// # Process
+    ///
+    /// - Create 17 byte buffer
+    /// - Create default StartDataMsgEncoder
+    /// - Wrap buffer in WriteBuf
+    /// - Encode header
+    /// - Encode message_type
+    /// - Encode client_id
+    /// - Encode exchange_id
+    /// - Encode symbol_id
+    /// - Encode time_resolution
+    /// - Encode data_type_id
+    /// - Return encoded size and buffer
+    ///
     pub fn encode(&self) -> Result<(usize, Vec<u8>), SbeEncodeError> {
         // precise buffer size is 17 bytes for the entire message.
         let mut buffer = vec![0u8; 17];

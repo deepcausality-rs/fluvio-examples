@@ -2,6 +2,29 @@ use crate::prelude::{FirstOHLCVBar, MessageType};
 use sbe_bindings::first_data_bar_codec::SBE_TEMPLATE_ID;
 use sbe_bindings::{FirstDataBarDecoder, MessageHeaderDecoder, ReadBuf, SbeResult};
 
+/// Decodes a FirstOHLCVBar message from a byte buffer.
+///
+/// # Arguments
+///
+/// * `buffer` - Byte buffer to decode
+///
+/// # Returns
+///
+/// Decoded FirstOHLCVBar
+///
+/// # Errors
+///
+/// Returns Err if decode fails
+///
+/// # Process
+///
+/// - Create default FirstDataBarDecoder
+/// - Wrap buffer in ReadBuf
+/// - Decode header and validate template ID
+/// - Decode and validate message_type
+/// - Decode symbol_id
+/// - Create and return FirstOHLCVBar
+///
 pub fn decode_first_data_bar_message(buffer: &[u8]) -> SbeResult<FirstOHLCVBar> {
     let mut csg = FirstDataBarDecoder::default();
     let buf = ReadBuf::new(buffer);

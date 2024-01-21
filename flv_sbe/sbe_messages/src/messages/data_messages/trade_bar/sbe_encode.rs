@@ -6,8 +6,37 @@ use sbe_bindings::{
     Encoder, MessageType as SbeMessageType, TradeBarEncoder, WriteBuf, ENCODED_LENGTH,
 };
 
-pub fn encode_data_bar_message(bar: TradeBar) -> Result<(usize, Vec<u8>), SbeEncodeError> {
-    // precise buffer size is 28 bytes for the entire message.
+
+/// Encodes a TradeBar message to a byte buffer.
+///
+/// # Arguments
+///
+/// * `bar` - TradeBar to encode
+///
+/// # Returns
+///
+/// (usize, Vec<u8>) - Tuple containing encoded size and byte buffer
+///
+/// # Errors
+///
+/// Returns Err if encoding fails
+///
+/// # Process
+///
+/// - Create 28 byte buffer
+/// - Create default TradeBarEncoder
+/// - Wrap buffer in WriteBuf
+/// - Encode header
+/// - Encode message_type
+/// - Encode symbol_id
+/// - Encode date_time as timestamp
+/// - Convert price to f32
+/// - Encode price
+/// - Convert volume to f32
+/// - Encode volume
+/// - Return encoded size and buffer
+///
+pub fn encode_trade_bar_message(bar: TradeBar) -> Result<(usize, Vec<u8>), SbeEncodeError> {
     let mut buffer = vec![0u8; 28];
 
     let mut csg = TradeBarEncoder::default();

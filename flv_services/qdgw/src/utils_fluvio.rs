@@ -157,7 +157,7 @@ impl Server {
 
         for bar in data_bars.to_vec() {
             // Encode bar message
-            let (_, buffer) = match SbeTradeBar::encode_data_bar_message(bar) {
+            let (_, buffer) = match SbeTradeBar::encode(bar) {
                 Ok(enc) => enc,
                 Err(e) => {
                     return Err((

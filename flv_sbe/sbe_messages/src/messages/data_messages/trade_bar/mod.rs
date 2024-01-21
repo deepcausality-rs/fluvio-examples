@@ -15,11 +15,47 @@ impl SbeTradeBar {
 }
 
 impl SbeTradeBar {
-    pub fn encode_data_bar_message(bar: TradeBar) -> Result<(usize, Vec<u8>), SbeEncodeError> {
-        sbe_encode::encode_data_bar_message(bar)
+    /// Encodes a TradeBar message to a byte buffer.
+    ///
+    /// # Arguments
+    ///
+    /// * `bar` - TradeBar to encode
+    ///
+    /// # Returns
+    ///
+    /// (usize, Vec<u8>) - Tuple containing encoded size and byte buffer
+    ///
+    /// # Errors
+    ///
+    /// Returns Err if encoding fails
+    ///
+    /// # Remarks
+    ///
+    /// Calls sbe_encode::encode_trade_bar_message to perform encoding
+    ///
+    pub fn encode(bar: TradeBar) -> Result<(usize, Vec<u8>), SbeEncodeError> {
+        sbe_encode::encode_trade_bar_message(bar)
     }
 
-    pub fn decode_trade_bar_message(buffer: &[u8]) -> Result<TradeBar, SbeDecodeError> {
+    /// Decodes a TradeBar message from a byte buffer.
+    ///
+    /// # Arguments
+    ///
+    /// * `buffer` - Byte buffer containing encoded TradeBar message
+    ///
+    /// # Returns
+    ///
+    /// Decoded TradeBar on success
+    ///
+    /// # Errors
+    ///
+    /// Returns Err if decoding fails
+    ///
+    /// # Remarks
+    ///
+    /// Calls sbe_decode::decode_trade_bar_message to perform decoding
+    ///
+    pub fn decode(buffer: &[u8]) -> Result<TradeBar, SbeDecodeError> {
         sbe_decode::decode_trade_bar_message(buffer)
     }
 }

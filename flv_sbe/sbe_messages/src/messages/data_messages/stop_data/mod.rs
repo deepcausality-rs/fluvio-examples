@@ -19,6 +19,21 @@ pub struct StopDataMessage {
 }
 
 impl StopDataMessage {
+    /// Creates a new StopDataMessage instance.
+    ///
+    /// Sets the message_type to StopData.
+    ///
+    /// # Arguments
+    ///
+    /// * `client_id` - u16 client ID
+    /// * `exchange_id` - ExchangeID exchange ID
+    /// * `symbol_id` - u16 symbol ID
+    /// * `data_type_id` - DataType data type ID
+    ///
+    /// # Returns
+    ///
+    /// StopDataMessage instance
+    ///
     pub fn new(
         client_id: u16,
         exchange_id: ExchangeID,
@@ -37,6 +52,22 @@ impl StopDataMessage {
 }
 
 impl From<&[u8]> for StopDataMessage {
+    /// Implements the From trait to decode a StopDataMessage from a byte slice.
+    ///
+    /// Calls the sbe_decode::decode_stop_data_message function to decode the message.
+    ///
+    /// # Arguments
+    ///
+    /// * `buffer` - Byte slice to decode
+    ///
+    /// # Returns
+    ///
+    /// Decoded StopDataMessage
+    ///
+    /// # Errors
+    ///
+    /// Panics if decode fails
+    ///
     #[inline]
     fn from(buffer: &[u8]) -> Self {
         sbe_decode::decode_stop_data_message(buffer).expect("Failed to decode start data message")

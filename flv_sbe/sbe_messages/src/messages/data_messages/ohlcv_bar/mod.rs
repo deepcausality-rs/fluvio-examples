@@ -40,6 +40,7 @@ impl SbeOHLCVBar {
     /// # Returns
     ///
     /// A Result containing the decoded OHLCVBar or a decoding error.
+    #[inline]
     pub fn decode_data_bar_message(buffer: &[u8]) -> Result<OHLCVBar, SbeDecodeError> {
         sbe_decoder::decode_data_bar_message(buffer)
     }

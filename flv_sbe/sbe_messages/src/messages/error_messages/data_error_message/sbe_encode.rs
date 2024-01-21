@@ -4,6 +4,31 @@ use sbe_bindings::MessageType as SbeMessageType;
 use sbe_bindings::{message_header_codec, DataErrorEncoder, Encoder, WriteBuf};
 
 impl DataErrorMessage {
+    /// Encodes a DataErrorMessage to a byte buffer.
+    ///
+    /// # Arguments
+    ///
+    /// * `self` - DataErrorMessage to encode
+    ///
+    /// # Returns
+    ///
+    /// (usize, Vec<u8>) - Tuple containing encoded size and byte buffer
+    ///
+    /// # Errors
+    ///
+    /// Returns Err if encoding fails
+    ///
+    /// # Process
+    ///
+    /// - Create 13 byte buffer
+    /// - Create default DataErrorEncoder
+    /// - Wrap buffer in WriteBuf
+    /// - Encode header
+    /// - Encode message_type
+    /// - Encode client_id
+    /// - Encode data_error_type
+    /// - Return encoded size and buffer
+    ///
     pub fn encode(&self) -> Result<(usize, Vec<u8>), SbeEncodeError> {
         let mut buffer = vec![0u8; 13];
 

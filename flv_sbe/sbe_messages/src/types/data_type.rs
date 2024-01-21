@@ -13,7 +13,7 @@ use std::fmt::{Display, Formatter};
 ///
 /// The enum is represented as a `u8` under the hood.
 #[derive(
-    Serialize, Deserialize, Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash,
+Serialize, Deserialize, Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash,
 )]
 #[repr(u8)]
 pub enum DataType {
@@ -39,17 +39,14 @@ impl From<u8> for DataType {
     /// - `0_u8` maps to `DataType::UnknownDataType`
     /// - `1_u8` maps to `DataType::TradeData`
     /// - `2_u8` maps to `DataType::OHLCVData`
-    /// - `3_u8` maps to `DataType::OrderBookData`
-    /// - `4_u8` maps to `DataType::QuoteData`
     ///
     /// Any other value maps to `DataType::UnknownDataType`.
+    #[inline]
     fn from(value: u8) -> Self {
         match value {
             0_u8 => DataType::UnknownDataType,
             1_u8 => DataType::TradeData,
             2_u8 => DataType::OHLCVData,
-            // 3_u8 => DataType::OrderBookData,
-            // 4_u8 => DataType::QuoteData,
             _ => DataType::UnknownDataType,
         }
     }

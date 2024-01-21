@@ -28,7 +28,7 @@ fn test_new() {
 fn test_encode_data_bar_message() {
     let bar = get_trade_bar();
 
-    let result = SbeTradeBar::encode_data_bar_message(bar);
+    let result = SbeTradeBar::encode(bar);
 
     assert!(result.is_ok()); // Assert encode passes
 
@@ -52,7 +52,7 @@ fn test_decode_trade_bar_message() {
         0, 0, 200, 66,
     ];
 
-    let message = SbeTradeBar::decode_trade_bar_message(&encoded).unwrap();
+    let message = SbeTradeBar::decode(&encoded).unwrap();
 
     assert_eq!(message.symbol_id(), 1);
     assert_eq!(message.price(), Decimal::from(100));

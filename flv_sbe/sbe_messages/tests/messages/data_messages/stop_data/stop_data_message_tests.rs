@@ -1,10 +1,10 @@
-use common::prelude::{ExchangeID, SymbolID};
+use common::prelude::{ExchangeID};
 use sbe_messages::prelude::{DataType, MessageType, StopDataMessage};
 
 fn get_message() -> StopDataMessage {
     let client_id = 1;
     let exchange_id = ExchangeID::Kraken;
-    let symbol_id = SymbolID::BTCUSD as u16;
+    let symbol_id = 1;
     let data_type = DataType::TradeData;
 
     StopDataMessage::new(client_id, exchange_id, symbol_id, data_type)
@@ -15,7 +15,7 @@ fn test_new() {
     let message = get_message();
 
     let exchange_id = ExchangeID::Kraken;
-    let symbol_id = SymbolID::BTCUSD as u16;
+    let symbol_id = 1;
     let data_type = DataType::TradeData;
 
     assert_eq!(message.message_type(), &MessageType::StopData);
@@ -30,7 +30,7 @@ fn test_encode() {
     let message = get_message();
 
     let exchange_id = ExchangeID::Kraken;
-    let symbol_id = SymbolID::BTCUSD as u16;
+    let symbol_id = 1;
     let data_type = DataType::TradeData;
 
     assert_eq!(message.message_type(), &MessageType::StopData);
@@ -58,7 +58,7 @@ fn test_decode() {
     let message = StopDataMessage::from(buffer);
 
     let exchange_id = ExchangeID::Kraken;
-    let symbol_id = SymbolID::BTCUSD as u16;
+    let symbol_id = 1;
     let data_type = DataType::TradeData;
 
     assert_eq!(message.message_type(), &MessageType::StopData);
@@ -95,7 +95,7 @@ fn test_exchange_id() {
 fn test_symbol_id() {
     let message = get_message();
 
-    let symbol_id = SymbolID::BTCUSD as u16;
+    let symbol_id = 1;
 
     assert_eq!(message.symbol_id(), &symbol_id);
 }

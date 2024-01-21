@@ -28,7 +28,7 @@ pub fn handle_data_event(raw_event: Vec<u8>) -> Result<(), Box<dyn Error + Send>
             println!("{:?}", first_trade_bar);
         }
         MessageType::TradeBar => {
-            let trade_bar = SbeTradeBar::decode_trade_bar_message(buffer).unwrap();
+            let trade_bar = SbeTradeBar::decode(buffer).unwrap();
             println!("{:?}", trade_bar);
         }
         MessageType::LastTradeBar => {

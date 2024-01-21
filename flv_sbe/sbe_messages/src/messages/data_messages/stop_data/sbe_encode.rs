@@ -4,8 +4,34 @@ use sbe_bindings::{message_header_codec, Encoder, StopDataMsgEncoder, WriteBuf};
 use crate::prelude::{SbeEncodeError, StopDataMessage};
 
 impl StopDataMessage {
+    /// Encodes a StopDataMessage to a byte buffer.
+    ///
+    /// # Arguments
+    ///
+    /// * `self` - StopDataMessage to encode
+    ///
+    /// # Returns
+    ///
+    /// (usize, Vec<u8>) - Tuple containing encoded size and byte buffer
+    ///
+    /// # Errors
+    ///
+    /// Returns Err if encoding fails
+    ///
+    /// # Process
+    ///
+    /// - Create 16 byte buffer
+    /// - Create default StopDataMsgEncoder
+    /// - Wrap buffer in WriteBuf
+    /// - Encode header
+    /// - Encode message_type
+    /// - Encode client_id
+    /// - Encode exchange_id
+    /// - Encode symbol_id
+    /// - Encode data_type_id
+    /// - Return encoded size and buffer
+    ///
     pub fn encode(&self) -> Result<(usize, Vec<u8>), SbeEncodeError> {
-        // Exact buffer size is 14 bytes for the entire message
         let mut buffer = vec![0u8; 16];
 
         let mut csg = StopDataMsgEncoder::default();
@@ -32,8 +58,6 @@ impl StopDataMessage {
         let value = self.data_type_id as u8;
         csg.data_type_id(value);
 
-        // Limit contains the exact number of bytes required to encode the message
-        // Use this value to determine the size of the buffer
         let limit = csg.get_limit();
         Ok((limit, buffer))
     }
