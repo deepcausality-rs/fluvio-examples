@@ -1,6 +1,6 @@
 use crate::handle_data::handle_data_message;
 use client_utils::prelude::{handle_error_utils, handle_utils};
-use common::prelude::{ExchangeID, MessageClientConfig};
+use common::prelude::{ExchangeID, MessageClientConfig, TimeResolution};
 use qd_client::QDClient;
 use std::time::Duration;
 use tokio::time::sleep;
@@ -11,7 +11,9 @@ const FN_NAME: &'static str = "basic_data_stream/main";
 
 const CLIENT_ID: u16 = 42;
 
-const ETH_AED: u16 = 278; //  278 = ETHAED on Kraken
+const ETH_AED: u16 = 278; //  278 = ethaed on Kraken
+
+const OP_USD: u16 = 653; // 653 = opusd on Kraken
 
 /// Basic Example of how to use the QD Client to get trade data for a specific symbol.
 ///  1) Construct QD Client
@@ -70,8 +72,22 @@ async fn main() {
         .await
         .expect("Failed to send start trade data message");
 
-    println!("basic_data_stream/main: Wait a moment to let stream complete...");
-    sleep(Duration::from_secs(3)).await;
+    println!("{FN_NAME}: Wait a moment to let the trade data stream complete...");
+    sleep(Duration::from_secs(1)).await;
+
+    // Configure OHLCV data
+    let exchange_id = ExchangeID::Kraken;
+    let symbol_id = OP_USD;
+    let time_resolution = TimeResolution::FiveMin;
+
+    println!("{FN_NAME}: Start streaming 5 MIN OHLCV data for OP/USD with symbol id: {OP_USD}");
+    client
+        .start_ohlcv_data(exchange_id, symbol_id, time_resolution)
+        .await
+        .expect("Failed to start OHLCV data");
+
+    println!("{FN_NAME}: Wait a moment to let the OHLCV data stream complete...");
+    sleep(Duration::from_secs(2)).await;
 
     println!("{FN_NAME}: Closing client");
     client.close().await.expect("Failed to close client");
