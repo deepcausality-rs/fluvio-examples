@@ -12,3 +12,6 @@ authors.workspace = true
 [dependencies]
 # Internal dependencies
 sbe_messages = { workspace = true }
+# External crates
+futures = {workspace = true}
+fluvio = { workspace = true }
