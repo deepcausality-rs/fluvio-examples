@@ -1,6 +1,5 @@
 use common::prelude::MessageClientConfig;
-use fluvio::dataplane::link::ErrorCode;
-use fluvio::{FluvioAdmin, Offset};
+use fluvio::{FluvioAdmin};
 use futures::Stream;
 use futures::StreamExt;
 use std::error::Error;

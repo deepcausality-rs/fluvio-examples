@@ -3,7 +3,7 @@ use futures::stream::StreamExt;
 use qd_client::QDClient;
 use sbe_messages::prelude::MessageType;
 use std::error::Error;
-use fluvio::{Offset, PartitionConsumer};
+use fluvio::{Offset};
 
 mod handle_data;
 mod handle_error;
