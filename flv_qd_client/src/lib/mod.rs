@@ -93,7 +93,6 @@ impl QDClient {
     }
 }
 
-
 impl QDClient {
     /// Closes the client connection by logging out and deleting topics.
     ///
