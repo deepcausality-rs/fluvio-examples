@@ -1,5 +1,7 @@
 use common::prelude::MessageClientConfig;
+use fluvio::dataplane::link::ErrorCode;
 use fluvio::{FluvioAdmin, Offset};
+use futures::Stream;
 use futures::StreamExt;
 use std::error::Error;
 use std::time::Duration;
@@ -37,30 +39,30 @@ pub struct QDClient {
 impl QDClient {
     /// Creates a new QDClient instance.
     ///
-    /// # Arguments
+    /// # Parameters
     ///
     /// * `client_id` - The unique ID for this client.
     /// * `client_config` - The client configuration.
-    /// * `data_handler` - The event handler for data messages.
-    /// * `err_handler` - The event handler for error messages.
     ///
     /// # Returns
     ///
-    /// Returns a `Result` with the `QDClient` instance on success, or an `Error` on failure.
+    /// Returns a `Result` with the new `QDClient` instance on success,
+    /// or an `Error` on failure.
     ///
-    /// # Note, the constructor does the following:
+    /// This does the following:
     ///
-    /// - Gets a `FluvioAdmin` client and `TopicProducer` for the gateway.
-    /// - Creates the client topics using `flv_utils::create_topics()`.
-    /// - Spawns the `data_handler` and `err_handler` callbacks as tasks.
-    /// - Constructs the `QDClient`.
-    /// - Logs in the client by calling `login()`.
+    /// - Gets a Fluvio admin client.
+    /// - Gets a producer for the gateway control topic.
+    /// - Creates the client topics.
+    /// - Creates a consumer for the data channel topic.
+    /// - Creates the QDClient instance.
+    /// - Logs in to the gateway to register the client.
+    ///
+    /// Any errors will be returned as a `Result` with the error cause.
     ///
     pub async fn new(
         client_id: u16,
         client_config: MessageClientConfig,
-        // data_handler: fn(buffer: Vec<u8>) -> Result<(), Box<dyn Error + Send>>,
-        // err_handler: Box<EventCallback>,
     ) -> Result<Self, Box<dyn Error + Send>> {
         // Get Fluvio admin.
         let admin = flv_utils::get_admin()
@@ -82,22 +84,6 @@ impl QDClient {
             .await
             .expect("Failed to create a consumer for data topic");
 
-        // // Start the data handler as Tokio task.
-        // let data_topic = client_config.data_channel();
-        // tokio::spawn(async move {
-        //     if let Err(e) = handle_channel(&data_topic, data_handler).await {
-        //         eprintln!("[QDClient/new]: Consumer connection error: {}", e);
-        //     }
-        // });
-
-        // Start the error handler as Tokio task.
-        // let err_topic = client_config.error_channel();
-        // tokio::spawn(async move {
-        //     if let Err(e) = handle_channel(&err_topic, err_handler).await {
-        //         eprintln!("[QDClient/new]: Consumer connection error: {}", e);
-        //     }
-        // });
-
         // Create client.
         let client = Self {
             client_id,
@@ -118,50 +104,12 @@ impl QDClient {
     }
 }
 
-/// Handles incoming messages on a topic channel.
-///
-/// # Arguments
-///
-/// * `channel_topic` - The topic to subscribe to.
-/// * `on_event` - The callback to process each message.
-///
-/// For each message received on the topic, this:
-///
-/// - Creates a Fluvio consumer for the topic.
-/// - Gets a stream for the consumer.
-/// - Loops through records in the stream.
-/// - Extracts the message bytes.
-/// - Calls the `event_handler` with the message buffer.
-///
-async fn handle_channel(
-    channel_topic: &str,
-    event_handler: fn(buffer: Vec<u8>) -> Result<(), Box<dyn Error + Send>>,
-    // on_event: fn(Vec<u8>) -> EventCallback,
-) -> Result<(), Box<dyn Error + Send>> {
-    // Create consumer for channel topic.
-    let consumer = fluvio::consumer(channel_topic, 0)
-        .await
-        .expect("Failed to create a consumer for data topic");
+impl QDClient {
 
-    // Create stream for consumer.
-    let mut stream = consumer
-        .stream(Offset::end())
-        .await
-        .expect("Failed to create a stream");
-
-    // Consume records from the stream and process with the event handler.
-    while let Some(Ok(record)) = stream.next().await {
-        let value = record.get_value().to_vec();
-        let buffer = value.as_slice();
-
-        event_handler(buffer.to_vec())?;
-
-        // on_event(buffer.to_vec())
-        //     .await
-        //     .expect("Failed to process event");
+    pub fn get_consumer(&self) -> &fluvio::PartitionConsumer {
+        &self.consumer
     }
 
-    Ok(())
 }
 
 impl QDClient {

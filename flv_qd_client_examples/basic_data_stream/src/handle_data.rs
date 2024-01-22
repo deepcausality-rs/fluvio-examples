@@ -3,7 +3,39 @@ use sbe_messages::prelude::{
 };
 use std::error::Error;
 
-pub async fn handle_data_event(buffer: &[u8]) -> () {
+/// The handle_data_message function handles data messages received from the gateway.
+///
+/// It takes a value byte vector containing the serialized data message as parameter.
+///
+/// It gets the message_type from the third byte of the buffer.
+///
+/// It then matches on the different MessageTypes:
+///
+/// - MessageType::FirstOHLCVBar:
+///   Deserializes the message into a FirstOHLCVBar and prints it.
+///
+/// - MessageType::OHLCVBar:
+///   Deserializes the message into a SbeOHLCVBar and prints it.
+///
+/// - MessageType::LastOHLCVBar:
+///   Deserializes the message into a LastOHLCVBar and prints it.
+///
+/// - MessageType::FirstTradeBar:
+///   Deserializes the message into a FirstTradeBar and prints it.
+///
+/// - MessageType::TradeBar:
+///   Deserializes the message into a SbeTradeBar and prints it.
+///
+/// - MessageType::LastTradeBar:
+///   Deserializes the message into a LastTradeBar and prints it.
+///
+/// - Other MessageTypes are ignored.
+///
+/// It returns a Result with no value if successful, otherwise an error.
+///
+pub fn handle_data_message(value: Vec<u8>) -> Result<(), Box<dyn Error + Send>> {
+    let buffer = value.as_slice();
+
     // The third byte of the buffer is always the message type.
     let message_type = MessageType::from(buffer[2] as u16);
 
@@ -38,5 +70,5 @@ pub async fn handle_data_event(buffer: &[u8]) -> () {
         _ => {}
     }
 
-    // Ok(())
+    Ok(())
 }

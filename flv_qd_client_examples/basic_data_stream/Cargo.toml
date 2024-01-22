@@ -13,12 +13,6 @@ name = "basic_data_stream"
 path = "src/main.rs"
 
 
-[lints.rust]
-# Temporary allow for clippy lints
-unused = "allow"
-unsafe_code = "forbid"
-
-
 [dependencies]
 # Intrnal crates
 common = { workspace = true }
