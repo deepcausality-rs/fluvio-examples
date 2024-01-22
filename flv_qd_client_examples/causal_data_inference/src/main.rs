@@ -1,8 +1,8 @@
-use std::time::Duration;
-use tokio::time::sleep;
 use client_utils::{handle_error_utils, handle_utils, print_utils};
 use common::prelude::MessageClientConfig;
 use qd_client::QDClient;
+use std::time::Duration;
+use tokio::time::sleep;
 
 mod handle_data;
 

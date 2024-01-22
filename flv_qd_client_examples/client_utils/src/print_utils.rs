@@ -1,5 +1,3 @@
-
-
 pub fn print_example_header(example: &str) {
     println!();
     println!("==========================================");
