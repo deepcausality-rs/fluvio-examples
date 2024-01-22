@@ -1,5 +1,5 @@
 [package]
-name = "basic_data_stream"
+name = "causal_data_inference"
 version = "0.1.0"
 edition.workspace = true
 rust-version.workspace = true
@@ -9,7 +9,7 @@ authors.workspace = true
 
 
 [[bin]]
-name = "basic_data_stream"
+name = "causal_data_inference"
 path = "src/main.rs"
 
 
@@ -20,6 +20,7 @@ client_utils = { workspace = true }
 qd_client = { workspace = true }
 sbe_messages = { workspace = true }
 # External crates
+deep_causality =  {workspace = true}
 futures = {workspace = true}
 tokio = { workspace = true }
 fluvio = { workspace = true }

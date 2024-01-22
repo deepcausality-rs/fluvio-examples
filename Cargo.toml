@@ -6,6 +6,8 @@ members = [
     "flv_cli/data_importer",
     "flv_qd_client",
     "flv_qd_client_examples/basic_data_stream",
+    "flv_qd_client_examples/causal_data_inference",
+    "flv_qd_client_examples/client_utils",
     "flv_common",
     "flv_components/client_manager",
     "flv_components/config_manager",
@@ -19,7 +21,6 @@ members = [
     "flv_specs/db_specs",
     "flv_specs/exchange_specs",
     "flv_specs/service_specs",
-    "flv_qd_client_examples/client_utils",
 ]
 
 
@@ -54,6 +55,7 @@ autometrics = { version = "1", features = ["prometheus-exporter"] }
 chrono = { version = "0.4", features = ["serde"] }
 config-file = "0.2"
 csv = "1.3"
+deep_causality = "0.6"
 encoding_rs = "0.8"
 fluvio = { version = "0.21", default-features = false, features = ["rustls"] }
 futures = "0.3"
