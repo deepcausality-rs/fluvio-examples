@@ -4,8 +4,11 @@ use common::prelude::{ExchangeID, MessageClientConfig, TimeResolution};
 use qd_client::QDClient;
 use std::time::Duration;
 use tokio::time::sleep;
+use client_utils::print_utils;
 
 mod handle_data;
+
+const EXAMPLE: &'static str = "Basic Data Stream";
 
 const FN_NAME: &'static str = "basic_data_stream/main";
 
@@ -33,11 +36,19 @@ const OP_USD: u16 = 653; // 653 = opusd on Kraken
 /// 4) Start trade data stream
 /// - Sends start_trade_data message to gateway
 ///
-/// 5) Close connection
-/// - Closes QDClient
+/// 5) Starts OHLCV data stream
+/// - Sends start_ohlcv_data message to gateway
+///
+/// 6) Waits a bit until the streams have finished
+///
+/// 7) Closes the client
+/// - The client sends a logout message to the gateway,
+///  closes the connection, and deletes all client topics.
 ///
 #[tokio::main]
 async fn main() {
+    print_utils::print_example_header(EXAMPLE);
+
     println!("{FN_NAME}: Build Client config for client ID: {CLIENT_ID}",);
     let client_config = MessageClientConfig::new(CLIENT_ID);
 
