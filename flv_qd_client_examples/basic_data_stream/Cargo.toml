@@ -16,6 +16,7 @@ path = "src/main.rs"
 [dependencies]
 # Intrnal crates
 common = { workspace = true }
+client_utils = { workspace = true }
 qd_client = { workspace = true }
 sbe_messages = { workspace = true }
 

@@ -19,6 +19,7 @@ members = [
     "flv_specs/db_specs",
     "flv_specs/exchange_specs",
     "flv_specs/service_specs",
+    "flv_utils/client_utils",
 ]
 
 
@@ -43,6 +44,7 @@ qd_client = { path = "flv_qd_client" }
 sbe_bindings = {path = "flv_sbe/bindings" }
 sbe_messages = {path = "flv_sbe/sbe_messages" }
 service_utils = { path = "flv_utils/service_utils" }
+client_utils = { path = "flv_utils/client_utils" }
 db_specs = { path = "flv_specs/db_specs" }
 exchange_specs = { path = "flv_specs/exchange_specs" }
 service_specs = {path = "flv_specs/service_specs" }
