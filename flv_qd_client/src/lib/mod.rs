@@ -1,7 +1,5 @@
 use common::prelude::MessageClientConfig;
-use fluvio::{FluvioAdmin};
-use futures::Stream;
-use futures::StreamExt;
+use fluvio::FluvioAdmin;
 use std::error::Error;
 use std::time::Duration;
 use tokio::time::sleep;
@@ -32,7 +30,6 @@ pub struct QDClient {
     admin: FluvioAdmin,
     client_config: MessageClientConfig,
     producer: fluvio::TopicProducer,
-    consumer: fluvio::PartitionConsumer,
 }
 
 impl QDClient {
@@ -53,7 +50,6 @@ impl QDClient {
     /// - Gets a Fluvio admin client.
     /// - Gets a producer for the gateway control topic.
     /// - Creates the client topics.
-    /// - Creates a consumer for the data channel topic.
     /// - Creates the QDClient instance.
     /// - Logs in to the gateway to register the client.
     ///
@@ -78,18 +74,12 @@ impl QDClient {
             .await
             .expect("[QDClient/new]: Failed to create topics");
 
-        // Create consumer for channel topic.
-        let consumer = fluvio::consumer(TOPIC, 0)
-            .await
-            .expect("Failed to create a consumer for data topic");
-
         // Create client.
         let client = Self {
             client_id,
             admin,
             client_config,
             producer,
-            consumer,
         };
 
         // login to the QD gateway and register the clients data channel
@@ -103,13 +93,6 @@ impl QDClient {
     }
 }
 
-impl QDClient {
-
-    pub fn get_consumer(&self) -> &fluvio::PartitionConsumer {
-        &self.consumer
-    }
-
-}
 
 impl QDClient {
     /// Closes the client connection by logging out and deleting topics.

@@ -1,5 +1,46 @@
-use sbe_messages::prelude::{ClientErrorMessage, ClientErrorType, DataErrorMessage, DataErrorType};
+use sbe_messages::prelude::{
+    ClientErrorMessage, ClientErrorType, DataErrorMessage, DataErrorType, MessageType,
+};
 use std::error::Error;
+
+/// Handles error messages received from the gateway.
+///
+/// Takes the raw message bytes as parameter.
+///
+/// Gets the message type from the third byte.
+///
+/// Matches on message type:
+///
+/// - MessageType::ClientError:
+///   Calls handle_client_error to handle client errors.
+///
+/// - MessageType::DataError:
+///   Calls handle_data_error to handle data errors.
+///
+/// - Other MessageTypes:
+///   Ignores the message.
+///
+/// Returns a Result with no value if successful, otherwise an error.
+///
+pub(crate) fn handle_error_message(message: Vec<u8>) -> Result<(), Box<dyn Error + Send>> {
+    // The third byte of the buffer is always the message type.
+    let message_type = MessageType::from(message[2] as u16);
+
+    match message_type {
+        // Handle client errors
+        MessageType::ClientError => {
+            handle_client_error(message)?;
+        }
+        // Handle data errors
+        MessageType::DataError => {
+            handle_data_error(message)?;
+        }
+        // Ignore other message types
+        _ => {}
+    }
+
+    Ok(())
+}
 
 /// The handle_client_error function handles ClientErrorMessages sent from the gateway.
 ///
@@ -35,7 +76,7 @@ use std::error::Error;
 ///
 /// It returns a Result with no value if successful, otherwise an error.
 ///
-pub(crate) fn handle_client_error(raw_event: Vec<u8>) -> Result<(), Box<dyn Error + Send>> {
+fn handle_client_error(raw_event: Vec<u8>) -> Result<(), Box<dyn Error + Send>> {
     let buffer = raw_event.as_slice();
     let client_error = ClientErrorMessage::from(buffer);
     let client_error_type = client_error.client_error_type();
@@ -106,7 +147,7 @@ pub(crate) fn handle_client_error(raw_event: Vec<u8>) -> Result<(), Box<dyn Erro
 ///
 /// It returns a Result with no value if successful, otherwise an error.
 ///
-pub(crate) fn handle_data_error(msg: Vec<u8>) -> Result<(), Box<dyn Error + Send>> {
+fn handle_data_error(msg: Vec<u8>) -> Result<(), Box<dyn Error + Send>> {
     let buffer = msg.as_slice();
     let data_error = DataErrorMessage::from(buffer);
     let data_error_type = data_error.data_error_type();

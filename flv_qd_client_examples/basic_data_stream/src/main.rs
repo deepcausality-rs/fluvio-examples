@@ -1,9 +1,12 @@
+use crate::handle_data::handle_data_message;
+use crate::handle_error::handle_error_message;
 use common::prelude::{ExchangeID, MessageClientConfig};
+use fluvio::Offset;
 use futures::stream::StreamExt;
 use qd_client::QDClient;
-use sbe_messages::prelude::MessageType;
 use std::error::Error;
-use fluvio::{Offset};
+use std::time::Duration;
+use tokio::time::sleep;
 
 mod handle_data;
 mod handle_error;
@@ -14,52 +17,52 @@ const CLIENT_ID: u16 = 42;
 
 const ETH_AED: u16 = 278; //  278 = ETHAED on Kraken
 
-// Example of how to use the QD Client to get trade data for a specific symbol.
-//
-// Main function:
-// - Creates QDClient instance
-// - Sends message to start streaming trade data
-// - Gets message stream from client
-// - Calls handle_message on messages
-// - Closes client
-//
-// handle_message function:
-// - Gets message type
-// - Calls specific handler functions based on message type
-// - Returns Result
-//
-// Helper modules handle different message types
-// - handle_data handles data messages
-// - handle_error handles error messages
-
+/// Basic Example of how to use the QD Client to get trade data for a specific symbol.
+///  1) Construct QD Client
+/// - Creates MessageClientConfig
+/// - Creates QDClient instance with config
+///
+/// 2) Start data handler
+/// - Gets data topic from config
+/// - Spawns tokio task to handle data channel
+///   using handle_channel and handle_data_message
+///
+/// 3) Start error handler
+/// - Gets error topic from config
+/// - Spawns tokio task to handle error channel
+///   using handle_channel and handle_error_message
+///
+/// 4) Start trade data stream
+/// - Sends start_trade_data message to gateway
+///
+/// 5) Close connection
+/// - Closes QDClient
+///
 #[tokio::main]
 async fn main() {
     println!("{FN_NAME}: Build Client config for client ID: {CLIENT_ID}",);
     let client_config = MessageClientConfig::new(CLIENT_ID);
 
     println!("{FN_NAME}: Build QD Client",);
-    let client = QDClient::new(CLIENT_ID, client_config)
+    let client = QDClient::new(CLIENT_ID, client_config.clone())
         .await
         .expect("basic_data_stream/main: Failed to create QD Gateway client");
-
 
     println!("{FN_NAME}: Start the data handler",);
     let data_topic = client_config.data_channel();
     tokio::spawn(async move {
-        if let Err(e) = handle_channel(&data_topic).await {
+        if let Err(e) = handle_channel(&data_topic, handle_data_message).await {
             eprintln!("[QDClient/new]: Consumer connection error: {}", e);
         }
     });
-
 
     println!("{FN_NAME}: Start the error handler",);
     let err_topic = client_config.error_channel();
     tokio::spawn(async move {
-        if let Err(e) = handle_channel(&err_topic).await {
+        if let Err(e) = handle_channel(&err_topic, handle_error_message).await {
             eprintln!("[QDClient/new]: Consumer connection error: {}", e);
         }
     });
-
 
     println!("{FN_NAME}: Send start streaming message for ETH/AED with symbol id: {ETH_AED}",);
     let exchange_id = ExchangeID::Kraken;
@@ -69,15 +72,37 @@ async fn main() {
         .await
         .expect("Failed to send start trade data message");
 
+    println!("basic_data_stream/main: Wait a moment to let stream complete...");
+    sleep(Duration::from_secs(3)).await;
 
     println!("{FN_NAME}: Closing client");
     client.close().await.expect("Failed to close client");
 }
 
-
-
+/// Handles consuming messages from a Fluvio topic and processing them.
+///
+/// # Parameters
+///
+/// * `channel_topic` - The Fluvio topic to consume from.
+/// * `message_handler` - The handler function to process each message.
+///   Takes the message buffer as parameter and returns a Result.
+///
+/// # Returns
+///
+/// Returns a Result with no value if successful, otherwise an error.
+///
+/// This does the following:
+///
+/// - Creates a Fluvio consumer for the topic.
+/// - Gets a stream for the consumer.
+/// - Loops through records from the stream.
+///   - Calls the handler function, passing the message buffer.
+///
+/// Any errors from the handler are propagated up.
+///
 async fn handle_channel(
     channel_topic: &str,
+    message_handler: fn(buffer: Vec<u8>) -> Result<(), Box<dyn Error + Send>>,
 ) -> Result<(), Box<dyn Error + Send>> {
     // Create consumer for channel topic.
     let consumer = fluvio::consumer(channel_topic, 0)
@@ -95,37 +120,7 @@ async fn handle_channel(
         let value = record.get_value().to_vec();
         let buffer = value.as_slice();
 
-        handle_message(buffer.to_vec())?;
-    }
-
-    Ok(())
-}
-
-const HANDLE_NAME: &'static str = "basic_data_stream/main";
-
-
-async  fn handle_message(msg: Vec<u8>) -> Result<(), Box<dyn Error + Send>> {
-
-    // The third byte of the buffer is always the message type.
-    let message_type = MessageType::from(msg[2] as u16);
-    println!("{HANDLE_NAME}: Received message type: {message_type:?}");
-
-    match message_type {
-        // Handle client errors
-        MessageType::ClientError => {
-            println!("{HANDLE_NAME}: Received client error message");
-            handle_error::handle_client_error(msg).expect("Failed to handle client error");
-        }
-        // Handle data errors
-        MessageType::DataError => {
-            println!("{HANDLE_NAME}: Received data error message");
-            handle_error::handle_data_error(msg).expect("Failed to handle data error");
-        }
-        // Handle everything else as data message
-        _ => {
-            println!("{HANDLE_NAME}: Received data message");
-            handle_data::handle_data_message(msg).expect("Failed to process data message");
-        }
+        message_handler(buffer.to_vec())?;
     }
 
     Ok(())
