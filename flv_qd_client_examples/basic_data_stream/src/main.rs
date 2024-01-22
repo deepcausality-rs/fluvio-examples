@@ -1,9 +1,9 @@
 use crate::handle_data::handle_data_message;
+use client_utils::prelude::{handle_error_utils, handle_utils};
 use common::prelude::{ExchangeID, MessageClientConfig};
 use qd_client::QDClient;
 use std::time::Duration;
 use tokio::time::sleep;
-use client_utils::prelude::{handle_error_utils, handle_utils};
 
 mod handle_data;
 
@@ -55,7 +55,9 @@ async fn main() {
     println!("{FN_NAME}: Start the error handler",);
     let err_topic = client_config.error_channel();
     tokio::spawn(async move {
-        if let Err(e) = handle_utils::handle_channel(&err_topic, handle_error_utils::handle_error_message).await {
+        if let Err(e) =
+            handle_utils::handle_channel(&err_topic, handle_error_utils::handle_error_message).await
+        {
             eprintln!("[QDClient/new]: Consumer connection error: {}", e);
         }
     });
@@ -74,4 +76,3 @@ async fn main() {
     println!("{FN_NAME}: Closing client");
     client.close().await.expect("Failed to close client");
 }
-

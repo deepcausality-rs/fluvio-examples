@@ -1,7 +1,6 @@
-use std::error::Error;
 use fluvio::Offset;
 use futures::stream::StreamExt;
-
+use std::error::Error;
 
 /// Handles consuming messages from a Fluvio topic and processing them.
 ///
