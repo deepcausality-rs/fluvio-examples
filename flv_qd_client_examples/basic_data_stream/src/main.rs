@@ -14,9 +14,9 @@ const FN_NAME: &'static str = "basic_data_stream/main";
 
 const CLIENT_ID: u16 = 42;
 
-const ETH_AED: u16 = 278; //  278 = ethaed on Kraken
+const ETH_AED: u16 = 284; //  284 = ethaed on Kraken
 
-const OP_USD: u16 = 653; // 653 = opusd on Kraken
+const OP_USD: u16 = 665; // 665 = opusd on Kraken
 
 /// Basic Example of how to use the QD Client to get trade data for a specific symbol.
 ///  1) Construct QD Client

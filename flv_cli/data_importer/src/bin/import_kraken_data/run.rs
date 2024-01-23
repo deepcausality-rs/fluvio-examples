@@ -58,7 +58,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
 
     print_utils::dbg_print(vrb, format!("Found {} files", files.len()).as_str());
 
-    print_utils::dbg_print(vrb, "Import all data files into DB");
+    print_utils::dbg_print(vrb, "Import all data files into Quest DB");
     let mut imported_files = 1;
 
     for file_path in &files {

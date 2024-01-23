@@ -12,6 +12,14 @@ and is stored in the database without any updates.
 The symbol manager provides methods to convert symbols and numeric IDs back
 and forth, which helps to implement clients efficiently.
 
+## IMPORTANT:
+
+The data importer generates symbol id's on the fly to map a symbol name to an unique symbol id, which means when you import data on your system, **_your symbol mapping will differ from the example code in this repo_**.
+
+For example, when xbteur maps to 202 in the examples, you will almost certainly see a different number on your system after the data import. 
+
+This is deemed acceptable for research and back testing, but clearly insufficient for production systems. **If your application requires stable symbol mapping, you have to implement a symbol master service.** 
+
 ## Map ID to Symbol
 
 If you want to figure out the which symbol corresponds to a certain ID, or the other way around, you can query

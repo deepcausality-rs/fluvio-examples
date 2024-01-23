@@ -70,6 +70,14 @@ make import
 
 Depending on the machine, and the selected dataset, this may take a while.
 
+**IMPORTANT:** 
+
+The data importer generates symbol id's on the fly to map symbol names to symbol id, 
+which means when you import data, **_your symbol mapping most likely will differ from the example code_**.
+
+For example, when xbteur maps to 202 in the examples, you will almost certainly see a different number 
+on your system after the data import.  
+
 ## 🔥 Analyze data with SQL
 
 After the import has completed, you can inspect the data was imported by opening the SQL console in your browser:
@@ -93,7 +101,7 @@ Which should result in the following output for the complete dataset:
 
 ![query_result_1.png](doc/img/query_result_1.png)
 
-That means, we have imported all markets into 695 tables with a total of 936_307_899 rows of data into QuestDB.
+That means, we have imported all markets into 708 tables with a total of 989_904_654 rows of data into QuestDB.
 
 For more details on how to analyze the data, please see the following guide:
 

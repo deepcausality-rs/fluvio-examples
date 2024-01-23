@@ -12,5 +12,3 @@ FROM kraken_symbols
 ORDER BY number_of_rows ASC
 LIMIT 10
 ;
-
--- ethaed 278
