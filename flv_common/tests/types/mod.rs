@@ -4,3 +4,4 @@ mod data_types;
 
 mod exchange_types;
 mod symbol_types;
+mod time_types;
