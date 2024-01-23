@@ -4,7 +4,11 @@ use qd_client::QDClient;
 use std::time::Duration;
 use tokio::time::sleep;
 
-mod handle_data;
+mod handle;
+mod types;
+mod protocols;
+mod model;
+mod workflow;
 
 const EXAMPLE: &'static str = "Causal Data Inference";
 
