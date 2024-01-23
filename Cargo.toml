@@ -16,7 +16,7 @@ members = [
     "flv_components/symbol_manager",
     "flv_sbe/bindings",
     "flv_sbe/sbe_messages",
-    "flv_utils/service_utils",
+    "flv_services/service_utils",
     "flv_services/qdgw",
     "flv_specs/db_specs",
     "flv_specs/exchange_specs",
@@ -44,7 +44,7 @@ symbol_manager = {path = "flv_components/symbol_manager" }
 qd_client = { path = "flv_qd_client" }
 sbe_bindings = {path = "flv_sbe/bindings" }
 sbe_messages = {path = "flv_sbe/sbe_messages" }
-service_utils = { path = "flv_utils/service_utils" }
+service_utils = { path = "flv_services/service_utils" }
 client_utils = { path = "flv_qd_client_examples/client_utils" }
 db_specs = { path = "flv_specs/db_specs" }
 exchange_specs = { path = "flv_specs/exchange_specs" }
@@ -52,7 +52,9 @@ service_specs = {path = "flv_specs/service_specs" }
 #
 # External crates
 autometrics = { version = "1", features = ["prometheus-exporter"] }
-chrono = { version = "0.4", features = ["serde"] }
+# chrono default-features = false mitigates "RUSTSEC-2020-0071".
+# See https://rustsec.org/advisories/RUSTSEC-2020-0071.html
+chrono = { version = "0.4", default-features = false , features = ["serde", "clock"] }
 config-file = "0.2"
 csv = "1.3"
 deep_causality = "0.6"
@@ -61,8 +63,11 @@ fluvio = { version = "0.21", default-features = false, features = ["rustls"] }
 futures = "0.3"
 lru = "0.12.1"
 log = "0.4.20"
+petgraph = "0.6"
+# default-features = false mitigates a warning of a yanked sub-sub dependency
+# db-postgres enables type conversion from postgres numeric to rust native numeric
 # https://stackoverflow.com/questions/72594101/how-to-parse-a-postgresql-numeric-type-to-rust-native-ones-upon-request
-rust_decimal = { version = "1.33", features = ["db-postgres"] }
+rust_decimal = { version = "1", default-features = false, features = ["serde", "db-postgres"] }
 serde = { version = "1", features = ["derive"] }
 tokio = { version = "1", features = ["macros", "net", "rt-multi-thread", "signal"] }
 # Quest DB uses the postgres wire protocol for queries, which requires the postgres crate
