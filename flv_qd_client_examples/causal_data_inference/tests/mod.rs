@@ -1,3 +1,2 @@
-
-mod types;
 mod model;
+mod types;

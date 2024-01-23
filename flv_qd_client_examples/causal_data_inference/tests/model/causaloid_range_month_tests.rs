@@ -1,4 +1,4 @@
-use deep_causality::prelude::{Identifiable};
+use deep_causality::prelude::Identifiable;
 use lib_inference::prelude::causaloid_range_month::get_current_month_causaloid;
 use lib_inference::types::alias::CustomContext;
 
@@ -14,5 +14,8 @@ fn test_get_current_month_causaloid() {
     // Assert
     assert!(!causaloid.active());
     assert_eq!(causaloid.id(), id);
-    assert_eq!(causaloid.description(), "Checks if the current price exceeds the range high level of the current month");
+    assert_eq!(
+        causaloid.description(),
+        "Checks if the current price exceeds the range high level of the current month"
+    );
 }

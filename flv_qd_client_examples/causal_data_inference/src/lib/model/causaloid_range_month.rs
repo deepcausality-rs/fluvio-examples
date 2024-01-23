@@ -38,7 +38,8 @@ pub fn get_current_month_causaloid<'l>(
     context: &'l CustomContext<'l>,
     id: IdentificationValue,
 ) -> CustomCausaloid<'l> {
-    let description = "Checks if the current price exceeds the range high level of the current month";
+    let description =
+        "Checks if the current price exceeds the range high level of the current month";
 
     // The causal function is a function that takes the current price and returns a boolean
     // that indicates whether the current price exceeds the monthly high level.

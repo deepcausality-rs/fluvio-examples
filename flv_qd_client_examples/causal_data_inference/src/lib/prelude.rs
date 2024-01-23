@@ -1,4 +1,3 @@
-
 // Extensions
 pub use crate::extensions::indexable;
 // Model
