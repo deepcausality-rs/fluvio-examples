@@ -29,7 +29,6 @@ fn test_month_variants() {
     assert_eq!(dec as u8, 12);
 }
 
-
 #[test]
 fn test_from_u8() {
     assert_eq!(Month::from(0), Month::NoMonth);

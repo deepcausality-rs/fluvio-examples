@@ -1,6 +1,6 @@
 use deep_causality::prelude::Identifiable;
+use lib_inference::prelude::{BarRange, RangeData, Rangeable};
 use rust_decimal::Decimal;
-use lib_inference::prelude::{BarRange, Rangeable, RangeData};
 
 #[test]
 fn test_new() {
@@ -12,7 +12,6 @@ fn test_new() {
     assert_eq!(id, range_data.id());
     assert_eq!(data_range, range_data.data_range());
 }
-
 
 #[test]
 fn test_display() {

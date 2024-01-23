@@ -1,6 +1,6 @@
-use std::fmt::{Display, Formatter};
-use deep_causality::prelude::{Datable, Identifiable};
 use crate::prelude::{BarRange, Rangeable};
+use deep_causality::prelude::{Datable, Identifiable};
+use std::fmt::{Display, Formatter};
 
 /// The CustomData struct represents custom data with an identifier and data range.
 ///
@@ -34,7 +34,6 @@ impl RangeData {
         Self { id, data_range }
     }
 }
-
 
 impl Datable for RangeData {}
 

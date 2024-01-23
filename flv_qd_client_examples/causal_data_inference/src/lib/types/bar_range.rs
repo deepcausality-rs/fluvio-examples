@@ -31,8 +31,18 @@ pub struct BarRange {
 }
 
 impl BarRange {
-    pub fn new(high: Decimal, close: Decimal, close_above_open: bool, close_below_open: bool) -> Self {
-        Self { high, close, close_above_open, close_below_open }
+    pub fn new(
+        high: Decimal,
+        close: Decimal,
+        close_above_open: bool,
+        close_below_open: bool,
+    ) -> Self {
+        Self {
+            high,
+            close,
+            close_above_open,
+            close_below_open,
+        }
     }
 }
 
@@ -53,7 +63,10 @@ impl BarRange {
 
 impl Display for BarRange {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "BarRange {{ high: {}, close: {}, close_above_open: {}, close_below_open: {} }}",
-               self.high, self.close, self.close_above_open, self.close_below_open)
+        write!(
+            f,
+            "BarRange {{ high: {}, close: {}, close_above_open: {}, close_below_open: {} }}",
+            self.high, self.close, self.close_above_open, self.close_below_open
+        )
     }
 }

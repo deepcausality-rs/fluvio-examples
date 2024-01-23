@@ -1,4 +1,3 @@
-
 use deep_causality::prelude::{BaseNumberType, Causaloid, Context, Model, Space, SpaceTime, Time};
 
 use crate::types::range_data::RangeData;

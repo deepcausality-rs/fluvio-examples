@@ -1,5 +1,3 @@
-
-
 use serde::{Deserialize, Serialize};
 
 /// The Month enum represents the 12 months of the year.
@@ -54,7 +52,7 @@ impl From<u8> for Month {
             10 => Month::October,
             11 => Month::November,
             12 => Month::December,
-            _ => Month::NoMonth
+            _ => Month::NoMonth,
         }
     }
 }

@@ -1,3 +1,3 @@
 
-#[cfg(test)]
 mod types;
+mod model;

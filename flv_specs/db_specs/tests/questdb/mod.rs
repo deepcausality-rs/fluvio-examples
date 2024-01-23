@@ -15,4 +15,3 @@ fn test_get_cluster_db_config() {
     let actual = get_cluster_db_config();
     assert_eq!(expected, actual);
 }
-

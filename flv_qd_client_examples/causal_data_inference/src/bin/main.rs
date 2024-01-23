@@ -4,7 +4,6 @@ use qd_client::QDClient;
 use std::time::Duration;
 use tokio::time::sleep;
 
-
 const EXAMPLE: &'static str = "Causal Data Inference";
 
 const FN_NAME: &'static str = "causal_data_inference/main";

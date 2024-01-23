@@ -1,5 +1,5 @@
-use rust_decimal::Decimal;
 use lib_inference::prelude::BarRange;
+use rust_decimal::Decimal;
 
 #[test]
 fn test_bar_range_new() {
@@ -40,7 +40,8 @@ fn test_bar_range_display() {
 
     let bar_range = BarRange::new(high, close, close_above_open, close_below_open);
 
-    let expected = "BarRange { high: 100, close: 90, close_above_open: false, close_below_open: true }";
+    let expected =
+        "BarRange { high: 100, close: 90, close_above_open: false, close_below_open: true }";
     let actual = format!("{}", bar_range);
 
     assert_eq!(expected, actual);
