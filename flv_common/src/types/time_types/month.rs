@@ -18,7 +18,7 @@ use serde::{Deserialize, Serialize};
 /// - `Default` - Default to NoMonth
 /// - `Display` - Format as a string like "January"
 ///
-#[derive(Serialize, Deserialize,Default, Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Serialize, Deserialize, Default, Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 #[repr(u8)]
 pub enum Month {
     #[default]
@@ -57,7 +57,6 @@ impl From<u8> for Month {
         }
     }
 }
-
 
 impl std::fmt::Display for Month {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {

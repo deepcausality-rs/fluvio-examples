@@ -15,7 +15,6 @@ pub enum TimeScale {
     Year = 8,
 }
 
-
 impl From<u8> for TimeScale {
     fn from(value: u8) -> Self {
         match value {
@@ -32,7 +31,6 @@ impl From<u8> for TimeScale {
         }
     }
 }
-
 
 impl Display for TimeScale {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
