@@ -24,3 +24,5 @@ pub use crate::types::exchange_types::security_type::SecurityType;
 pub use crate::types::symbol_types::symbol::Symbol;
 // Time Types
 pub use crate::types::time_types::month::Month;
+pub use crate::types::time_types::time_scale::TimeScale;
+
