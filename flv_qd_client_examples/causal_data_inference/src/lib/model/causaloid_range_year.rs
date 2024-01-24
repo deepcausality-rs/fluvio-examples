@@ -34,7 +34,7 @@ use crate::types::alias::{CustomCausaloid, CustomContext};
 ///
 /// The context is used to lookup the previous day's data via the Indexable trait.
 ///
-pub fn get_current_year_causaloid<'l>(
+pub(crate) fn get_year_causaloid<'l>(
     context: &'l CustomContext<'l>,
     id: IdentificationValue,
 ) -> CustomCausaloid<'l> {
@@ -71,10 +71,11 @@ pub fn get_current_year_causaloid<'l>(
             .expect("Failed to get data out of year node");
 
         // closure that captures the context within the causal function.
-        let check_price_above_year_open = || obs.gt(&year_range.data_range().open().to_f64().unwrap());
+        let check_price_above_year_open =
+            || obs.gt(&year_range.data_range().open().to_f64().unwrap());
 
         // With the closures in place, the main logic becomes straightforward and simple to understand.
-        if check_price_above_year_open(){
+        if check_price_above_year_open() {
             Ok(true)
         } else {
             Ok(false)

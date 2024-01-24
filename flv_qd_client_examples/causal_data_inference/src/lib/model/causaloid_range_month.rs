@@ -34,7 +34,7 @@ use crate::types::alias::{CustomCausaloid, CustomContext};
 ///
 /// The context is used to lookup the current month data in the context via the Indexable trait.
 ///
-pub fn get_current_month_causaloid<'l>(
+pub(crate) fn get_month_causaloid<'l>(
     context: &'l CustomContext<'l>,
     id: IdentificationValue,
 ) -> CustomCausaloid<'l> {

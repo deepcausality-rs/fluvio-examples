@@ -10,7 +10,6 @@ impl Indexable for CustomContext<'_> {
         todo!()
     }
 
-
     fn set_current_year_index(&mut self, _index: usize) {
         todo!()
     }
@@ -18,7 +17,6 @@ impl Indexable for CustomContext<'_> {
     fn set_current_month_index(&mut self, _index: usize) {
         todo!()
     }
-
 
     fn get_previous_year_index(&self) -> usize {
         todo!()
@@ -28,7 +26,6 @@ impl Indexable for CustomContext<'_> {
         todo!()
     }
 
-
     fn set_previous_year_index(&mut self, _index: usize) {
         todo!()
     }
@@ -36,5 +33,4 @@ impl Indexable for CustomContext<'_> {
     fn set_previous_month_index(&mut self, _index: usize) {
         todo!()
     }
-
 }
