@@ -6,9 +6,15 @@ use futures::lock::Mutex;
 use futures::StreamExt;
 use std::collections::HashMap;
 use std::future::Future;
+use std::pin::Pin;
 use std::sync::Arc;
+use std::time;
 use symbol_manager::SymbolManager;
+use tokio::time::sleep;
 use tokio::{pin, select};
+
+// fixed retry for simplicity, but exponetial backoff crates are available
+const RETRY: time::Duration = time::Duration::from_secs(5);
 
 pub struct Server {
     channel_topic: String,
@@ -78,52 +84,54 @@ impl Server {
         self,
         signal: impl Future<Output = ()> + Send + 'static,
     ) -> Result<(), MessageProcessingError> {
+        //
         // When call .await on a &mut _ reference, pin the future. https://docs.rs/tokio/latest/tokio/macro.pin.html#examples
         let signal_future = signal;
         pin!(signal_future);
 
-        //
-        // Somehow we need to keep the consumer alive
-        // otherwise the consumer close the connection with the following error:
-        //
-        // connection error: connection closed
-        //
-        let consumer = fluvio::consumer(&self.channel_topic, 0)
-            .await
-            .expect("Failed to create a consumer for data topic");
-
-        // Creates a stream of messages from the topic.
-        let mut stream = consumer
-            .stream(Offset::end())
-            .await
-            .expect("[QDGW/Service:run]: Failed to create a stream");
-
+        // Handle reconnecting to the cluster if the connection fails.
         loop {
-            select! {
-                    _ = &mut signal_future => {
-                         break;
-                    }
+            // Connect to the Fluvio cluster.
+            let Ok(client) = fluvio::consumer(&self.channel_topic, 0).await else {
+                println!("[QDGW/Service:run]: Could not connect to Fluvio cluster, retrying");
+                sleep(RETRY).await;
+                continue;
+            };
 
-                    record = stream.next() => {
-                        if let Some(res) = record {
-                                     match res {
-                                         Ok(record) => {
-                                             match self.handle_record(&record).await{
-                                            Ok(()) => {},
-                                            Err(e) => {
-                                                return Err(e);
+            // Creates a stream of messages from the topic.
+            let Ok(mut stream) = client.stream(Offset::end()).await else {
+                println!("[QDGW/Service:run]: Failed to create stream, retrying");
+                sleep(RETRY).await;
+                continue;
+            };
+
+            loop {
+                select! {
+                        record = stream.next() => {
+                            if let Some(res) = record {
+                                         match res {
+                                             Ok(record) => {
+                                                 match self.handle_record(&record).await{
+                                                Ok(()) => {},
+                                                Err(e) => {
+                                                    return Err(e);
+                                                }
                                             }
-                                        }
-                                     },
-                                        Err(e) =>{
-                                             return Err(MessageProcessingError(e.to_string()));
-                                         }
-                                 }
-                             }
-                }// end stream.next()
-            } // end select
-        } // end loop
+                                         },
+                                            Err(e) =>{
+                                                println!("[QDGW/Service:run]: Reconnecting stream");
+                                                sleep(RETRY).await;
+                                                // Exit inner loop and try to reconnect stream
+                                                break;
+                                            }
+                                     }
+                                 }// end match record
+                    }// end stream.next()
+                } // end select
+            } // End inner loop
+        } // end outer loop
 
+        // currently unreachable, because the signal handler is not yet implemented
         Ok(())
     }
 }
