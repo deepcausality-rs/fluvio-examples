@@ -40,7 +40,11 @@ pub struct SampledDataBars {
 ///
 impl SampledDataBars {
     pub fn new() -> Self {
-        Self { day_bars: Vec::new(), month_bars: Vec::new(), year_bars: Vec::new() }
+        Self {
+            day_bars: Vec::new(),
+            month_bars: Vec::new(),
+            year_bars: Vec::new(),
+        }
     }
 }
 
@@ -54,7 +58,6 @@ impl SampledDataBars {
     pub fn set_year_bars(&mut self, year_bars: Vec<OHLCVBar>) {
         self.year_bars = year_bars;
     }
-
 
     pub fn day_bars(&self) -> &Vec<OHLCVBar> {
         &self.day_bars
