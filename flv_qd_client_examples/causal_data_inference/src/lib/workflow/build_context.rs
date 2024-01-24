@@ -1,4 +1,4 @@
-use crate::prelude::{CustomContext, SampledDataBars};
+use crate::prelude::{CustomContext, Indexable, SampledDataBars};
 use crate::utils::counter;
 use crate::utils::time_utils;
 use crate::workflow::augment_data;
@@ -55,12 +55,25 @@ pub fn build_time_data_context<'l>(
     for data_bar in elements {
         let year = data_bar.date_time().year();
 
+        //
         let (tempoid, dataoid) = augment_data::convert_ohlcv_bar_to_augmented(data_bar, time_scale);
 
         // Create new time node
         let key = counter.increment_and_get();
         let time_node = Contextoid::new(key, ContextoidType::Tempoid(tempoid));
         let year_index = g.add_node(time_node);
+
+        // Set index of current year
+        // Set index of previous year if current month is not the first year
+        if g.get_current_year_index() != year_index {
+            let prev_year_index = g.get_current_year_index();
+
+            g.set_previous_year_index(prev_year_index);
+            g.set_current_year_index(year_index);
+        } else {
+            // Set just index of current and previous year if current year is the first year
+            g.set_current_year_index(year_index);
+        }
 
         // Create new data node
         let data_id = counter.increment_and_get();
@@ -94,6 +107,18 @@ pub fn build_time_data_context<'l>(
             let key = counter.increment_and_get();
             let time_node = Contextoid::new(key, ContextoidType::Tempoid(tempoid));
             let month_index = g.add_node(time_node);
+
+            // Set index of current month
+            // Set index of previous month if current month is not the first month
+            if g.get_current_month_index() != month_index {
+                let prev_month_index = g.get_current_month_index();
+
+                g.set_previous_month_index(prev_month_index);
+                g.set_current_month_index(month_index);
+            } else {
+                // Set index of current and previous month if current month is the first month
+                g.set_current_month_index(month_index);
+            }
 
             // Add data
             let data_id = counter.increment_and_get();

@@ -22,6 +22,7 @@ path = "src/lib/mod.rs"
 # Intrnal crates
 common = { workspace = true }
 client_utils = { workspace = true }
+db_query_manager = { workspace = true }
 qd_client = { workspace = true }
 sbe_messages = { workspace = true }
 # External crates

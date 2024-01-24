@@ -24,6 +24,7 @@ use rust_decimal::Decimal;
 ///
 #[derive(Debug, Copy, Clone, Hash, Eq, PartialEq)]
 pub struct BarRange {
+    open: Decimal,
     high: Decimal,
     close: Decimal,
     close_above_open: bool,
@@ -32,12 +33,14 @@ pub struct BarRange {
 
 impl BarRange {
     pub fn new(
+        open: Decimal,
         high: Decimal,
         close: Decimal,
         close_above_open: bool,
         close_below_open: bool,
     ) -> Self {
         Self {
+            open,
             high,
             close,
             close_above_open,
@@ -47,6 +50,9 @@ impl BarRange {
 }
 
 impl BarRange {
+    pub fn open(&self) -> Decimal {
+        self.open
+    }
     pub fn high(&self) -> Decimal {
         self.high
     }
@@ -65,8 +71,8 @@ impl Display for BarRange {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "BarRange {{ high: {}, close: {}, close_above_open: {}, close_below_open: {} }}",
-            self.high, self.close, self.close_above_open, self.close_below_open
+            "BarRange {{ open: {} high: {}, close: {}, close_above_open: {}, close_below_open: {} }}",
+            self.open, self.high, self.close, self.close_above_open, self.close_below_open
         )
     }
 }

@@ -24,17 +24,13 @@
 pub trait Indexable {
     fn get_current_year_index(&self) -> usize;
     fn get_current_month_index(&self) -> usize;
-    fn get_current_day_index(&self) -> usize;
     //
     fn set_current_year_index(&mut self, index: usize);
     fn set_current_month_index(&mut self, index: usize);
-    fn set_current_day_index(&mut self, index: usize);
 
     fn get_previous_year_index(&self) -> usize;
     fn get_previous_month_index(&self) -> usize;
-    fn get_previous_day_index(&self) -> usize;
     //
     fn set_previous_year_index(&mut self, index: usize);
     fn set_previous_month_index(&mut self, index: usize);
-    fn set_previous_day_index(&mut self, index: usize);
 }

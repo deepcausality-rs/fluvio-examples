@@ -1,7 +1,7 @@
 // Extensions
 pub use crate::extensions::indexable;
 // Model
-pub use crate::model::causaloid_range_day;
+pub use crate::model::causaloid_range_year;
 pub use crate::model::causaloid_range_month;
 // Protocols
 pub use crate::protocols::indexable::Indexable;

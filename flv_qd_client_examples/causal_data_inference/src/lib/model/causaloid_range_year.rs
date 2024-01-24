@@ -34,7 +34,7 @@ use crate::types::alias::{CustomCausaloid, CustomContext};
 ///
 /// The context is used to lookup the previous day's data via the Indexable trait.
 ///
-pub fn get_previous_day_causaloid<'l>(
+pub fn get_current_year_causaloid<'l>(
     context: &'l CustomContext<'l>,
     id: IdentificationValue,
 ) -> CustomCausaloid<'l> {
@@ -60,26 +60,21 @@ pub fn get_previous_day_causaloid<'l>(
         // We use a dynamic secondary index to determine the actual index of the previous or current day tempoid relative
         // to the now() timestamp. To do this, we  extend the context with an extension trait and corresponding implementation.
         // See http://xion.io/post/code/rust-extension-traits.html
-        let month = ctx
-            .get_node(ctx.get_previous_day_index())
+        let year = ctx
+            .get_node(ctx.get_current_year_index())
             .expect("node for current month not found");
 
-        let data = month
+        // Get the range of the current year.
+        let year_range = year
             .vertex_type()
             .dataoid()
             .expect("Failed to get data out of year node");
 
-        let check_month_breakout = || {
-            // This logic is obviously complete nonsense, but it demonstrates that you can
-            // split complex causal functions into multiple closures.
-            data.data_range().close_above_open() && !data.data_range().close_below_open()
-        };
-
-        // Another closure that captures the context within the causal function.
-        let check_price_above_high = || obs.gt(&data.data_range().high().to_f64().unwrap());
+        // closure that captures the context within the causal function.
+        let check_price_above_year_open = || obs.gt(&year_range.data_range().open().to_f64().unwrap());
 
         // With the closures in place, the main logic becomes straightforward and simple to understand.
-        if check_price_above_high() && check_month_breakout() {
+        if check_price_above_year_open(){
             Ok(true)
         } else {
             Ok(false)

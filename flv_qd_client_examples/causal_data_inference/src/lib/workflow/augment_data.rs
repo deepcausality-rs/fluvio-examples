@@ -47,10 +47,11 @@ pub fn convert_ohlcv_bar_to_augmented(
 /// A [`BarRange`] containing the range data for the bar.
 ///
 fn calculate_ohlcv_ranges(data_bar: &OHLCVBar) -> BarRange {
+    let open = data_bar.open();
     let high = data_bar.high();
     let close = data_bar.open();
     let close_above_open = data_bar.close() > data_bar.open();
     let close_below_open = data_bar.close() < data_bar.open();
 
-    BarRange::new(high, close, close_above_open, close_below_open)
+    BarRange::new(open, high, close, close_above_open, close_below_open)
 }
