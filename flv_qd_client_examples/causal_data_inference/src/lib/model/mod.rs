@@ -23,7 +23,7 @@ pub(crate) mod causaloid_range_year;
 ///
 /// The built [`CustomModel`] containing the provided context and causaloid.
 ///
-pub fn build_model<'l>(
+pub fn build_causal_model<'l>(
     context: &'l CustomContext<'l>,
     causaloid: &'l CustomCausaloid<'l>,
 ) -> CustomModel<'l> {

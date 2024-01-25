@@ -6,8 +6,8 @@ use crate::types::range_data::RangeData;
 ///
 /// - CustomData: Our custom data type
 /// - Space<BaseNumberType>: Vector space of base number types
-/// - Time<BaseNumberType>: Time series of base number types
-/// - SpaceTime<BaseNumberType>: Spacetime of base number types
+/// - `Time<BaseNumberType>`: Time series of base number types
+/// - `SpaceTime<BaseNumberType>`: Spacetime of base number types
 /// - BaseNumberType: The base number type
 ///
 /// This provides a convenient way to create a Context for our custom types.
@@ -25,8 +25,8 @@ pub type CustomContext<'l> = Context<
 ///
 /// - CustomData: Our custom data type
 /// - Space<BaseNumberType>: Vector space of base number types
-/// - Time<BaseNumberType>: Time series of base number types
-/// - SpaceTime<BaseNumberType>: Spacetime of base number types
+/// - `Time<BaseNumberType>`: Time series of base number types
+/// - `SpaceTime<BaseNumberType>`: Spacetime of base number types
 /// - BaseNumberType: The base number type
 ///
 /// This provides a convenient way to create a Causaloid for our custom types.
@@ -44,8 +44,8 @@ pub type CustomCausaloid<'l> = Causaloid<
 ///
 /// - CustomData: Our custom data type
 /// - Space<BaseNumberType>: Vector space of base number types
-/// - Time<BaseNumberType>: Time series of base number types
-/// - SpaceTime<BaseNumberType>: Spacetime of base number types
+/// - `Time<BaseNumberType>`: Time series of base number types
+/// - `SpaceTime<BaseNumberType>`: Spacetime of base number types
 /// - BaseNumberType: The base number type
 ///
 /// This provides a convenient way to create a Model for our custom types.

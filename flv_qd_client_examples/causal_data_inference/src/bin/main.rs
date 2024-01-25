@@ -1,4 +1,5 @@
-use client_utils::{handle_error_utils, handle_utils, print_utils};
+use std::sync::{Arc, RwLock};
+use client_utils::{print_utils};
 use common::prelude::{ExchangeID, MessageClientConfig, ServiceID};
 use config_manager::ConfigManager;
 use db_query_manager::QueryDBManager;
@@ -75,7 +76,7 @@ async fn main() {
 
     println!("{FN_NAME}: Build Causal Model");
     let causaloid = model::get_main_causaloid(&context);
-    let model = model::build_model(&context, &causaloid);
+    let model = model::build_causal_model(&context, &causaloid);
 
     println!();
     println!("Causal Model Information:");
@@ -91,6 +92,11 @@ async fn main() {
         .await
         .expect("basic_data_stream/main: Failed to create QD Gateway client");
 
+    // Model is not `Send` thus not thread safe for Tokio.
+
+    // Wrap the model in an Arc / Mutex to share it between threads.
+    let model =   Arc::new(RwLock::new(model));
+
     println!("{FN_NAME}: Start the data handlers",);
     let data_topic = client_config.data_channel();
     tokio::spawn(async move {
@@ -98,22 +104,22 @@ async fn main() {
             channel_handler::handle_data_channel_with_inference(
                 &data_topic,
                 data_handler::handle_data_message_inference,
-                &model,
+                model,
             ).await
         {
             eprintln!("[QDClient/new]: Consumer connection error: {}", e);
         }
     });
 
-    println!("{FN_NAME}: Start the error handlers");
-    let err_topic = client_config.error_channel();
-    tokio::spawn(async move {
-        if let Err(e) =
-            handle_utils::handle_channel(&err_topic, handle_error_utils::handle_error_message).await
-        {
-            eprintln!("[QDClient/new]: Consumer connection error: {}", e);
-        }
-    });
+    // println!("{FN_NAME}: Start the error handlers");
+    // let err_topic = client_config.error_channel();
+    // tokio::spawn(async move {
+    //     if let Err(e) =
+    //         handle_utils::handle_channel(&err_topic, handle_error_utils::handle_error_message).await
+    //     {
+    //         eprintln!("[QDClient/new]: Consumer connection error: {}", e);
+    //     }
+    // });
 
     println!("{FN_NAME}: Send start streaming message for symbol id: {symbol_id}",);
     client

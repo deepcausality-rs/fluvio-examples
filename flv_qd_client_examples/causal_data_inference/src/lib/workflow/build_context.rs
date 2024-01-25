@@ -28,6 +28,20 @@ use std::error::Error;
 ///
 /// The built [`Context`] graph representing the time series data.
 ///
+/// # Notes
+///
+/// The function:
+///
+/// * Creates a new context graph and initializes the current/previous year/month indices to 0.
+/// * Adds a root node to represent the entire time series.
+/// * Iterates through the bar data grouped by year, converting each bar to time and data nodes.
+/// * For each year, it adds a year node under the root.
+/// * Sets the current and previous year indices as it processes each year.
+/// * If the time scale includes months, it groups bars by month and adds month nodes under each year.
+/// * Sets the current and previous month indices as it processes each month.
+/// * The time and data nodes are connected in a hierarchy based on the time scale - years under root, months under years, data under months/years.
+/// * Finally it returns the built context graph representing the time series data.
+///
 pub fn build_time_data_context<'l>(
     data: &SampledDataBars,
     time_scale: &TimeScale,
