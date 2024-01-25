@@ -3,7 +3,7 @@ use deep_causality::prelude::{
 };
 use rust_decimal::prelude::ToPrimitive;
 
-use crate::prelude::{Indexable, Rangeable};
+use crate::prelude::{TimeIndexable, Rangeable};
 use crate::types::alias::{CustomCausaloid, CustomContext};
 
 /// Creates a new Causaloid that checks if the current price exceeds the previous day's range high level.

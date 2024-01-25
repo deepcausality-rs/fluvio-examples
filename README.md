@@ -75,7 +75,7 @@ Depending on the machine, and the selected dataset, this may take a while.
 The data importer generates symbol id's on the fly to map symbol names to symbol id, 
 which means when you import data, **_your symbol mapping most likely will differ from the example code_**.
 
-For example, when xbteur maps to 202 in the examples, you will almost certainly see a different number 
+For example, when XBTEUR maps to 202 in the examples, you will almost certainly see a different number 
 on your system after the data import.  
 
 ## 🔥 Analyze data with SQL

@@ -3,7 +3,7 @@ pub use crate::extensions::indexable;
 // Model
 pub use crate::model;
 // Protocols
-pub use crate::protocols::indexable::Indexable;
+pub use crate::protocols::indexable::TimeIndexable;
 pub use crate::protocols::rangeable::Rangeable;
 // Types
 pub use crate::types::alias::*;

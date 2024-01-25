@@ -1,4 +1,4 @@
-use crate::prelude::{CustomContext, Indexable, SampledDataBars};
+use crate::prelude::{CustomContext, TimeIndexable, SampledDataBars};
 use crate::utils::counter;
 use crate::utils::time_utils;
 use crate::workflow::augment_data;
