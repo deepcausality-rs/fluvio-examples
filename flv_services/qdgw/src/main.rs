@@ -75,7 +75,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .and(warp::path(metrics_uri.clone()))
         .map(prometheus_exporter::encode_http_response);
 
-    //Creates a new Warp filter for the metrics endpoint with a graceful shutdown handler.
+    //Creates a new Warp filter for the metrics endpoint with a graceful shutdown handlers.
     let signal = shutdown_utils::signal_handler("Http web server");
     let (_, web_server) = warp::serve(routes).bind_with_graceful_shutdown(web_addr, signal);
 

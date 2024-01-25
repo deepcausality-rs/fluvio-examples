@@ -1,9 +1,9 @@
 use client_utils::{handle_error_utils, handle_utils, print_utils};
-use common::prelude::{MessageClientConfig, ServiceID};
+use common::prelude::{ExchangeID, MessageClientConfig, ServiceID};
 use config_manager::ConfigManager;
 use db_query_manager::QueryDBManager;
 use deep_causality::prelude::{ContextuableGraph, Identifiable, TimeScale};
-use lib_inference::prelude::{build_context, load_data, model};
+use lib_inference::prelude::{build_context, data_handler, load_data, model};
 use qd_client::QDClient;
 use std::time::Duration;
 use symbol_manager::SymbolManager;
@@ -14,6 +14,8 @@ const EXAMPLE: &'static str = "Causal Data Inference";
 const FN_NAME: &'static str = "causal_data_inference/main";
 
 const CLIENT_ID: u16 = 77;
+
+const EXCHANGE_ID: ExchangeID = ExchangeID::Kraken;
 
 //  Symbols
 // const XBT_EUR: u16 = 202; // BTC in EUR ~80 million trades ~ 124 months
@@ -47,10 +49,11 @@ async fn main() {
     let mut symbol_manager = SymbolManager::new(symbols, exchanges)
         .expect("[main]: Failed to create SymbolManager instance.");
 
-    let exchange_id = 1;
+    let exchange_id = EXCHANGE_ID;
     let symbol_id = JTO_EUR;
+
     let symbol_table_name = symbol_manager
-        .get_symbol_table_name(exchange_id, symbol_id)
+        .get_symbol_table_name(exchange_id as u16, symbol_id)
         .expect("[main]: Failed to get symbol table name");
 
     println!("{FN_NAME}: Load Data");
@@ -65,48 +68,58 @@ async fn main() {
     let context = build_context::build_time_data_context(&data, &TimeScale::Month, 250)
         .expect("[main]:  to build context");
 
-    // println!("Context HyperGraph Metrics:");
-    // println!("Edge Count: {}", context.edge_count());
-    // println!("Vertex Count: {}", context.node_count());
+    println!();
+    println!("Context HyperGraph Metrics:");
+    println!("Edge Count: {}", context.edge_count());
+    println!("Vertex Count: {}", context.node_count());
 
-    // println!("{FN_NAME}: Build Causal Model");
-    // let causaloid = model::get_main_causaloid(&context);
-    // let model = model::build_model(&context, &causaloid);
-    //
-    // println!("Causal Model:");
-    // println!("Model ID: {}", model.id());
-    // println!("Model Description: {}", model.description());
-    // println!();
-    //
-    // println!("{FN_NAME}: Build Client config for client ID: {CLIENT_ID}",);
-    // let client_config = MessageClientConfig::new(CLIENT_ID);
-    //
-    // println!("{FN_NAME}: Build QD Client",);
-    // let client = QDClient::new(CLIENT_ID, client_config.clone())
-    //     .await
-    //     .expect("basic_data_stream/main: Failed to create QD Gateway client");
+    println!("{FN_NAME}: Build Causal Model");
+    let causaloid = model::get_main_causaloid(&context);
+    let model = model::build_model(&context, &causaloid);
 
-    // println!("{FN_NAME}: Start the data handler",);
-    // let data_topic = client_config.data_channel();
-    // tokio::spawn(async move {
-    //     if let Err(e) = handle_utils::handle_channel(&data_topic, handle_data_message).await {
-    //         eprintln!("[QDClient/new]: Consumer connection error: {}", e);
-    //     }
-    // });
-    //
-    // println!("{FN_NAME}: Start the error handler");
-    // let err_topic = client_config.error_channel();
-    // tokio::spawn(async move {
-    //     if let Err(e) =
-    //         handle_utils::handle_channel(&err_topic, handle_error_utils::handle_error_message).await
-    //     {
-    //         eprintln!("[QDClient/new]: Consumer connection error: {}", e);
-    //     }
-    // });
-    //
-    // println!("{FN_NAME}: Wait a moment to let the OHLCV data stream complete...");
-    // sleep(Duration::from_secs(2)).await;
+    println!();
+    println!("Causal Model Information:");
+    println!("Model ID: {}", model.id());
+    println!("Model Description: {}", model.description());
+    println!();
 
-    // println!("{FN_NAME}: Closing client");
-    // client.close().await.expect("Failed to close client");
+    println!("{FN_NAME}: Build Client config for client ID: {CLIENT_ID}",);
+    let client_config = MessageClientConfig::new(CLIENT_ID);
+
+    println!("{FN_NAME}: Build QD Client",);
+    let client = QDClient::new(CLIENT_ID, client_config.clone())
+        .await
+        .expect("basic_data_stream/main: Failed to create QD Gateway client");
+
+    println!("{FN_NAME}: Start the data handlers",);
+    let data_topic = client_config.data_channel();
+    tokio::spawn(async move {
+        if let Err(e) =
+            handle_utils::handle_channel(&data_topic, data_handler::handle_data_message).await
+        {
+            eprintln!("[QDClient/new]: Consumer connection error: {}", e);
+        }
+    });
+
+    println!("{FN_NAME}: Start the error handlers");
+    let err_topic = client_config.error_channel();
+    tokio::spawn(async move {
+        if let Err(e) =
+            handle_utils::handle_channel(&err_topic, handle_error_utils::handle_error_message).await
+        {
+            eprintln!("[QDClient/new]: Consumer connection error: {}", e);
+        }
+    });
+
+    println!("{FN_NAME}: Send start streaming message for symbol id: {symbol_id}",);
+    client
+        .start_trade_data(exchange_id, symbol_id)
+        .await
+        .expect("Failed to send start trade data message");
+
+    println!("{FN_NAME}: Wait a moment to let the data stream complete...");
+    sleep(Duration::from_secs(3)).await;
+
+    println!("{FN_NAME}: Closing client");
+    client.close().await.expect("Failed to close client");
 }

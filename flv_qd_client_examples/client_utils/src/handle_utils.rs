@@ -7,7 +7,7 @@ use std::error::Error;
 /// # Parameters
 ///
 /// * `channel_topic` - The Fluvio topic to consume from.
-/// * `message_handler` - The handler function to process each message.
+/// * `message_handler` - The handlers function to process each message.
 ///   Takes the message buffer as parameter and returns a Result.
 ///
 /// # Returns
@@ -19,9 +19,9 @@ use std::error::Error;
 /// - Creates a Fluvio consumer for the topic.
 /// - Gets a stream for the consumer.
 /// - Loops through records from the stream.
-///   - Calls the handler function, passing the message buffer.
+///   - Calls the handlers function, passing the message buffer.
 ///
-/// Any errors from the handler are propagated up.
+/// Any errors from the handlers are propagated up.
 ///
 pub async fn handle_channel(
     channel_topic: &str,
@@ -38,7 +38,7 @@ pub async fn handle_channel(
         .await
         .expect("Failed to create a stream");
 
-    // Consume records from the stream and process with the event handler.
+    // Consume records from the stream and process with the event handlers.
     while let Some(Ok(record)) = stream.next().await {
         let value = record.get_value().to_vec();
         let buffer = value.as_slice();

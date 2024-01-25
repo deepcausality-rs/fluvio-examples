@@ -9,7 +9,7 @@ use sbe_messages::prelude::{
 impl Server {
     /// Handles a consumer record received from the Fluvio message bus.
     ///
-    /// Parses the message type and delegates to the appropriate handler.
+    /// Parses the message type and delegates to the appropriate handlers.
     ///
     /// # Parameters
     ///
