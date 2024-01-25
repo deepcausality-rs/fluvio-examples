@@ -4,7 +4,6 @@ use crate::types::alias::CustomContext;
 
 impl Indexable for CustomContext<'_> {
     fn get_index(&self, key: usize, current: bool) -> usize {
-
         todo!()
     }
 

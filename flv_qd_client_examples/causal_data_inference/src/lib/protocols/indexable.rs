@@ -1,6 +1,5 @@
 use deep_causality::prelude::TimeScale;
 
-
 pub trait Indexable {
     /// Get the index for the given key.
     ///
@@ -25,7 +24,6 @@ pub trait Indexable {
     ///
     fn set_index(&mut self, key: usize, index: usize, current: bool);
 }
-
 
 ///
 /// Trait for types that support indexing date components.
