@@ -60,8 +60,14 @@ pub(crate) fn get_year_causaloid<'l>(
         // We use a dynamic secondary index to determine the actual index of the previous or current day tempoid relative
         // to the now() timestamp. To do this, we  extend the context with an extension trait and corresponding implementation.
         // See http://xion.io/post/code/rust-extension-traits.html
+
+        // Unwrap is safe because the build_context function ensures
+        // that the current year is always available.
+        let year_index = *ctx.get_current_year_index().unwrap();
+
+        // Get the node for the current year.
         let year = ctx
-            .get_node(ctx.get_current_year_index())
+            .get_node(year_index)
             .expect("node for current month not found");
 
         // Get the range of the current year.

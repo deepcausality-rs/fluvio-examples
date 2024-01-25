@@ -39,6 +39,10 @@ pub fn build_time_data_context<'l>(
     // Create new context
     let mut g = Context::with_capacity(1, "Causal Context", node_capacity);
 
+    // Initialize indices to zero to prevent unnecessary unwrap errors
+    g.set_current_month_index(0);
+    g.set_current_year_index(0);
+
     // Create new time scale control map
     let cm = time_utils::get_time_scale_control_map(time_scale);
     let add_month = *cm.get(2).unwrap();
@@ -65,10 +69,14 @@ pub fn build_time_data_context<'l>(
 
         // Set index of current year
         // Set index of previous year if current month is not the first year
-        if g.get_current_year_index() != year_index {
-            let prev_year_index = g.get_current_year_index();
 
-            g.set_previous_year_index(prev_year_index);
+        // Unwrap is safe because current year has been initialized to zero at the beginning of the function
+        let current_year_index = *g.get_current_year_index().unwrap();
+
+        if current_year_index != year_index {
+            let prev_year_index = g.get_current_year_index().unwrap();
+
+            g.set_previous_year_index(*prev_year_index);
             g.set_current_year_index(year_index);
         } else {
             // Set just index of current and previous year if current year is the first year
@@ -110,10 +118,14 @@ pub fn build_time_data_context<'l>(
 
             // Set index of current month
             // Set index of previous month if current month is not the first month
-            if g.get_current_month_index() != month_index {
-                let prev_month_index = g.get_current_month_index();
 
-                g.set_previous_month_index(prev_month_index);
+            // Unwrap is safe because current month has been initialized to zero at the beginning of the function
+            let current_month_index = *g.get_current_month_index().unwrap();
+
+            if current_month_index != month_index {
+                let prev_month_index = g.get_current_month_index().unwrap();
+
+                g.set_previous_month_index(*prev_month_index);
                 g.set_current_month_index(month_index);
             } else {
                 // Set index of current and previous month if current month is the first month

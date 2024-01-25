@@ -15,6 +15,10 @@ const FN_NAME: &'static str = "causal_data_inference/main";
 
 const CLIENT_ID: u16 = 77;
 
+//  Symbols
+// const XBT_EUR: u16 = 202; // BTC in EUR ~80 million trades ~ 124 months
+const JTO_EUR: u16 = 708; // JPY in EUR 2420 trades ~ 1 months
+
 #[tokio::main]
 async fn main() {
     print_utils::print_example_header(EXAMPLE);
@@ -44,7 +48,7 @@ async fn main() {
         .expect("[main]: Failed to create SymbolManager instance.");
 
     let exchange_id = 1;
-    let symbol_id = 2;
+    let symbol_id = JTO_EUR;
     let symbol_table_name = symbol_manager
         .get_symbol_table_name(exchange_id, symbol_id)
         .expect("[main]: Failed to get symbol table name");
@@ -54,30 +58,33 @@ async fn main() {
         .await
         .expect("[main]: Failed to load data.");
 
+    let m_len = data.month_bars().len();
+    println!("{FN_NAME}: Loaded Data for {m_len} months.");
+
     println!("{FN_NAME}: Build Context");
     let context = build_context::build_time_data_context(&data, &TimeScale::Month, 250)
         .expect("[main]:  to build context");
 
-    println!("Context HyperGraph Metrics:");
-    println!("Edge Count: {}", context.edge_count());
-    println!("Vertex Count: {}", context.node_count());
+    // println!("Context HyperGraph Metrics:");
+    // println!("Edge Count: {}", context.edge_count());
+    // println!("Vertex Count: {}", context.node_count());
 
-    println!("{FN_NAME}: Build Causal Model");
-    let causaloid = model::get_main_causaloid(&context);
-    let model = model::build_model(&context, &causaloid);
-
-    println!("Causal Model:");
-    println!("Model ID: {}", model.id());
-    println!("Model Description: {}", model.description());
-    println!();
-
-    println!("{FN_NAME}: Build Client config for client ID: {CLIENT_ID}",);
-    let client_config = MessageClientConfig::new(CLIENT_ID);
-
-    println!("{FN_NAME}: Build QD Client",);
-    let client = QDClient::new(CLIENT_ID, client_config.clone())
-        .await
-        .expect("basic_data_stream/main: Failed to create QD Gateway client");
+    // println!("{FN_NAME}: Build Causal Model");
+    // let causaloid = model::get_main_causaloid(&context);
+    // let model = model::build_model(&context, &causaloid);
+    //
+    // println!("Causal Model:");
+    // println!("Model ID: {}", model.id());
+    // println!("Model Description: {}", model.description());
+    // println!();
+    //
+    // println!("{FN_NAME}: Build Client config for client ID: {CLIENT_ID}",);
+    // let client_config = MessageClientConfig::new(CLIENT_ID);
+    //
+    // println!("{FN_NAME}: Build QD Client",);
+    // let client = QDClient::new(CLIENT_ID, client_config.clone())
+    //     .await
+    //     .expect("basic_data_stream/main: Failed to create QD Gateway client");
 
     // println!("{FN_NAME}: Start the data handler",);
     // let data_topic = client_config.data_channel();
@@ -86,20 +93,20 @@ async fn main() {
     //         eprintln!("[QDClient/new]: Consumer connection error: {}", e);
     //     }
     // });
+    //
+    // println!("{FN_NAME}: Start the error handler");
+    // let err_topic = client_config.error_channel();
+    // tokio::spawn(async move {
+    //     if let Err(e) =
+    //         handle_utils::handle_channel(&err_topic, handle_error_utils::handle_error_message).await
+    //     {
+    //         eprintln!("[QDClient/new]: Consumer connection error: {}", e);
+    //     }
+    // });
+    //
+    // println!("{FN_NAME}: Wait a moment to let the OHLCV data stream complete...");
+    // sleep(Duration::from_secs(2)).await;
 
-    println!("{FN_NAME}: Start the error handler");
-    let err_topic = client_config.error_channel();
-    tokio::spawn(async move {
-        if let Err(e) =
-            handle_utils::handle_channel(&err_topic, handle_error_utils::handle_error_message).await
-        {
-            eprintln!("[QDClient/new]: Consumer connection error: {}", e);
-        }
-    });
-
-    println!("{FN_NAME}: Wait a moment to let the OHLCV data stream complete...");
-    sleep(Duration::from_secs(2)).await;
-
-    println!("{FN_NAME}: Closing client");
-    client.close().await.expect("Failed to close client");
+    // println!("{FN_NAME}: Closing client");
+    // client.close().await.expect("Failed to close client");
 }

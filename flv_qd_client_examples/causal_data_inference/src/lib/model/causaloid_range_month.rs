@@ -57,18 +57,26 @@ pub(crate) fn get_month_causaloid<'l>(
             return Err(CausalityError("Observation is NULL/NAN".into()));
         }
 
-        // We use a dynamic secondary index to determine the actual index of the previous or current month tempoid relative
+        // We use a dynamic index to determine the actual index of the previous or current month tempoid relative
         // to the now() timestamp. To do this, we  extend the context with an extension trait and corresponding implementation.
         // See http://xion.io/post/code/rust-extension-traits.html
+
+        // Unwrap is safe because the build_context function ensures
+        // that the current month is always available.
+        let month_index = *ctx.get_current_month_index().unwrap();
+
+        // We use the dynamic index to lookup the current month node in the context.
         let month = ctx
-            .get_node(ctx.get_current_month_index())
+            .get_node(month_index)
             .expect("node for current month not found");
 
+        // Extract the data from the current month node.
         let data = month
             .vertex_type()
             .dataoid()
             .expect("Failed to get data out of year node");
 
+        // check if the current price exceeds the high level of the current month.
         let check_month_breakout = || {
             // This logic is obviously complete nonsense, but it demonstrates that you can
             // split complex causal functions into multiple closures.
