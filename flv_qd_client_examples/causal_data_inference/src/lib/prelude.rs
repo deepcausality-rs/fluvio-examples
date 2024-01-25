@@ -1,6 +1,7 @@
 // Extensions
 pub use crate::extensions::indexable;
 // Handlers
+pub use crate::handlers::channel_handler;
 pub use crate::handlers::data_handler;
 // Model
 pub use crate::model;

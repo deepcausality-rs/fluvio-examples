@@ -3,7 +3,7 @@ use common::prelude::{ExchangeID, MessageClientConfig, ServiceID};
 use config_manager::ConfigManager;
 use db_query_manager::QueryDBManager;
 use deep_causality::prelude::{ContextuableGraph, Identifiable, TimeScale};
-use lib_inference::prelude::{build_context, data_handler, load_data, model};
+use lib_inference::prelude::{build_context, channel_handler, data_handler, load_data, model};
 use qd_client::QDClient;
 use std::time::Duration;
 use symbol_manager::SymbolManager;
@@ -95,7 +95,11 @@ async fn main() {
     let data_topic = client_config.data_channel();
     tokio::spawn(async move {
         if let Err(e) =
-            handle_utils::handle_channel(&data_topic, data_handler::handle_data_message).await
+            channel_handler::handle_data_channel_with_inference(
+                &data_topic,
+                data_handler::handle_data_message_inference,
+                &model,
+            ).await
         {
             eprintln!("[QDClient/new]: Consumer connection error: {}", e);
         }

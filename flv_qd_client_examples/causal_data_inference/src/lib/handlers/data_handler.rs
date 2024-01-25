@@ -1,7 +1,12 @@
 use sbe_messages::prelude::{FirstTradeBar, LastTradeBar, MessageType, SbeTradeBar};
 use std::error::Error;
+use crate::prelude::CustomModel;
 
-pub fn handle_data_message(value: Vec<u8>) -> Result<(), Box<dyn Error + Send>> {
+pub fn handle_data_message_inference<'l>(
+    value: Vec<u8>,
+    _model: &CustomModel<'l>,
+) -> Result<(), Box<dyn Error + Send>> {
+    // Convert the Vector to a byte slice
     let buffer = value.as_slice();
 
     // The third byte of the buffer is always the message type.
