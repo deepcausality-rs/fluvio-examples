@@ -1,10 +1,9 @@
-use std::sync::{Arc, RwLock};
 use client_utils::{handle_error_utils, handle_utils, print_utils};
 use common::prelude::{ExchangeID, MessageClientConfig, ServiceID};
 use config_manager::ConfigManager;
 use db_query_manager::QueryDBManager;
 use deep_causality::prelude::{ContextuableGraph, Identifiable, TimeScale};
-use lib_inference::prelude::{build_context, channel_handler, CustomModel, data_handler, load_data, model};
+use lib_inference::prelude::{build_context, channel_handler, data_handler, load_data, model};
 use qd_client::QDClient;
 use std::time::Duration;
 use symbol_manager::SymbolManager;
@@ -66,17 +65,18 @@ async fn main() {
     println!("{FN_NAME}: Loaded Data for {m_len} months.");
 
     println!("{FN_NAME}: Build Context");
-    let context = build_context::build_time_data_context(&data, &TimeScale::Month, 250)
+    let node_capacity = 50;
+    let context = build_context::build_time_data_context(&data, &TimeScale::Month, node_capacity)
         .expect("[main]:  to build context");
 
     println!();
     println!("Context HyperGraph Metrics:");
-    println!("Edge Count: {}", context.edge_count());
-    println!("Vertex Count: {}", context.node_count());
+    println!("Edge Count: {}", &context.edge_count());
+    println!("Vertex Count: {}", &context.node_count());
 
     println!("{FN_NAME}: Build Causal Model");
     let causaloid = model::get_main_causaloid(&context);
-    let model = model::build_causal_model(&context, &causaloid);
+    let model = model::build_causal_model(&context, causaloid);
 
     println!();
     println!("Causal Model Information:");
@@ -93,10 +93,11 @@ async fn main() {
         .expect("basic_data_stream/main: Failed to create QD Gateway client");
 
     // Wrap the model in an Arc / RwLock to share it between threads.
-    let model =   Arc::new(RwLock::new(model)) as  Arc<RwLock<CustomModel<'_>>>;
+    // let model =   Arc::new(RwLock::new(model)) as  Arc<RwLock<CustomModel<'_>>>;
 
     println!("{FN_NAME}: Start the data handlers",);
     let data_topic = client_config.data_channel();
+
     tokio::spawn(async move {
         if let Err(e) =
             channel_handler::handle_data_channel_with_inference(

@@ -58,7 +58,7 @@ chrono = { version = "0.4", default-features = false , features = ["serde", "clo
 config-file = "0.2"
 csv = "1.3"
 #
-deep_causality = { git = "https://github.com/marvin-hansen/deep_causality.git", branch = "main" }
+deep_causality = { git = "https://github.com/marvin-hansen/deep_causality.git", rev = "ac774d3e64b8b53dea292219d451062674ba1fb2" }
 encoding_rs = "0.8"
 fluvio = { version = "0.21", default-features = false, features = ["rustls"] }
 futures = "0.3"

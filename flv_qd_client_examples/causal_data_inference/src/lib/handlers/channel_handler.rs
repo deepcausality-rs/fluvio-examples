@@ -1,18 +1,17 @@
 use std::error::Error;
-use std::sync::{Arc, RwLock};
 use fluvio::Offset;
 use futures::stream::StreamExt;
 use crate::prelude::CustomModel;
 
 ///
-type MessageFunction<'l> = fn(value: Vec<u8>, model:  Arc<RwLock<CustomModel<'l>>>,) -> Result<(), Box<dyn Error + Send>>;
+type MessageFunction<'l> = fn(value: Vec<u8>, model:  CustomModel<'l>,) -> Result<(), Box<dyn Error + Send>>;
 
 
 ///
 pub async fn handle_data_channel_with_inference<'l>(
     channel_topic: &str,
     message_handler: MessageFunction<'l>,
-    model: Arc<RwLock<CustomModel<'l>>>,
+    model: CustomModel<'l>,
 )
     -> Result<(), Box<dyn Error + Send>>
 {

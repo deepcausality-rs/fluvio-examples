@@ -25,7 +25,7 @@ pub(crate) mod causaloid_range_year;
 ///
 pub fn build_causal_model<'l>(
     context: &'l CustomContext<'l>,
-    causaloid: &'l CustomCausaloid<'l>,
+    causaloid: CustomCausaloid<'l>,
 ) -> CustomModel<'l> {
     let id = 1;
     let author = "Marvin Hansen <marvin.hansen@gmail.com>";
