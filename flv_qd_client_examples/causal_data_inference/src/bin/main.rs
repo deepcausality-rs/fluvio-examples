@@ -1,10 +1,10 @@
 use std::sync::{Arc, RwLock};
-use client_utils::{print_utils};
+use client_utils::{handle_error_utils, handle_utils, print_utils};
 use common::prelude::{ExchangeID, MessageClientConfig, ServiceID};
 use config_manager::ConfigManager;
 use db_query_manager::QueryDBManager;
 use deep_causality::prelude::{ContextuableGraph, Identifiable, TimeScale};
-use lib_inference::prelude::{build_context, channel_handler, data_handler, load_data, model};
+use lib_inference::prelude::{build_context, channel_handler, CustomModel, data_handler, load_data, model};
 use qd_client::QDClient;
 use std::time::Duration;
 use symbol_manager::SymbolManager;
@@ -92,10 +92,8 @@ async fn main() {
         .await
         .expect("basic_data_stream/main: Failed to create QD Gateway client");
 
-    // Model is not `Send` thus not thread safe for Tokio.
-
-    // Wrap the model in an Arc / Mutex to share it between threads.
-    let model =   Arc::new(RwLock::new(model));
+    // Wrap the model in an Arc / RwLock to share it between threads.
+    let model =   Arc::new(RwLock::new(model)) as  Arc<RwLock<CustomModel<'_>>>;
 
     println!("{FN_NAME}: Start the data handlers",);
     let data_topic = client_config.data_channel();
@@ -111,21 +109,21 @@ async fn main() {
         }
     });
 
-    // println!("{FN_NAME}: Start the error handlers");
-    // let err_topic = client_config.error_channel();
-    // tokio::spawn(async move {
-    //     if let Err(e) =
-    //         handle_utils::handle_channel(&err_topic, handle_error_utils::handle_error_message).await
-    //     {
-    //         eprintln!("[QDClient/new]: Consumer connection error: {}", e);
-    //     }
-    // });
+    println!("{FN_NAME}: Start the error handlers");
+    let err_topic = client_config.error_channel();
+    tokio::spawn(async move {
+        if let Err(e) =
+            handle_utils::handle_channel(&err_topic, handle_error_utils::handle_error_message).await
+        {
+            eprintln!("[QDClient/new]: Consumer connection error: {}", e);
+        }
+    });
 
-    println!("{FN_NAME}: Send start streaming message for symbol id: {symbol_id}",);
-    client
-        .start_trade_data(exchange_id, symbol_id)
-        .await
-        .expect("Failed to send start trade data message");
+    // println!("{FN_NAME}: Send start streaming message for symbol id: {symbol_id}",);
+    // client
+    //     .start_trade_data(exchange_id, symbol_id)
+    //     .await
+    //     .expect("Failed to send start trade data message");
 
     println!("{FN_NAME}: Wait a moment to let the data stream complete...");
     sleep(Duration::from_secs(3)).await;
