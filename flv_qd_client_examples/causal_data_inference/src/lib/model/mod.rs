@@ -42,24 +42,24 @@ pub fn build_causal_model<'l>(
     )
 }
 
-/// Builds the main causaloid graph from year and month sub-causaloid graphs.
-///
-/// Constructs a new [`CausaloidGraph`] and adds the root year causaloid
-/// from [`get_year_causaloid`].
-///
-/// Then adds the month causaloid from [`get_month_causaloid`] and connects it
-/// to the root.
-///
-/// Wraps the built causaloid graph in a [`Causaloid`] containing the provided
-/// [`CustomContext`].
+/// Creates the main causaloid graph from the provided context.
 ///
 /// # Arguments
 ///
-/// * `context` - Context graph to include in the built causaloid
+/// * `context` - The context graph to build the causaloid from.
 ///
 /// # Returns
 ///
-/// The built [`CustomCausaloid`] containing the full causaloid graph.
+/// The built causaloid graph containing:
+///
+/// - A root causaloid node representing the entire time series.
+/// - A month causaloid node connected under the root.
+///
+///
+/// The causaloid graph connects high-level time aggregations
+/// (years, months) to enable causal reasoning on different time scales.
+///
+/// Additional causaloid nodes can be added to the graph as needed.
 ///
 pub fn get_main_causaloid<'l>(context: &'l CustomContext<'l>) -> CustomCausaloid<'l> {
     let mut g = CausaloidGraph::new();

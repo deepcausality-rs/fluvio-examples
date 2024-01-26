@@ -1,12 +1,18 @@
-use deep_causality::prelude::{
-    CausalityError, Causaloid, Contextuable, ContextuableGraph, IdentificationValue, NumericalValue,
-};
+use crate::prelude::{context_utils, Rangeable, TimeIndexable};
+use crate::types::alias::{CustomCausaloid, CustomContext};
+use deep_causality::prelude::{CausalityError, Causaloid, IdentificationValue, NumericalValue};
 use rust_decimal::prelude::ToPrimitive;
 
-use crate::prelude::{Rangeable, TimeIndexable};
-use crate::types::alias::{CustomCausaloid, CustomContext};
-
 /// Creates a new Causaloid that checks if the current price exceeds the monthly range high level.
+///
+/// The monthly breakout is defined as the following price action:
+///
+/// 0) if the previous month close is above the previous month open.
+/// 1) if the current spot price exceeds the high level of the previous month,
+/// 2) if the current spot price is above the previous months close price,
+/// 3) if the current spot price is above the current month open price,
+///
+/// If, and only if, all conditions are true, then a monthly breakout is detected.
 ///
 /// # Arguments
 ///
@@ -19,80 +25,95 @@ use crate::types::alias::{CustomCausaloid, CustomContext};
 ///
 /// # Functionality
 ///
-/// The causal function takes the current price observation and checks if it exceeds the
-/// monthly range high level from the context. It returns a boolean indicating if this condition
-/// is met.
+/// The purpose is to create a Causaloid that checks for a potential monthly breakout, that is,
+///  when the current price exceeds the previous highest level for the month.
 ///
-/// The cause is the price exceeding the range high, and the effect is a potential monthly breakout.
+/// 1. It defines the causal function that will check for the monthly breakout condition.
+/// 2. The causal function takes the price observation and context as arguments.
+/// 3. It uses the context to lookup the current and previous month data node.
+/// 4. The data is extracted from the node.
+/// 5. The price observation is compared to determine a potential monthly breakout.
+/// 6. A boolean is returned indicating if the price exceeds the monthly high.
+/// 7. The causal function is passed to Causaloid::new_with_context to create the Causaloid.
 ///
-/// The function uses closures to break the logic into smaller reusable parts:
-///
-/// - Checking the month open/close range direction
-/// - Checking if price exceeds the high
-///
-/// This allows the main logic to be straightforward.
-///
-/// The context is used to lookup the current month data in the context via the Indexable trait.
+/// This allows creating a Causaloid to detect potential monthly breakouts in a simple way.
+/// The context handles looking up the required data dynamically.
 ///
 pub(crate) fn get_month_causaloid<'l>(
     context: &'l CustomContext<'l>,
     id: IdentificationValue,
 ) -> CustomCausaloid<'l> {
-    let description =
-        "Checks if the current price exceeds the range high level of the current month";
-
-    // The causal function is a function that takes the current price and returns a boolean
-    // that indicates whether the current price exceeds the monthly high level.
-    // The cause being some fabricated nonsense metrics i.e. price above monthly high and the effect
-    // being a monthly breakout.
+    //
+    let description = "Checks for a potential monthly breakout";
 
     // The causal fucntion must be a function and not a closure because the function
     // will be coercived into a function pointer later on, which is not possible with a closure.
     // Within the causal function, you can write safely as many closures as you want. See below.
     fn contextual_causal_fn<'l>(
-        obs: NumericalValue,
+        current_price: NumericalValue,
         ctx: &'l CustomContext<'l>,
     ) -> Result<bool, CausalityError> {
-        if obs.is_nan() {
-            return Err(CausalityError("Observation is NULL/NAN".into()));
+        // Check if current_price data is available, if not, return an error.
+        if current_price.is_nan() {
+            return Err(CausalityError(
+                "Observation/current_price is NULL/NAN".into(),
+            ));
         }
 
-        // We use a dynamic index to determine the actual index of the previous or current month tempoid relative
-        // to the now() timestamp. To do this, we  extend the context with an extension trait and corresponding implementation.
-        // See http://xion.io/post/code/rust-extension-traits.html
+        // We use a dynamic index to determine the actual index of the previous or current month.
+        // Unwrap is safe here because the build_context function ensures that the current month is always initialized with a valid value.
+        let current_month_index = *ctx.get_current_month_index().unwrap();
+        let previous_month_index = *ctx.get_previous_month_index().unwrap();
 
-        // Unwrap is safe because the build_context function ensures
-        // that the current month is always available.
-        let month_index = *ctx.get_current_month_index().unwrap();
+        // We use the dynamic index to extract the RangeData from the current and previous month.
+        let current_data = context_utils::extract_data_from_context(ctx, current_month_index)?;
+        let previous_data = context_utils::extract_data_from_context(ctx, previous_month_index)?;
 
-        // We use the dynamic index to lookup the current month node in the context.
-        let month = ctx
-            .get_node(month_index)
-            .expect("node for current month not found");
+        // The logic below is obviously totally trivial, but it demonstrates that you can
+        // easily split an arbitrary complex causal function into multiple closures.
+        // With closures in place, the logic becomes straightforward, robust, and simple to understand.
 
-        // Extract the data from the current month node.
-        let data = month
-            .vertex_type()
-            .dataoid()
-            .expect("Failed to get data out of year node");
-
-        // check if the current price exceeds the high level of the current month.
-        let check_month_breakout = || {
-            // This logic is obviously complete nonsense, but it demonstrates that you can
-            // split complex causal functions into multiple closures.
-            data.data_range().close_above_open() && !data.data_range().close_below_open()
+        // Check if the previous month close is above the previous month open.
+        let check_previous_month_close_above_open = || {
+            // Test if the previous month close is above the previous month open.
+            // This is indicative of a general uptrend and gives a subsequent breakout more credibility.
+            previous_data.data_range().close_above_open()
         };
 
-        // Another closure that captures the context within the causal function.
-        let check_price_above_high = || obs.gt(&data.data_range().high().to_f64().unwrap());
+        // Check if the current price is above the previous months close price.
+        let check_current_price_above_previous_close = || {
+            // Test if the current price is above the previous months close price.
+            current_price.gt(&previous_data.data_range().close().to_f64().unwrap())
+        };
 
-        // With the closures in place, the main logic becomes straightforward and simple to understand.
-        if check_price_above_high() && check_month_breakout() {
+        // Check if the current price is above the current month open price.
+        // This may seem redundant, but it safeguards against false positives.
+        let check_current_price_above_current_open = || {
+            // Test if the current price is above the current month open price.
+            current_price.gt(&current_data.data_range().open().to_f64().unwrap())
+        };
+
+        // Check if the current price exceeds the high level of the previous month.
+        let check_current_price_above_previous_high = || {
+            // Test if the (current price) is above the current high price of the current month.
+            current_price.gt(&previous_data.data_range().high().to_f64().unwrap())
+        };
+
+        // Check if the current price exceeds the high level of the previous month,
+        // and if the current price is above the previous months close price,
+        // and if the previous month close is above the previous month open.
+        // If all conditions are true, then a monthly breakout is detected and returns true.
+        if check_current_price_above_previous_high()
+            && check_current_price_above_previous_close()
+            && check_current_price_above_current_open()
+            && check_previous_month_close_above_open()
+        {
             Ok(true)
         } else {
             Ok(false)
         }
     }
 
+    // Constructs and returns the Causaloid.
     Causaloid::new_with_context(id, contextual_causal_fn, Some(context), description)
 }
