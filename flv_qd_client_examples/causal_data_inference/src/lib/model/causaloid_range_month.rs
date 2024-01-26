@@ -70,10 +70,8 @@ pub(crate) fn get_month_causaloid<'l>(
         let previous_month_index = *ctx.get_previous_month_index().unwrap();
 
         // We use the dynamic index to extract the RangeData from the current and previous month.
-        let current_month_data =
-            context_utils::extract_data_from_context(ctx, current_month_index)?;
-        let previous_month_data =
-            context_utils::extract_data_from_context(ctx, previous_month_index)?;
+        let current_month_data = context_utils::extract_data_from_ctx(ctx, current_month_index)?;
+        let previous_month_data = context_utils::extract_data_from_ctx(ctx, previous_month_index)?;
 
         // The logic below is obviously totally trivial, but it demonstrates that you can
         // easily split an arbitrary complex causal function into multiple closures.

@@ -17,7 +17,7 @@ use deep_causality::prelude::{Contextuable, ContextuableGraph};
 ///
 /// Returns a CausalityError if the node or its dataoid is not found.
 ///
-pub fn extract_data_from_context<'l>(
+pub fn extract_data_from_ctx<'l>(
     ctx: &'l CustomContext<'l>,
     index: usize,
 ) -> Result<BarRange, CausalityError> {
