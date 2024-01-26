@@ -10,37 +10,34 @@ use std::error::Error;
 
 /// Builds a time series context graph from OHLCV bar data.
 ///
-/// Iterates through the provided OHLCV bar data, converting each bar to
-/// augmented [`Time`] and [`RangeData`] nodes. Connects these nodes in a
-/// hierarchy based on the provided [`TimeScale`].
+/// Takes in OHLCV bar data, a time scale, and node capacity.
+/// Iterates through the bar data and converts each one to augmented time and data nodes.
+/// Connects the nodes in a hierarchy based on the provided time scale.
 ///
-/// The root node represents the entire time series. Year nodes are always added
-/// under the root. Monthly nodes are optionally added under each Year if the
-/// control map indicates Months should be included for the [`TimeScale`].
+/// The root node represents the entire time series.
+/// Year nodes are added under root.
+/// Monthly nodes optionally added under Years based on time scale control map.
 ///
-/// # Arguments
+/// Arguments:
 ///
-/// * `data` - The OHLCV bar data to build the context from.
-/// * `time_scale` - The [`TimeScale`] to use for building the hierarchy.
-/// * `node_capacity` - Max number of nodes to allocate for the context.
+/// - data: The OHLCV bar data to build context from.
+/// - time_scale: The TimeScale to use for hierarchy.
+/// - node_capacity: Max nodes to allocate.
 ///
-/// # Returns
+/// Returns:
 ///
-/// The built [`Context`] graph representing the time series data.
+/// - The built Context graph representing the time series data.
 ///
-/// # Notes
+/// Logic:
 ///
-/// The function:
-///
-/// * Creates a new context graph and initializes the current/previous year/month indices to 0.
-/// * Adds a root node to represent the entire time series.
-/// * Iterates through the bar data grouped by year, converting each bar to time and data nodes.
-/// * For each year, it adds a year node under the root.
-/// * Sets the current and previous year indices as it processes each year.
-/// * If the time scale includes months, it groups bars by month and adds month nodes under each year.
-/// * Sets the current and previous month indices as it processes each month.
-/// * The time and data nodes are connected in a hierarchy based on the time scale - years under root, months under years, data under months/years.
-/// * Finally it returns the built context graph representing the time series data.
+/// 1. Create new context graph and init year/month indices.
+/// 2. Add root node for entire series.
+/// 3. Group bars by year, convert to nodes, add year nodes under root.
+/// 4. Set current/previous year indices.
+/// 5. If time scale includes months, group bars by month, add month nodes under years.
+/// 6. Set current/previous month indices.
+/// 7. Connect nodes in hierarchy based on time scale.
+/// 8. Return built context graph.
 ///
 pub fn build_time_data_context<'l>(
     data: &SampledDataBars,

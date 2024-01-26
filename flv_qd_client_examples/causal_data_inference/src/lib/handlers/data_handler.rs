@@ -1,12 +1,12 @@
-use sbe_messages::prelude::{FirstTradeBar, LastTradeBar, MessageType, SbeTradeBar};
-use std::error::Error;
+use crate::prelude::CustomModel;
 use deep_causality::prelude::Causable;
 use rust_decimal::prelude::ToPrimitive;
-use crate::prelude::CustomModel;
+use sbe_messages::prelude::{FirstTradeBar, LastTradeBar, MessageType, SbeTradeBar};
+use std::error::Error;
 
 pub fn handle_data_message_inference<'l>(
     value: Vec<u8>,
-    model:  CustomModel<'l>,
+    model: CustomModel<'l>,
 ) -> Result<(), Box<dyn Error + Send>> {
     // Convert the Vector to a byte slice
     let buffer = value.as_slice();
@@ -31,14 +31,13 @@ pub fn handle_data_message_inference<'l>(
                 .causaloid()
                 .verify_single_cause(&price)
                 .unwrap_or_else(|e| {
-                println!("Error: {}", e);
-                false
-            });
+                    println!("Error: {}", e);
+                    false
+                });
 
             if res {
                 println!("DeepCausality: Detected Price Breakout!");
             }
-
         }
         MessageType::LastTradeBar => {
             let last_trade_bar = LastTradeBar::from(buffer);

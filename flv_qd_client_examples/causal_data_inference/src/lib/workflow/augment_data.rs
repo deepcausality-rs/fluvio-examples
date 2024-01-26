@@ -14,10 +14,19 @@ use deep_causality::prelude::{BaseNumberType, Time, TimeScale};
 /// * `data_bar` - The [`OHLCVBar`] to convert.
 /// * `time_scale` - The [`TimeScale`] to use for temporal augmentation.
 ///
-/// # Returns
 ///
-/// A tuple containing the constructed [`Time`] and [`RangeData`] objects
-/// representing the augmented [`OHLCVBar`] data.
+/// Returns:
+///
+/// - tempoid: Augmented Time node
+/// - dataoid: Augmented RangeData node
+///
+/// Logic:
+///
+/// 1. Get time unit value from bar based on time scale
+/// 2. Calculate price ranges from bar
+/// 3. Create Time node with time unit value
+/// 4. Create RangeData node with price ranges
+/// 5. Return time and data nodes
 ///
 pub fn convert_ohlcv_bar_to_augmented(
     data_bar: &OHLCVBar,

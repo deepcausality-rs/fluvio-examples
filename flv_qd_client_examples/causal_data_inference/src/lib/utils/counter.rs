@@ -5,21 +5,32 @@ use std::sync::atomic::{self, AtomicU64};
 // https://doc.rust-lang.org/nomicon/atomics.html#data-accesses
 const ORDER: atomic::Ordering = atomic::Ordering::Relaxed;
 
-/// Counter with relaxed atomic ordering.
+/// A thread-safe counter that provides relaxed atomic increment operations.
 ///
-/// This counter uses an [`AtomicU64`] with [`Relaxed`] ordering for its
-/// operations. This provides atomic increments without imposing
-/// sequencing constraints between threads.
+/// This counter uses relaxed memory ordering for its atomic operations. This
+/// means operations on it will not synchronize memory with other threads.
 ///
-/// # Fields
+/// The counter is initialized to 0 and supports an atomic
+/// `increment_and_get()` method to increment and retrieve the value.
 ///
-/// * `0` - The underlying [`AtomicU64`] value.
+/// # Examples
 ///
-/// # Methods
+/// ```
+/// use lib_inference::prelude::RelaxedAtomicCounter;
 ///
-/// * `new` - Creates a new [`RelaxedAtomicCounter`] initialized to 0.
-/// * `increment_and_get` - Atomically increments the counter and returns
-///   the new value. Uses [`Relaxed`] ordering.
+/// let counter = RelaxedAtomicCounter::new();
+///
+/// let v1 = counter.increment_and_get(); // v1 = 1
+/// let v2 = counter.increment_and_get(); // v2 = 2
+/// ```
+///
+/// # Notes
+///
+/// For performance-critical code where synchronization is not required, a
+/// relaxed atomic counter provides efficient concurrent incrementing.
+///
+/// For code that requires synchronization, use a sequentially consistent
+/// atomic counter instead.
 ///
 #[derive(Debug)]
 pub struct RelaxedAtomicCounter(AtomicU64);

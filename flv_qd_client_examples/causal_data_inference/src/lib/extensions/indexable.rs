@@ -16,6 +16,7 @@ use crate::types::alias::CustomContext;
 /// use lib_inference::prelude::{CustomContext, TimeIndexable};
 ///
 /// let mut context = CustomContext::with_capacity(1,"TestContext", 10);
+///
 /// context.set_current_year_index(2022);
 /// let current_year = context.get_current_year_index();
 /// ```

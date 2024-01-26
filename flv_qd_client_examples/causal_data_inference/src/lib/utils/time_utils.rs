@@ -7,21 +7,18 @@ use deep_causality::prelude::TimeScale;
 ///
 /// The returned vector contains a boolean value for each time unit,
 /// indicating whether data should be aggregated for that unit based
-/// on the given [`TimeScale`]. The time units in order are:
+/// on the given [`TimeScale`].
 ///
-/// 0: Year
-/// 1: Quarter
-/// 2: Month
-/// 3: Week
-/// 4: Day
-/// 5: Hour
-/// 6: Minute
-/// 7: Second
+/// The time units in order are:
 ///
-/// For example, if [`TimeScale::Day`] is passed, the returned vector
-/// would be [true, true, true, true, false, false, false, false],
-/// indicating aggregation should happen for Year, Quarter, Month,
-/// and Week, but not for Day, Hour, Minute, or Second.
+/// - Year
+/// - Quarter
+/// - Month
+/// - Week
+/// - Day
+/// - Hour
+/// - Minute
+/// - Second
 ///
 /// # Arguments
 ///
@@ -29,7 +26,18 @@ use deep_causality::prelude::TimeScale;
 ///
 /// # Returns
 ///
-/// A `Vec<bool>` containing the aggregation control map for the given `TimeScale`.
+/// A `Vec<bool>` containing the aggregation control map for the given
+/// `TimeScale`.
+///
+/// # Examples
+///
+/// ```
+/// use deep_causality::prelude::TimeScale;
+/// use lib_inference::prelude::time_utils::get_time_scale_control_map;
+///
+/// let hour_map = get_time_scale_control_map(&TimeScale::Hour);
+/// // [true, true, true, true, true, false, false, false]
+/// ```
 ///
 pub fn get_time_scale_control_map(time_scale: &TimeScale) -> Vec<bool> {
     match time_scale {
@@ -49,11 +57,11 @@ pub fn get_time_scale_control_map(time_scale: &TimeScale) -> Vec<bool> {
 
 /// Returns the time unit value for an [`OHLCVBar`] based on the provided [`TimeScale`].
 ///
-/// Gets the appropriate time field from the [`OHLCVBar`]'s [`DateTime`]
+/// Gets the appropriate time field from the [`OHLCVBar`]'s DateTime field
 /// based on the desired [`TimeScale`] aggregation.
 ///
 /// For example if [`TimeScale::Hour`] is passed, this will return the
-/// hour field of the bar's [`DateTime`].
+/// hour field of the bar's DateTime field
 ///
 /// # Arguments
 ///

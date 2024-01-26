@@ -1,20 +1,37 @@
-use std::error::Error;
+use crate::prelude::CustomModel;
 use fluvio::Offset;
 use futures::stream::StreamExt;
-use crate::prelude::CustomModel;
+use std::error::Error;
 
+/// MessageFunction is a function type that handles incoming messages for a channel.
 ///
-type MessageFunction<'l> = fn(value: Vec<u8>, model:  CustomModel<'l>,) -> Result<(), Box<dyn Error + Send>>;
-
-
+/// It takes the message payload as a `Vec<u8>` and a model instance, and returns a `Result`
+/// indicating whether the message was processed successfully.
 ///
+/// This allows customizing the message handling logic for different channels by passing
+/// different MessageFunction implementations. The model instance allows the handler to maintain
+/// state and perform inference.
+///
+/// # Arguments
+///
+/// * `value` - The message payload as bytes
+/// * `model` - The model instance
+///
+/// # Returns
+///
+/// `Result` indicating whether message processing succeeded
+///
+type MessageFunction<'l> =
+    fn(value: Vec<u8>, model: CustomModel<'l>) -> Result<(), Box<dyn Error + Send>>;
+
+// Move this into a process hanlder that can be wrapped in an Arc/Mutex
+
+//
 pub async fn handle_data_channel_with_inference<'l>(
     channel_topic: &str,
     message_handler: MessageFunction<'l>,
     model: CustomModel<'l>,
-)
-    -> Result<(), Box<dyn Error + Send>>
-{
+) -> Result<(), Box<dyn Error + Send>> {
     // Create consumer for channel topic.
     let consumer = fluvio::consumer(channel_topic, 0)
         .await

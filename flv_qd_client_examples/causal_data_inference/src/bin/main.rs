@@ -99,12 +99,12 @@ async fn main() {
     let data_topic = client_config.data_channel();
 
     tokio::spawn(async move {
-        if let Err(e) =
-            channel_handler::handle_data_channel_with_inference(
-                &data_topic,
-                data_handler::handle_data_message_inference,
-                model,
-            ).await
+        if let Err(e) = channel_handler::handle_data_channel_with_inference(
+            &data_topic,
+            data_handler::handle_data_message_inference,
+            model,
+        )
+        .await
         {
             eprintln!("[QDClient/new]: Consumer connection error: {}", e);
         }
