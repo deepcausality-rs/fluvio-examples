@@ -7,12 +7,12 @@ use rust_decimal::Decimal;
 ///
 /// The monthly breakout is defined as the following price action:
 ///
-/// 0) if the previous month close is above the previous month open.
-/// 1) if the current spot price exceeds the high level of the previous month,
-/// 2) if the current spot price is above the previous months close price,
-/// 3) if the current spot price is above the current month open price,
+/// 1) Check if the previous month close is above the previous month open.
+/// 2) Check if the current price is above the previous months close price.
+/// 3) Check if the current price is above the current month open price.
+/// 4) Check if the current price exceeds the high level of the previous month.
 ///
-/// If, and only if, all conditions are true, then a monthly breakout is detected.
+/// If, and only if all conditions are true, then a monthly breakout is detected.
 ///
 /// # Arguments
 ///
@@ -77,46 +77,48 @@ pub(crate) fn get_month_causaloid<'l>(
         // easily split an arbitrary complex causal function into multiple closures.
         // With closures in place, the logic becomes straightforward, robust, and simple to understand.
 
-        // Check if the previous month close is above the previous month open.
-        let check_previous_month_close_above_open = || {
+        // 1) Check if the previous month close is above the previous month open.
+        let check_previous_month_close_above_previous_open = || {
             // Test if the previous month close is above the previous month open.
             // This is indicative of a general uptrend and gives a subsequent breakout more credibility.
             previous_month_data.close_above_open()
         };
 
-        // Check if the current price is above the previous months close price.
+        // 2) Check if the current price is above the previous months close price.
         let check_current_price_above_previous_close = || {
             // Test if the current price is above the previous months close price.
             // gt = greater than > operator
             current_price.gt(&previous_month_data.close())
         };
 
-        // Check if the current price is above the current month open price.
+        // 3) Check if the current price is above the current month open price.
         // This may seem redundant, but it safeguards against false positives.
         let check_current_price_above_current_open = || {
             // Test if the current price is above the current month open price.
             current_price.gt(&current_month_data.open())
         };
 
-        // Check if the current price exceeds the high level of the previous month.
+        // 4) Check if the current price exceeds the high level of the previous month.
         let check_current_price_above_previous_high = || {
-            // Test if the (current price) is above the current high price of the current month.
+            // Test if the current price is above the high price established in the previous month.
             current_price.gt(&previous_month_data.high())
         };
 
-        // Check if the current price exceeds the high level of the previous month,
-        // and if the current price is above the previous months close price,
-        // and if the previous month close is above the previous month open.
-        // If all conditions are true, then a monthly breakout is detected and returns true.
+        // All checks combined:
         //
-        // Note, you can do arbitrary complex control flow as long as its deterministic.
-        if check_current_price_above_previous_high()
+        // 1) Check if the previous month close is above the previous month open.
+        // 2) Check if the current price is above the previous months close price.
+        // 3) Check if the current price is above the current month open price.
+        // 4) Check if the current price exceeds the high level of the previous month.
+        if check_previous_month_close_above_previous_open()
             && check_current_price_above_previous_close()
             && check_current_price_above_current_open()
-            && check_previous_month_close_above_open()
+            && check_current_price_above_previous_high()
         {
+            // If all conditions are true, then a monthly breakout is detected and return true.
             Ok(true)
         } else {
+            // If any of the conditions are false, then no breakout is detected and return false.
             Ok(false)
         }
     }
