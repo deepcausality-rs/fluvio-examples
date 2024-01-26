@@ -16,8 +16,9 @@ use rust_decimal::Decimal;
 ///
 /// # Arguments
 ///
-/// * `context` - The context containing the current month data
-/// * `id` - The ID to assign to the Causaloid
+/// * `context` - The context of the instrument. This is used to lookup the current and previous month data nodes.
+/// * `id` - The ID to assign to the Causaloid. This must be unique within the model graph to enable the causal inference engine to work correctly.
+///    Even if you create multiple instances of the same causaloid, each one must have an unique ID.
 ///
 /// # Returns
 ///
@@ -25,16 +26,15 @@ use rust_decimal::Decimal;
 ///
 /// # Functionality
 ///
-/// The purpose is to create a Causaloid that checks for a potential monthly breakout, that is,
-///  when the current price exceeds the previous highest level for the month.
+/// The purpose is to create a Causaloid that checks for a potential monthly breakout.
 ///
 /// 1. It defines the causal function that will check for the monthly breakout condition.
 /// 2. The causal function takes the price observation and context as arguments.
 /// 3. It uses the context to lookup the current and previous month data node.
 /// 4. The data is extracted from the node.
 /// 5. The price observation is compared to determine a potential monthly breakout.
-/// 6. A boolean is returned indicating if the price exceeds the monthly high.
-/// 7. The causal function is passed to Causaloid::new_with_context to create the Causaloid.
+/// 6. A boolean is returned indicating if the price is a potential monthly breakout.
+/// 7. The causal function returns a new Causaloid::new_with_context.
 ///
 /// This allows creating a Causaloid to detect potential monthly breakouts in a simple way.
 /// The context handles looking up the required data dynamically.
