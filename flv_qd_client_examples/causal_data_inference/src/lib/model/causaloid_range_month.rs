@@ -1,7 +1,7 @@
-use crate::prelude::{context_utils, Rangeable, TimeIndexable};
+use crate::prelude::{context_utils, TimeIndexable};
 use crate::types::alias::{CustomCausaloid, CustomContext};
 use deep_causality::prelude::{CausalityError, Causaloid, IdentificationValue, NumericalValue};
-use rust_decimal::prelude::ToPrimitive;
+use rust_decimal::Decimal;
 
 /// Creates a new Causaloid that checks if the current price exceeds the previously established monthly high price.
 ///
@@ -50,15 +50,19 @@ pub(crate) fn get_month_causaloid<'l>(
     // will be coercived into a function pointer later on, which is not possible with a closure.
     // Within the causal function, you can write safely as many closures as you want. See below.
     fn contextual_causal_fn<'l>(
-        current_price: NumericalValue,
+        obs: NumericalValue,
         ctx: &'l CustomContext<'l>,
     ) -> Result<bool, CausalityError> {
         // Check if current_price data is available, if not, return an error.
-        if current_price.is_nan() {
+        if obs.is_nan() {
             return Err(CausalityError(
                 "Observation/current_price is NULL/NAN".into(),
             ));
         }
+
+        // Convert f64 to Decimal to avoid precision loss and make the code below more readable.
+        // Unwrap is safe because of the previous null check, we know that the current price is not null.
+        let current_price = Decimal::from_f64_retain(obs).unwrap();
 
         // We use a dynamic index to determine the actual index of the previous or current month.
         // Unwrap is safe here because the build_context function ensures that the current month is always initialized with a valid value.
@@ -66,8 +70,10 @@ pub(crate) fn get_month_causaloid<'l>(
         let previous_month_index = *ctx.get_previous_month_index().unwrap();
 
         // We use the dynamic index to extract the RangeData from the current and previous month.
-        let current_data = context_utils::extract_data_from_context(ctx, current_month_index)?;
-        let previous_data = context_utils::extract_data_from_context(ctx, previous_month_index)?;
+        let current_month_data =
+            context_utils::extract_data_from_context(ctx, current_month_index)?;
+        let previous_month_data =
+            context_utils::extract_data_from_context(ctx, previous_month_index)?;
 
         // The logic below is obviously totally trivial, but it demonstrates that you can
         // easily split an arbitrary complex causal function into multiple closures.
@@ -77,37 +83,27 @@ pub(crate) fn get_month_causaloid<'l>(
         let check_previous_month_close_above_open = || {
             // Test if the previous month close is above the previous month open.
             // This is indicative of a general uptrend and gives a subsequent breakout more credibility.
-            previous_data.data_range().close_above_open()
+            previous_month_data.close_above_open()
         };
 
         // Check if the current price is above the previous months close price.
         let check_current_price_above_previous_close = || {
             // Test if the current price is above the previous months close price.
             // gt = greater than > operator
-            current_price.gt(&previous_data.data_range().close().to_f64().unwrap())
+            current_price.gt(&previous_month_data.close())
         };
 
         // Check if the current price is above the current month open price.
         // This may seem redundant, but it safeguards against false positives.
         let check_current_price_above_current_open = || {
             // Test if the current price is above the current month open price.
-            current_price.gt(&current_data.data_range().open().to_f64().unwrap())
+            current_price.gt(&current_month_data.open())
         };
 
-        // Here, we need a margin of safety to prevent falling for false breakout.
-        // A false breakout is a false positive that occurs when the current price
-        // just briefly touches the pivot point and then immediately
-        // does a U turn and goes the other direction.
-        //
-        // Therefore, we add a bit of buffer on top of the previous high level to ensure
-        // we're capturing a real breakout. The exact value needs to be fine tuned for the specific market.
-        let safety_margin = previous_data.data_range().high().to_f64().unwrap() * 0.000125;
-        let safety_margin_high = previous_data.data_range().high().to_f64().unwrap() + safety_margin;
-
-        // Check if the current price exceeds the high level (with safety margin) of the previous month.
+        // Check if the current price exceeds the high level of the previous month.
         let check_current_price_above_previous_high = || {
             // Test if the (current price) is above the current high price of the current month.
-            current_price.gt(&safety_margin_high)
+            current_price.gt(&previous_month_data.high())
         };
 
         // Check if the current price exceeds the high level of the previous month,

@@ -1,4 +1,4 @@
-use crate::prelude::{CustomContext, RangeData};
+use crate::prelude::{BarRange, CustomContext, Rangeable};
 use deep_causality::errors::CausalityError;
 use deep_causality::prelude::{Contextuable, ContextuableGraph};
 
@@ -11,7 +11,7 @@ use deep_causality::prelude::{Contextuable, ContextuableGraph};
 ///
 /// # Returns
 ///
-/// The RangeData contained in the node's dataoid field.
+/// The BarRange data contained in the node's dataoid field.
 ///
 /// # Errors
 ///
@@ -20,7 +20,7 @@ use deep_causality::prelude::{Contextuable, ContextuableGraph};
 pub fn extract_data_from_context<'l>(
     ctx: &'l CustomContext<'l>,
     index: usize,
-) -> Result<RangeData, CausalityError> {
+) -> Result<BarRange, CausalityError> {
     //Get node from context.
     let node = ctx
         .get_node(index)
@@ -33,5 +33,5 @@ pub fn extract_data_from_context<'l>(
         .expect(format!("No Data for node at index {}", index).as_str());
 
     // Deref and return.
-    Ok(data.to_owned())
+    Ok(data.data_range())
 }
