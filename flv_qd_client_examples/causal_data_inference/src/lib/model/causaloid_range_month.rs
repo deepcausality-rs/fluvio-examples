@@ -3,7 +3,7 @@ use crate::types::alias::{CustomCausaloid, CustomContext};
 use deep_causality::prelude::{CausalityError, Causaloid, IdentificationValue, NumericalValue};
 use rust_decimal::prelude::ToPrimitive;
 
-/// Creates a new Causaloid that checks if the current price exceeds the monthly range high level.
+/// Creates a new Causaloid that checks if the current price exceeds the previously established monthly high price.
 ///
 /// The monthly breakout is defined as the following price action:
 ///
@@ -44,7 +44,7 @@ pub(crate) fn get_month_causaloid<'l>(
     id: IdentificationValue,
 ) -> CustomCausaloid<'l> {
     //
-    let description = "Checks for a potential monthly breakout";
+    let description = "Checks for a potential monthly long breakout";
 
     // The causal fucntion must be a function and not a closure because the function
     // will be coercived into a function pointer later on, which is not possible with a closure.
@@ -83,6 +83,7 @@ pub(crate) fn get_month_causaloid<'l>(
         // Check if the current price is above the previous months close price.
         let check_current_price_above_previous_close = || {
             // Test if the current price is above the previous months close price.
+            // gt = greater than > operator
             current_price.gt(&previous_data.data_range().close().to_f64().unwrap())
         };
 
@@ -93,16 +94,28 @@ pub(crate) fn get_month_causaloid<'l>(
             current_price.gt(&current_data.data_range().open().to_f64().unwrap())
         };
 
-        // Check if the current price exceeds the high level of the previous month.
+        // Here, we need a margin of safety to prevent falling for false breakout.
+        // A false breakout is a false positive that occurs when the current price
+        // just briefly touches the pivot point and then immediately
+        // does a U turn and goes the other direction.
+        //
+        // Therefore, we add a bit of buffer on top of the previous high level to ensure
+        // we're capturing a real breakout. The exact value needs to be fine tuned for the specific market.
+        let safety_margin = previous_data.data_range().high().to_f64().unwrap() * 0.000125;
+        let safety_margin_high = previous_data.data_range().high().to_f64().unwrap() + safety_margin;
+
+        // Check if the current price exceeds the high level (with safety margin) of the previous month.
         let check_current_price_above_previous_high = || {
             // Test if the (current price) is above the current high price of the current month.
-            current_price.gt(&previous_data.data_range().high().to_f64().unwrap())
+            current_price.gt(&safety_margin_high)
         };
 
         // Check if the current price exceeds the high level of the previous month,
         // and if the current price is above the previous months close price,
         // and if the previous month close is above the previous month open.
         // If all conditions are true, then a monthly breakout is detected and returns true.
+        //
+        // Note, you can do arbitrary complex control flow as long as its deterministic.
         if check_current_price_above_previous_high()
             && check_current_price_above_previous_close()
             && check_current_price_above_current_open()
