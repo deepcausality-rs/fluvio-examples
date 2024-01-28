@@ -5,7 +5,8 @@ mod query_trades;
 mod query_utils;
 
 use common::prelude::DBConfig;
-use tokio_postgres::{Client, NoTls};
+use tokio_postgres::{Client, Connection, NoTls, Socket};
+use tokio_postgres::tls::NoTlsStream;
 
 pub struct QueryDBManager {
     client: Client,
@@ -41,25 +42,23 @@ impl QueryDBManager {
     /// ```
     ///
     pub async fn new(db_config: DBConfig) -> Result<Self, tokio_postgres::Error> {
-        {
-            // Extract connection string.
-            let params = db_config.pg_connection_string();
 
-            // Connect to the database.
-            let (client, connection) = tokio_postgres::connect(&params, NoTls)
-                .await
-                .expect("Failed to connect to DB");
+        // Extract connection string.
+        let params = db_config.pg_connection_string();
 
-            // The connection object performs the actual communication with the database,
-            // so spawn it off to run on its own.
-            tokio::spawn(async move {
-                if let Err(e) = connection.await {
-                    eprintln!("connection error: {}", e);
-                }
-            });
+        // Connect to the database.
+        let (client, connection) = tokio_postgres::connect(&params, NoTls)
+            .await
+            .expect("[QueryDBManager]: Failed to connect to QuestDB");
 
-            Ok(Self { client })
-        }
+        // The connection object performs the actual communication with the database, so spawn it off to run on its own.
+        tokio::spawn(async move {
+            if let Err(e) = connection.await {
+                eprintln!("[QueryDBManager]: Connection lost to QuestDB: {}", e);
+            }
+        });
+
+        Ok(Self { client })
     }
 }
 
