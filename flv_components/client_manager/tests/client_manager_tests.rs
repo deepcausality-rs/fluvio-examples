@@ -32,7 +32,7 @@ fn test_get_client_control_channel() {
     assert!(result.is_err());
     assert_eq!(
         result.unwrap_err().to_string(),
-        "MessageClientConfigError: Client id 2 does not exist"
+        "MessageClientConfigError: [ClientManager]: Client id 2 does not exist"
     );
 }
 
@@ -53,7 +53,7 @@ fn test_get_client_data_channel() {
     assert!(result.is_err());
     assert_eq!(
         result.unwrap_err().to_string(),
-        "MessageClientConfigError: Client id 2 does not exist"
+        "MessageClientConfigError: [ClientManager]: Client id 2 does not exist"
     );
 }
 
@@ -74,7 +74,7 @@ fn test_get_client_heartbeat_channel() {
     assert!(result.is_err());
     assert_eq!(
         result.unwrap_err().to_string(),
-        "MessageClientConfigError: Client id 2 does not exist"
+        "MessageClientConfigError: [ClientManager]: Client id 2 does not exist"
     );
 }
 
@@ -95,7 +95,7 @@ fn test_get_client_execution_channel() {
     assert!(result.is_err());
     assert_eq!(
         result.unwrap_err().to_string(),
-        "MessageClientConfigError: Client id 2 does not exist"
+        "MessageClientConfigError: [ClientManager]: Client id 2 does not exist"
     );
 }
 

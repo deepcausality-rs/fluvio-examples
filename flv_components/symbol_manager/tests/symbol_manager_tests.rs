@@ -64,7 +64,7 @@ fn test_get_symbol_id() {
     assert!(result.is_err());
     assert_eq!(
         result.unwrap_err().to_string(),
-        "LookupError: ID not found for Symbol: lalacoin"
+        "LookupError: [SymbolManager]: ID not found for Symbol: lalacoin"
     );
 }
 
