@@ -41,7 +41,7 @@ impl SymbolManager {
             Some(symbol) => symbol,
             None => {
                 return Err(LookupError::new(format!(
-                    "Symbol not found for ID: {}",
+                    "[SymbolManager]: Symbol not found for ID: {}",
                     symbol_id
                 )))
             }
@@ -91,7 +91,7 @@ impl SymbolManager {
             Some(id) => id,
             None => {
                 return Err(LookupError::new(format!(
-                    "ID not found for Symbol: {}",
+                    "[SymbolManager]: ID not found for Symbol: {}",
                     symbol
                 )))
             }
@@ -131,7 +131,7 @@ impl SymbolManager {
     /// If not empty, collects all keys into a vector to return.
     pub fn get_all_symbols(&self) -> Result<Vec<String>, LookupError> {
         if self.symbol_to_index.is_empty() {
-            return Err(LookupError::new("No symbols found".to_string()));
+            return Err(LookupError::new("[SymbolManager]: Symbol index is empty".to_string()));
         }
 
         let symbols: Vec<String> = self.symbol_to_index.keys().cloned().collect();
@@ -172,7 +172,7 @@ impl SymbolManager {
     /// If not empty, collects all keys into a vector to return.
     pub fn get_all_symbol_ids(&self) -> Result<Vec<u16>, LookupError> {
         if self.index_to_symbol.is_empty() {
-            return Err(LookupError::new("No symbol IDs found".to_string()));
+            return Err(LookupError::new("[SymbolManager]: Symbol IDs empty".to_string()));
         }
 
         let ids: Vec<u16> = self.index_to_symbol.keys().cloned().collect();

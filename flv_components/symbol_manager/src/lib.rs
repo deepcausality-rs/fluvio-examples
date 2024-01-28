@@ -47,7 +47,7 @@ impl SymbolManager {
     ///  let symbols =  vec![(1, "apeusdt".to_string()), (2, "btxusdt".to_string())];
     ///
     ///  let symbol_manager = SymbolManager::new(symbols, exchanges)
-    ///         .expect("Failed to create symbol manager");
+    ///         .expect("[SymbolManager]: Failed to create symbol manager");
     ///
     /// let nr_symbols = symbol_manager.number_of_symbols();
     /// println!("Symbol: {}", nr_symbols);
@@ -80,7 +80,7 @@ impl SymbolManager {
         // or 150 if the percentage calculation results in a None value.
         let n = symbols_capacity / 10;
         let cache_capacity = NonZeroUsize::new(n).unwrap_or_else(|| {
-            NonZeroUsize::new(150).expect("Failed to determine LRU cache capacity")
+            NonZeroUsize::new(150).expect("[SymbolManager]: Failed to determine LRU cache capacity")
         });
 
         // Create hashmaps
