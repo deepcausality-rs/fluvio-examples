@@ -44,7 +44,7 @@ impl QuestDBManager {
 
         let sender = SenderBuilder::new(host, port)
             .connect()
-            .expect("Failed to connect to QuestDB");
+            .expect("[QuestDBManager]: Failed to connect to QuestDB");
 
         Self { db_config, sender }
     }
@@ -136,18 +136,18 @@ impl QuestDBManager {
 
             buffer
                 .table(table_name)
-                .expect("Failed to set table name")
+                .expect("[QuestDBManager]: Failed to set table name")
                 .column_f64("price", price)
-                .expect("Failed to set price")
+                .expect("[QuestDBManager]: Failed to set price")
                 .column_f64("volume", volume)
-                .expect("Failed to set volume")
+                .expect("[QuestDBManager]: Failed to set volume")
                 .at(designated_timestamp)
-                .expect("Failed to set timestamp");
+                .expect("[QuestDBManager]: Failed to set timestamp");
 
             if counter == max_buffer_size {
                 // Add multiple rows before flushing.
                 // It's recommended to keep a timer and/or a buffer size before flushing.
-                sender.flush(&mut buffer).expect("Failed to flush buffer");
+                sender.flush(&mut buffer).expect("[QuestDBManager]: Failed to flush buffer");
 
                 // restart counter
                 counter = 0;
@@ -155,24 +155,24 @@ impl QuestDBManager {
         }
 
         // Flush out all the remaining trade bars.
-        sender.flush(&mut buffer).expect("Failed to flush buffer");
+        sender.flush(&mut buffer).expect("[QuestDBManager]: Failed to flush buffer");
 
         buffer
             .table(meta_data_table)
-            .expect("Failed to set symbol table name")
+            .expect("[QuestDBManager]: Failed to set symbol table name")
             .symbol("symbol", symbol)
-            .expect("Failed to set symbol")
+            .expect("[QuestDBManager]: Failed to set symbol")
             .column_i64("symbol_id", symbol_id)
-            .expect("Failed to set symbol_id")
+            .expect("[QuestDBManager]: Failed to set symbol_id")
             .column_i64("number_of_rows", number_of_rows as i64)
-            .expect("Failed to set number_of_rows")
+            .expect("[QuestDBManager]: Failed to set number_of_rows")
             .column_str("table_name", table_name)
-            .expect("Failed to set trade bars table_name")
+            .expect("[QuestDBManager]: Failed to set trade bars table_name")
             .at(TimestampNanos::now())
-            .expect("Failed to set timestamp");
+            .expect("[QuestDBManager]: Failed to set timestamp");
 
         // Flush out the symbol table record.
-        sender.flush(&mut buffer).expect("Failed to flush buffer");
+        sender.flush(&mut buffer).expect("[QuestDBManager]: Failed to flush buffer");
 
         Ok(())
     }
@@ -182,11 +182,11 @@ fn extract_nano_timestamp(trade_bar: &TradeBar) -> TimestampNanos {
     let nanos = trade_bar
         .date_time()
         .timestamp_nanos_opt()
-        .expect("Failed to convert UTC timestamp into nanoseconds");
+        .expect("[QuestDBManager]: Failed to convert UTC timestamp into nanoseconds");
 
     TimestampNanos::new(nanos)
 }
 
 fn convert_decimal_to_f64(decimal: &rust_decimal::Decimal) -> f64 {
-    decimal.to_f64().expect("Failed to convert decimal to f64")
+    decimal.to_f64().expect("[QuestDBManager]: Failed to convert decimal to f64")
 }
