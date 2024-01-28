@@ -122,7 +122,10 @@ impl Server {
         }
 
         // Flush the producer
-        producer.flush().await.expect("[QDGW/utils_fluvio::send_single_data]: Failed to flush");
+        producer
+            .flush()
+            .await
+            .expect("[QDGW/utils_fluvio::send_single_data]: Failed to flush");
 
         Ok(())
     }
@@ -180,7 +183,10 @@ impl Server {
         }
 
         // Flush out the producer
-        producer.flush().await.expect("[QDGW/utils_fluvio::send_bulk_trade_data]: Failed to flush");
+        producer
+            .flush()
+            .await
+            .expect("[QDGW/utils_fluvio::send_bulk_trade_data]: Failed to flush");
 
         Ok(())
     }
@@ -239,7 +245,10 @@ impl Server {
         }
 
         // Flush out the producer
-        producer.flush().await.expect("[QDGW/utils_fluvio::send_bulk_ohlcv_data]: Failed to flush");
+        producer
+            .flush()
+            .await
+            .expect("[QDGW/utils_fluvio::send_bulk_ohlcv_data]: Failed to flush");
 
         Ok(())
     }

@@ -84,10 +84,9 @@ impl Server {
             .expect("[QDGW/utils_error:send_error]: Failed to get error channel producer");
 
         // Send the error message
-        producer
-            .send(RecordKey::NULL, error_buffer)
-            .await
-            .expect("[QDGW/utils_error:send_error]: Failed to send DataError: DataUnavailableError!");
+        producer.send(RecordKey::NULL, error_buffer).await.expect(
+            "[QDGW/utils_error:send_error]: Failed to send DataError: DataUnavailableError!",
+        );
 
         // Flush the producer to the message bus
         producer
