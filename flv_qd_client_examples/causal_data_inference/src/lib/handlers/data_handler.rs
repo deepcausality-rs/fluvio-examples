@@ -3,11 +3,11 @@ use deep_causality::prelude::Causable;
 use rust_decimal::prelude::ToPrimitive;
 use sbe_messages::prelude::{FirstTradeBar, LastTradeBar, MessageType, SbeTradeBar};
 use std::error::Error;
-use std::sync::{Arc, RwLock};
+use std::sync::{Arc};
 
 pub fn handle_data_message_inference<'l>(
     value: Vec<u8>,
-    model: Arc<RwLock<CustomModel<'l>>>,
+    model: Arc<CustomModel<'l>>,
 ) -> Result<(), Box<dyn Error + Send>> {
     let buffer = value.as_slice();
 
@@ -26,10 +26,8 @@ pub fn handle_data_message_inference<'l>(
             // Extract the price from the trade bar
             let price = trade_bar.price().to_f64().unwrap();
 
-            let guard = model.write().unwrap();
-
-            // Apply the model to the price for causality inference
-            let res = guard
+            // Apply the model to the price for causal inference
+            let res = model
                 .causaloid()
                 .verify_single_cause(&price)
                 .unwrap_or_else(|e| {
@@ -41,7 +39,6 @@ pub fn handle_data_message_inference<'l>(
                 println!("DeepCausality: Detected Price Breakout!");
             }
 
-            drop(guard);
         }
         MessageType::LastTradeBar => {
             let last_trade_bar = LastTradeBar::from(buffer);

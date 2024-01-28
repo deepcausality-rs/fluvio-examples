@@ -1,14 +1,15 @@
-use std::sync::{Arc, RwLock};
 use client_utils::{handle_error_utils, handle_utils, print_utils};
 use common::prelude::{ExchangeID, MessageClientConfig, ServiceID};
 use config_manager::ConfigManager;
 use db_query_manager::QueryDBManager;
-use deep_causality::prelude::{ContextuableGraph, Identifiable, TimeScale};
-use lib_inference::prelude::{build_context, channel_handler, CustomModel, data_handler, load_data, model};
+use deep_causality::prelude::{TimeScale};
+use lib_inference::prelude::{build_context, data_handler, load_data, model, SampledDataBars};
 use qd_client::QDClient;
+use std::sync::{Arc};
 use std::time::Duration;
 use symbol_manager::SymbolManager;
 use tokio::time::sleep;
+use lib_inference::prelude::channel_handler::MessageHandler;
 
 const EXAMPLE: &'static str = "Causal Data Inference";
 
@@ -65,60 +66,36 @@ async fn main() {
     let m_len = data.month_bars().len();
     println!("{FN_NAME}: Loaded Data for {m_len} months.");
 
-    println!("{FN_NAME}: Build Context");
-    let node_capacity = 50;
-    let context = build_context::build_time_data_context(&data, &TimeScale::Month, node_capacity)
-        .expect("[main]:  to build context");
-
-    println!();
-    println!("Context HyperGraph Metrics:");
-    println!("Edge Count: {}", &context.edge_count());
-    println!("Vertex Count: {}", &context.node_count());
-
-    println!("{FN_NAME}: Build Causal Model");
-    //
-    // Borrow checker problem due to lifeline:
-    //
-    //  ^^^^^^^^ borrowed value does not live long enough
-    let causaloid = model::build_main_causaloid(&context);
-
-    // argument requires that `context` is borrowed for `'static`
-    let model = model::build_causal_model(&context, causaloid);
-
-    println!();
-    println!("Causal Model Information:");
-    println!("Model ID: {}", model.id());
-    println!("Model Description: {}", model.description());
-    println!();
-
-    println!("{FN_NAME}: Build Client config for client ID: {CLIENT_ID}",);
+    println!("{FN_NAME}: Build Client config for client ID: {CLIENT_ID}", );
     let client_config = MessageClientConfig::new(CLIENT_ID);
 
-    println!("{FN_NAME}: Build QD Client",);
+    println!("{FN_NAME}: Build QD Client", );
     let client = QDClient::new(CLIENT_ID, client_config.clone())
         .await
         .expect("basic_data_stream/main: Failed to create QD Gateway client");
 
-    // The code below does not compile yet.
-    // Model is wrapped in an Arc<RwLock<CustomModel>> to allow multiple threads to access it.
-    // However, this does not solve the borrow checker problem from above.
-    let model =   Arc::new(RwLock::new(model)) as  Arc<RwLock<CustomModel<'_>>>;
+    println!("{FN_NAME}: Start the error handler");
+    spawn_error_handler(client_config.clone()).await;
 
-    println!("{FN_NAME}: Start the data handlers",);
-    let data_topic = client_config.data_channel();
-    tokio::spawn(async move {
-        if let Err(e) = channel_handler::handle_data_channel_with_inference(
-            &data_topic,
-            data_handler::handle_data_message_inference,
-            model,
-        )
+    println!("{FN_NAME}: Start the data handler");
+    spawn_data_handler(client_config.clone(), data).await;
+
+    println!("{FN_NAME}: Send start streaming message for symbol id: {symbol_id}",);
+    client
+        .start_trade_data(exchange_id, symbol_id)
         .await
-        {
-            eprintln!("[QDClient/new]: Consumer connection error: {}", e);
-        }
-    });
+        .expect("Failed to send start trade data message");
 
-    println!("{FN_NAME}: Start the error handlers");
+    println!("{FN_NAME}: Wait a moment to let the data stream complete...");
+    sleep(Duration::from_secs(1)).await;
+
+    println!("{FN_NAME}: Closing client");
+    client.close().await.expect("Failed to close client");
+}
+
+async fn spawn_error_handler(
+    client_config: MessageClientConfig,
+) {
     let err_topic = client_config.error_channel();
     tokio::spawn(async move {
         if let Err(e) =
@@ -127,16 +104,27 @@ async fn main() {
             eprintln!("[QDClient/new]: Consumer connection error: {}", e);
         }
     });
+}
 
-    // println!("{FN_NAME}: Send start streaming message for symbol id: {symbol_id}",);
-    // client
-    //     .start_trade_data(exchange_id, symbol_id)
-    //     .await
-    //     .expect("Failed to send start trade data message");
+async fn spawn_data_handler(
+    client_config: MessageClientConfig,
+    data: SampledDataBars,
+) {
+    let data_topic = client_config.data_channel();
+    tokio::spawn(async move {
+        let node_capacity = 50;
+        let context = build_context::build_time_data_context(&data, &TimeScale::Month, node_capacity).expect("[main]:  to build context");
 
-    println!("{FN_NAME}: Wait a moment to let the data stream complete...");
-    sleep(Duration::from_secs(1)).await;
+        let causaloid = model::build_main_causaloid(&context);
+        let model = Arc::new(model::build_causal_model(&context, causaloid));
+        let data_handler = data_handler::handle_data_message_inference;
 
-    println!("{FN_NAME}: Closing client");
-    client.close().await.expect("Failed to close client");
+        let handler = MessageHandler::new(data_topic, data_handler, model);
+
+        if let Err(e) =
+            handler.handle_data_channel_with_inference().await
+        {
+            eprintln!("[QDClient/new]: Data processing error: {}", e);
+        }
+    });
 }
