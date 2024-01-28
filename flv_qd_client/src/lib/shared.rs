@@ -22,10 +22,13 @@ impl QDClient {
         self.producer
             .send(RecordKey::NULL, buffer)
             .await
-            .expect("Failed to send Done!");
+            .expect("[QDClient/send_message]: Failed to send Done!");
 
         // Flush the producer to ensure the message is sent.
-        self.producer.flush().await.expect("Failed to flush");
+        self.producer
+            .flush()
+            .await
+            .expect("[QDClient/send_message]: Failed to flush to message bus.");
 
         Ok(())
     }

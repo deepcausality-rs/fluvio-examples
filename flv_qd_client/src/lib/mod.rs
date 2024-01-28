@@ -5,7 +5,6 @@ use std::time::Duration;
 use tokio::time::sleep;
 use utils::flv_utils;
 
-mod handle_events;
 mod send_login;
 mod send_logout;
 mod send_start_data;
