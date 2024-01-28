@@ -147,7 +147,9 @@ impl QuestDBManager {
             if counter == max_buffer_size {
                 // Add multiple rows before flushing.
                 // It's recommended to keep a timer and/or a buffer size before flushing.
-                sender.flush(&mut buffer).expect("[QuestDBManager]: Failed to flush buffer");
+                sender
+                    .flush(&mut buffer)
+                    .expect("[QuestDBManager]: Failed to flush buffer");
 
                 // restart counter
                 counter = 0;
@@ -155,7 +157,9 @@ impl QuestDBManager {
         }
 
         // Flush out all the remaining trade bars.
-        sender.flush(&mut buffer).expect("[QuestDBManager]: Failed to flush buffer");
+        sender
+            .flush(&mut buffer)
+            .expect("[QuestDBManager]: Failed to flush buffer");
 
         buffer
             .table(meta_data_table)
@@ -172,7 +176,9 @@ impl QuestDBManager {
             .expect("[QuestDBManager]: Failed to set timestamp");
 
         // Flush out the symbol table record.
-        sender.flush(&mut buffer).expect("[QuestDBManager]: Failed to flush buffer");
+        sender
+            .flush(&mut buffer)
+            .expect("[QuestDBManager]: Failed to flush buffer");
 
         Ok(())
     }
@@ -188,5 +194,7 @@ fn extract_nano_timestamp(trade_bar: &TradeBar) -> TimestampNanos {
 }
 
 fn convert_decimal_to_f64(decimal: &rust_decimal::Decimal) -> f64 {
-    decimal.to_f64().expect("[QuestDBManager]: Failed to convert decimal to f64")
+    decimal
+        .to_f64()
+        .expect("[QuestDBManager]: Failed to convert decimal to f64")
 }

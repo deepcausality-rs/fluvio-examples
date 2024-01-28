@@ -45,7 +45,9 @@ impl ClientManager {
         config: MessageClientConfig,
     ) -> Result<(), MessageClientConfigError> {
         if self.clients.contains_key(&id) {
-            return Err(MessageClientConfigError("[ClientManager]: Client id already exists".into()));
+            return Err(MessageClientConfigError(
+                "[ClientManager]: Client id already exists".into(),
+            ));
         }
 
         self.clients.insert(id, config);
@@ -97,12 +99,14 @@ impl ClientManager {
         id: u16,
     ) -> Result<&MessageClientConfig, MessageClientConfigError> {
         if !self.clients.contains_key(&id) {
-            return Err(MessageClientConfigError("[ClientManager]: Client id does not exist".into()));
+            return Err(MessageClientConfigError(
+                "[ClientManager]: Client id does not exist".into(),
+            ));
         }
 
-        self.clients
-            .get(&id)
-            .ok_or(MessageClientConfigError("[ClientManager]: Client not found".into()))
+        self.clients.get(&id).ok_or(MessageClientConfigError(
+            "[ClientManager]: Client not found".into(),
+        ))
     }
 
     /// Checks if a client id exists.

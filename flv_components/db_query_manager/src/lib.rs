@@ -41,7 +41,6 @@ impl QueryDBManager {
     /// ```
     ///
     pub async fn new(db_config: DBConfig) -> Result<Self, tokio_postgres::Error> {
-
         // Extract connection string.
         let params = db_config.pg_connection_string();
 
