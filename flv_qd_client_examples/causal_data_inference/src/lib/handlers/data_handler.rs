@@ -3,7 +3,7 @@ use deep_causality::prelude::Causable;
 use rust_decimal::prelude::ToPrimitive;
 use sbe_messages::prelude::{FirstTradeBar, LastTradeBar, MessageType, SbeTradeBar};
 use std::error::Error;
-use std::sync::{Arc};
+use std::sync::Arc;
 
 /// Handles an incoming data message by running inference.
 ///
@@ -56,7 +56,6 @@ pub fn handle_data_message_inference<'l>(
             if res {
                 println!("DeepCausality: Detected Price Breakout!");
             }
-
         }
         MessageType::LastTradeBar => {
             let last_trade_bar = LastTradeBar::from(buffer);

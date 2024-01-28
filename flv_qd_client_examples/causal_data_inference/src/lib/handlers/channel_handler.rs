@@ -2,10 +2,10 @@ use crate::prelude::CustomModel;
 use fluvio::Offset;
 use futures::stream::StreamExt;
 use std::error::Error;
-use std::sync::{Arc};
+use std::sync::Arc;
 
-type MessageFunction<'l> = fn(value: Vec<u8>, model: Arc<CustomModel<'l>>) -> Result<(), Box<dyn Error + Send>>;
-
+type MessageFunction<'l> =
+    fn(value: Vec<u8>, model: Arc<CustomModel<'l>>) -> Result<(), Box<dyn Error + Send>>;
 
 pub struct MessageHandler<'l> {
     channel_topic: String,
@@ -14,15 +14,21 @@ pub struct MessageHandler<'l> {
 }
 
 impl<'l> MessageHandler<'l> {
-    pub fn new(channel_topic: String, message_handler: MessageFunction<'l>, model: Arc<CustomModel<'l>>) -> Self {
-        Self { channel_topic, message_handler, model }
+    pub fn new(
+        channel_topic: String,
+        message_handler: MessageFunction<'l>,
+        model: Arc<CustomModel<'l>>,
+    ) -> Self {
+        Self {
+            channel_topic,
+            message_handler,
+            model,
+        }
     }
 }
 
 impl<'l> MessageHandler<'l> {
-    pub async fn run_inference(
-        &self,
-    ) -> Result<(), Box<dyn Error + Send>> {
+    pub async fn run_inference(&self) -> Result<(), Box<dyn Error + Send>> {
         // Create consumer for channel topic.
         let consumer = fluvio::consumer(&self.channel_topic, 0)
             .await

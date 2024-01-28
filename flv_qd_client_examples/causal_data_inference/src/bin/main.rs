@@ -2,14 +2,14 @@ use client_utils::{handle_error_utils, handle_utils, print_utils};
 use common::prelude::{ExchangeID, MessageClientConfig, ServiceID};
 use config_manager::ConfigManager;
 use db_query_manager::QueryDBManager;
-use deep_causality::prelude::{TimeScale};
+use deep_causality::prelude::TimeScale;
+use lib_inference::prelude::channel_handler::MessageHandler;
 use lib_inference::prelude::{build_context, data_handler, load_data, model, SampledDataBars};
 use qd_client::QDClient;
-use std::sync::{Arc};
+use std::sync::Arc;
 use std::time::Duration;
 use symbol_manager::SymbolManager;
 use tokio::time::sleep;
-use lib_inference::prelude::channel_handler::MessageHandler;
 
 const EXAMPLE: &'static str = "Causal Data Inference";
 
@@ -19,7 +19,7 @@ const CLIENT_ID: u16 = 77;
 
 const EXCHANGE_ID: ExchangeID = ExchangeID::Kraken;
 
-//  Symbols
+// Symbols
 // const XBT_EUR: u16 = 202; // BTC in EUR ~80 million trades ~ 124 months
 const JTO_EUR: u16 = 708; // JPY in EUR 2420 trades ~ 1 months
 
@@ -80,10 +80,10 @@ async fn main() {
     let m_len = data.month_bars().len();
     println!("{FN_NAME}: Loaded Data for {m_len} months.");
 
-    println!("{FN_NAME}: Build Client config for client ID: {CLIENT_ID}", );
+    println!("{FN_NAME}: Build Client config for client ID: {CLIENT_ID}",);
     let client_config = MessageClientConfig::new(CLIENT_ID);
 
-    println!("{FN_NAME}: Build QD Client", );
+    println!("{FN_NAME}: Build QD Client",);
     let client = QDClient::new(CLIENT_ID, client_config.clone())
         .await
         .expect("[main]: Failed to create QD Gateway client");
@@ -107,7 +107,7 @@ async fn main() {
     client.close().await.expect("Failed to close client");
 }
 
-/// Spawns an async task to handle errors from the Fluvio consumer stream.
+/// Spawns an async task to handle errors from the Fluvio error stream.
 ///
 /// This creates a separate async task that runs for the lifetime of the application.
 /// It listens to the client's error channel for any errors sent from the main consumer loop.
@@ -120,9 +120,7 @@ async fn main() {
 ///
 /// * client_config: MessageClientConfig,
 ///
-async fn spawn_error_handler(
-    client_config: MessageClientConfig,
-) {
+async fn spawn_error_handler(client_config: MessageClientConfig) {
     let err_topic = client_config.error_channel();
     tokio::spawn(async move {
         if let Err(e) =
@@ -133,7 +131,7 @@ async fn spawn_error_handler(
     });
 }
 
-/// Spawns an async task to handle data messages from the Fluvio consumer stream.
+/// Spawns an async task to handle data messages from the Fluvio data stream.
 ///
 /// This creates a separate async task that runs for the lifetime of the application.
 ///
@@ -142,11 +140,10 @@ async fn spawn_error_handler(
 /// # Arguments
 ///
 /// * `model` - The causal model to use for processing the data
-async fn spawn_data_handler(
-    client_config: MessageClientConfig,
-    data: SampledDataBars,
-) {
+async fn spawn_data_handler(client_config: MessageClientConfig, data: SampledDataBars) {
     let data_topic = client_config.data_channel();
+
+    // Spawn the task to handle the data messages.
     tokio::spawn(async move {
         // We have to build a context for the model inside the async block
         // so that the task owns all internal references to the data, context, and causaloid.
@@ -156,16 +153,15 @@ async fn spawn_data_handler(
         // This is necessary because the DeepCausality crate uses references with lifetimes
         // internally to store the context, which may grow large if the dataset is large.
         //
-        let context = build_context::build_time_data_context(&data, &TimeScale::Month, 50).expect("[main]:  to build context");
+        let context = build_context::build_time_data_context(&data, &TimeScale::Month, 50)
+            .expect("[main]:  to build context");
         let causaloid = model::build_main_causaloid(&context);
         let model = Arc::new(model::build_causal_model(&context, causaloid));
         let data_handler = data_handler::handle_data_message_inference;
 
         let handler = MessageHandler::new(data_topic, data_handler, model);
 
-        if let Err(e) =
-            handler.run_inference().await
-        {
+        if let Err(e) = handler.run_inference().await {
             eprintln!("{FN_NAME}: Data processing error: {}", e);
         }
     });
