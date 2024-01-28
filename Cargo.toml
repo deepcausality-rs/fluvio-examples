@@ -51,6 +51,7 @@ exchange_specs = { path = "flv_specs/exchange_specs" }
 service_specs = {path = "flv_specs/service_specs" }
 #
 # External crates
+async-trait = {version = "0.1.77"}
 autometrics = { version = "1", features = ["prometheus-exporter"] }
 # chrono default-features = false mitigates "RUSTSEC-2020-0071".
 # See https://rustsec.org/advisories/RUSTSEC-2020-0071.html

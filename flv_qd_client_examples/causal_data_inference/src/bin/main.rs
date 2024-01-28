@@ -1,9 +1,10 @@
+use std::sync::{Arc, RwLock};
 use client_utils::{handle_error_utils, handle_utils, print_utils};
 use common::prelude::{ExchangeID, MessageClientConfig, ServiceID};
 use config_manager::ConfigManager;
 use db_query_manager::QueryDBManager;
 use deep_causality::prelude::{ContextuableGraph, Identifiable, TimeScale};
-use lib_inference::prelude::{build_context, channel_handler, data_handler, load_data, model};
+use lib_inference::prelude::{build_context, channel_handler, CustomModel, data_handler, load_data, model};
 use qd_client::QDClient;
 use std::time::Duration;
 use symbol_manager::SymbolManager;
@@ -75,7 +76,13 @@ async fn main() {
     println!("Vertex Count: {}", &context.node_count());
 
     println!("{FN_NAME}: Build Causal Model");
+    //
+    // Borrow checker problem due to lifeline:
+    //
+    //  ^^^^^^^^ borrowed value does not live long enough
     let causaloid = model::get_main_causaloid(&context);
+
+    // argument requires that `context` is borrowed for `'static`
     let model = model::build_causal_model(&context, causaloid);
 
     println!();
@@ -92,12 +99,13 @@ async fn main() {
         .await
         .expect("basic_data_stream/main: Failed to create QD Gateway client");
 
-    // Wrap the model in an Arc / RwLock to share it between threads.
-    // let model =   Arc::new(RwLock::new(model)) as  Arc<RwLock<CustomModel<'_>>>;
+    // The code below does not compile yet.
+    // Model is wrapped in an Arc<RwLock<CustomModel>> to allow multiple threads to access it.
+    // However, this does not solve the borrow checker problem from above.
+    let model =   Arc::new(RwLock::new(model)) as  Arc<RwLock<CustomModel<'_>>>;
 
     println!("{FN_NAME}: Start the data handlers",);
     let data_topic = client_config.data_channel();
-
     tokio::spawn(async move {
         if let Err(e) = channel_handler::handle_data_channel_with_inference(
             &data_topic,
@@ -127,7 +135,7 @@ async fn main() {
     //     .expect("Failed to send start trade data message");
 
     println!("{FN_NAME}: Wait a moment to let the data stream complete...");
-    sleep(Duration::from_secs(3)).await;
+    sleep(Duration::from_secs(1)).await;
 
     println!("{FN_NAME}: Closing client");
     client.close().await.expect("Failed to close client");

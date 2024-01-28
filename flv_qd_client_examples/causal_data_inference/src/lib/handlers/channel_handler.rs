@@ -2,6 +2,7 @@ use crate::prelude::CustomModel;
 use fluvio::Offset;
 use futures::stream::StreamExt;
 use std::error::Error;
+use std::sync::{Arc, RwLock};
 
 /// MessageFunction is a function type that handles incoming messages for a channel.
 ///
@@ -21,16 +22,15 @@ use std::error::Error;
 ///
 /// `Result` indicating whether message processing succeeded
 ///
+/// Model is wrapped in an Arc<RwLock<CustomModel>> to allow multiple threads to access it.
 type MessageFunction<'l> =
-    fn(value: Vec<u8>, model: CustomModel<'l>) -> Result<(), Box<dyn Error + Send>>;
-
-// Move this into a process hanlder that can be wrapped in an Arc/Mutex
+    fn(value: Vec<u8>, model: Arc<RwLock<CustomModel<'l>>>) -> Result<(), Box<dyn Error + Send>>;
 
 //
 pub async fn handle_data_channel_with_inference<'l>(
     channel_topic: &str,
     message_handler: MessageFunction<'l>,
-    model: CustomModel<'l>,
+    model: Arc<RwLock<CustomModel<'l>>>,
 ) -> Result<(), Box<dyn Error + Send>> {
     // Create consumer for channel topic.
     let consumer = fluvio::consumer(channel_topic, 0)
@@ -49,6 +49,7 @@ pub async fn handle_data_channel_with_inference<'l>(
         let buffer = value.as_slice();
 
         // Process the record and apply causal model
+        // The model is passed as an Arc<RwLock<CustomModel>> to allow the multiple threads to access it.
         message_handler(buffer.to_vec(), model.clone())?;
     }
 

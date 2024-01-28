@@ -29,6 +29,7 @@ qd_client = { workspace = true }
 sbe_messages = { workspace = true }
 symbol_manager = { workspace = true }
 # External crates
+async-trait = {workspace = true}
 chrono = {workspace = true}
 deep_causality =  {workspace = true}
 fluvio = { workspace = true }
