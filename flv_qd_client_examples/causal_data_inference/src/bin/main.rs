@@ -4,7 +4,7 @@ use config_manager::ConfigManager;
 use db_query_manager::QueryDBManager;
 use deep_causality::prelude::TimeScale;
 use lib_inference::prelude::channel_handler::MessageHandler;
-use lib_inference::prelude::{build_context, data_handler, load_data, model, SampledDataBars};
+use lib_inference::prelude::{build_context, load_data, model, SampledDataBars};
 use qd_client::QDClient;
 use std::sync::Arc;
 use std::time::Duration;
@@ -157,9 +157,7 @@ async fn spawn_data_handler(client_config: MessageClientConfig, data: SampledDat
             .expect("[main]:  to build context");
         let causaloid = model::build_main_causaloid(&context);
         let model = Arc::new(model::build_causal_model(&context, causaloid));
-        let data_handler = data_handler::handle_data_message_inference;
-
-        let handler = MessageHandler::new(data_topic, data_handler, model);
+        let handler = MessageHandler::new(data_topic, model);
 
         if let Err(e) = handler.run_inference().await {
             eprintln!("{FN_NAME}: Data processing error: {}", e);
