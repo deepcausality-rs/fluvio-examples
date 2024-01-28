@@ -23,6 +23,20 @@ const EXCHANGE_ID: ExchangeID = ExchangeID::Kraken;
 // const XBT_EUR: u16 = 202; // BTC in EUR ~80 million trades ~ 124 months
 const JTO_EUR: u16 = 708; // JPY in EUR 2420 trades ~ 1 months
 
+///
+/// This main function initializes the various components needed for the program:
+/// * It creates a ConfigManager to load configuration settings.
+/// * It creates a QueryDBManager to interface with the database.
+/// * It uses the ConfigManager and QueryDBManager to load symbol data like exchange IDs and symbol IDs.
+/// * It creates a SymbolManager to manage the symbol data.
+/// * It loads historical trade data for a specific symbol from the database using the QueryDBManager.
+/// * It prints how much data was loaded.
+/// * It creates a MessageClientConfig and QDClient to connect to a streaming data service.
+/// * It spawns tasks to handle errors and incoming streaming data separately.
+/// * It sends a message to start streaming live trade data for a symbol.
+/// * It waits briefly to allow some data to stream.
+/// * It closes the streaming client.
+///
 #[tokio::main]
 async fn main() {
     print_utils::print_example_header(EXAMPLE);
@@ -41,7 +55,7 @@ async fn main() {
         .await
         .expect("[main]: Failed to create QueryDBManager instance.");
 
-    // Get all symbols for the default exchange.
+    println!("{FN_NAME}: Get all symbols for the default exchange.");
     let symbols = db_query_manager
         .get_all_symbols_with_ids(&exchange_symbol_table)
         .await
@@ -72,7 +86,7 @@ async fn main() {
     println!("{FN_NAME}: Build QD Client", );
     let client = QDClient::new(CLIENT_ID, client_config.clone())
         .await
-        .expect("basic_data_stream/main: Failed to create QD Gateway client");
+        .expect("[main]: Failed to create QD Gateway client");
 
     println!("{FN_NAME}: Start the error handler");
     spawn_error_handler(client_config.clone()).await;
@@ -93,6 +107,19 @@ async fn main() {
     client.close().await.expect("Failed to close client");
 }
 
+/// Spawns an async task to handle errors from the Fluvio consumer stream.
+///
+/// This creates a separate async task that runs for the lifetime of the application.
+/// It listens to the client's error channel for any errors sent from the main consumer loop.
+///
+/// Whenever an error is received on the channel, it will log the error to the console.
+///
+/// This avoids the main loop being disrupted by transient consumer errors.
+///
+/// # Arguments
+///
+/// * client_config: MessageClientConfig,
+///
 async fn spawn_error_handler(
     client_config: MessageClientConfig,
 ) {
@@ -101,20 +128,35 @@ async fn spawn_error_handler(
         if let Err(e) =
             handle_utils::handle_channel(&err_topic, handle_error_utils::handle_error_message).await
         {
-            eprintln!("[QDClient/new]: Consumer connection error: {}", e);
+            eprintln!("{FN_NAME}: Consumer connection error: {}", e);
         }
     });
 }
 
+/// Spawns an async task to handle data messages from the Fluvio consumer stream.
+///
+/// This creates a separate async task that runs for the lifetime of the application.
+///
+/// The messages are passed to the `handle_data_message` function to process the data.
+///
+/// # Arguments
+///
+/// * `model` - The causal model to use for processing the data
 async fn spawn_data_handler(
     client_config: MessageClientConfig,
     data: SampledDataBars,
 ) {
     let data_topic = client_config.data_channel();
     tokio::spawn(async move {
-        let node_capacity = 50;
-        let context = build_context::build_time_data_context(&data, &TimeScale::Month, node_capacity).expect("[main]:  to build context");
-
+        // We have to build a context for the model inside the async block
+        // so that the task owns all internal references to the data, context, and causaloid.
+        // This is because the task will be dropped when the async block ends and that way,
+        // the data, context, and causaloid will live as long as the task is alive.
+        //
+        // This is necessary because the DeepCausality crate uses references with lifetimes
+        // internally to store the context, which may grow large if the dataset is large.
+        //
+        let context = build_context::build_time_data_context(&data, &TimeScale::Month, 50).expect("[main]:  to build context");
         let causaloid = model::build_main_causaloid(&context);
         let model = Arc::new(model::build_causal_model(&context, causaloid));
         let data_handler = data_handler::handle_data_message_inference;
@@ -122,9 +164,9 @@ async fn spawn_data_handler(
         let handler = MessageHandler::new(data_topic, data_handler, model);
 
         if let Err(e) =
-            handler.handle_data_channel_with_inference().await
+            handler.run_inference().await
         {
-            eprintln!("[QDClient/new]: Data processing error: {}", e);
+            eprintln!("{FN_NAME}: Data processing error: {}", e);
         }
     });
 }

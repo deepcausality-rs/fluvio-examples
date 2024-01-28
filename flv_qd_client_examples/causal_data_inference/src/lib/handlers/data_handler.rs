@@ -5,6 +5,24 @@ use sbe_messages::prelude::{FirstTradeBar, LastTradeBar, MessageType, SbeTradeBa
 use std::error::Error;
 use std::sync::{Arc};
 
+/// Handles an incoming data message by running inference.
+///
+/// Takes a data message payload and passes it to the inference function
+/// along with the causal model to run inference.
+///
+/// # Arguments
+///
+/// * `value` - The message payload as a byte vector
+/// * `model` - The causal model to use for inference
+///
+/// # Returns
+///
+/// A Result with no value if inference succeeds, or an error if it fails.
+///
+/// # Errors
+///
+/// Returns any error from the inference function.
+///
 pub fn handle_data_message_inference<'l>(
     value: Vec<u8>,
     model: Arc<CustomModel<'l>>,

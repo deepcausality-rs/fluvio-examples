@@ -20,7 +20,7 @@ impl<'l> MessageHandler<'l> {
 }
 
 impl<'l> MessageHandler<'l> {
-    pub async fn handle_data_channel_with_inference(
+    pub async fn run_inference(
         &self,
     ) -> Result<(), Box<dyn Error + Send>> {
         // Create consumer for channel topic.
