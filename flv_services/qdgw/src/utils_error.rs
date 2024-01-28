@@ -81,19 +81,19 @@ impl Server {
         let producer = self
             .get_channel_producer(ClientChannel::ErrorChannel, client_id)
             .await
-            .expect("[send_error]: Failed to get error channel producer");
+            .expect("[QDGW/utils_error:send_error]: Failed to get error channel producer");
 
         // Send the error message
         producer
             .send(RecordKey::NULL, error_buffer)
             .await
-            .expect("[send_error]: Failed to send DataError: DataUnavailableError!");
+            .expect("[QDGW/utils_error:send_error]: Failed to send DataError: DataUnavailableError!");
 
         // Flush the producer to the message bus
         producer
             .flush()
             .await
-            .expect("[send_error]: Failed to flush to message bus.");
+            .expect("[QDGW/utils_error:send_error]: Failed to flush to message bus.");
 
         Ok(())
     }

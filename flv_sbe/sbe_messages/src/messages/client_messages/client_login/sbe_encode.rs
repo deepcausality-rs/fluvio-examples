@@ -39,7 +39,10 @@ impl ClientLoginMessage {
             message_header_codec::ENCODED_LENGTH,
         );
 
-        csg = csg.header(0).parent().expect("Failed to encode header");
+        csg = csg
+            .header(0)
+            .parent()
+            .expect("[ClientLoginMessage]: Failed to encode header");
 
         let value = SbeMessageType::from(self.message_type as u16);
         csg.message_type(value);

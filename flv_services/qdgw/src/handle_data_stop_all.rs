@@ -11,9 +11,11 @@ impl Server {
     ) -> Result<(), MessageProcessingError> {
         // Remove debug print
         println!(
-            "[QDGW/handle::stop_all_data]: stop_all_data: {:?}",
+            "[QDGW/handle_stop_date]: stop_all_data: {:?}",
             stop_all_data_msg
         );
+
+        println!("[QDGW/handle_stop_date]: NOT IMPLEMENTED",);
 
         Ok(())
     }

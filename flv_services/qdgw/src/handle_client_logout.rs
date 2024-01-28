@@ -52,7 +52,7 @@ impl Server {
         let producer = fluvio
             .topic_producer(client_control_channel)
             .await
-            .expect("Failed to create a producer");
+            .expect("[QDGW/handle_client_logout]: Failed to create a producer");
 
         // println!("::handle_client_logout]: Check if the client is logged in");
         let exists = self.check_client_login(client_id).await;
@@ -69,11 +69,12 @@ impl Server {
                             // println!("[QDGW/handle_client_logout::handle_client_logout] ClientLogOutError: {:?}", err);
 
                             let client_error_type = ClientErrorType::ClientLogOutError;
-                            match self
-                                .send_client_error(client_id, client_error_type)
-                                .await {
+                            match self.send_client_error(client_id, client_error_type).await {
                                 Ok(_) => {}
-                                Err(err) => println!("[QDGW/handle_client_login::handle_client_login] ClientLogInError: {:?}", err.to_string()),
+                                Err(err) => println!(
+                                    "[QDGW/handle_client_logout]: ClientLogInError: {:?}",
+                                    err.to_string()
+                                ),
                             }
                         }
                     }
@@ -86,7 +87,10 @@ impl Server {
                     match self.send_client_error(client_id, client_error_type).await {
                         Ok(_) => {}
                         Err(err) => {
-                            println!("[QDGW/handle_client_login::handle_client_login] ClientAlreadyLoggedIn: {:?}", err);
+                            println!(
+                                "[QDGW/handle_client_logout]: ClientAlreadyLoggedIn: {:?}",
+                                err
+                            );
                         }
                     }
                 }
@@ -94,7 +98,7 @@ impl Server {
             // Something went horribly wrong, log the message, and return an unknown error
             Err(err) => {
                 println!(
-                    "[QDGW/handle_client_logout::handle_client_logout] UnknownClientError: {:?}",
+                    "[QDGW/handle_client_logout] UnknownClientError: {:?}",
                     err.to_string()
                 );
 
@@ -102,7 +106,10 @@ impl Server {
                 match self.send_client_error(client_id, client_error_type).await {
                     Ok(_) => {}
                     Err(err) => {
-                        println!("[QDGW/handle_client_login::handle_client_login] UnknownClientError: {:?}", err.to_string());
+                        println!(
+                            "[QDGW/handle_client_logout]: UnknownClientError: {:?}",
+                            err.to_string()
+                        );
                     }
                 }
             }

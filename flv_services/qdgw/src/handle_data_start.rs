@@ -34,7 +34,7 @@ impl Server {
         start_data_msg: &StartDataMessage,
     ) -> Result<(), MessageProcessingError> {
         // Remove debug print
-        // println!("[QDGW/handle::handle_start_data_message]");
+        // println!("[QDGW/handle_start_data_message]");
 
         // println!("::handle_start_data_message]: Extract fields from message");
         let client_id = *start_data_msg.client_id();
@@ -43,9 +43,10 @@ impl Server {
         let data_type = start_data_msg.data_type_id();
 
         // println!("::handle_start_data_message]: Check if the client is already logged in");
-        let exists = self.check_client_login(client_id).await.expect(
-            "[QDGW/handle::handle_start_data_message]: Failed to check if client is logged in",
-        );
+        let exists = self
+            .check_client_login(client_id)
+            .await
+            .expect("[QDGW/handle_start_data_message]: Failed to check if client is logged in");
 
         // Send a ClientNotLoggedIn Error, if not logged in.
         if !exists {
@@ -54,7 +55,7 @@ impl Server {
             match self.send_client_error(client_id, client_error_type).await {
                 Ok(_) => {}
                 Err(err) => {
-                    println!("[QDGW/handle::handle_start_data_message]: Failed to send ClientNotLoggedIn error: {}", err);
+                    println!("[QDGW/handle_start_data_message]: Failed to send ClientNotLoggedIn error: {}", err);
                 }
             }
 
@@ -66,16 +67,16 @@ impl Server {
         let trade_table = match self.get_trade_table_name(exchange_id, symbol_id).await {
             Ok(table) => table,
             Err(err) => {
-                println!("[QDGW/handle::handle_start_data_message]: Failed to get Data Table For exchange error: {}", err);
+                println!("[QDGW/handle_start_data_message]: Failed to get Data Table For exchange error: {}", err);
                 let data_err = DataErrorType::DataTableNotFound;
                 match self.send_data_error(client_id, data_err).await {
                     Ok(_) => {}
                     Err(err) => {
-                        println!("[QDGW/handle::handle_start_data_message]: Failed to send DataTableNotFound error: {}", err);
+                        println!("[QDGW/handle_start_data_message]: Failed to send DataTableNotFound error: {}", err);
                     }
                 }
                 return Err(MessageProcessingError(format!(
-                    "[QDGW/handle::handle_start_data_message]: Failed to get data table: {}",
+                    "[QDGW/handle_start_data_message]: Failed to get data table: {}",
                     err
                 )));
             }
@@ -89,13 +90,13 @@ impl Server {
                     Ok(_) => {}
                     Err(err) => {
                         println!(
-                            "[QDGW/handle::handle_start_data_message]: Failed to get first bar: {}",
+                            "[QDGW/handle_start_data_message]: Failed to get first bar: {}",
                             err
                         );
                     }
                 }
                 return Err(MessageProcessingError(format!(
-                    "[QDGW/handle::handle_start_data_message]: Failed to get first bar: {}",
+                    "[QDGW/handle_start_data_message]: Failed to get first bar: {}",
                     err
                 )));
             }
@@ -109,14 +110,14 @@ impl Server {
                     Ok(_) => {}
                     Err(err) => {
                         println!(
-                            "[QDGW/handle::handle_start_data_message]: Failed to get last bar: {}",
+                            "[QDGW/handle_start_data_message]: Failed to get last bar: {}",
                             err
                         );
                     }
                 }
 
                 return Err(MessageProcessingError(format!(
-                    "[QDGW/handle::handle_start_data_message]: Failed to get last bar: {}",
+                    "[QDGW/handle_start_data_message]: Failed to get last bar: {}",
                     err
                 )));
             }
@@ -130,7 +131,7 @@ impl Server {
                     Ok(_) => {}
                     Err(err) => {
                         println!(
-                            "[QDGW/handle::handle_start_data_message]: Failed to get last bar: {}",
+                            "[QDGW/handle_start_data_message]: Failed to get last bar: {}",
                             err
                         );
                     }
@@ -149,12 +150,15 @@ impl Server {
                         match self.send_data_error(client_id, data_err).await {
                             Ok(_) => {}
                             Err(err) => {
-                                println!("[QDGW/handle::handle_start_data_message]: Failed to get last bar: {}", err);
+                                println!(
+                                    "[QDGW/handle_start_data_message]: Failed to get last bar: {}",
+                                    err
+                                );
                             }
                         }
 
                         return Err(MessageProcessingError(format!(
-                            "[QDGW/handle::handle_start_data_message]: Failed to get trade bars: {}",
+                            "[QDGW/handle_start_data_message]: Failed to get trade bars: {}",
                             err
                         )));
                     }
@@ -170,12 +174,15 @@ impl Server {
                         match self.send_data_error(client_id, data_err).await {
                             Ok(_) => {}
                             Err(err) => {
-                                println!("[QDGW/handle::handle_start_data_message]: Failed to get last bar: {}", err);
+                                println!(
+                                    "[QDGW/handle_start_data_message]: Failed to get last bar: {}",
+                                    err
+                                );
                             }
                         }
 
                         return Err(MessageProcessingError(format!(
-                            "[QDGW/handle::handle_start_data_message]: Failed to get trade bars: {}",
+                            "[QDGW/handle_start_data_message]: Failed to get trade bars: {}",
                             err
                         )));
                     }
@@ -196,12 +203,15 @@ impl Server {
                         match self.send_data_error(client_id, data_err).await {
                             Ok(_) => {}
                             Err(err) => {
-                                println!("[QDGW/handle::handle_start_data_message]: Failed to get last bar: {}", err);
+                                println!(
+                                    "[QDGW/handle_start_data_message]: Failed to get last bar: {}",
+                                    err
+                                );
                             }
                         }
 
                         return Err(MessageProcessingError(format!(
-                            "[QDGW/handle::handle_start_data_message]: Failed to get trade bars: {}",
+                            "[QDGW/handle_start_data_message]: Failed to get trade bars: {}",
                             err
                         )));
                     }
@@ -217,12 +227,15 @@ impl Server {
                         match self.send_data_error(client_id, data_err).await {
                             Ok(_) => {}
                             Err(err) => {
-                                println!("[QDGW/handle::handle_start_data_message]: Failed to get last bar: {}", err);
+                                println!(
+                                    "[QDGW/handle_start_data_message]: Failed to get last bar: {}",
+                                    err
+                                );
                             }
                         }
 
                         return Err(MessageProcessingError(format!(
-                            "[QDGW/handle::handle_start_data_message]: Failed to get trade bars: {}",
+                            "[QDGW/handle_start_data_message]: Failed to get trade bars: {}",
                             err
                         )));
                     }

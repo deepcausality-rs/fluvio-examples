@@ -27,7 +27,7 @@ impl ClientLogoutMessage {
     /// - Encode message_type
     /// - Encode client_id
     /// - Return encoded size and buffer
-
+    ///
     pub fn encode(&self) -> Result<(usize, Vec<u8>), SbeEncodeError> {
         // precise buffer size is 12 bytes for the entire message.
         let mut buffer = vec![0u8; 12];

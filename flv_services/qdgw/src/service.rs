@@ -90,7 +90,7 @@ impl Server {
         //
         let consumer = fluvio::consumer(&self.channel_topic, 0)
             .await
-            .expect("Failed to create a consumer for data topic");
+            .expect("[QDGW/Service:run]: Failed to create a consumer for data topic");
 
         // Creates a stream of messages from the topic.
         let mut stream = consumer

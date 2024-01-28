@@ -77,7 +77,7 @@ impl Server {
         let producer = fluvio
             .topic_producer(client_error_channel)
             .await
-            .expect("[send_client_error]: Failed to create a producer");
+            .expect("[QDGW/utils_fluvio::get_channel_producer]: Failed to create a producer");
 
         Ok(producer)
     }
@@ -108,7 +108,7 @@ impl Server {
         // Get the producer for the error channel
         let producer = client_data_producers
             .get(&client_id)
-            .expect("No producer found");
+            .expect("[QDGW/utils_fluvio::send_single_data]: No producer found");
 
         // Send the data
         match producer.send(RecordKey::NULL, buffer).await {
@@ -122,7 +122,7 @@ impl Server {
         }
 
         // Flush the producer
-        producer.flush().await.expect("Failed to flush");
+        producer.flush().await.expect("[QDGW/utils_fluvio::send_single_data]: Failed to flush");
 
         Ok(())
     }
@@ -153,7 +153,7 @@ impl Server {
         // Get the producer for the error channel
         let producer = client_data_producers
             .get(&client_id)
-            .expect("No producer found");
+            .expect("[QDGW/utils_fluvio::send_bulk_trade_data]: No producer found");
 
         for bar in data_bars.to_vec() {
             // Encode bar message
@@ -180,7 +180,7 @@ impl Server {
         }
 
         // Flush out the producer
-        producer.flush().await.expect("Failed to flush");
+        producer.flush().await.expect("[QDGW/utils_fluvio::send_bulk_trade_data]: Failed to flush");
 
         Ok(())
     }
@@ -211,7 +211,7 @@ impl Server {
         // Get the producer for the error channel
         let producer = client_data_producers
             .get(&client_id)
-            .expect("No producer found");
+            .expect("[QDGW/utils_fluvio::send_bulk_ohlcv_data]: No producer found");
 
         // Send all trade bars to the client
         for bar in ohlcv_bars.to_vec() {
@@ -239,7 +239,7 @@ impl Server {
         }
 
         // Flush out the producer
-        producer.flush().await.expect("Failed to flush");
+        producer.flush().await.expect("[QDGW/utils_fluvio::send_bulk_ohlcv_data]: Failed to flush");
 
         Ok(())
     }
