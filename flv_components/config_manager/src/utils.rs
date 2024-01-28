@@ -48,7 +48,7 @@ pub(crate) fn get_env_type() -> EnvironmentType {
         "CLUSTER" => EnvironmentType::Cluster,
         _ => {
             panic!(
-                "Unknown environment type: {}. Environment can only be Local or Cluster",
+                "[ConfigManager]: Unknown environment type: {}. Environment can only be Local or Cluster",
                 env_var
             );
         }
