@@ -33,7 +33,7 @@ impl ClientManager {
         match self.get_client_config(id) {
             Ok(client_config) => Ok(client_config.control_channel().clone()),
             Err(_) => Err(MessageClientConfigError(format!(
-                "Client id {} does not exist",
+                "[ClientManager]: Client id {} does not exist",
                 id
             ))),
         }
@@ -70,7 +70,7 @@ impl ClientManager {
         match self.get_client_config(id) {
             Ok(client_config) => Ok(client_config.data_channel().clone()),
             Err(_) => Err(MessageClientConfigError(format!(
-                "Client id {} does not exist",
+                "[ClientManager]: Client id {} does not exist",
                 id
             ))),
         }
@@ -110,7 +110,7 @@ impl ClientManager {
         match self.get_client_config(id) {
             Ok(client_config) => Ok(client_config.execution_channel().clone()),
             Err(_) => Err(MessageClientConfigError(format!(
-                "Client id {} does not exist",
+                "[ClientManager]: Client id {} does not exist",
                 id
             ))),
         }
@@ -150,7 +150,7 @@ impl ClientManager {
         match self.get_client_config(id) {
             Ok(client_config) => Ok(client_config.heartbeat_channel().clone()),
             Err(_) => Err(MessageClientConfigError(format!(
-                "Client id {} does not exist",
+                "[ClientManager]: Client id {} does not exist",
                 id
             ))),
         }
