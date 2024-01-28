@@ -80,7 +80,7 @@ async fn main() {
     // Borrow checker problem due to lifeline:
     //
     //  ^^^^^^^^ borrowed value does not live long enough
-    let causaloid = model::get_main_causaloid(&context);
+    let causaloid = model::build_main_causaloid(&context);
 
     // argument requires that `context` is borrowed for `'static`
     let model = model::build_causal_model(&context, causaloid);

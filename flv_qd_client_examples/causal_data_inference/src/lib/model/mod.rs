@@ -61,7 +61,7 @@ pub fn build_causal_model<'l>(
 ///
 /// Additional causaloid nodes can be added to the graph as needed.
 ///
-pub fn get_main_causaloid<'l>(context: &'l CustomContext<'l>) -> CustomCausaloid<'l> {
+pub fn build_main_causaloid<'l>(context: &'l CustomContext<'l>) -> CustomCausaloid<'l> {
     let mut g = CausaloidGraph::new();
 
     // Add the root causaloid to the causaloid graph
