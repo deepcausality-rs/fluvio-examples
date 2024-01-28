@@ -4,12 +4,13 @@ use config_manager::ConfigManager;
 use db_query_manager::QueryDBManager;
 use deep_causality::prelude::TimeScale;
 use lib_inference::prelude::channel_handler::MessageHandler;
-use lib_inference::prelude::{build_context, load_data, model, SampledDataBars};
+use lib_inference::prelude::{build_context, load_data, SampledDataBars};
 use qd_client::QDClient;
 use std::sync::Arc;
 use std::time::Duration;
 use symbol_manager::SymbolManager;
 use tokio::time::sleep;
+use lib_inference::model::build_model;
 
 const EXAMPLE: &'static str = "Causal Data Inference";
 
@@ -155,8 +156,8 @@ async fn spawn_data_handler(client_config: MessageClientConfig, data: SampledDat
         //
         let context = build_context::build_time_data_context(&data, &TimeScale::Month, 50)
             .expect("[main]:  to build context");
-        let causaloid = model::build_main_causaloid(&context);
-        let model = Arc::new(model::build_causal_model(&context, causaloid));
+        let causaloid = build_model::build_main_causaloid(&context);
+        let model = Arc::new(build_model::build_causal_model(&context, causaloid));
         let handler = MessageHandler::new(data_topic, model);
 
         if let Err(e) = handler.run_inference().await {
