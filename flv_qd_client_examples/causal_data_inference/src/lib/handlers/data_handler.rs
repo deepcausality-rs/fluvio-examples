@@ -4,6 +4,8 @@ use rust_decimal::prelude::ToPrimitive;
 use sbe_messages::prelude::{FirstTradeBar, LastTradeBar, MessageType, SbeTradeBar};
 use std::error::Error;
 
+const FN_NAME: &'static str = "data_handler/handle_message_inference";
+
 impl<'l> MessageHandler<'l> {
     /// Handles an incoming data message by running inference.
     ///
@@ -22,10 +24,7 @@ impl<'l> MessageHandler<'l> {
     ///
     /// Returns any error from the inference function.
     ///
-    pub fn handle_data_message_inference(
-        &self,
-        message: Vec<u8>,
-    ) -> Result<(), Box<dyn Error + Send>> {
+    pub fn handle_message_inference(&self, message: Vec<u8>) -> Result<(), Box<dyn Error + Send>> {
         // The third byte of the buffer is always the message type.
         let message_type = MessageType::from(message[2] as u16);
 
@@ -33,7 +32,7 @@ impl<'l> MessageHandler<'l> {
             // Handle first trade bar
             MessageType::FirstTradeBar => {
                 let first_trade_bar = FirstTradeBar::from(message.as_slice());
-                println!("Data stream Starts: {:?}", first_trade_bar);
+                println!("{FN_NAME}: Data stream Starts: {:?}", first_trade_bar);
             }
 
             // Handle actual trade bar with data
@@ -49,7 +48,7 @@ impl<'l> MessageHandler<'l> {
                     .causaloid()
                     .verify_single_cause(&price)
                     .unwrap_or_else(|e| {
-                        println!("Error: {}", e);
+                        println!("{FN_NAME}: {}", e);
                         false
                     });
 
@@ -62,7 +61,7 @@ impl<'l> MessageHandler<'l> {
             // Handle last trade bar
             MessageType::LastTradeBar => {
                 let last_trade_bar = LastTradeBar::from(message.as_slice());
-                println!("Data stream stops:{:?}", last_trade_bar);
+                println!("{FN_NAME}: Data stream stops:{:?}", last_trade_bar);
             }
             // Ignore all other message types
             _ => {}

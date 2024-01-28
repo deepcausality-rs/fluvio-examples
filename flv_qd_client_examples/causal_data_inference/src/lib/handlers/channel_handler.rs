@@ -4,6 +4,7 @@ use futures::stream::StreamExt;
 use std::error::Error;
 use std::sync::Arc;
 
+const FN_NAME: &'static str = "message_handler/run_inference";
 
 pub struct MessageHandler<'l> {
     channel_topic: String,
@@ -11,10 +12,7 @@ pub struct MessageHandler<'l> {
 }
 
 impl<'l> MessageHandler<'l> {
-    pub fn new(
-        channel_topic: String,
-        model: Arc<CustomModel<'l>>,
-    ) -> Self {
+    pub fn new(channel_topic: String, model: Arc<CustomModel<'l>>) -> Self {
         Self {
             channel_topic,
             model,
@@ -40,10 +38,10 @@ impl<'l> MessageHandler<'l> {
             let message = record.get_value().to_vec();
 
             // Process the record and apply causal model
-            match self.handle_data_message_inference(message) {
+            match self.handle_message_inference(message) {
                 Ok(_) => {}
                 Err(e) => {
-                    println!("Error processing record: {}", e);
+                    println!("{FN_NAME}: Error processing record: {}", e);
                     return Err(e);
                 }
             }
