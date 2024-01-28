@@ -5,8 +5,7 @@ mod query_trades;
 mod query_utils;
 
 use common::prelude::DBConfig;
-use tokio_postgres::{Client, Connection, NoTls, Socket};
-use tokio_postgres::tls::NoTlsStream;
+use tokio_postgres::{Client, NoTls};
 
 pub struct QueryDBManager {
     client: Client,
