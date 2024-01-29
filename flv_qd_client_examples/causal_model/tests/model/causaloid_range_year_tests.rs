@@ -5,7 +5,7 @@ use client_utils::data_utils;
 use common::prelude::{ExchangeID, ServiceID};
 use config_manager::ConfigManager;
 use deep_causality::prelude::{
-    Contextuable, ContextuableGraph, Identifiable, Temporable, TimeScale,
+    Contextuable, ContextuableGraph, Identifiable, TimeScale,
 };
 use std::env;
 
@@ -43,7 +43,7 @@ async fn test_current_year_index() {
 
     let current_year_index = causaloid.context().unwrap().get_current_year_index();
     assert!(current_year_index.is_some());
-    assert_eq!(current_year_index, Some(&1));
+    assert_eq!(current_year_index, Some(&2));
 }
 
 #[tokio::test]
@@ -55,16 +55,13 @@ async fn test_current_year_node() {
 
     let current_year_index = causaloid.context().unwrap().get_current_year_index();
     assert!(current_year_index.is_some());
-    assert_eq!(current_year_index, Some(&1));
+    assert_eq!(current_year_index, Some(&2));
 
-    let year_node = causaloid.context().unwrap().get_node(1);
+    let current_year_index = current_year_index.unwrap();
+    let year_node = causaloid.context().unwrap().get_node(*current_year_index);
     assert!(year_node.is_some());
 
     let year_node = year_node.unwrap();
-    let tempoid = year_node.vertex_type().tempoid();
-    assert!(tempoid.is_some());
-
-    let tempoid = tempoid.unwrap();
-    assert_eq!(tempoid.time_unit(), &2023);
-    assert_eq!(tempoid.time_scale(), &TimeScale::Year);
+    let data = year_node.vertex_type().dataoid();
+    assert!(data.is_some());
 }

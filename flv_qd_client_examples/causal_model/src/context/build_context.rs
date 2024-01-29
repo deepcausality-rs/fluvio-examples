@@ -67,44 +67,45 @@ pub fn build_time_data_context<'l>(
     let time_scale = TimeScale::Year;
     let elements = data.year_bars();
     for data_bar in elements {
+        // Get current year from bar
         let year = data_bar.date_time().year();
 
-        //
+        // Augment OHLCV bar with time and data nodes
         let (tempoid, dataoid) =
             context_utils::convert_ohlcv_bar_to_augmented(data_bar, time_scale);
 
-        // Create new time node
+        // Create year time node
         let key = counter.increment_and_get();
         let time_node = Contextoid::new(key, ContextoidType::Tempoid(tempoid));
-        let year_index = g.add_node(time_node);
+        let year_time_index = g.add_node(time_node);
 
-        // Set index of current year
-        // Set index of previous year if current month is not the first year
+        // Create year data node
+        let data_id = counter.increment_and_get();
+        let data_node = Contextoid::new(data_id, ContextoidType::Datoid(dataoid));
+        let year_data_index = g.add_node(data_node);
 
+        // Set index of data for current year
+        // Set index of previous year if current year is not the first year
+        //
         // Unwrap is safe because current year has been initialized to zero at the beginning of the function
         let current_year_index = *g.get_current_year_index().unwrap();
 
-        if current_year_index != year_index {
+        if current_year_index != year_data_index {
             let prev_year_index = g.get_current_year_index().unwrap();
-
             g.set_previous_year_index(*prev_year_index);
-            g.set_current_year_index(year_index);
+
+            g.set_current_year_index(year_data_index);
         } else {
             // Set just index of current and previous year if current year is the first year
-            g.set_current_year_index(year_index);
+            g.set_current_year_index(year_data_index);
         }
 
-        // Create new data node
-        let data_id = counter.increment_and_get();
-        let data_node = Contextoid::new(data_id, ContextoidType::Datoid(dataoid));
-        let data_index = g.add_node(data_node);
-
         // link root to year
-        g.add_edge(root_index, year_index, RelationKind::Temporal)
+        g.add_edge(root_index, year_time_index, RelationKind::Temporal)
             .expect("Failed to add edge between root and year.");
 
         // link data to year
-        g.add_edge(data_index, year_index, RelationKind::Datial)
+        g.add_edge(year_data_index, year_time_index, RelationKind::Datial)
             .expect("Failed to add edge between year and data");
 
         if !add_month {
@@ -115,45 +116,48 @@ pub fn build_time_data_context<'l>(
         let time_scale = TimeScale::Month;
         let elements = data.month_bars();
         for data_bar in elements {
+            //
+            // Skip bars that are not in current year
             if data_bar.date_time().year() != year {
                 continue;
             }
 
+            // Augment OHLCV bar with time and data nodes
             let (tempoid, dataoid) =
                 context_utils::convert_ohlcv_bar_to_augmented(data_bar, time_scale);
-
-            // Add Month
-            let key = counter.increment_and_get();
-            let time_node = Contextoid::new(key, ContextoidType::Tempoid(tempoid));
-            let month_index = g.add_node(time_node);
-
-            // Set index of current month
-            // Set index of previous month if current month is not the first month
-
-            // Unwrap is safe because current month has been initialized to zero at the beginning of the function
-            let current_month_index = *g.get_current_month_index().unwrap();
-
-            if current_month_index != month_index {
-                let prev_month_index = g.get_current_month_index().unwrap();
-
-                g.set_previous_month_index(*prev_month_index);
-                g.set_current_month_index(month_index);
-            } else {
-                // Set index of current and previous month if current month is the first month
-                g.set_current_month_index(month_index);
-            }
 
             // Add data
             let data_id = counter.increment_and_get();
             let data_node = Contextoid::new(data_id, ContextoidType::Datoid(dataoid));
-            let data_index = g.add_node(data_node);
+            let month_data_index = g.add_node(data_node);
+
+            // Add Month
+            let key = counter.increment_and_get();
+            let time_node = Contextoid::new(key, ContextoidType::Tempoid(tempoid));
+            let month_time_index = g.add_node(time_node);
+
+            // Set index of data from current month
+            // Set index of previous month if current month is not the first month
+            //
+            // Unwrap is safe because current month has been initialized to zero at the beginning of the function
+            let current_month_index = *g.get_current_month_index().unwrap();
+
+            if current_month_index != month_data_index {
+                let prev_month_index = g.get_current_month_index().unwrap();
+
+                g.set_previous_month_index(*prev_month_index);
+                g.set_current_month_index(month_data_index);
+            } else {
+                // Set index of current and previous month if current month is the first month
+                g.set_current_month_index(month_data_index);
+            }
 
             // link month to year
-            g.add_edge(month_index, year_index, RelationKind::Temporal)
+            g.add_edge(month_time_index, year_time_index, RelationKind::Temporal)
                 .expect("Failed to add edge between month and year.");
 
             // link data to month
-            g.add_edge(data_index, month_index, RelationKind::Datial)
+            g.add_edge(month_data_index, month_time_index, RelationKind::Datial)
                 .expect("Failed to add edge between month and data.");
         } // end month
     } // end year
