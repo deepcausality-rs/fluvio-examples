@@ -134,7 +134,7 @@ async fn spawn_data_handler(client_config: MessageClientConfig, data: SampledDat
         // internally to store the context, which may grow large if the dataset is large.
         //
         let context = build_context::build_time_data_context(&data, &TimeScale::Month, 10)
-            .expect("[main]:  to build context");
+            .expect("[main]: Failed to build context");
         let causaloid = build_model::build_main_causaloid(&context);
         let model = Arc::new(build_model::build_causal_model(&context, causaloid));
         let handler = MessageHandler::new(data_topic, model);

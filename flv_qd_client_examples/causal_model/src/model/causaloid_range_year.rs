@@ -34,7 +34,7 @@ use crate::types::alias::{CustomCausaloid, CustomContext};
 ///
 /// The context is used to lookup the previous day's data via the Indexable trait.
 ///
-pub(crate) fn get_year_causaloid<'l>(
+pub fn get_year_causaloid<'l>(
     context: &'l CustomContext<'l>,
     id: IdentificationValue,
 ) -> CustomCausaloid<'l> {

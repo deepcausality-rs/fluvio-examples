@@ -5,15 +5,13 @@ use config_manager::ConfigManager;
 use deep_causality::prelude::{ContextuableGraph, Identifiable, TimeScale};
 use std::env;
 
-const EXCHANGE_ID: ExchangeID = ExchangeID::Kraken;
-
-const JTO_EUR: u16 = 708; // JPY in EUR 2420 trades ~ 1 months
+const JTO_EUR: u16 = 708; // JTO in EUR 2420 trades ~ 1 months
 
 async fn get_data() -> SampledDataBars {
     env::set_var("ENV", "Local");
 
     let cfg_manager = async { ConfigManager::new(ServiceID::Default) }.await;
-    let exchange_id = EXCHANGE_ID;
+    let exchange_id = ExchangeID::Kraken;
     let symbol_id = JTO_EUR;
     let data = data_utils::load_data(&cfg_manager, symbol_id, exchange_id)
         .await
