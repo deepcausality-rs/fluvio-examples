@@ -28,7 +28,7 @@ members = [
 edition = "2021"
 rust-version = "1.75"
 readme = "README.md"
-repository = "https://github.com/marvin-hansen/quant-engine"
+repository = "https://github.com/marvin-hansen/fluvio-examples"
 authors = ["Marvin Hansen <marvin.hansen@gmail.com>"]
 
 

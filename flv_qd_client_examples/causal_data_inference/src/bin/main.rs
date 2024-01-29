@@ -1,14 +1,12 @@
 use client_utils::{handle_error_utils, handle_utils, print_utils};
 use common::prelude::{ExchangeID, MessageClientConfig, ServiceID};
 use config_manager::ConfigManager;
-use db_query_manager::QueryDBManager;
 use deep_causality::prelude::TimeScale;
 use lib_inference::prelude::channel_handler::MessageHandler;
 use lib_inference::prelude::{build_context, load_data, SampledDataBars};
 use qd_client::QDClient;
 use std::sync::Arc;
 use std::time::Duration;
-use symbol_manager::SymbolManager;
 use tokio::time::sleep;
 use lib_inference::model::build_model;
 
@@ -44,39 +42,16 @@ async fn main() {
 
     println!("{FN_NAME}: Creating a new ConfigManager.");
     let cfg_manager = async { ConfigManager::new(ServiceID::Default) }.await;
-    let default_exchange = cfg_manager.default_exchange();
-    let exchanges = cfg_manager.exchanges_id_names().to_owned();
-    let exchange_symbol_table = cfg_manager
-        .get_symbol_table(default_exchange)
-        .expect("[main]: Failed to get symbol table for default exchange.");
-
-    println!("{FN_NAME}: Creating a new QueryDBManager.");
-    let db_config = cfg_manager.db_config();
-    let mut db_query_manager = QueryDBManager::new(db_config.clone())
-        .await
-        .expect("[main]: Failed to create QueryDBManager instance.");
-
-    println!("{FN_NAME}: Get all symbols for the default exchange.");
-    let symbols = db_query_manager
-        .get_all_symbols_with_ids(&exchange_symbol_table)
-        .await
-        .expect("[main]: Failed to get all symbols for SymbolManager.");
-
-    println!("{FN_NAME}: Creating a new SymbolManager.");
-    let mut symbol_manager = SymbolManager::new(symbols, exchanges)
-        .expect("[main]: Failed to create SymbolManager instance.");
-
-    let exchange_id = EXCHANGE_ID;
-    let symbol_id = JTO_EUR;
-
-    let symbol_table_name = symbol_manager
-        .get_symbol_table_name(exchange_id as u16, symbol_id)
-        .expect("[main]: Failed to get symbol table name");
 
     println!("{FN_NAME}: Load Data");
-    let data = load_data::load_data(&mut db_query_manager, symbol_id, &symbol_table_name)
+    let exchange_id = EXCHANGE_ID;
+    let symbol_id = JTO_EUR;
+    let data = load_data::load_data(&cfg_manager, symbol_id, exchange_id)
         .await
         .expect("[main]: Failed to load data.");
+
+    let y_len = data.year_bars().len();
+    println!("{FN_NAME}: Loaded Data for {y_len} years.");
 
     let m_len = data.month_bars().len();
     println!("{FN_NAME}: Loaded Data for {m_len} months.");
@@ -95,11 +70,11 @@ async fn main() {
     println!("{FN_NAME}: Start the data handler");
     spawn_data_handler(client_config.clone(), data).await;
 
-    println!("{FN_NAME}: Send start streaming message for symbol id: {symbol_id}",);
-    client
-        .start_trade_data(exchange_id, symbol_id)
-        .await
-        .expect("Failed to send start trade data message");
+    // println!("{FN_NAME}: Send start streaming message for symbol id: {symbol_id}",);
+    // client
+    //     .start_trade_data(exchange_id, symbol_id)
+    //     .await
+    //     .expect("Failed to send start trade data message");
 
     println!("{FN_NAME}: Wait a moment to let the data stream complete...");
     sleep(Duration::from_secs(1)).await;

@@ -68,13 +68,13 @@ pub(crate) fn get_year_causaloid<'l>(
         // Get the node for the current year.
         let year = ctx
             .get_node(year_index)
-            .expect("node for current month not found");
+            .expect("node for current year not found");
 
         // Get the range of the current year.
         let year_range = year
             .vertex_type()
             .dataoid()
-            .expect("Failed to get data out of year node");
+            .expect("Failed to get data out of the current year node");
 
         // closure that captures the context within the causal function.
         let check_price_above_year_open =
@@ -86,6 +86,7 @@ pub(crate) fn get_year_causaloid<'l>(
         } else {
             Ok(false)
         }
+
     }
 
     Causaloid::new_with_context(id, contextual_causal_fn, Some(context), description)
