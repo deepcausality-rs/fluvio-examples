@@ -1,7 +1,7 @@
 // Context
 pub use crate::context;
 // Extensions
-pub use crate::extensions::indexable;
+pub use crate::extensions::time_indexable;
 // Model
 pub use crate::model;
 // Protocols

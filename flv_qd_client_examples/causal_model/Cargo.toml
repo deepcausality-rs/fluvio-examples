@@ -15,9 +15,12 @@ path = "src/mod.rs"
 
 [dependencies]
 # Intrnal crates
+client_utils = { workspace = true }
 common = { workspace = true }
+config_manager = { workspace = true }
 
 # External crates
-chrono = {workspace = true}
-deep_causality =  {workspace = true}
-rust_decimal = {workspace = true}
+chrono = { workspace = true }
+deep_causality = { workspace = true }
+rust_decimal = { workspace = true }
+tokio = { workspace = true }

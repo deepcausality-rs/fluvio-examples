@@ -25,8 +25,8 @@ use crate::types::range_data::RangeData;
 /// These methods are defined in the inedexable trait and added as a type extension.
 /// See the following files for details:
 ///
-/// - flv_qd_client_examples/causal_data_inference/src/lib/protocols/indexable.rs
-/// - flv_qd_client_examples/causal_data_inference/src/lib/extensions/indexable.rs
+/// - flv_qd_client_examples/causal_data_inference/src/lib/protocols/time_indexable
+/// - flv_qd_client_examples/causal_data_inference/src/lib/extensions/time_indexable
 ///
 /// This provides easy access to the special nodes in the hierarchy
 /// that track the current and previous year and month.

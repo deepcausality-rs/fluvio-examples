@@ -8,7 +8,7 @@ use crate::types::alias::CustomContext;
 /// the current and previous year and month indices.
 ///
 /// The default implementation of [`TimeIndexable`] is located in:
-/// lib/protocols/indexable.rs
+/// lib/protocols/time_indexable
 ///
 /// # Example
 ///
