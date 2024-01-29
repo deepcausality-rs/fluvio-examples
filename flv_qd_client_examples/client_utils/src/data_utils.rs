@@ -31,7 +31,7 @@ const FN_NAME: &'static str = "workflow/load_data";
 /// use common::prelude::{ExchangeID, ServiceID};
 /// use config_manager::ConfigManager;
 ///
-/// async fn main(){
+/// async fn test(){
 ///
 /// use client_utils::data_utils::load_data;
 /// let cfg_manager = ConfigManager::new(ServiceID::Default);

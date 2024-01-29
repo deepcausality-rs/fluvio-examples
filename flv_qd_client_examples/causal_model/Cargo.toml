@@ -10,7 +10,7 @@ authors.workspace = true
 
 [lib]
 name = "causal_model"
-path = "src/lib/mod.rs"
+path = "src/mod.rs"
 
 
 [dependencies]
