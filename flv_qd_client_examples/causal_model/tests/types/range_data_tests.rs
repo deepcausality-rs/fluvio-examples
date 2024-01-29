@@ -1,5 +1,5 @@
-use deep_causality::prelude::Identifiable;
 use causal_model::prelude::{BarRange, RangeData, Rangeable};
+use deep_causality::prelude::Identifiable;
 use rust_decimal::Decimal;
 
 #[test]
