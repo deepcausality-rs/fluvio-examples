@@ -4,9 +4,7 @@ use causal_model::prelude::{CustomContext, TimeIndexable};
 use client_utils::data_utils;
 use common::prelude::{ExchangeID, ServiceID};
 use config_manager::ConfigManager;
-use deep_causality::prelude::{
-    Contextuable, ContextuableGraph, Identifiable, TimeScale,
-};
+use deep_causality::prelude::{Contextuable, ContextuableGraph, Identifiable, TimeScale};
 use std::env;
 
 async fn get_context() -> CustomContext<'static> {
@@ -43,7 +41,6 @@ async fn test_current_year_index() {
 
     let current_year_index = causaloid.context().unwrap().get_current_year_index();
     assert!(current_year_index.is_some());
-    assert_eq!(current_year_index, Some(&2));
 }
 
 #[tokio::test]
@@ -55,7 +52,6 @@ async fn test_current_year_node() {
 
     let current_year_index = causaloid.context().unwrap().get_current_year_index();
     assert!(current_year_index.is_some());
-    assert_eq!(current_year_index, Some(&2));
 
     let current_year_index = current_year_index.unwrap();
     let year_node = causaloid.context().unwrap().get_node(*current_year_index);

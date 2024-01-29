@@ -39,7 +39,7 @@ use rust_decimal::Decimal;
 /// This allows creating a Causaloid to detect potential monthly breakouts in a simple way.
 /// The context handles looking up the required data dynamically.
 ///
-pub(crate) fn get_month_causaloid<'l>(
+pub fn get_month_causaloid<'l>(
     context: &'l CustomContext<'l>,
     id: IdentificationValue,
 ) -> CustomCausaloid<'l> {
