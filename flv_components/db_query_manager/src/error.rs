@@ -1,4 +1,5 @@
 use common::prelude::ValidationError;
+use std::error::Error;
 use std::fmt;
 
 /// Custom error type for DB query errors
@@ -9,6 +10,8 @@ pub enum QueryError {
     EmptyTableName(ValidationError),
     TableNameTooLong(ValidationError),
 }
+
+impl Error for QueryError {}
 
 impl fmt::Display for QueryError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {

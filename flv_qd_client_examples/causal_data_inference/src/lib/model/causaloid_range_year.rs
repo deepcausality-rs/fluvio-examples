@@ -86,7 +86,6 @@ pub(crate) fn get_year_causaloid<'l>(
         } else {
             Ok(false)
         }
-
     }
 
     Causaloid::new_with_context(id, contextual_causal_fn, Some(context), description)

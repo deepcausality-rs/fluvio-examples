@@ -2,13 +2,13 @@ use client_utils::{handle_error_utils, handle_utils, print_utils};
 use common::prelude::{ExchangeID, MessageClientConfig, ServiceID};
 use config_manager::ConfigManager;
 use deep_causality::prelude::TimeScale;
+use lib_inference::model::build_model;
 use lib_inference::prelude::channel_handler::MessageHandler;
 use lib_inference::prelude::{build_context, load_data, SampledDataBars};
 use qd_client::QDClient;
 use std::sync::Arc;
 use std::time::Duration;
 use tokio::time::sleep;
-use lib_inference::model::build_model;
 
 const EXAMPLE: &'static str = "Causal Data Inference";
 
@@ -51,10 +51,10 @@ async fn main() {
         .expect("[main]: Failed to load data.");
 
     let y_len = data.year_bars().len();
-    println!("{FN_NAME}: Loaded Data for {y_len} years.");
+    println!("{FN_NAME}: Loaded Data for {y_len} year(s).");
 
     let m_len = data.month_bars().len();
-    println!("{FN_NAME}: Loaded Data for {m_len} months.");
+    println!("{FN_NAME}: Loaded Data for {m_len} month(s).");
 
     println!("{FN_NAME}: Build Client config for client ID: {CLIENT_ID}",);
     let client_config = MessageClientConfig::new(CLIENT_ID);

@@ -46,7 +46,7 @@ impl<'l> MessageHandler<'l> {
                 let res = self
                     .model
                     .causaloid()
-                    .verify_all_causes(&[price, price],None)
+                    .verify_all_causes(&[price, price], None)
                     .unwrap_or_else(|e| {
                         println!("{FN_NAME}: {}", e);
                         false
