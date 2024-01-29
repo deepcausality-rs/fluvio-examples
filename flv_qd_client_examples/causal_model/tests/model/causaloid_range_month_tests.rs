@@ -75,7 +75,6 @@ async fn test_previous_month_index() {
     // assert!(month_node.is_some());
 }
 
-
 #[tokio::test]
 async fn test_previous_month_node() {
     let context = get_context().await;

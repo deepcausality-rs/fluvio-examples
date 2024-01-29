@@ -5,11 +5,11 @@ mod query_trades;
 mod query_utils;
 
 use common::prelude::DBConfig;
-use tokio_postgres::{Client, NoTls};
+use deadpool_postgres::{Config, CreatePoolError, ManagerConfig, Pool, RecyclingMethod, Runtime};
+use tokio_postgres::NoTls;
 
 pub struct QueryDBManager {
-    client: Client,
-    // connection: Connection<Socket, NoTlsStream>
+    pool: Pool,
 }
 
 impl QueryDBManager {
@@ -40,23 +40,21 @@ impl QueryDBManager {
     /// }
     /// ```
     ///
-    pub async fn new(db_config: DBConfig) -> Result<Self, tokio_postgres::Error> {
-        // Extract connection string.
-        let params = db_config.pg_connection_string();
+    pub async fn new(db_config: DBConfig) -> Result<Self, CreatePoolError> {
 
-        // Connect to the database.
-        let (client, connection) = tokio_postgres::connect(&params, NoTls)
-            .await
-            .expect("[QueryDBManager]: Failed to connect to QuestDB");
+        // Configure the connection pool
+        let mut cfg = Config::new();
+        cfg.host = Some(db_config.host().to_string());
+        cfg.dbname = Some(db_config.pg_database().to_string());
+        cfg.user = Some(db_config.pg_user().to_string());
+        cfg.password = Some(db_config.pg_password().to_string());
+        cfg.manager = Some(ManagerConfig { recycling_method: RecyclingMethod::Fast });
 
-        // The connection object performs the actual communication with the database, so spawn it off to run on its own.
-        tokio::spawn(async move {
-            if let Err(e) = connection.await {
-                eprintln!("[QueryDBManager]: Connection lost to QuestDB: {}", e);
-            }
-        });
-
-        Ok(Self { client })
+        // Create new QueryDBManager with the configured connection pool.
+        return match cfg.create_pool(Some(Runtime::Tokio1), NoTls) {
+            Ok(pool) => Ok(Self { pool }),
+            Err(e) => Err(e),
+        };
     }
 }
 
@@ -77,15 +75,24 @@ impl QueryDBManager {
     ///  let db_config =  DBConfig::new(9009, "0.0.0.0".into());
     /// let query_manager = QueryDBManager::new(db_config).await.expect("Failed to create db connection");
     ///
-    /// if query_manager.is_close().await {
-    ///         println!("Connection is closed: {}", query_manager.is_close().await);
+    /// let open = query_manager.is_close().await;
+    ///
+    /// if open{
+    ///         println!("Connection is closed: {}", open);
     /// } else {
-    ///     // Connection is open
+    ///     println!("Connection is open: {}", open);
     /// }
     /// }
     /// ```
     ///
     pub async fn is_close(&self) -> bool {
-        self.client.is_closed()
+        // Get a client from the connection pool
+        let client = self
+            .pool
+            .get()
+            .await
+            .expect("[QueryDBManager/is_close]: Failed to get client from connection pool");
+
+        client.is_closed()
     }
 }

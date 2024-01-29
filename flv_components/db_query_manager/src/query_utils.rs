@@ -18,7 +18,13 @@ impl QueryDBManager {
         &mut self,
         query: &str,
     ) -> Result<Vec<tokio_postgres::Row>, tokio_postgres::Error> {
-        self.client.query(query, &[]).await
+        let client = self
+            .pool
+            .get()
+            .await
+            .expect("[QueryDBManager/query]: Failed to get client from connection pool");
+
+        client.query(query, &[]).await
     }
 
     /// Builds a SQL query to get all symbol IDs and symbols from a symbol table.

@@ -7,6 +7,12 @@ const BUFFER_SIZE: usize = 50_000;
 
 /// Configuration for the QuestDB database.
 /// Requires both, ILP and Postgres connection parameters.
+/// Default ports are used for the ILP and Postgres connections.
+///
+/// * ILP: 9009
+/// * Postgres Wire: 8812
+///
+/// https://questdb.io/docs/develop/connect/
 #[derive(Debug, Eq, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DBConfig {
     /// ILP ort number to connect to at the server host. The default port for the line protocol is 9009.
@@ -52,6 +58,8 @@ impl DBConfig {
             port,
             host,
             buffer_size: BUFFER_SIZE,
+            // Default Postgres authentication parameters.
+            // https://questdb.io/docs/develop/connect/
             pg_user: "admin".to_string(),
             pg_password: "quest".to_string(),
             pg_database: "qdb".to_string(),

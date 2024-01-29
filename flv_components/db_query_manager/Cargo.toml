@@ -18,6 +18,7 @@ path = "src/lib.rs"
 common = { workspace = true }
 # External crates
 chrono = { workspace = true }
+deadpool-postgres = { workspace = true }
 rust_decimal = { workspace = true }
 tokio-postgres =  { workspace = true }
 tokio = { workspace = true }

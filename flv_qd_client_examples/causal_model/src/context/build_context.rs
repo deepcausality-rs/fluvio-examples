@@ -90,7 +90,6 @@ pub fn build_time_data_context<'l>(
 
             if current_year_index != prev_year_index {
                 g.set_previous_year_index(prev_year_index);
-
             }
 
             g.set_current_year_index(year_data_index);
@@ -141,9 +140,7 @@ pub fn build_time_data_context<'l>(
             let current_month_index = *g.get_current_month_index().unwrap_or_else(|| &0);
 
             if current_month_index != month_data_index {
-                let prev_month_index = *g
-                    .get_current_month_index()
-                    .unwrap_or_else(|| &0);
+                let prev_month_index = *g.get_current_month_index().unwrap_or_else(|| &0);
 
                 if current_month_index != prev_month_index {
                     g.set_previous_month_index(prev_month_index);
