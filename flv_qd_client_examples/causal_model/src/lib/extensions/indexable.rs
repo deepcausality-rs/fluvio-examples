@@ -13,7 +13,7 @@ use crate::types::alias::CustomContext;
 /// # Example
 ///
 /// ```
-/// use lib_inference::prelude::{CustomContext, TimeIndexable};
+/// use causal_model::prelude::{CustomContext, TimeIndexable};
 ///
 /// let mut context = CustomContext::with_capacity(1,"TestContext", 10);
 ///
