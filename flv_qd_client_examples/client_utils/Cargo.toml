@@ -11,7 +11,11 @@ authors.workspace = true
 
 [dependencies]
 # Internal dependencies
+common = { workspace = true }
+config_manager = { workspace = true }
+db_query_manager = { workspace = true }
 sbe_messages = { workspace = true }
+symbol_manager = { workspace = true }
 # External crates
 futures = {workspace = true}
 fluvio = { workspace = true }

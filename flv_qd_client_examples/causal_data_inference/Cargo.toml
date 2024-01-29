@@ -23,11 +23,8 @@ path = "src/lib/mod.rs"
 common = { workspace = true }
 config_manager = { workspace = true }
 client_utils = { workspace = true }
-db_query_manager = { workspace = true }
-db_specs = { workspace = true }
 qd_client = { workspace = true }
 sbe_messages = { workspace = true }
-symbol_manager = { workspace = true }
 # External crates
 async-trait = {workspace = true}
 chrono = {workspace = true}

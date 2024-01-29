@@ -1,8 +1,9 @@
-use crate::prelude::{CustomContext, SampledDataBars, TimeIndexable};
+use crate::prelude::{CustomContext, TimeIndexable};
 use crate::utils::counter;
 use crate::utils::time_utils;
 use crate::workflow::augment_data;
 use chrono::Datelike;
+use common::prelude::SampledDataBars;
 use deep_causality::prelude::{
     Context, Contextoid, ContextoidType, ContextuableGraph, RelationKind, Root, TimeScale,
 };

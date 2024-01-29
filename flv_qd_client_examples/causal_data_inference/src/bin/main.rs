@@ -1,10 +1,10 @@
-use client_utils::{handle_error_utils, handle_utils, print_utils};
-use common::prelude::{ExchangeID, MessageClientConfig, ServiceID};
+use client_utils::{data_utils, handle_error_utils, handle_utils, print_utils};
+use common::prelude::{ExchangeID, MessageClientConfig, SampledDataBars, ServiceID};
 use config_manager::ConfigManager;
 use deep_causality::prelude::TimeScale;
 use lib_inference::model::build_model;
+use lib_inference::prelude::build_context;
 use lib_inference::prelude::channel_handler::MessageHandler;
-use lib_inference::prelude::{build_context, load_data, SampledDataBars};
 use qd_client::QDClient;
 use std::sync::Arc;
 use std::time::Duration;
@@ -46,15 +46,11 @@ async fn main() {
     println!("{FN_NAME}: Load Data");
     let exchange_id = EXCHANGE_ID;
     let symbol_id = JTO_EUR;
-    let data = load_data::load_data(&cfg_manager, symbol_id, exchange_id)
+    let data = data_utils::load_data(&cfg_manager, symbol_id, exchange_id)
         .await
         .expect("[main]: Failed to load data.");
 
-    let y_len = data.year_bars().len();
-    println!("{FN_NAME}: Loaded Data for {y_len} year(s).");
-
-    let m_len = data.month_bars().len();
-    println!("{FN_NAME}: Loaded Data for {m_len} month(s).");
+    print_data_summary(&data);
 
     println!("{FN_NAME}: Build Client config for client ID: {CLIENT_ID}",);
     let client_config = MessageClientConfig::new(CLIENT_ID);
@@ -139,4 +135,12 @@ async fn spawn_data_handler(client_config: MessageClientConfig, data: SampledDat
             eprintln!("{FN_NAME}: Data processing error: {}", e);
         }
     });
+}
+
+fn print_data_summary(data: &SampledDataBars) {
+    let y_len = data.year_bars().len();
+    println!("{FN_NAME}: Loaded Data for {y_len} year(s).");
+
+    let m_len = data.month_bars().len();
+    println!("{FN_NAME}: Loaded Data for {m_len} month(s).");
 }

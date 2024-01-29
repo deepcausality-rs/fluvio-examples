@@ -1,4 +1,4 @@
-use crate::prelude::SampledDataBars;
+use common::prelude::SampledDataBars;
 use common::prelude::{ExchangeID, TimeResolution};
 use config_manager::ConfigManager;
 use db_query_manager::QueryDBManager;
@@ -30,10 +30,10 @@ const FN_NAME: &'static str = "workflow/load_data";
 /// ```rust
 /// use common::prelude::{ExchangeID, ServiceID};
 /// use config_manager::ConfigManager;
-/// use lib_inference::prelude::load_data::load_data;
 ///
 /// async fn main(){
 ///
+/// use client_utils::data_utils::load_data;
 /// let cfg_manager = ConfigManager::new(ServiceID::Default);
 /// let symbol_id = 1234;
 /// let exchange_id = ExchangeID::Kraken;
@@ -49,6 +49,7 @@ pub async fn load_data(
     symbol_id: u16,
     exchange_id: ExchangeID,
 ) -> Result<SampledDataBars, Box<dyn Error>> {
+    //
     let mut bars = SampledDataBars::new();
 
     // println!("{FN_NAME}: Loading configuration for QueryDBManager.");
