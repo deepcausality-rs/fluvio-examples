@@ -1,4 +1,4 @@
-use crate::prelude::CustomModel;
+use causal_model::prelude::CustomModel;
 use fluvio::Offset;
 use futures::stream::StreamExt;
 use std::error::Error;
@@ -8,7 +8,7 @@ const FN_NAME: &'static str = "message_handler/run_inference";
 
 pub struct MessageHandler<'l> {
     channel_topic: String,
-    pub(crate) model: Arc<CustomModel<'l>>,
+    pub model: Arc<CustomModel<'l>>,
 }
 
 impl<'l> MessageHandler<'l> {

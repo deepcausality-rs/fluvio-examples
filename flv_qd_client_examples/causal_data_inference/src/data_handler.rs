@@ -1,4 +1,4 @@
-use crate::handlers::channel_handler::MessageHandler;
+use crate::channel_handler::MessageHandler;
 use deep_causality::prelude::Causable;
 use rust_decimal::prelude::ToPrimitive;
 use sbe_messages::prelude::{FirstTradeBar, LastTradeBar, MessageType, SbeTradeBar};

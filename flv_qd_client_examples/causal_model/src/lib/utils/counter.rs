@@ -16,7 +16,7 @@ const ORDER: atomic::Ordering = atomic::Ordering::Relaxed;
 /// # Examples
 ///
 /// ```
-/// use lib_inference::prelude::RelaxedAtomicCounter;
+/// use causal_model::prelude::RelaxedAtomicCounter;
 ///
 /// let counter = RelaxedAtomicCounter::new();
 ///

@@ -1,5 +1,5 @@
 use deep_causality::prelude::TimeScale;
-use lib_inference::prelude::time_utils::get_time_scale_control_map;
+use causal_model::prelude::time_utils::get_time_scale_control_map;
 
 #[test]
 fn test_get_boolean_control_map() {

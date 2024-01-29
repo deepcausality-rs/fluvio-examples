@@ -9,8 +9,8 @@ authors.workspace = true
 
 
 [lib]
-name = "lib_inference"
-path = "src/lib.rs"
+name = "causal_model"
+path = "src/lib/mod.rs"
 
 
 [dependencies]
@@ -18,4 +18,6 @@ path = "src/lib.rs"
 common = { workspace = true }
 
 # External crates
+chrono = {workspace = true}
 deep_causality =  {workspace = true}
+rust_decimal = {workspace = true}

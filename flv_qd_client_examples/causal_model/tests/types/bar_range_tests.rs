@@ -1,4 +1,4 @@
-use lib_inference::prelude::BarRange;
+use causal_model::prelude::BarRange;
 use rust_decimal::Decimal;
 
 #[test]

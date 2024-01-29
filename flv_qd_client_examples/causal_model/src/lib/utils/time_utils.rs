@@ -33,7 +33,7 @@ use deep_causality::prelude::TimeScale;
 ///
 /// ```
 /// use deep_causality::prelude::TimeScale;
-/// use lib_inference::prelude::time_utils::get_time_scale_control_map;
+/// use causal_model::prelude::time_utils::get_time_scale_control_map;
 ///
 /// let hour_map = get_time_scale_control_map(&TimeScale::Hour);
 /// // [true, true, true, true, true, false, false, false]

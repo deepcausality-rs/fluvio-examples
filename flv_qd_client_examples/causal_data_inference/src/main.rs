@@ -1,14 +1,17 @@
+use crate::channel_handler::MessageHandler;
+use causal_model::context::build_context;
+use causal_model::model::build_model;
 use client_utils::{data_utils, handle_error_utils, handle_utils, print_utils};
 use common::prelude::{ExchangeID, MessageClientConfig, SampledDataBars, ServiceID};
 use config_manager::ConfigManager;
 use deep_causality::prelude::TimeScale;
-use lib_inference::model::build_model;
-use lib_inference::prelude::build_context;
-use lib_inference::prelude::channel_handler::MessageHandler;
 use qd_client::QDClient;
 use std::sync::Arc;
 use std::time::Duration;
 use tokio::time::sleep;
+
+pub mod channel_handler;
+pub mod data_handler;
 
 const EXAMPLE: &'static str = "Causal Data Inference";
 

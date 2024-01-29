@@ -10,28 +10,20 @@ authors.workspace = true
 
 [[bin]]
 name = "causal_data_inference"
-path = "src/bin/main.rs"
-
-
-[lib]
-name = "lib_inference"
-path = "src/lib/mod.rs"
+path = "src/main.rs"
 
 
 [dependencies]
 # Intrnal crates
+causal_model =  { workspace = true }
 common = { workspace = true }
 config_manager = { workspace = true }
 client_utils = { workspace = true }
 qd_client = { workspace = true }
 sbe_messages = { workspace = true }
 # External crates
-async-trait = {workspace = true}
-chrono = {workspace = true}
 deep_causality =  {workspace = true}
 fluvio = { workspace = true }
 futures = {workspace = true}
-petgraph = { workspace = true}
 rust_decimal = {workspace = true}
-serde = { workspace = true }
 tokio = { workspace = true }

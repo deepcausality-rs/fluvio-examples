@@ -1,7 +1,5 @@
 use crate::prelude::{CustomContext, TimeIndexable};
-use crate::utils::counter;
-use crate::utils::time_utils;
-use crate::workflow::augment_data;
+use crate::utils::{context_utils, counter, time_utils};
 use chrono::Datelike;
 use common::prelude::SampledDataBars;
 use deep_causality::prelude::{
@@ -72,7 +70,8 @@ pub fn build_time_data_context<'l>(
         let year = data_bar.date_time().year();
 
         //
-        let (tempoid, dataoid) = augment_data::convert_ohlcv_bar_to_augmented(data_bar, time_scale);
+        let (tempoid, dataoid) =
+            context_utils::convert_ohlcv_bar_to_augmented(data_bar, time_scale);
 
         // Create new time node
         let key = counter.increment_and_get();
@@ -121,7 +120,7 @@ pub fn build_time_data_context<'l>(
             }
 
             let (tempoid, dataoid) =
-                augment_data::convert_ohlcv_bar_to_augmented(data_bar, time_scale);
+                context_utils::convert_ohlcv_bar_to_augmented(data_bar, time_scale);
 
             // Add Month
             let key = counter.increment_and_get();
