@@ -12,6 +12,25 @@ fn test_new() {
 }
 
 #[test]
+fn test_new_with_pg_config() {
+    let config = DBConfig::new_with_pg_config(
+            27017,
+            "localhost".to_string(),
+            "pguser".to_string(),
+            "pgpass".to_string(),
+            "pgdb".to_string(),
+            5432,
+        );
+
+    assert_eq!(config.port(), 27017);
+    assert_eq!(config.host(), "localhost");
+    assert_eq!(config.pg_user(), "pguser");
+    assert_eq!(config.pg_password(), "pgpass");
+    assert_eq!(config.pg_database(), "pgdb");
+    assert_eq!(config.pg_port(), 5432);
+}
+
+#[test]
 fn test_pg_connection_string() {
     let config = get_db_config();
 
@@ -22,19 +41,17 @@ fn test_pg_connection_string() {
 }
 
 #[test]
-fn test_debug() {
-    let config = get_db_config();
-
-    let expected = "DBConfig { port: 27017, host: \"localhost\", buffer_size: 50000 }";
-
-    assert_eq!(format!("{:?}", config), expected);
-}
-
-#[test]
 fn test_display() {
-    let config = get_db_config();
+    let config = DBConfig::new_with_pg_config(
+        27017,
+        "localhost".to_string(),
+        "pguser".to_string(),
+        "pgpass".to_string(),
+        "pgdb".to_string(),
+        5432,
+    );
 
-    let expected = "DBConfig { port: 27017, host: localhost }";
+    let expected = "DBConfig {\n  port: 27017,\n  host: localhost,\n  pg_user: pguser,\n  pg_database: pgdb\n pg_port: 5432\n}";
 
     assert_eq!(format!("{}", config), expected);
 }

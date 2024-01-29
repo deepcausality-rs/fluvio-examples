@@ -5,26 +5,27 @@ use serde::{Deserialize, Serialize};
 
 const BUFFER_SIZE: usize = 50_000;
 
-/// DBConfig represents the configuration for connecting to a database instance.
-///
-/// # Fields
-/// * `port`: The port number to connect to at the server host. The default port is 9009.
-/// * `host`: The DNS resolvable name of the host to connect to. Exactly one of `host` and `address`
+/// Configuration for the QuestDB database.
+/// Requires both, ILP and Postgres connection parameters.
 #[derive(Debug, Eq, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DBConfig {
-    /// Port number to connect to at the server host. The default port for the line protocol is 9009.
+    /// ILP ort number to connect to at the server host. The default port for the line protocol is 9009.
     port: u16,
     /// DNS resolvable name of the host to connect to.
     host: String,
     /// ILP Buffer size before flushing to the server.
     buffer_size: usize,
-    //
-    // authentication is not yet supported.
-    // see:https://github.com/questdb/c-questdb-client/blob/main/questdb-rs/examples/auth.rs
-    // kid: String,
-    // d: String,
-    // x: String,
-    // y: String,
+    // Postgres authentication parameters.
+    /// Postgres username.
+    pg_user: String,
+    /// Postgres password.
+    pg_password: String,
+    /// Postgres database name.
+    pg_database: String,
+    /// Postgres server address.
+    pg_port: u16,
+    // Secure authentication is not implemented.
+    // See: https://github.com/questdb/c-questdb-client/blob/main/questdb-rs/examples/auth.rs
 }
 
 impl DBConfig {
@@ -32,7 +33,7 @@ impl DBConfig {
     ///
     /// # Arguments
     ///
-    /// * `port` - The port number to connect to the database
+    /// * `port`: The ILP port number to connect to at the server host. The default port is 9009.
     /// * `host` - The hostname of the database server
     ///
     /// # Returns
@@ -51,35 +52,237 @@ impl DBConfig {
             port,
             host,
             buffer_size: BUFFER_SIZE,
+            pg_user: "admin".to_string(),
+            pg_password: "quest".to_string(),
+            pg_database: "qdb".to_string(),
+            pg_port: 8812,
+        }
+    }
+
+    /// Creates a new DBConfig instance configured for Postgres.
+    ///
+    /// This allows providing Postgres specific configuration like credentials and database name.
+    ///
+    /// # Arguments
+    ///
+    /// * `port`: The ILP port number to connect to at the server host. The default port is 9009.
+    /// * `host` - The QuestDB host address
+    /// * `pg_user` - The Postgres user to authenticate with. Default is "admin"
+    /// * `pg_password` - The password for the Postgres user
+    /// * `pg_database` - The name of the Postgres database to use. Default is "qdb"
+    /// * `pg_port` - The port to connect to Postgres on. Default is 8812
+    ///
+    /// # Returns
+    ///
+    /// A DBConfig instance configured with the provided Postgres parameters.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use common::prelude::DBConfig;
+    ///
+    /// let config = DBConfig::new_with_pg_config(
+    ///     9009, "localhost".into(), "myuser".into(), "password".into(),
+    ///     "qdb".into(), 8812);
+    /// ```
+    ///
+    pub fn new_with_pg_config(
+        port: u16,
+        host: String,
+        pg_user: String,
+        pg_password: String,
+        pg_database: String,
+        pg_port: u16,
+    ) -> Self {
+        Self {
+            port,
+            host,
+            buffer_size: BUFFER_SIZE,
+            pg_user,
+            pg_password,
+            pg_database,
+            pg_port,
         }
     }
 }
 
 // getters
 impl DBConfig {
+    /// Returns the configured ILP port number.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use common::prelude::DBConfig;
+    ///
+    /// let config = DBConfig::new(9009, "localhost".into());
+    /// assert_eq!(config.port(), 9009);
+    /// ```
     pub fn port(&self) -> u16 {
         self.port
     }
 
-    pub fn host(&self) -> &String {
+    /// Returns the configured host string.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use common::prelude::DBConfig;
+    ///
+    /// let config = DBConfig::new(9009, "localhost".into());
+    /// assert_eq!(config.host(), "localhost");
+    /// ```
+    pub fn host(&self) -> &str {
         &self.host
     }
 
+    /// Returns the configured buffer size.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use common::prelude::DBConfig;
+    ///
+    /// let config = DBConfig::new(9009, "localhost".into());
+    /// assert_eq!(config.buffer_size(), 50000);
+    /// ```
     pub fn buffer_size(&self) -> usize {
         self.buffer_size
     }
 
+    /// Returns the configured Postgres user.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use common::prelude::DBConfig;
+    ///
+    /// let config = DBConfig::new_with_pg_config(
+    ///         27017,
+    ///         "localhost".to_string(),
+    ///         "pguser".to_string(),
+    ///         "pgpass".to_string(),
+    ///         "pgdb".to_string(),
+    ///         5432,
+    ///     );
+    ///
+    /// assert_eq!(config.pg_user(), "pguser");
+    /// ```
+    pub fn pg_user(&self) -> &str {
+        &self.pg_user
+    }
+
+    /// Returns the configured Postgres password.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use common::prelude::DBConfig;
+    ///
+    /// let config = DBConfig::new_with_pg_config(
+    ///         27017,
+    ///         "localhost".to_string(),
+    ///         "pguser".to_string(),
+    ///         "pgpass".to_string(),
+    ///         "pgdb".to_string(),
+    ///         5432,
+    ///     );
+    ///
+    /// assert_eq!(config.pg_password(), "pgpass");
+    /// ```
+    pub fn pg_password(&self) -> &str {
+        &self.pg_password
+    }
+
+    /// Returns the configured Postgres database name.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use common::prelude::DBConfig;
+    ///
+    /// let config = DBConfig::new_with_pg_config(
+    ///         27017,
+    ///         "localhost".to_string(),
+    ///         "pguser".to_string(),
+    ///         "pgpass".to_string(),
+    ///         "pgdb".to_string(),
+    ///         5432,
+    ///     );
+    ///
+    /// assert_eq!(config.pg_database(), "pgdb");
+    /// ```
+    pub fn pg_database(&self) -> &str {
+        &self.pg_database
+    }
+
+    /// Returns the configured Postgres port number.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use common::prelude::DBConfig;
+    ///
+    /// let config = DBConfig::new_with_pg_config(
+    ///         27017,
+    ///         "localhost".to_string(),
+    ///         "pguser".to_string(),
+    ///         "pgpass".to_string(),
+    ///         "pgdb".to_string(),
+    ///         5432,
+    ///     );
+    ///
+    /// assert_eq!(config.pg_port(), 5432);
+    /// ```
+    pub fn pg_port(&self) -> u16 {
+        self.pg_port
+    }
+}
+
+impl DBConfig {
+    /// Generates a PostgreSQL connection string from the DBConfig.
+    ///
+    /// The connection string contains the parameters required to connect to
+    /// QuestDB's PostgreSQL endpoint, including:
+    ///
+    /// - user
+    /// - password
+    /// - host
+    /// - port
+    /// - dbname
+    ///
+    /// The string follows the format expected by PostgreSQL clients.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use common::prelude::DBConfig;
+    ///
+    /// let config = DBConfig::new(9009, "localhost".into());
+    /// let conn_str = config.pg_connection_string();
+    ///
+    /// assert_eq!(conn_str, "user=admin password=quest host=localhost port=8812 dbname=qdb");
+    /// ```
+    ///
     pub fn pg_connection_string(&self) -> String {
         // https://questdb.io/docs/develop/query-data/#postgresql-wire-protocol
         format!(
-            "user=admin password=quest host={} port=8812 dbname=qdb",
-            self.host
+            "user={} password={} host={} port={} dbname={}",
+            self.pg_user, self.pg_password, self.host, self.pg_port, self.pg_database,
         )
     }
 }
 
 impl Display for DBConfig {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        write!(f, "DBConfig {{ port: {}, host: {} }}", self.port, self.host,)
+        write!(
+            f,
+            "DBConfig {{\n  port: {},\n  host: {},\n  pg_user: {},\n  pg_database: {}\n pg_port: {}\n}}",
+            self.port,
+            self.host,
+            self.pg_user,
+            self.pg_database,
+            self.pg_port,
+        )
     }
 }
