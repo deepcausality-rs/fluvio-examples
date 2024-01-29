@@ -7,6 +7,7 @@ members = [
     "flv_qd_client",
     "flv_qd_client_examples/basic_data_stream",
     "flv_qd_client_examples/causal_data_inference",
+    "flv_qd_client_examples/causal_model",
     "flv_qd_client_examples/client_utils",
     "flv_common",
     "flv_components/client_manager",
@@ -35,6 +36,7 @@ authors = ["Marvin Hansen <marvin.hansen@gmail.com>"]
 [workspace.dependencies]
 #
 # Internal crates
+causal_model = {path = "flv_qd_client_examples/causal_model" }
 common = {path = "flv_common" }
 client_manager = {path = "flv_components/client_manager" }
 config_manager = {path = "flv_components/config_manager" }
@@ -81,7 +83,6 @@ warp = { version = "0.3", features = ["multipart"] }
 # Optimize all crates
 [profile.release]
 opt-level = 3
-strip = true  # Automatically strip debug symbols from the binary
 lto = true    # Enable Link Time Optimization (LTO)
 codegen-units = 1 # Reduce Parallel Code Generation Units to Increase Optimization
 
@@ -91,5 +92,4 @@ codegen-units = 1 # Reduce Parallel Code Generation Units to Increase Optimizati
 # https://docs.rust-embedded.org/book/unsorted/speed-vs-size.html
 [profile.release.package."*"]
 opt-level = 3
-strip = true  # Automatically strip debug symbols from the binary to reduce size
 codegen-units = 1 # Reduce Parallel Code Generation Units to Increase Optimization
