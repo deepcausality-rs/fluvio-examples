@@ -1,4 +1,4 @@
-use crate::channel_handler::MessageHandler;
+use crate::handle_data::MessageHandler;
 use causal_model::context::build_context;
 use causal_model::model::build_model;
 use client_utils::{data_utils, handle_error_utils, handle_utils, print_utils};
@@ -10,10 +10,7 @@ use std::sync::Arc;
 use std::time::Duration;
 use tokio::time::sleep;
 
-pub mod channel_handler;
-pub mod data_handler;
-
-const EXAMPLE: &'static str = "Causal Data Inference";
+mod handle_data;
 
 const FN_NAME: &'static str = "causal_data_inference/main";
 
@@ -26,22 +23,30 @@ const EXCHANGE_ID: ExchangeID = ExchangeID::Kraken;
 const JTO_EUR: u16 = 708; // JPY in EUR 2420 trades ~ 1 months
 
 ///
-/// This main function initializes the various components needed for the program:
-/// * It creates a ConfigManager to load configuration settings.
-/// * It creates a QueryDBManager to interface with the database.
-/// * It uses the ConfigManager and QueryDBManager to load symbol data like exchange IDs and symbol IDs.
-/// * It creates a SymbolManager to manage the symbol data.
-/// * It loads historical trade data for a specific symbol from the database using the QueryDBManager.
-/// * It prints how much data was loaded.
-/// * It creates a MessageClientConfig and QDClient to connect to a streaming data service.
-/// * It spawns tasks to handle errors and incoming streaming data separately.
-/// * It sends a message to start streaming live trade data for a symbol.
-/// * It waits briefly to allow some data to stream.
-/// * It closes the streaming client.
+/// The main function loads historical data, connects to a stream, handles errors,
+/// builds a model, and processes streaming data through the model to make causal inferences.
+/// The concurrent async tasks allow both data processing and error handling to happen simultaneously.
+///
+/// The main logic flow is:
+/// * Prints the example header.
+/// * Creates a ConfigManager to access configurations.
+/// * Loads historical trade data for the specified symbol from the config.
+/// * Prints a summary of the loaded data.
+/// * Creates a MessageClientConfig for the client ID.
+/// * Creates a QDClient using the config to connect to the data stream.
+/// * Starts an async error handling task using the client config.
+/// * Starts an async data handling task, passing the client config and historical data.
+/// * Waits briefly to let data stream, then closes the client.
+///
+/// The error handling task listens on the error stream and logs any errors.
+/// This avoids disrupting the main loop.
+///
+/// The data handling task builds a context and causal model using the historical data.
+/// It spawns an async task to process each incoming data message through the model to run causal inference.
 ///
 #[tokio::main]
 async fn main() {
-    print_utils::print_example_header(EXAMPLE);
+    print_utils::print_example_header("Causal Data Inference");
 
     println!("{FN_NAME}: Creating a new ConfigManager.");
     let cfg_manager = async { ConfigManager::new(ServiceID::Default) }.await;
