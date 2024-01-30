@@ -11,15 +11,9 @@ fn test_build_main_causaloid() {
     assert_eq!(causaloid.id(), 0);
     assert_eq!(causaloid.description(), "Causaloid main graph");
 
-    let has_root = causaloid
-        .causal_graph()
-        .unwrap()
-        .contains_root_causaloid();
+    let has_root = causaloid.causal_graph().unwrap().contains_root_causaloid();
     assert!(has_root);
 
-    let has_month = causaloid
-        .causal_graph()
-        .unwrap()
-        .contains_causaloid(1);
+    let has_month = causaloid.causal_graph().unwrap().contains_causaloid(1);
     assert!(has_month);
 }
