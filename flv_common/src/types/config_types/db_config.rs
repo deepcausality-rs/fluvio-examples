@@ -12,7 +12,7 @@ const BUFFER_SIZE: usize = 50_000;
 /// * ILP: 9009
 /// * Postgres Wire: 8812
 ///
-/// https://questdb.io/docs/develop/connect/
+/// See <https://questdb.io/docs/develop/connect/>`
 #[derive(Debug, Eq, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DBConfig {
     /// ILP ort number to connect to at the server host. The default port for the line protocol is 9009.

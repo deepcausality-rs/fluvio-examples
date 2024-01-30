@@ -5,6 +5,43 @@ use symbol_manager::SymbolManager;
 
 const FN_NAME: &str = "client_utils/get_symbol_id";
 
+/// Gets the symbol id for the provided symbol name.
+///
+/// This queries the database to lookup the symbol id mapping.
+/// The symbol manager cache is first checked before querying the database.
+///
+/// # Arguments
+///
+/// * `cfg_manager` - Configuration manager instance
+/// * `symbol` - The symbol name to lookup
+///
+/// # Returns
+///
+/// Returns the u16 symbol id if found.
+///
+/// # Errors
+///
+/// Returns a `Box<dyn Error>` if the symbol id could not be found.
+///
+/// # Example
+///
+/// ```
+/// use client_utils::symbol_utils::get_symbol_id;
+/// use common::prelude::{ServiceID};
+/// use config_manager::ConfigManager;
+///
+/// async fn test(){
+///
+/// use client_utils::data_utils::load_data;
+/// let cfg_manager = ConfigManager::new(ServiceID::Default);
+/// let symbol = "ethaed";
+///
+/// let result = get_symbol_id(&cfg_manager, symbol).await;
+///
+/// assert!(result.is_ok());
+/// }
+/// ```
+///
 pub async fn get_symbol_id(
     cfg_manager: &ConfigManager,
     symbol: &str,
