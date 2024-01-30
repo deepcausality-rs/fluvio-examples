@@ -1,7 +1,7 @@
-use deep_causality::prelude::{CausableGraph, Causaloid, CausaloidGraph};
 use crate::model::causaloid_range_month::get_month_causaloid;
 use crate::model::causaloid_range_year::get_year_causaloid;
 use crate::prelude::{CustomCausaloid, CustomContext};
+use deep_causality::prelude::{CausableGraph, Causaloid, CausaloidGraph};
 
 /// Creates the main causaloid graph from the provided context.
 ///

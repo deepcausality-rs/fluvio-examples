@@ -1,7 +1,7 @@
-use deep_causality::prelude::Identifiable;
 use causal_model::model::causaloid_range_month;
-use causal_model::prelude::{CustomContext};
 use causal_model::prelude::model::model_builder;
+use causal_model::prelude::CustomContext;
+use deep_causality::prelude::Identifiable;
 
 #[test]
 fn test_build_causal_model() {
@@ -12,6 +12,9 @@ fn test_build_causal_model() {
 
     assert_eq!(model.id(), 1);
     assert_eq!(model.author(), &"Marvin Hansen <marvin.hansen@gmail.com>");
-    assert_eq!(model.description(), &"This is a test causal model with context");
+    assert_eq!(
+        model.description(),
+        &"This is a test causal model with context"
+    );
     assert!(model.assumptions().is_none());
 }
