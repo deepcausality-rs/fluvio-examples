@@ -99,7 +99,7 @@ pub fn build_time_data_context<'l>(
         // Set index of previous year if current year is not the the same as before
         let current_year_index = *g
             .get_current_year_index()
-            .expect(format!("{FN_NAME} Failed to get current year index.").as_str());
+            .unwrap_or_else(|| panic!("{FN_NAME} Failed to get current year index."));
 
         // println!("{FN_NAME}: current year index stored: {}.", current_year_index);
 
