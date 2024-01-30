@@ -23,7 +23,7 @@ impl Server {
         &self,
         client_id: u16,
         first_bar: Vec<u8>,
-        data_bars: &Vec<TradeBar>,
+        data_bars: &[TradeBar],
         last_bar: Vec<u8>,
     ) -> Result<(), (DataErrorType, MessageProcessingError)> {
         // Send first  bar message to inform the client that the data stream starts

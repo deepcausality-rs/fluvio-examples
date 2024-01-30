@@ -24,12 +24,20 @@ pub fn extract_data_from_ctx<'l>(
     index: usize,
 ) -> Result<BarRange, CausalityError> {
     //Get node from context.
-    let node = ctx.get_node(index).unwrap_or_else(|| panic!("[extract_data_from_ctx]: Node for the index {} not found in context",
-            index));
+    let node = ctx.get_node(index).unwrap_or_else(|| {
+        panic!(
+            "[extract_data_from_ctx]: Node for the index {} not found in context",
+            index
+        )
+    });
 
     // Extract the data from the node.
-    let data = node.vertex_type().dataoid().unwrap_or_else(|| panic!("[extract_data_from_ctx]: No Data for node at index {}",
-            index));
+    let data = node.vertex_type().dataoid().unwrap_or_else(|| {
+        panic!(
+            "[extract_data_from_ctx]: No Data for node at index {}",
+            index
+        )
+    });
 
     // Deref and return.
     Ok(data.data_range())

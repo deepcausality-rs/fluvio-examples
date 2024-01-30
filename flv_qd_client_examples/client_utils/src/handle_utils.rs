@@ -2,6 +2,10 @@ use fluvio::Offset;
 use futures::stream::StreamExt;
 use std::error::Error;
 
+/// The type of the handler function for processing messages.
+/// This is a function that takes a buffer and returns a Result with no value or an error.
+pub type HandleMessageFunction = fn(buffer: Vec<u8>) -> Result<(), Box<dyn Error + Send>>;
+
 /// Handles consuming messages from a Fluvio topic and processing them.
 ///
 /// # Parameters
@@ -25,7 +29,7 @@ use std::error::Error;
 ///
 pub async fn handle_channel(
     channel_topic: &str,
-    message_handler: fn(buffer: Vec<u8>) -> Result<(), Box<dyn Error + Send>>,
+    message_handler: HandleMessageFunction,
 ) -> Result<(), Box<dyn Error + Send>> {
     // Create consumer for channel topic.
     let consumer = fluvio::consumer(channel_topic, 0)

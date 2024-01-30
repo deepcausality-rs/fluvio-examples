@@ -45,12 +45,10 @@ impl Server {
                 let first_ohlcv_bar = FirstOHLCVBar::new(symbol_id);
                 match first_ohlcv_bar.encode() {
                     Ok((_, buf)) => Ok(buf),
-                    Err(e) => {
-                        Err((
-                            DataErrorType::DataEncodingError,
-                            MessageProcessingError(e.to_string()),
-                        ))
-                    }
+                    Err(e) => Err((
+                        DataErrorType::DataEncodingError,
+                        MessageProcessingError(e.to_string()),
+                    )),
                 }
             }
         }

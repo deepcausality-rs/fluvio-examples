@@ -148,7 +148,7 @@ impl Server {
     pub(crate) async fn send_bulk_trade_data(
         &self,
         client_id: u16,
-        data_bars: &Vec<TradeBar>,
+        data_bars: &[TradeBar],
     ) -> Result<(), (DataErrorType, MessageProcessingError)> {
         // lock the client_data_producers hashmap
         let client_data_producers = self.client_data_producers.lock().await;
@@ -158,7 +158,7 @@ impl Server {
             .get(&client_id)
             .expect("[QDGW/utils_fluvio::send_bulk_trade_data]: No producer found");
 
-        for bar in data_bars.to_vec() {
+        for bar in data_bars.iter().cloned() {
             // Encode bar message
             let (_, buffer) = match SbeTradeBar::encode(bar) {
                 Ok(enc) => enc,
@@ -209,7 +209,7 @@ impl Server {
     pub(crate) async fn send_bulk_ohlcv_data(
         &self,
         client_id: u16,
-        ohlcv_bars: &Vec<OHLCVBar>,
+        ohlcv_bars: &[OHLCVBar],
     ) -> Result<(), (DataErrorType, MessageProcessingError)> {
         // lock the client_data_producers hashmap
         let client_data_producers = self.client_data_producers.lock().await;
@@ -220,7 +220,7 @@ impl Server {
             .expect("[QDGW/utils_fluvio::send_bulk_ohlcv_data]: No producer found");
 
         // Send all trade bars to the client
-        for bar in ohlcv_bars.to_vec() {
+        for bar in ohlcv_bars.iter().cloned() {
             // Encode bar message
             let (_, buffer) = match SbeOHLCVBar::encode_data_bar_message(bar) {
                 Ok(enc) => enc,

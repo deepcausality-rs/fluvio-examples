@@ -12,8 +12,7 @@ impl ConfigManager {
     /// The `default_exchange` field, containing the u16 ExchangeID value
     /// set as the default for this service.
     pub fn get_symbol_table(&self, exchange_id: ExchangeID) -> Option<String> {
-        self.exchanges_symbol_tables
-            .get(&exchange_id).cloned()
+        self.exchanges_symbol_tables.get(&exchange_id).cloned()
     }
 }
 
