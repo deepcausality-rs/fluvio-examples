@@ -5,7 +5,7 @@ use std::fmt;
 /// Custom error type for DB query errors
 #[derive(Debug)]
 pub enum QueryError {
-    QueryFailed(tokio_postgres::Error),
+    QueryFailed(String),
     InvalidTableName(ValidationError),
     EmptyTableName(ValidationError),
     TableNameTooLong(ValidationError),

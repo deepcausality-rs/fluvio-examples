@@ -42,6 +42,9 @@ impl QueryDBManager {
     ///  let time_resolution = TimeResolution::FiveMin;
     ///  let trades = query_manager.get_all_ohlcv_bars(278, "kraken_ethaed", &time_resolution)
     ///               .await.expect("Failed to get all trades");
+    ///
+    ///   // Close the connection pool
+    ///   query_manager.close().await;
     /// }
     /// ```
     pub async fn get_all_ohlcv_bars(
@@ -65,7 +68,7 @@ impl QueryDBManager {
         // Handle query errors
         let result_rows = match result {
             Ok(rows) => rows,
-            Err(e) => return Err(QueryError::QueryFailed(e)),
+            Err(e) => return Err(e),
         };
 
         // Check for empty result

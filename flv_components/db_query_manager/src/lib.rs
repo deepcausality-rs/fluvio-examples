@@ -5,11 +5,13 @@ mod query_trades;
 mod query_utils;
 
 use common::prelude::DBConfig;
-use deadpool_postgres::{Config, CreatePoolError, ManagerConfig, Pool, RecyclingMethod, Runtime};
-use tokio_postgres::NoTls;
+use sqlx::{postgres::PgPoolOptions, Pool, Postgres};
+use std::fmt::Error;
+
+const FN_NAME: &'static str = "[QueryDBManager]:";
 
 pub struct QueryDBManager {
-    pool: Pool,
+    pool: Pool<Postgres>,
 }
 
 impl QueryDBManager {
@@ -37,25 +39,54 @@ impl QueryDBManager {
     /// async fn main() {
     ///  let db_config =  DBConfig::new(9009, "0.0.0.0".into());
     ///  let query_manager = QueryDBManager::new(db_config).await.expect("Failed to create db connection");
+    ///   // Run Queries
+    ///
+    ///   // Close the connection pool
+    ///   query_manager.close().await;
     /// }
     /// ```
     ///
-    pub async fn new(db_config: DBConfig) -> Result<Self, CreatePoolError> {
+    pub async fn new(db_config: DBConfig) -> Result<Self, Error> {
+        let url = db_config.pg_connection_url();
+        let max_connections = db_config.pg_max_connections();
+        let pool = create_connection_pool(url, max_connections).await;
 
-        // Configure the connection pool
-        let mut cfg = Config::new();
-        cfg.host = Some(db_config.host().to_string());
-        cfg.dbname = Some(db_config.pg_database().to_string());
-        cfg.user = Some(db_config.pg_user().to_string());
-        cfg.password = Some(db_config.pg_password().to_string());
-        cfg.manager = Some(ManagerConfig { recycling_method: RecyclingMethod::Fast });
-
-        // Create new QueryDBManager with the configured connection pool.
-        return match cfg.create_pool(Some(Runtime::Tokio1), NoTls) {
-            Ok(pool) => Ok(Self { pool }),
-            Err(e) => Err(e),
-        };
+        Ok(Self { pool })
     }
+}
+
+/// Creates a connection pool to the Postgres database.
+///
+/// # Arguments
+///
+/// * `url` - The database URL
+/// * `max_connections` - The maximum number of connections in the pool
+///
+/// # Returns
+///
+/// A Pool of Postgres connections.
+///
+/// # Errors
+///
+/// Returns a connection pool error if connecting to the database fails.
+///
+async fn create_connection_pool(url: String, max_connections: u32) -> Pool<Postgres> {
+    // Create a connection pool to the database
+    let pool_connection = PgPoolOptions::new()
+        .max_connections(max_connections)
+        .connect(&url)
+        .await;
+
+    // Check if the connection to the database was successful
+    return match pool_connection {
+        Ok(pool) => {
+            println!(" ✅ Database Connection OK!");
+            pool
+        }
+        Err(err) => {
+            panic!("{FN_NAME}  ❌ Connection to the database failed: {:?}", err);
+        }
+    };
 }
 
 impl QueryDBManager {
@@ -78,21 +109,49 @@ impl QueryDBManager {
     /// let open = query_manager.is_close().await;
     ///
     /// if open{
-    ///         println!("Connection is closed: {}", open);
+    ///         println!("✅ DB Connection is open: {}", open);
     /// } else {
-    ///     println!("Connection is open: {}", open);
+    ///     println!("❌ DB Connection is closed");
     /// }
+    ///
+    ///   // Close the connection pool
+    ///   query_manager.close().await;
     /// }
     /// ```
     ///
     pub async fn is_close(&self) -> bool {
-        // Get a client from the connection pool
-        let client = self
-            .pool
-            .get()
-            .await
-            .expect("[QueryDBManager/is_close]: Failed to get client from connection pool");
+        self.pool.is_closed()
+    }
 
-        client.is_closed()
+    /// Closes the database connection pool.
+    ///
+    /// # Arguments
+    ///
+    /// * `self` - The QueryManager instance
+    ///
+    /// # Returns
+    ///
+    /// Result with the following outcomes:
+    ///
+    /// - Ok(()) - The connection pool was closed successfully.
+    /// - Err(e) - An error occurred while closing the connection pool.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use common::prelude::DBConfig;
+    /// use db_query_manager::QueryDBManager;
+    ///
+    /// #[tokio::main]
+    /// async fn main() {
+    ///  let db_config =  DBConfig::new(9009, "0.0.0.0".into());
+    ///  let query_manager = QueryDBManager::new(db_config).await.expect("Failed to create db connection");
+    ///
+    ///   query_manager.close().await;
+    ///
+    ///  }
+    /// ```
+    pub async fn close(&self) {
+        self.pool.close().await
     }
 }

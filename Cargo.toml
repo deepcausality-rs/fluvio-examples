@@ -74,10 +74,9 @@ petgraph = "0.6"
 rust_decimal = { version = "1", default-features = false, features = ["serde", "db-postgres"] }
 serde = { version = "1", features = ["derive"] }
 tokio = { version = "1", features = ["macros", "net", "rt-multi-thread", "signal"] }
-# Quest DB uses the postgres wire protocol for queries, which requires the postgres crate
+# Quest DB uses the postgres wire protocol for queries; hence both, the questdb-rs and sqlx crates
 questdb-rs = { version = "3.1" }
-deadpool-postgres = { version = "0.12" }
-tokio-postgres = { version = "0.7", features = [ "with-chrono-0_4"] }
+sqlx = { version = "0.7", features = ["runtime-tokio-native-tls", "postgres", "chrono" ] }
 warp = { version = "0.3", features = ["multipart"] }
 
 

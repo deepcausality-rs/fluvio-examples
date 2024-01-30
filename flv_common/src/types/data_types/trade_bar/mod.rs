@@ -1,8 +1,9 @@
-use chrono::{DateTime, NaiveDateTime, TimeZone, Utc};
+use chrono::{DateTime, TimeZone, Utc};
 use rust_decimal::prelude::FromPrimitive;
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
-use tokio_postgres::Row;
+use sqlx::postgres::PgRow;
+use sqlx::Row;
 
 mod default;
 mod display;
@@ -39,8 +40,11 @@ impl TradeBar {
 }
 
 impl TradeBar {
-    pub fn from_pg_row(symbol_id: u16, row: &Row) -> Self {
-        let timestamp = row.get::<usize, NaiveDateTime>(0);
+    pub fn from_pg_row(symbol_id: u16, row: &PgRow) -> Self {
+        //
+        let timestamp = row
+            .try_get("timestamp")
+            .expect("[TradeBar]: Could not parse timestamp");
 
         let p = row.try_get(1).expect("[TradeBar]: Could not parse price");
 

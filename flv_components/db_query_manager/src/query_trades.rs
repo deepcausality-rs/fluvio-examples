@@ -37,6 +37,9 @@ impl QueryDBManager {
     ///
     ///  let trades = query_manager.get_all_trades(278, "kraken_ethaed")
     ///               .await.expect("Failed to get all trades");
+    ///
+    ///   // Close the connection pool
+    ///   query_manager.close().await;
     /// }
     /// ```
     pub async fn get_all_trades(
@@ -59,7 +62,7 @@ impl QueryDBManager {
         // Handle query errors
         let result_rows = match result {
             Ok(rows) => rows,
-            Err(e) => return Err(QueryError::QueryFailed(e)),
+            Err(e) => return Err(e),
         };
 
         // Check for empty result

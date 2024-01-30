@@ -1,6 +1,7 @@
 use crate::error::QueryError;
 use crate::QueryDBManager;
 use common::prelude::{TimeResolution, ValidationError};
+use sqlx::postgres::PgRow;
 
 impl QueryDBManager {
     /// Utils that executes a SQL query against the database.
@@ -14,17 +15,13 @@ impl QueryDBManager {
     /// A `Result` containing a `Vec` of `postgres::Row` representing the result rows if the query
     /// executed successfully. Returns a `postgres::Error` if there was an error executing the query.
     ///
-    pub(crate) async fn query(
-        &mut self,
-        query: &str,
-    ) -> Result<Vec<tokio_postgres::Row>, tokio_postgres::Error> {
-        let client = self
-            .pool
-            .get()
-            .await
-            .expect("[QueryDBManager/query]: Failed to get client from connection pool");
+    pub(crate) async fn query(&mut self, query: &str) -> Result<Vec<PgRow>, QueryError> {
+        let select_query = sqlx::query(query).fetch_all(&self.pool).await;
 
-        client.query(query, &[]).await
+        return match select_query {
+            Ok(rows) => Ok(rows),
+            Err(e) => Err(QueryError::QueryFailed(e.to_string())),
+        };
     }
 
     /// Builds a SQL query to get all symbol IDs and symbols from a symbol table.
@@ -55,6 +52,17 @@ impl QueryDBManager {
         format!("SELECT timestamp, price, volume FROM {};", trade_table)
     }
 
+    /// Builds a SQL query to get OHLCV bars from a trade table at a given time resolution.
+    ///
+    /// # Arguments
+    ///
+    /// * `trade_table` - The name of the trade table to query
+    /// * `time_resolution` - The time resolution to resample the trades to
+    ///
+    /// # Returns
+    ///
+    /// Returns a SQL query string to retrieve OHLCV bars from the trade table resampled to the time resolution.
+    ///
     pub(crate) fn build_get_ohlcv_bars_query(
         &self,
         trade_table: &str,

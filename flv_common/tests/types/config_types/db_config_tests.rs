@@ -14,13 +14,13 @@ fn test_new() {
 #[test]
 fn test_new_with_pg_config() {
     let config = DBConfig::new_with_pg_config(
-            27017,
-            "localhost".to_string(),
-            "pguser".to_string(),
-            "pgpass".to_string(),
-            "pgdb".to_string(),
-            5432,
-        );
+        27017,
+        "localhost".to_string(),
+        "pguser".to_string(),
+        "pgpass".to_string(),
+        "pgdb".to_string(),
+        5432,
+    );
 
     assert_eq!(config.port(), 27017);
     assert_eq!(config.host(), "localhost");

@@ -1,9 +1,10 @@
-use chrono::{DateTime, NaiveDateTime, TimeZone, Utc};
+use chrono::{DateTime, TimeZone, Utc};
 use rust_decimal::prelude::FromPrimitive;
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
+use sqlx::postgres::PgRow;
+use sqlx::Row;
 use std::fmt::Debug;
-use tokio_postgres::Row;
 
 mod default;
 mod display;
@@ -71,8 +72,11 @@ impl OHLCVBar {
     /// # Returns
     ///
     /// A new OHLCVBar instance populated with the data parsed from the row.
-    pub fn from_pg_row(row: &Row, symbol_id: u16) -> OHLCVBar {
-        let timestamp = row.get::<usize, NaiveDateTime>(0);
+    pub fn from_pg_row(row: &PgRow, symbol_id: u16) -> OHLCVBar {
+        //
+        let timestamp = row
+            .try_get(0)
+            .expect("[DataBar]: Could not parse timestamp");
 
         let o = row
             .try_get("open")

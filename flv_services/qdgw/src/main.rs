@@ -124,7 +124,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let server = Server::new(
         service_topic.clone(),
         client_manager,
-        query_manager,
+        query_manager.clone(),
         symbol_manager,
     );
 
@@ -158,6 +158,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             );
         }
     }
+
+    // Close the DB Connection pool.
+    let q_manager = query_manager.lock().await;
+    q_manager.close().await;
 
     //Prints the stop headers for the current service.
     print_utils::print_stop_header(&SVC_ID);

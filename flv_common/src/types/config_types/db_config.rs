@@ -30,6 +30,8 @@ pub struct DBConfig {
     pg_database: String,
     /// Postgres server address.
     pg_port: u16,
+    /// Postgres max connections.
+    pg_max_connections: u32,
     // Secure authentication is not implemented.
     // See: https://github.com/questdb/c-questdb-client/blob/main/questdb-rs/examples/auth.rs
 }
@@ -64,6 +66,7 @@ impl DBConfig {
             pg_password: "quest".to_string(),
             pg_database: "qdb".to_string(),
             pg_port: 8812,
+            pg_max_connections: 10,
         }
     }
 
@@ -79,6 +82,7 @@ impl DBConfig {
     /// * `pg_password` - The password for the Postgres user
     /// * `pg_database` - The name of the Postgres database to use. Default is "qdb"
     /// * `pg_port` - The port to connect to Postgres on. Default is 8812
+    /// * `pg_max_connections` - The maximum number of connections to Postgres. Default is 10
     ///
     /// # Returns
     ///
@@ -91,7 +95,7 @@ impl DBConfig {
     ///
     /// let config = DBConfig::new_with_pg_config(
     ///     9009, "localhost".into(), "myuser".into(), "password".into(),
-    ///     "qdb".into(), 8812);
+    ///     "qdb".into(), 8812, 10);
     /// ```
     ///
     pub fn new_with_pg_config(
@@ -101,6 +105,7 @@ impl DBConfig {
         pg_password: String,
         pg_database: String,
         pg_port: u16,
+        pg_max_connections: u32,
     ) -> Self {
         Self {
             port,
@@ -110,7 +115,49 @@ impl DBConfig {
             pg_password,
             pg_database,
             pg_port,
+            pg_max_connections,
         }
+    }
+}
+
+impl DBConfig {
+    /// Generates a PostgreSQL connection string from the DBConfig.
+    ///
+    /// The connection string contains the parameters required to connect to
+    /// QuestDB's PostgreSQL endpoint, including:
+    ///
+    /// - user
+    /// - password
+    /// - host
+    /// - port
+    /// - dbname
+    ///
+    /// The string follows the format expected by PostgreSQL clients.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use common::prelude::DBConfig;
+    ///
+    /// let config = DBConfig::new(9009, "localhost".into());
+    /// let conn_str = config.pg_connection_string();
+    ///
+    /// assert_eq!(conn_str, "user=admin password=quest host=localhost port=8812 dbname=qdb");
+    /// ```
+    ///
+    pub fn pg_connection_string(&self) -> String {
+        // https://questdb.io/docs/develop/query-data/#postgresql-wire-protocol
+        format!(
+            "user={} password={} host={} port={} dbname={}",
+            self.pg_user, self.pg_password, self.host, self.pg_port, self.pg_database,
+        )
+    }
+
+    pub fn pg_connection_url(&self) -> String {
+        format!(
+            "postgres://{}:{}@{}:{}/{}",
+            self.pg_user, self.pg_password, self.host, self.pg_port, self.pg_database,
+        )
     }
 }
 
@@ -172,6 +219,7 @@ impl DBConfig {
     ///         "pgpass".to_string(),
     ///         "pgdb".to_string(),
     ///         5432,
+    ///         10,
     ///     );
     ///
     /// assert_eq!(config.pg_user(), "pguser");
@@ -194,6 +242,7 @@ impl DBConfig {
     ///         "pgpass".to_string(),
     ///         "pgdb".to_string(),
     ///         5432,
+    ///         10,
     ///     );
     ///
     /// assert_eq!(config.pg_password(), "pgpass");
@@ -216,6 +265,7 @@ impl DBConfig {
     ///         "pgpass".to_string(),
     ///         "pgdb".to_string(),
     ///         5432,
+    ///         10,
     ///     );
     ///
     /// assert_eq!(config.pg_database(), "pgdb");
@@ -238,6 +288,7 @@ impl DBConfig {
     ///         "pgpass".to_string(),
     ///         "pgdb".to_string(),
     ///         5432,
+    ///         10,
     ///     );
     ///
     /// assert_eq!(config.pg_port(), 5432);
@@ -245,39 +296,9 @@ impl DBConfig {
     pub fn pg_port(&self) -> u16 {
         self.pg_port
     }
-}
 
-impl DBConfig {
-    /// Generates a PostgreSQL connection string from the DBConfig.
-    ///
-    /// The connection string contains the parameters required to connect to
-    /// QuestDB's PostgreSQL endpoint, including:
-    ///
-    /// - user
-    /// - password
-    /// - host
-    /// - port
-    /// - dbname
-    ///
-    /// The string follows the format expected by PostgreSQL clients.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use common::prelude::DBConfig;
-    ///
-    /// let config = DBConfig::new(9009, "localhost".into());
-    /// let conn_str = config.pg_connection_string();
-    ///
-    /// assert_eq!(conn_str, "user=admin password=quest host=localhost port=8812 dbname=qdb");
-    /// ```
-    ///
-    pub fn pg_connection_string(&self) -> String {
-        // https://questdb.io/docs/develop/query-data/#postgresql-wire-protocol
-        format!(
-            "user={} password={} host={} port={} dbname={}",
-            self.pg_user, self.pg_password, self.host, self.pg_port, self.pg_database,
-        )
+    pub fn pg_max_connections(&self) -> u32 {
+        self.pg_max_connections
     }
 }
 

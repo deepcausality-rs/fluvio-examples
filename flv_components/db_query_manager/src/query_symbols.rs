@@ -1,5 +1,6 @@
 use crate::error::QueryError;
 use crate::QueryDBManager;
+use sqlx::Row;
 
 impl QueryDBManager {
     /// Retrieves all symbols and their IDs from the given symbol table.
@@ -34,6 +35,9 @@ impl QueryDBManager {
     ///  let symbols = query_manager.get_all_symbols_with_ids("kraken_symbols")
     ///             .await
     ///             .expect("Failed to query all symbols from symbols table");
+    ///
+    ///   // Close the connection pool
+    ///   query_manager.close().await;
     /// }
     /// ```
     ///
@@ -63,7 +67,7 @@ impl QueryDBManager {
         // Handle query errors
         let result_rows = match result {
             Ok(rows) => rows,
-            Err(e) => return Err(QueryError::QueryFailed(e)),
+            Err(e) => return Err(e),
         };
 
         // Check for empty result

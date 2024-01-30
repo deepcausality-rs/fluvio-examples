@@ -122,5 +122,8 @@ pub async fn load_data(
     // println!("{FN_NAME}: Set month bars.");
     bars.set_month_bars(months_bars);
 
+    // Close the DB connection
+    db_query_manager.close().await;
+
     Ok(bars)
 }

@@ -14,6 +14,8 @@ async fn test_new_query_db_manager() {
         .expect("Failed to create db connection");
 
     assert!(!manager.is_close().await);
+
+    manager.close().await;
 }
 
 #[tokio::test]
@@ -22,7 +24,7 @@ async fn test_get_all_symbol_ids() {
     let mut manager = QueryDBManager::new(db_config)
         .await
         .expect("Failed to create db connection");
-    // assert!(!manager.is_close().await);
+    assert!(!manager.is_close().await);
 
     // symbol table
     let symbol_table = "kraken_symbols";
@@ -45,6 +47,9 @@ async fn test_get_all_symbol_ids() {
 
     let expected_symbol = &"apeusdt".to_string();
     assert_eq!(expected_symbol, actual_symbol);
+
+    // Close connection
+    manager.close().await;
 }
 
 #[tokio::test]
@@ -65,6 +70,9 @@ async fn test_get_all_trades() {
 
     // Verify result is ok
     assert!(result.is_ok());
+
+    // Close connection
+    manager.close().await;
 }
 
 #[tokio::test]
@@ -108,4 +116,7 @@ async fn test_get_all_ohlcv_bars() {
     assert_eq!(expected_low, first_bar.low());
     assert_eq!(expected_close, first_bar.close());
     assert_eq!(expected_volume, first_bar.volume());
+
+    // Close connection
+    manager.close().await;
 }
