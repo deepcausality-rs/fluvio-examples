@@ -20,6 +20,7 @@ fn test_new_with_pg_config() {
         "pgpass".to_string(),
         "pgdb".to_string(),
         5432,
+        10,
     );
 
     assert_eq!(config.port(), 27017);
@@ -49,6 +50,7 @@ fn test_display() {
         "pgpass".to_string(),
         "pgdb".to_string(),
         5432,
+        10,
     );
 
     let expected = "DBConfig {\n  port: 27017,\n  host: localhost,\n  pg_user: pguser,\n  pg_database: pgdb\n pg_port: 5432\n}";
