@@ -74,7 +74,8 @@ pub async fn get_symbol_id(
     // println!("{FN_NAME}: Get all symbols for the default exchange.");
     let symbols = match db_query_manager
         .get_all_symbols_with_ids(&exchange_symbol_table)
-        .await {
+        .await
+    {
         Ok(sym) => sym,
         Err(err) => {
             println!("{FN_NAME}: Failed to get all symbols for the default exchange.");

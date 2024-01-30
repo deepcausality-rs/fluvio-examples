@@ -1,9 +1,9 @@
-use causal_model::prelude::CustomModel;
+use causal_model::prelude::CustomCausaloid;
 use deep_causality::prelude::Causable;
 use fluvio::Offset;
 use futures::stream::StreamExt;
 use rust_decimal::prelude::ToPrimitive;
-use sbe_messages::prelude::{ MessageType, SbeTradeBar};
+use sbe_messages::prelude::{MessageType, SbeTradeBar};
 use std::error::Error;
 use std::sync::Arc;
 
@@ -25,7 +25,7 @@ pub struct MessageHandler<'l> {
 
     /// The inference model instance. This is wrapped in an Arc to allow
     /// shared ownership between MessageHandler instances.
-    model: Arc<CustomModel<'l>>,
+    model: Arc<CustomCausaloid<'l>>,
 }
 
 impl<'l> MessageHandler<'l> {
@@ -44,7 +44,7 @@ impl<'l> MessageHandler<'l> {
     ///
     /// A new MessageHandler instance initialized with the provided args.
     ///
-    pub fn new(channel_topic: String, model: Arc<CustomModel<'l>>) -> Self {
+    pub fn new(channel_topic: String, model: Arc<CustomCausaloid<'l>>) -> Self {
         Self {
             channel_topic,
             model,
@@ -137,21 +137,17 @@ impl<'l> MessageHandler<'l> {
             }
 
             MessageType::TradeBar => {
-                println!("{FN_NAME}: TradeBar: {:?}", message);
                 let trade_bar = SbeTradeBar::decode(message.as_slice()).unwrap();
+                // println!("{FN_NAME}: TradeBar: {:?}", trade_bar);
 
-                println!("{FN_NAME}: Extract the price from the trade bar: {}", trade_bar.price().to_f64().unwrap());
+                // println!("{FN_NAME}: Extract the price from the trade bar: {}", trade_bar.price().to_f64().unwrap());
                 let price = trade_bar.price().to_f64().unwrap();
 
-                println!("{FN_NAME}: Apply the model to the price for causal inference");
-                let res = self
-                    .model
-                    .causaloid()
-                    .verify_all_causes(&[price], None)
-                    .unwrap_or_else(|e| {
-                        println!("{FN_NAME}: {}", e);
-                        false
-                    });
+                println!("{FN_NAME}: Apply the causal model to the price for causal inference");
+                let res = self.model.verify_single_cause(&price).unwrap_or_else(|e| {
+                    println!("{FN_NAME}: {}", e);
+                    false
+                });
 
                 // Print the result of the inference in case it detected a price breakout
                 if res {
