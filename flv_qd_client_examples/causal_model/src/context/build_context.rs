@@ -84,10 +84,9 @@ pub fn build_time_data_context<'l>(
         // Set index of previous year if current year is not the first year
         //
         let current_year_index = *g.get_current_year_index().unwrap_or_else(|| &0);
+        let prev_year_index = *g.get_current_year_index().unwrap_or_else(|| &0);
 
         if current_year_index != year_data_index {
-            let prev_year_index = *g.get_current_year_index().unwrap_or_else(|| &0);
-
             if current_year_index != prev_year_index {
                 g.set_previous_year_index(prev_year_index);
             }
@@ -138,15 +137,13 @@ pub fn build_time_data_context<'l>(
             // Set index of previous month if current month is not the first month
             //
             let current_month_index = *g.get_current_month_index().unwrap_or_else(|| &0);
+            let prev_month_index = *g.get_current_month_index().unwrap_or_else(|| &0);
 
             if current_month_index != month_data_index {
-                let prev_month_index = *g.get_current_month_index().unwrap_or_else(|| &0);
-
                 if current_month_index != prev_month_index {
                     g.set_previous_month_index(prev_month_index);
                 }
 
-                // g.set_previous_month_index(*prev_month_index);
                 g.set_current_month_index(month_data_index);
             } else {
                 // Set index of current and previous month if current month is the first month

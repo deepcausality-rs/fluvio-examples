@@ -18,7 +18,7 @@ const CLIENT_ID: u16 = 77;
 
 const EXCHANGE_ID: ExchangeID = ExchangeID::Kraken;
 
-const SYMBOL: &str = "jtoeur"; // JPY in EUR 2420 trades ~ 1 months
+const SYMBOL: &str = "pytheur"; // pytheur 11172 trades
 
 ///
 /// The main function loads historical data, connects to a stream, handles errors,

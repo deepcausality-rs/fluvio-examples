@@ -7,12 +7,14 @@ use config_manager::ConfigManager;
 use deep_causality::prelude::{ContextuableGraph, Identifiable, TimeScale};
 use std::env;
 
+const SYMBOL: &str = "pytheur"; // pytheur 11172 trades
+
 async fn get_context() -> CustomContext<'static> {
     env::set_var("ENV", "Local");
 
     let cfg_manager = async { ConfigManager::new(ServiceID::Default) }.await;
     let exchange_id = ExchangeID::Kraken;
-    let symbol_id = "jtoeur"; //2420 trades ~ 1 months
+    let symbol_id = SYMBOL;
     let data = data_utils::load_data(&cfg_manager, symbol_id, exchange_id)
         .await
         .expect("[get_context]: Failed to load data.");
@@ -64,12 +66,9 @@ async fn test_previous_month_index() {
 
     assert_eq!(causaloid.id(), 1);
 
-    //
-    // Current data set ( 708 / JPY) has only 1 month of data.
-    //
-    // let previous_month_index = causaloid.context().unwrap().get_previous_month_index();
-    // assert!(previous_month_index.is_some());
-    //
+    let previous_month_index = causaloid.context().unwrap().get_previous_month_index();
+    assert!(previous_month_index.is_some());
+
     // let previous_month_index = previous_month_index.unwrap();
     // let month_node = causaloid.context().unwrap().get_node(*previous_month_index);
     // assert!(month_node.is_some());

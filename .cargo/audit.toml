@@ -1,0 +1,14 @@
+[advisories]
+ignore = [
+    "RUSTSEC-2023-0033",
+    "RUSTSEC-2023-0003",
+    "RUSTSEC-2024-0003",
+    # Resource exhaustion vulnerability in h2 may lead to Denial of Service (DoS)
+    # https://rustsec.org/advisories/RUSTSEC-2023-0033
+    # https://rustsec.org/advisories/RUSTSEC-2023-0003
+    # https://rustsec.org/advisories/RUSTSEC-2024-0003
+
+    "RUSTSEC-2023-0071",
+    # Marvin Attack: potential key recovery through timing sidechannels
+    # https://rustsec.org/advisories/RUSTSEC-2023-0071
+]
