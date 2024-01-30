@@ -8,7 +8,7 @@ use common::prelude::DBConfig;
 use sqlx::{postgres::PgPoolOptions, Pool, Postgres};
 use std::fmt::Error;
 
-const FN_NAME: &'static str = "[QueryDBManager]:";
+const FN_NAME: &str = "[QueryDBManager]:";
 
 pub struct QueryDBManager {
     pool: Pool<Postgres>,
@@ -79,7 +79,7 @@ async fn create_connection_pool(url: String, max_connections: u32) -> Pool<Postg
         .await;
 
     // Check if the connection to the database was successful
-    return match pool_connection {
+    match pool_connection {
         Ok(pool) => {
             println!("✅ Database Connection OK!");
             pool
@@ -87,7 +87,7 @@ async fn create_connection_pool(url: String, max_connections: u32) -> Pool<Postg
         Err(err) => {
             panic!("{FN_NAME} ❌ Database Connection FAILED ❌: {:?}", err);
         }
-    };
+    }
 }
 
 impl QueryDBManager {

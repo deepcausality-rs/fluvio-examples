@@ -7,7 +7,7 @@ use sbe_messages::prelude::{FirstTradeBar, LastTradeBar, MessageType, SbeTradeBa
 use std::error::Error;
 use std::sync::Arc;
 
-const FN_NAME: &'static str = "data_handler/handle_message_inference";
+const FN_NAME: &str = "data_handler/handle_message_inference";
 
 /// Handles messages for running inference.
 ///

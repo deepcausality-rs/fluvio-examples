@@ -26,7 +26,7 @@ impl Server {
         date_type: &DataType,
         symbol_id: u16,
     ) -> Result<Vec<u8>, (DataErrorType, MessageProcessingError)> {
-        return match date_type {
+        match date_type {
             DataType::UnknownDataType => Err((
                 DataErrorType::DataTypeNotKnownError,
                 MessageProcessingError("DataTypeNotKnownError".to_string()),
@@ -46,14 +46,14 @@ impl Server {
                 match first_ohlcv_bar.encode() {
                     Ok((_, buf)) => Ok(buf),
                     Err(e) => {
-                        return Err((
+                        Err((
                             DataErrorType::DataEncodingError,
                             MessageProcessingError(e.to_string()),
-                        ));
+                        ))
                     }
                 }
             }
-        };
+        }
     }
 
     /// Encodes a LastTradeBar or LastOHLCVBar message for the given symbol id and data type.
@@ -77,7 +77,7 @@ impl Server {
         date_type: &DataType,
         symbol_id: u16,
     ) -> Result<Vec<u8>, (DataErrorType, MessageProcessingError)> {
-        return match date_type {
+        match date_type {
             DataType::UnknownDataType => Err((
                 DataErrorType::DataTypeNotKnownError,
                 MessageProcessingError("DataTypeNotKnownError".to_string()),
@@ -104,6 +104,6 @@ impl Server {
                     )),
                 }
             }
-        };
+        }
     }
 }

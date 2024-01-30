@@ -8,9 +8,9 @@ use tokio::time::sleep;
 
 mod handle_data;
 
-const EXAMPLE: &'static str = "Basic Data Stream";
+const EXAMPLE: &str = "Basic Data Stream";
 
-const FN_NAME: &'static str = "basic_data_stream/main";
+const FN_NAME: &str = "basic_data_stream/main";
 
 const CLIENT_ID: u16 = 42;
 

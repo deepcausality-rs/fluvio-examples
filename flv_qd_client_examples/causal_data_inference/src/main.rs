@@ -12,7 +12,7 @@ use tokio::time::sleep;
 
 mod handle_data;
 
-const FN_NAME: &'static str = "causal_data_inference/main";
+const FN_NAME: &str = "causal_data_inference/main";
 
 const CLIENT_ID: u16 = 77;
 

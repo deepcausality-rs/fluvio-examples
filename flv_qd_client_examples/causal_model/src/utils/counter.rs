@@ -35,6 +35,12 @@ const ORDER: atomic::Ordering = atomic::Ordering::Relaxed;
 #[derive(Debug)]
 pub struct RelaxedAtomicCounter(AtomicU64);
 
+impl Default for RelaxedAtomicCounter {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl RelaxedAtomicCounter {
     // Creates a new counter with atomic increment operation.
     pub fn new() -> Self {

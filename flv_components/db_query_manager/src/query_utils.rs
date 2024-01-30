@@ -19,10 +19,10 @@ impl QueryDBManager {
         // https://gist.github.com/jeremychone/34d1e3daffc38eb602b1a9ab21298d10
         let select_query = sqlx::query(query).fetch_all(&self.pool).await;
 
-        return match select_query {
+        match select_query {
             Ok(rows) => Ok(rows),
             Err(e) => Err(QueryError::QueryFailed(e.to_string())),
-        };
+        }
     }
 
     /// Builds a SQL query to get all symbol IDs and symbols from a symbol table.

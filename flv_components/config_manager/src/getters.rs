@@ -13,8 +13,7 @@ impl ConfigManager {
     /// set as the default for this service.
     pub fn get_symbol_table(&self, exchange_id: ExchangeID) -> Option<String> {
         self.exchanges_symbol_tables
-            .get(&exchange_id)
-            .map(|x| x.clone())
+            .get(&exchange_id).cloned()
     }
 }
 

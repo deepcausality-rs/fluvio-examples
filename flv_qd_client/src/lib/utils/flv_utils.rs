@@ -34,19 +34,19 @@ pub(crate) async fn create_topics(
     // Create client topics:
     // 1. client_id-control - For receiving control messages from the gateway.
     let control_topic = &client_config.control_channel();
-    create_topic(&admin, control_topic)
+    create_topic(admin, control_topic)
         .await
         .expect("Failed to create control topic");
 
     // 2. client_id-data - For receiving data messages from the gateway.
     let data_topic = &client_config.data_channel();
-    create_topic(&admin, data_topic)
+    create_topic(admin, data_topic)
         .await
         .expect("Failed to create data topic");
 
     // 3. client_id-error - For receiving error messages from the gateway.
     let err_topic = &client_config.error_channel();
-    create_topic(&admin, err_topic)
+    create_topic(admin, err_topic)
         .await
         .expect("Failed to create data topic");
 
@@ -112,19 +112,19 @@ pub(crate) async fn delete_topics(
 ) -> Result<(), Box<dyn Error>> {
     // 1. client_id-control
     let control_topic = &client_config.control_channel();
-    delete_topic(&admin, control_topic)
+    delete_topic(admin, control_topic)
         .await
         .expect("Failed to delete topic");
 
     // 2. client_id-data
     let data_topic = &client_config.data_channel();
-    delete_topic(&admin, data_topic)
+    delete_topic(admin, data_topic)
         .await
         .expect("Failed to delete topic");
 
     // 3. client_id-error
     let err_topic = &client_config.error_channel();
-    delete_topic(&admin, err_topic)
+    delete_topic(admin, err_topic)
         .await
         .expect("Failed to delete topic");
 

@@ -13,11 +13,11 @@ async fn get_data() -> SampledDataBars {
     let cfg_manager = async { ConfigManager::new(ServiceID::Default) }.await;
     let exchange_id = ExchangeID::Kraken;
     let symbol_id = JTO_EUR;
-    let data = data_utils::load_data(&cfg_manager, symbol_id, exchange_id)
-        .await
-        .expect("[get_data]: Failed to load data.");
+    
 
-    data
+    data_utils::load_data(&cfg_manager, symbol_id, exchange_id)
+        .await
+        .expect("[get_data]: Failed to load data.")
 }
 
 #[tokio::test]

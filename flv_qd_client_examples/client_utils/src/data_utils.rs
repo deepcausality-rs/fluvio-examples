@@ -5,7 +5,7 @@ use db_query_manager::QueryDBManager;
 use std::error::Error;
 use symbol_manager::SymbolManager;
 
-const FN_NAME: &'static str = "workflow/load_data";
+const FN_NAME: &str = "workflow/load_data";
 
 /// Loads OHLCV bar data from the database at yearly and monthly resolutions.
 ///
