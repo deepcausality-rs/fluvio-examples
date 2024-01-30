@@ -57,33 +57,53 @@ pub async fn load_data(
     let exchanges = cfg_manager.exchanges_id_names().to_owned();
     let exchange_symbol_table = cfg_manager
         .get_symbol_table(default_exchange)
-        .expect("Failed to get symbol table for default exchange.");
+        .expect("[client_utils/load_data]: Failed to get symbol table for default exchange.");
 
     // println!("{FN_NAME}: Creating a new QueryDBManager.");
     let db_config = cfg_manager.db_config();
-    let mut db_query_manager = QueryDBManager::new(db_config.clone())
-        .await
-        .expect("[load_data]: Failed to create QueryDBManager instance.");
+    let mut db_query_manager = match QueryDBManager::new(db_config.clone()).await {
+        Ok(db_query_manager) => db_query_manager,
+        Err(err) => {
+            println!("{FN_NAME}: Failed to create QueryDBManager instance. Error: {err}");
+            return Err(err.into());
+        }
+    };
 
     // println!("{FN_NAME}: Get all symbols for the default exchange.");
-    let symbols = db_query_manager
+    let symbols = match db_query_manager
         .get_all_symbols_with_ids(&exchange_symbol_table)
         .await
-        .expect("[load_data]: Failed to get all symbols for SymbolManager.");
+    {
+        Ok(symbols) => symbols,
+        Err(err) => {
+            println!("{FN_NAME}: Failed to get symbols for exchange {exchange_id}. Error: {err}");
+            return Err(err.into());
+        }
+    };
 
     // println!("{FN_NAME}: Creating a new SymbolManager.");
     let mut symbol_manager = SymbolManager::new(symbols, exchanges)
         .expect("[load_data]: Failed to create SymbolManager instance.");
 
     // println!("{FN_NAME}: Get symbol id for symbol {}.", symbol);
-    let symbol_id = symbol_manager
-        .get_symbol_id(symbol)
-        .expect("[load_data]: Failed to get symbol.");
+    let symbol_id = match symbol_manager.get_symbol_id(symbol) {
+        Ok(id) => id,
+        Err(err) => {
+            println!("{FN_NAME}: Failed to get symbol id for symbol {}.", symbol);
+            return Err(Box::try_from(err).unwrap());
+        }
+    };
 
     // println!("{FN_NAME}: Get symbol table for the default exchange.");
-    let symbol_table = symbol_manager
-        .get_symbol_table_name(exchange_id as u16, symbol_id)
-        .expect("[load_data]: Failed to get symbol table name");
+    let symbol_table = match symbol_manager.get_symbol_table_name(exchange_id as u16, symbol_id) {
+        Ok(symbol_table) => symbol_table,
+        Err(err) => {
+            println!(
+                "{FN_NAME}: Failed to get symbol table for exchange {exchange_id}. Error: {err}"
+            );
+            return Err(Box::try_from(err).unwrap());
+        }
+    };
 
     // println!("{FN_NAME}: Get yearly bars for symbol {}.", symbol_id);
     let time_resolution = &TimeResolution::OneYear;
