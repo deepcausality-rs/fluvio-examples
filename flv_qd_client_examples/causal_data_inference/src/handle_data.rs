@@ -3,7 +3,7 @@ use deep_causality::prelude::Causable;
 use fluvio::Offset;
 use futures::stream::StreamExt;
 use rust_decimal::prelude::ToPrimitive;
-use sbe_messages::prelude::{FirstTradeBar, LastTradeBar, MessageType, SbeTradeBar};
+use sbe_messages::prelude::{ MessageType, SbeTradeBar};
 use std::error::Error;
 use std::sync::Arc;
 
@@ -133,22 +133,21 @@ impl<'l> MessageHandler<'l> {
         match message_type {
             // Handle first trade bar
             MessageType::FirstTradeBar => {
-                let first_trade_bar = FirstTradeBar::from(message.as_slice());
-                println!("{FN_NAME}: Data stream Starts: {:?}", first_trade_bar);
+                println!("{FN_NAME}: FirstTradeBar (Data stream Starts)");
             }
 
-            // Handle actual trade bar with data
             MessageType::TradeBar => {
+                println!("{FN_NAME}: TradeBar: {:?}", message);
                 let trade_bar = SbeTradeBar::decode(message.as_slice()).unwrap();
 
-                // Extract the price from the trade bar
+                println!("{FN_NAME}: Extract the price from the trade bar: {}", trade_bar.price().to_f64().unwrap());
                 let price = trade_bar.price().to_f64().unwrap();
 
-                // Apply the model to the price for causal inference
+                println!("{FN_NAME}: Apply the model to the price for causal inference");
                 let res = self
                     .model
                     .causaloid()
-                    .verify_all_causes(&[price, price], None)
+                    .verify_all_causes(&[price], None)
                     .unwrap_or_else(|e| {
                         println!("{FN_NAME}: {}", e);
                         false
@@ -162,8 +161,7 @@ impl<'l> MessageHandler<'l> {
 
             // Handle last trade bar
             MessageType::LastTradeBar => {
-                let last_trade_bar = LastTradeBar::from(message.as_slice());
-                println!("{FN_NAME}: Data stream stops:{:?}", last_trade_bar);
+                println!("{FN_NAME}: LastTradeBar (Data stream stops)");
             }
             // Ignore all other message types
             _ => {}
