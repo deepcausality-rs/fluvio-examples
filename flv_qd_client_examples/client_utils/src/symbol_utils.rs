@@ -50,6 +50,7 @@ pub async fn get_symbol_id(
     let default_exchange = cfg_manager.default_exchange();
     let exchanges = cfg_manager.exchanges_id_names().to_owned();
 
+    // println!("{FN_NAME}: Creating a new SymbolManager.");
     let exchange_symbol_table = match cfg_manager.get_symbol_table(default_exchange) {
         Some(table) => table,
         None => {
@@ -73,8 +74,7 @@ pub async fn get_symbol_id(
     // println!("{FN_NAME}: Get all symbols for the default exchange.");
     let symbols = match db_query_manager
         .get_all_symbols_with_ids(&exchange_symbol_table)
-        .await
-    {
+        .await {
         Ok(sym) => sym,
         Err(err) => {
             println!("{FN_NAME}: Failed to get all symbols for the default exchange.");
