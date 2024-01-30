@@ -5,7 +5,7 @@ use db_query_manager::QueryDBManager;
 use std::error::Error;
 use symbol_manager::SymbolManager;
 
-const FN_NAME: &str = "workflow/load_data";
+const FN_NAME: &str = "[client_utils/load_data]: ";
 
 /// Loads OHLCV bar data from the database at yearly and monthly resolutions.
 ///
@@ -57,7 +57,7 @@ pub async fn load_data(
     let exchanges = cfg_manager.exchanges_id_names().to_owned();
     let exchange_symbol_table = cfg_manager
         .get_symbol_table(default_exchange)
-        .expect("[load_data]: Failed to get symbol table for default exchange.");
+        .expect("Failed to get symbol table for default exchange.");
 
     // println!("{FN_NAME}: Creating a new QueryDBManager.");
     let db_config = cfg_manager.db_config();

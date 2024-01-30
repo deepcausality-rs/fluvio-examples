@@ -1,7 +1,7 @@
 use crate::handle_data::MessageHandler;
 use causal_model::context::build_context;
 use causal_model::model::{build_main_causaloid, model_builder};
-use client_utils::{data_utils, handle_error_utils, handle_utils, print_utils};
+use client_utils::{data_utils, handle_error_utils, handle_utils, print_utils, symbol_utils};
 use common::prelude::{ExchangeID, MessageClientConfig, SampledDataBars, ServiceID};
 use config_manager::ConfigManager;
 use deep_causality::prelude::TimeScale;
@@ -51,8 +51,8 @@ async fn main() {
 
     println!("{FN_NAME}: Load Data");
     let exchange_id = EXCHANGE_ID;
-    let symbol_id = SYMBOL;
-    let data = data_utils::load_data(&cfg_manager, symbol_id, exchange_id)
+    let symbol = SYMBOL;
+    let data = data_utils::load_data(&cfg_manager, symbol, exchange_id)
         .await
         .expect("[main]: Failed to load data.");
 
@@ -60,6 +60,11 @@ async fn main() {
 
     println!("{FN_NAME}: Build Client config for client ID: {CLIENT_ID}",);
     let client_config = MessageClientConfig::new(CLIENT_ID);
+
+    println!("{FN_NAME}: Get Symbol ID for symbol: {symbol}",);
+    let symbol_id = symbol_utils::get_symbol_id(&cfg_manager, symbol)
+        .await
+        .expect("[main]: Failed to get symbol ID.");
 
     println!("{FN_NAME}: Build QD Client",);
     let client = QDClient::new(CLIENT_ID, client_config.clone())
@@ -72,11 +77,11 @@ async fn main() {
     println!("{FN_NAME}: Start the data handler");
     spawn_data_handler(client_config.clone(), data).await;
 
-    // println!("{FN_NAME}: Send start streaming message for symbol id: {symbol_id}",);
-    // client
-    //     .start_trade_data(exchange_id, symbol_id)
-    //     .await
-    //     .expect("Failed to send start trade data message");
+    println!("{FN_NAME}: Send start streaming message for symbol id: {symbol_id}",);
+    client
+        .start_trade_data(exchange_id, symbol_id)
+        .await
+        .expect("Failed to send start trade data message");
 
     println!("{FN_NAME}: Wait a moment to let the data stream complete...");
     sleep(Duration::from_secs(1)).await;
