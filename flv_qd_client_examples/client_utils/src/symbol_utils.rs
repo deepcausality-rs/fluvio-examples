@@ -17,10 +17,9 @@ pub async fn get_symbol_id(
         Some(table) => table,
         None => {
             println!("{FN_NAME}: Failed to get symbol table for default exchange.");
-            return Err(Box::try_from(format!(
+            return Err(Box::from(format!(
                 "{FN_NAME}: Failed to get symbol table for default exchange."
-            ))
-            .unwrap());
+            )));
         }
     };
 
@@ -30,7 +29,7 @@ pub async fn get_symbol_id(
         Ok(dqm) => dqm,
         Err(err) => {
             println!("{FN_NAME}: Failed to create QueryDBManager.");
-            return Err(Box::try_from(err).unwrap());
+            return Err(Box::from(err));
         }
     };
 
@@ -42,7 +41,7 @@ pub async fn get_symbol_id(
         Ok(sym) => sym,
         Err(err) => {
             println!("{FN_NAME}: Failed to get all symbols for the default exchange.");
-            return Err(Box::try_from(err).unwrap());
+            return Err(Box::from(err));
         }
     };
 
@@ -55,7 +54,7 @@ pub async fn get_symbol_id(
         Ok(id) => id,
         Err(err) => {
             println!("{FN_NAME}: Failed to get symbol id for symbol {}.", symbol);
-            return Err(Box::try_from(err).unwrap());
+            return Err(Box::from(err));
         }
     };
 

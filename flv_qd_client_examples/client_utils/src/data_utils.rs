@@ -90,7 +90,7 @@ pub async fn load_data(
         Ok(id) => id,
         Err(err) => {
             println!("{FN_NAME}: Failed to get symbol id for symbol {}.", symbol);
-            return Err(Box::try_from(err).unwrap());
+            return Err(Box::from(err));
         }
     };
 
@@ -101,7 +101,7 @@ pub async fn load_data(
             println!(
                 "{FN_NAME}: Failed to get symbol table for exchange {exchange_id}. Error: {err}"
             );
-            return Err(Box::try_from(err).unwrap());
+            return Err(Box::from(err));
         }
     };
 
