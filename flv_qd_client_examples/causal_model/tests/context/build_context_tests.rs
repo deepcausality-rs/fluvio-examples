@@ -5,7 +5,7 @@ use config_manager::ConfigManager;
 use deep_causality::prelude::{ContextuableGraph, Identifiable, TimeScale};
 use std::env;
 
-const JTO_EUR: u16 = 708; // JTO in EUR 2420 trades ~ 1 months
+const JTO_EUR: &str = "jtoeur"; // JPY in EUR 2420 trades ~ 1 months
 
 async fn get_data() -> SampledDataBars {
     env::set_var("ENV", "Local");

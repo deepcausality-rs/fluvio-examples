@@ -44,7 +44,7 @@ pub fn get_month_causaloid<'l>(
     id: IdentificationValue,
 ) -> CustomCausaloid<'l> {
     //
-    let description = "Checks for a potential monthly long breakout";
+    let description = "Month Causaloid: Checks for a potential monthly long breakout";
 
     // The causal fucntion must be a function and not a closure because the function
     // will be coercived into a function pointer later on, which is not possible with a closure.
@@ -56,7 +56,7 @@ pub fn get_month_causaloid<'l>(
         // Check if current_price data is available, if not, return an error.
         if obs.is_nan() {
             return Err(CausalityError(
-                "Observation/current_price is NULL/NAN".into(),
+                "Month Causaloid: Observation/current_price is NULL/NAN".into(),
             ));
         }
 

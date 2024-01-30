@@ -35,10 +35,10 @@ const FN_NAME: &'static str = "workflow/load_data";
 ///
 /// use client_utils::data_utils::load_data;
 /// let cfg_manager = ConfigManager::new(ServiceID::Default);
-/// let symbol_id = 1234;
+/// let symbol = "ethaed";
 /// let exchange_id = ExchangeID::Kraken;
 ///
-/// let result = load_data(&cfg_manager, symbol_id, exchange_id).await;
+/// let result = load_data(&cfg_manager, symbol, exchange_id).await;
 ///
 /// assert!(result.is_ok());
 /// }
@@ -46,7 +46,7 @@ const FN_NAME: &'static str = "workflow/load_data";
 ///
 pub async fn load_data(
     cfg_manager: &ConfigManager,
-    symbol_id: u16,
+    symbol: &str,
     exchange_id: ExchangeID,
 ) -> Result<SampledDataBars, Box<dyn Error>> {
     //
@@ -74,6 +74,11 @@ pub async fn load_data(
     // println!("{FN_NAME}: Creating a new SymbolManager.");
     let mut symbol_manager = SymbolManager::new(symbols, exchanges)
         .expect("[load_data]: Failed to create SymbolManager instance.");
+
+    // println!("{FN_NAME}: Get symbol id for symbol {}.", symbol);
+    let symbol_id = symbol_manager
+        .get_symbol_id(symbol)
+        .expect("[load_data]: Failed to get symbol.");
 
     // println!("{FN_NAME}: Get symbol table for the default exchange.");
     let symbol_table = symbol_manager
@@ -122,7 +127,7 @@ pub async fn load_data(
     // println!("{FN_NAME}: Set month bars.");
     bars.set_month_bars(months_bars);
 
-    // Close the DB connection
+    // Close DB connection
     db_query_manager.close().await;
 
     Ok(bars)

@@ -18,9 +18,7 @@ const CLIENT_ID: u16 = 77;
 
 const EXCHANGE_ID: ExchangeID = ExchangeID::Kraken;
 
-// Symbols
-// const XBT_EUR: u16 = 202; // BTC in EUR ~80 million trades ~ 124 months
-const JTO_EUR: u16 = 708; // JPY in EUR 2420 trades ~ 1 months
+const SYMBOL: &str = "jtoeur"; // JPY in EUR 2420 trades ~ 1 months
 
 ///
 /// The main function loads historical data, connects to a stream, handles errors,
@@ -53,7 +51,7 @@ async fn main() {
 
     println!("{FN_NAME}: Load Data");
     let exchange_id = EXCHANGE_ID;
-    let symbol_id = JTO_EUR;
+    let symbol_id = SYMBOL;
     let data = data_utils::load_data(&cfg_manager, symbol_id, exchange_id)
         .await
         .expect("[main]: Failed to load data.");

@@ -12,7 +12,7 @@ async fn get_context() -> CustomContext<'static> {
 
     let cfg_manager = async { ConfigManager::new(ServiceID::Default) }.await;
     let exchange_id = ExchangeID::Kraken;
-    let symbol_id = 708; // JPY in EUR 2420 trades ~ 1 months
+    let symbol_id = "jtoeur"; //2420 trades ~ 1 months
     let data = data_utils::load_data(&cfg_manager, symbol_id, exchange_id)
         .await
         .expect("[get_context]: Failed to load data.");

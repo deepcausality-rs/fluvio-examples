@@ -72,6 +72,7 @@ impl QueryDBManager {
 ///
 async fn create_connection_pool(url: String, max_connections: u32) -> Pool<Postgres> {
     // Create a connection pool to the database
+    // https://github.com/questdb/questdb/issues/3204
     let pool_connection = PgPoolOptions::new()
         .max_connections(max_connections)
         .connect(&url)
@@ -80,11 +81,11 @@ async fn create_connection_pool(url: String, max_connections: u32) -> Pool<Postg
     // Check if the connection to the database was successful
     return match pool_connection {
         Ok(pool) => {
-            println!(" ✅ Database Connection OK!");
+            println!("✅ Database Connection OK!");
             pool
         }
         Err(err) => {
-            panic!("{FN_NAME}  ❌ Connection to the database failed: {:?}", err);
+            panic!("{FN_NAME} ❌ Database Connection FAILED ❌: {:?}", err);
         }
     };
 }
