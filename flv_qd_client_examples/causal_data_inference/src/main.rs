@@ -1,6 +1,6 @@
 use crate::handle_data::MessageHandler;
 use causal_model::context::build_context;
-use causal_model::model::build_model;
+use causal_model::model::{build_main_causaloid, model_builder};
 use client_utils::{data_utils, handle_error_utils, handle_utils, print_utils};
 use common::prelude::{ExchangeID, MessageClientConfig, SampledDataBars, ServiceID};
 use config_manager::ConfigManager;
@@ -133,8 +133,8 @@ async fn spawn_data_handler(client_config: MessageClientConfig, data: SampledDat
         //
         let context = build_context::build_time_data_context(&data, &TimeScale::Month, 10)
             .expect("[main]: Failed to build context");
-        let causaloid = build_model::build_main_causaloid(&context);
-        let model = Arc::new(build_model::build_causal_model(&context, causaloid));
+        let causaloid = build_main_causaloid::build_main_causaloid(&context);
+        let model = Arc::new(model_builder::build_causal_model(&context, causaloid));
         let handler = MessageHandler::new(data_topic, model);
 
         if let Err(e) = handler.run_inference().await {

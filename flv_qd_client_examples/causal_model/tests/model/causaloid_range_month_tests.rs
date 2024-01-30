@@ -29,7 +29,6 @@ async fn get_context() -> CustomContext<'static> {
 async fn test_get_month_causaloid() {
     let context = get_context().await;
     let causaloid = causaloid_range_month::get_month_causaloid(&context, 1);
-
     assert_eq!(causaloid.id(), 1);
 }
 
@@ -37,7 +36,6 @@ async fn test_get_month_causaloid() {
 async fn test_current_month_index() {
     let context = get_context().await;
     let causaloid = causaloid_range_month::get_month_causaloid(&context, 1);
-
     assert_eq!(causaloid.id(), 1);
 
     let current_month_index = causaloid.context().unwrap().get_current_month_index();
@@ -48,7 +46,6 @@ async fn test_current_month_index() {
 async fn test_current_month_node() {
     let context = get_context().await;
     let causaloid = causaloid_range_month::get_month_causaloid(&context, 1);
-
     assert_eq!(causaloid.id(), 1);
 
     let current_month_index = causaloid.context().unwrap().get_current_month_index();
@@ -63,23 +60,22 @@ async fn test_current_month_node() {
 async fn test_previous_month_index() {
     let context = get_context().await;
     let causaloid = causaloid_range_month::get_month_causaloid(&context, 1);
-
     assert_eq!(causaloid.id(), 1);
 
     let previous_month_index = causaloid.context().unwrap().get_previous_month_index();
     assert!(previous_month_index.is_some());
-
-    // let previous_month_index = previous_month_index.unwrap();
-    // let month_node = causaloid.context().unwrap().get_node(*previous_month_index);
-    // assert!(month_node.is_some());
 }
 
 #[tokio::test]
 async fn test_previous_month_node() {
     let context = get_context().await;
     let causaloid = causaloid_range_month::get_month_causaloid(&context, 1);
-
     assert_eq!(causaloid.id(), 1);
-    //
-    // Add tests once we have more data.
+
+    let previous_month_index = causaloid.context().unwrap().get_previous_month_index();
+    assert!(previous_month_index.is_some());
+
+    let previous_month_index = previous_month_index.unwrap();
+    let month_node = causaloid.context().unwrap().get_node(*previous_month_index);
+    assert!(month_node.is_some());
 }
