@@ -60,7 +60,6 @@ autometrics = { version = "1", features = ["prometheus-exporter"] }
 chrono = { version = "0.4", default-features = false , features = ["serde", "clock"] }
 config-file = "0.2"
 csv = "1.3"
-#
 deep_causality = { git = "https://github.com/marvin-hansen/deep_causality.git", rev = "2a18217bd3f67ea965c67c7ba43935b6ba9c8365" }
 encoding_rs = "0.8"
 fluvio = { version = "0.21", default-features = false, features = ["rustls"] }

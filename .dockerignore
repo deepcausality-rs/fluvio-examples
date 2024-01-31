@@ -1,0 +1,10 @@
+.autometrics
+.cargo
+.github
+.git
+data
+doc
+scripts
+sql
+target
+tools

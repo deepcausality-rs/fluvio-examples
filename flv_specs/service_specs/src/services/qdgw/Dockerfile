@@ -3,7 +3,7 @@
 # This Dockerfile runs relative to the repo root.
 # Therefore, copy it there before running.
 ############################
-FROM rust:1.74-slim-buster as builder
+FROM rust:1.75-slim-buster as builder
 
 # Create the user and group files to run the binary
 # in the final scratch container as an unprivileged user.
@@ -39,7 +39,7 @@ RUN cargo fetch
 # https://github.com/google/oss-fuzz/issues/10174
 
 # Run the release build.
-RUN cargo build -p qdgw --release --target aarch64-unknown-linux-musl
+RUN RUSTFLAGS='-C target-cpu=native' cargo build -p qdgw --release --target aarch64-unknown-linux-musl
 
 # Move binary up to root level directory for easy access
 RUN mv /app/target/aarch64-unknown-linux-musl/release/qdgw /qdgw
