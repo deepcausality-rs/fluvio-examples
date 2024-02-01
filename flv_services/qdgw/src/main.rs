@@ -116,6 +116,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Wrap the QueryDBManager instance into an Arc/Mutex to allow multi-threaded access.
     let query_manager = Arc::new(Mutex::new(q_manager));
 
+    // Check if the database connection is open.
+    let q_manager = query_manager.lock().await;
+    let is_open = q_manager.is_open().await;
+    drop(q_manager);
+
+    if is_open {
+        println!("✅ Database Connection OK!");
+    }
+
     // Autoconfigures message channel
     let msg_config = cfg_manager.message_client_config();
     let service_topic = msg_config.control_channel();
