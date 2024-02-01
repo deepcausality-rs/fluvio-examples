@@ -80,10 +80,7 @@ async fn create_connection_pool(url: String, max_connections: u32) -> Pool<Postg
 
     // Check if the connection to the database was successful
     match pool_connection {
-        Ok(pool) => {
-            println!("✅ Database Connection OK!");
-            pool
-        }
+        Ok(pool) => pool,
         Err(err) => {
             panic!("{FN_NAME} ❌ Database Connection FAILED ❌: {:?}", err);
         }
@@ -91,11 +88,11 @@ async fn create_connection_pool(url: String, max_connections: u32) -> Pool<Postg
 }
 
 impl QueryDBManager {
-    /// Checks if the database connection is closed.
+    /// Checks if the database connection is open.
     ///
     /// # Returns
     ///
-    /// Returns `true` if the connection is closed, `false` otherwise.
+    /// Returns `true` if the db connection is open, `false` otherwise.
     ///
     /// # Example
     /// ```rust
@@ -107,18 +104,28 @@ impl QueryDBManager {
     ///  let db_config =  DBConfig::new(9009, "0.0.0.0".into());
     /// let query_manager = QueryDBManager::new(db_config).await.expect("Failed to create db connection");
     ///
-    /// let open = query_manager.is_close().await;
+    /// let open = query_manager.is_open().await;
     ///
     /// if open{
-    ///         println!("✅ DB Connection is open: {}", open);
+    ///         println!("✅ DB connection is open: {}", open);
     /// } else {
-    ///     println!("❌ DB Connection is closed");
+    ///     println!("❌ DB connection is closed");
     /// }
     ///
     ///   // Close the connection pool
     ///   query_manager.close().await;
     /// }
     /// ```
+    ///
+    pub async fn is_open(&self) -> bool {
+        !self.pool.is_closed()
+    }
+
+    /// Checks if the database connection is closed.
+    ///
+    /// # Returns
+    ///
+    /// Returns `true` if the db connection is closed, `false` otherwise.
     ///
     pub async fn is_close(&self) -> bool {
         self.pool.is_closed()
