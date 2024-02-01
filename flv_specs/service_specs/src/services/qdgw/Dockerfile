@@ -14,10 +14,7 @@ RUN mkdir /user && \
 # Install protobuf compiler
 # Install git to fix issue #3787 in fluvio
 # https://github.com/infinyon/fluvio/issues/3787
-RUN apt-get update && apt-get install -y git protobuf-compiler libprotobuf-dev
-
-# Install build target musel for compiling a static binary
-RUN rustup target add aarch64-unknown-linux-musl
+RUN apt-get update && apt-get install -y git pkg-config libssl-dev
 
 # Set workspace directory
 WORKDIR /app
@@ -25,39 +22,30 @@ WORKDIR /app
 # Copy over the entire source code
 COPY . ./
 
-# Fix linker issue with musel that affects both, AMD64 and ARM64 (aarch64).
-# https://github.com/rust-lang/stacker/issues/80
-ARG CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_LINKER=aarch64-linux-gnu-gcc
-ARG CC=aarch64-linux-gnu-gcc
-
 # Download all dependencies
 RUN cargo fetch
 
-# Because of Issue #10174 in SurrealDB, Docker requires at least 4GB of memory build the image.
-# When memory is low, the docker build aborts after 15+ min with (signal: 9, SIGKILL: kill)
-# Just set memory limit in Docker to at least 4GB, better 12GB, and the issue is gone.
-# https://github.com/google/oss-fuzz/issues/10174
-
-# Run the release build.
-RUN RUSTFLAGS='-C target-cpu=native' cargo build -p qdgw --release --target aarch64-unknown-linux-musl
+# Build the release.
+RUN #RUSTFLAGS='-C target-cpu=native' cargo build -p qdgw --release
+RUN cargo build -p qdgw --release
 
 # Move binary up to root level directory for easy access
-RUN mv /app/target/aarch64-unknown-linux-musl/release/qdgw /qdgw
+RUN mv /app/target/release/qdgw /qdgw
 
 ############################
-# Scratch image
+# Run image
 ############################
 # Create minimal docker image
-FROM scratch as runner
+FROM alpine as runner
 
 # Import user and group files from the build stage.
 COPY --from=builder /user/group /user/passwd /etc/
 
-# Import the CAcertificates from the build stage to enable HTTPS.
+# Import the CA-certificates from the build stage to enable HTTPS.
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
 # Copy binary from build output directory
-COPY --from=builder /services/qdgw /
+COPY --from=builder /qdgw /
 
 # Port number must match deployment.yaml and specs/*/service_info
 # Fluvio PORT: 9003 9005 9010
@@ -67,5 +55,5 @@ EXPOSE 9003 9005 9010 8080
 # Run binary as unprivileged user
 USER nobody:nobody
 
-# Hard coded start command b/c no shell in scratch image
+# Hard coded start command b/c no shell
 CMD ["/qdgw"]
