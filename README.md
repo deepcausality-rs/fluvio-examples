@@ -42,6 +42,7 @@ Simple Binary Encoding is a highly efficient fixed sized binary codec used for  
 * [Installation](doc/install.md)
 * [Data import](doc/import_data.md)
 * [Data analysis with SQL](doc/analyze_data.md)
+* [QD communication protocol](doc/qd_protocol.md)
 
 Generate the API documentation with:
 
