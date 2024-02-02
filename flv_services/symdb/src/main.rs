@@ -54,16 +54,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Create a new QueryDBManager instance.
     let db_config = cfg_manager.db_config();
-    let q_manager = QueryDBManager::new(db_config.clone())
+    let mut q_manager = QueryDBManager::new(db_config)
         .await
         .expect("[SYMDB]/main: Failed to create QueryDBManager instance.");
-
-    // Wrap the QueryDBManager instance into an Arc/Mutex to allow multi-threaded access.
-    let query_manager = Arc::new(RwLock::new(q_manager));
-
-    let mut q_manager = query_manager
-        .write()
-        .expect("[SYMDB]/main: Failed to lock QueryDBManager");
 
     // Get all symbols for the default exchange.
     let symbols = q_manager
@@ -96,13 +89,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     print_utils::print_start_header_grpc_service(&SVC_ID, "", &metrics_addr, &metrics_uri);
 
     // Free up some memory before starting the service,
-    drop(db_config);
     drop(cfg_manager);
     drop(metrics_host);
     drop(metrics_uri);
     drop(metrics_addr);
     drop(q_manager);
-    drop(query_manager);
 
     //Starts both servers concurrently.
     match tokio::try_join!(web_handle) {
