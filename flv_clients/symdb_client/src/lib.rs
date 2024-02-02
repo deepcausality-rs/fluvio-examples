@@ -36,8 +36,8 @@ impl SymdbClient {
     /// use symdb_client::SymdbClient;
     /// use common::prelude::HostEndpoint;
     ///
-    /// let config = HostEndpoint::new("127.0.0.1".to_string(), 7070);
-    /// let client = SymdbClient::new(config).await?;
+    ///     let config = HostEndpoint::new("127.0.0.1".to_string(), 7070);
+    ///     let client = SymdbClient::new(config).await.expect("Failed to create SymdbClient");
     /// }
     /// ```
     pub async fn new(config: HostEndpoint) -> Result<Self, Error> {
