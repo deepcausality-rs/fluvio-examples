@@ -8,7 +8,7 @@ fn test_get_symdb_service_config() {
     assert_eq!(config.svc_id(), ServiceID::SYMDB);
     assert_eq!(config.name(), "symdbv1");
     assert_eq!(config.version(), 1);
-    assert_eq!(config.online(), false);
+    assert!(!config.online());
     assert_eq!(
         config.description(),
         "SYMDB (Symbol Master Database) gives access to central symbol to ID mapping)"
