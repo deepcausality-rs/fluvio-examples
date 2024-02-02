@@ -15,13 +15,15 @@ members = [
     "flv_components/db_query_manager",
     "flv_components/db_quest_manager",
     "flv_components/symbol_manager",
+    "flv_proto",
     "flv_sbe/bindings",
     "flv_sbe/sbe_messages",
     "flv_services/service_utils",
+    "flv_services/symdb",
     "flv_services/qdgw",
     "flv_specs/db_specs",
     "flv_specs/exchange_specs",
-    "flv_specs/service_specs", "flv_services/symdb",
+    "flv_specs/service_specs",
 ]
 
 
@@ -43,6 +45,7 @@ config_manager = {path = "flv_components/config_manager" }
 db_query_manager = { path = "flv_components/db_query_manager" }
 db_quest_manager = {path = "flv_components/db_quest_manager" }
 symbol_manager = {path = "flv_components/symbol_manager" }
+proto = {path = "flv_proto"}
 qd_client = { path = "flv_qd_client" }
 sbe_bindings = {path = "flv_sbe/bindings" }
 sbe_messages = {path = "flv_sbe/sbe_messages" }
@@ -73,6 +76,11 @@ petgraph = "0.6"
 rust_decimal = { version = "1", default-features = false, features = ["serde", "db-postgres"] }
 serde = { version = "1", features = ["derive"] }
 tokio = { version = "1", features = ["macros", "net", "rt-multi-thread", "signal"] }
+# proto / gRPC deps
+prost = "0.12"
+tonic-health = "0.10"
+tonic = "0.10"
+tonic-build = "0.10"
 # Quest DB uses the postgres wire protocol for queries; hence both, the questdb-rs and sqlx crates
 questdb-rs = { version = "3.1" }
 sqlx = { version = "0.7", features = ["runtime-tokio-native-tls", "postgres", "chrono" ] }

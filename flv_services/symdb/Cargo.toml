@@ -18,10 +18,14 @@ path = "src/main.rs"
 common = {workspace = true}
 config_manager = {workspace = true}
 db_query_manager = {workspace = true}
+proto = {workspace = true}
+
 service_utils = {workspace = true}
 
 # External crates
 autometrics = { workspace = true }
 tokio = { workspace = true }
+tonic = { workspace = true }
+tonic-health = { workspace = true }
+prost = { workspace = true }
 warp = { workspace = true }
-log = { workspace = true }

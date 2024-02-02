@@ -1,3 +1,5 @@
+mod service;
+
 use autometrics::prometheus_exporter;
 use common::prelude::ServiceID;
 use config_manager::ConfigManager;
