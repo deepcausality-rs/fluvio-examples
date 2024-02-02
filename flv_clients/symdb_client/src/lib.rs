@@ -5,7 +5,6 @@ mod utils_proto;
 use common::prelude::HostEndpoint;
 use proto::binding::symdb_service_client::SymdbServiceClient;
 use std::fmt::Error;
-use std::sync::{Arc, RwLock};
 use tonic::transport::{Channel, Uri};
 
 /// Client for interacting with the SymdbService.
@@ -15,7 +14,7 @@ use tonic::transport::{Channel, Uri};
 ///
 #[derive(Debug, Clone)]
 pub struct SymdbClient {
-    client: Arc<RwLock<SymdbServiceClient<Channel>>>,
+    client: SymdbServiceClient<Channel>,
 }
 
 impl SymdbClient {
@@ -61,8 +60,6 @@ impl SymdbClient {
             .unwrap_or_else(|_| panic!("\r\n ❌[SymdbClient]: Failed to connect to SYMDB service on: {} \r\n  \r\n Detail: \r\n", s));
 
         let client = SymdbServiceClient::new(channel);
-
-        let client = Arc::new(RwLock::new(client));
 
         Ok(Self { client })
     }

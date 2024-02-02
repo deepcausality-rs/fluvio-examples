@@ -1,8 +1,6 @@
 use crate::error::SymdbClientError;
 use crate::{utils_proto, SymdbClient};
 use common::prelude::ExchangeID;
-use proto::binding::symdb_service_client::SymdbServiceClient;
-use std::sync::RwLockWriteGuard;
 
 const FN_NAME: &str = "[SymdbClient]: ";
 
@@ -23,14 +21,13 @@ impl SymdbClient {
     /// let exchange_name = lookup_exchange_name(1).await?;
     ///
     pub async fn lookup_exchange_name(
-        &self,
+        &mut self,
         exchange_id: ExchangeID,
     ) -> Result<String, SymdbClientError> {
+        //
         let request = utils_proto::get_exchange_request(exchange_id);
 
-        let mut client = self.get_client().await?;
-        let res = client.lookup_exchange_name(request).await;
-        drop(client);
+        let res = self.client.lookup_exchange_name(request).await;
 
         match res {
             Ok(res) => Ok(res.into_inner().exchange_name),
@@ -54,15 +51,13 @@ impl SymdbClient {
     /// let symbol = lookup_symbol(42).await?;
     ///
     pub async fn lookup_symbol(
-        &self,
+        &mut self,
         exchange_id: ExchangeID,
         symbol_id: u16,
     ) -> Result<String, SymdbClientError> {
         let request = utils_proto::get_symbol_request(exchange_id, symbol_id);
 
-        let mut client = self.get_client().await?;
-        let res = client.lookup_symbol(request).await;
-        drop(client);
+        let res = self.client.lookup_symbol(request).await;
 
         match res {
             Ok(res) => Ok(res.into_inner().symbol),
@@ -84,41 +79,20 @@ impl SymdbClient {
     /// Returns a Result with the u32 symbol ID if found, otherwise a SymdbClientError.
     ///
     pub async fn lookup_symbol_id(
-        &self,
+        &mut self,
         exchange_id: ExchangeID,
         symbol: String,
     ) -> Result<u16, SymdbClientError> {
         let request = utils_proto::get_symbol_id_request(exchange_id, symbol.clone());
 
-        let mut client = self.get_client().await?;
-        let res = client.lookup_symbol_id(request).await;
-        drop(client);
+        let res = self.client.lookup_symbol_id(request);
 
-        match res {
+        match res.await {
             Ok(res) => Ok(res.into_inner().symbol_id as u16),
             Err(err) => Err(get_error(
                 format!("Error Looking up ID for symbol {}", &symbol).as_str(),
                 &err.to_string(),
             )),
-        }
-    }
-
-    /// Gets a write lock on the SymdbServiceClient.
-    ///
-    /// Locks the client for writing and returns the locked client.
-    ///
-    /// # Returns
-    ///
-    /// Returns a Result with the write locked client if successful,
-    /// otherwise a SymdbClientError if locking fails.
-    ///
-    async fn get_client(
-        &self,
-    ) -> Result<RwLockWriteGuard<SymdbServiceClient<tonic::transport::Channel>>, SymdbClientError>
-    {
-        match self.client.write() {
-            Ok(client) => Ok(client),
-            Err(err) => Err(get_error("Failed to lock SymdbClient", &err.to_string())),
         }
     }
 }
