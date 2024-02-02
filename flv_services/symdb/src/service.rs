@@ -163,5 +163,5 @@ impl SymdbService for SYMDBServer {
 }
 
 fn get_status(msg: &str, e: LookupError) -> Status {
-    Status::internal(format!("{} {} because of error: {}", FN_NAME, msg, e))
+    Status::internal(format!("{FN_NAME} {msg} because of error: {e}"))
 }
