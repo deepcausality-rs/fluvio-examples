@@ -1,33 +1,176 @@
-// use autometrics::autometrics;
+use autometrics::autometrics;
+use std::sync::{Arc, RwLock};
 use tonic::{Request, Response, Status};
 
 use proto::binding::symdb_service_server::SymdbService;
 use proto::binding::*;
+use symbol_manager::SymbolManager;
 
 #[derive(Clone)]
 pub struct SYMDBServer {
+    symbol_manager: Arc<RwLock<SymbolManager>>,
 }
 
-
-impl SYMDBServer{
-    pub fn new() -> Self {
-        Self {}
+impl SYMDBServer {
+    pub fn new(symbol_manager: Arc<RwLock<SymbolManager>>) -> Self {
+        Self { symbol_manager }
     }
 }
-
 
 #[tonic::async_trait]
-// #[autometrics]
-impl SymdbService for SYMDBServer{
-    async fn lookup_exchange_name(&self, request: Request<LookupExchangeNameRequest>) -> Result<Response<LookupExchangeNameResponse>, Status> {
-        todo!()
+#[autometrics]
+impl SymdbService for SYMDBServer {
+    /// Looks up the exchange name for the given exchange ID.
+    ///
+    /// # Arguments
+    ///
+    /// * `request` - The LookupExchangeNameRequest containing the exchange ID to look up.
+    ///
+    /// # Returns
+    ///
+    /// Returns a LookupExchangeNameResponse containing a boolean indicating if the exchange was found,
+    /// and the name if found. Returns an error if there was an issue looking up the name.
+    ///
+    /// # Errors
+    ///
+    /// May return an internal error if there was an issue looking up the exchange name.
+    ///
+    async fn lookup_exchange_name(
+        &self,
+        request: Request<LookupExchangeNameRequest>,
+    ) -> Result<Response<LookupExchangeNameResponse>, Status> {
+        // Extract fields from request
+        let exchange_id = request.into_inner().exchange_id;
+        // Lock symbol manager
+        let sym_manager = self
+            .symbol_manager
+            .read()
+            .expect("Failed To lock symbol manager");
+
+        // Lock up exchange name & handle error
+        return match sym_manager.get_exchange_name(exchange_id as u16) {
+            Ok(exchange_name) => Ok(Response::new(LookupExchangeNameResponse {
+                exchange_found: true,
+                exchange_name,
+            })),
+            Err(e) => Err(Status::internal(e.to_string())),
+        };
     }
 
-    async fn lookup_symbol(&self, request: Request<LookupSymbolRequest>) -> Result<Response<LookupSymbolResponse>, Status> {
-        todo!()
+    /// Looks up a symbol for a given ID.
+    ///
+    /// # Arguments
+    ///
+    /// * `request` - The LookupSymbolRequest containing the symbol ID to look up.
+    ///
+    /// # Returns
+    ///
+    /// Returns a LookupSymbolResponse containing the Symbol if found.
+    /// Returns an error if the symbol was not found.
+    ///
+    /// # Errors
+    ///
+    /// May return an NotFound error if the symbol does not exist.
+    /// May return an internal error if there was an issue looking up the symbol.
+    ///
+    async fn lookup_symbol(
+        &self,
+        request: Request<LookupSymbolRequest>,
+    ) -> Result<Response<LookupSymbolResponse>, Status> {
+        // Extract fields from request
+        let exchange_id = request.get_ref().exchange_id;
+        let symbol_id = request.get_ref().symbol_id;
+
+        // Lock symbol manager
+        let mut sym_manager = self
+            .symbol_manager
+            .write()
+            .expect("Failed To lock symbol manager");
+
+        let exchange_name = match sym_manager.get_exchange_name(exchange_id as u16) {
+            Ok(exchange_id) => exchange_id,
+            Err(e) => {
+                return Err(Status::internal(format!(
+                    "Exchange not found for ID: {} because of error: {}",
+                    exchange_id,
+                    e.to_string()
+                )))
+            }
+        };
+
+        return match sym_manager.get_symbol(symbol_id as u16) {
+            Ok(symbol) => Ok(Response::new(LookupSymbolResponse {
+                exchange_found: true,
+                exchange_name,
+                symbol_found: true,
+                symbol,
+            })),
+            Err(e) => {
+                return Err(Status::internal(format!(
+                    "Symbol not found for ID: {} because of error: {}",
+                    symbol_id,
+                    e.to_string()
+                )))
+            }
+        };
     }
 
-    async fn lookup_symbol_id(&self, request: Request<LookupSymbolIdRequest>) -> Result<Response<LookupSymbolIdResponse>, Status> {
-        todo!()
+    /// Looks up the symbol ID for the given symbol name and exchange ID.
+    ///
+    /// # Arguments
+    ///
+    /// * `request` - The LookupSymbolIdRequest containing the symbol name and exchange ID.
+    ///
+    /// # Returns
+    ///
+    /// Returns a LookupSymbolIdResponse containing the symbol ID if found.
+    /// Returns an error if the symbol was not found.
+    ///
+    /// # Errors
+    ///
+    /// May return a NotFound error if the symbol does not exist for the given name and exchange.
+    /// May return an internal error if there was an issue looking up the symbol ID.
+    ///
+    async fn lookup_symbol_id(
+        &self,
+        request: Request<LookupSymbolIdRequest>,
+    ) -> Result<Response<LookupSymbolIdResponse>, Status> {
+        let exchange_id = request.get_ref().exchange_id;
+        let symbol = request.into_inner().symbol;
+
+        // Lock symbol manager
+        let mut sym_manager = self
+            .symbol_manager
+            .write()
+            .expect("Failed To lock symbol manager");
+
+        // Lookup exchange name
+        let exchange_name = match sym_manager.get_exchange_name(exchange_id as u16) {
+            Ok(exchange_id) => exchange_id,
+            Err(e) => {
+                return Err(Status::internal(format!(
+                    "Exchange not found for ID: {} because of error: {}",
+                    exchange_id,
+                    e.to_string()
+                )))
+            }
+        };
+
+        // Lookup ID for Sy,bol & handle error
+        return match sym_manager.get_symbol_id(&symbol) {
+            Ok(symbol_id) => Ok(Response::new(LookupSymbolIdResponse {
+                exchange_found: true,
+                exchange_name,
+                symbol_found: true,
+                symbol_id: symbol_id as i32,
+            })),
+            Err(e) => {
+                return Err(Status::internal(format!(
+                    "Symbol ID not found for Symbol: {} because of error: {}",
+                    symbol,
+                    e.to_string()
+                )))
+            }
+        };
     }
 }

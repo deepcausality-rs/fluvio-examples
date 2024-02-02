@@ -6,7 +6,7 @@ use config_manager::ConfigManager;
 use db_query_manager::QueryDBManager;
 use service_utils::{print_utils, shutdown_utils};
 use std::net::SocketAddr;
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc, RwLock};
 use warp::Filter;
 
 const SVC_ID: ServiceID = ServiceID::SYMDB;
@@ -50,15 +50,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .expect("[SYMDB]/main: Failed to create QueryDBManager instance.");
 
     // Wrap the QueryDBManager instance into an Arc/Mutex to allow multi-threaded access.
-    let query_manager = Arc::new(Mutex::new(q_manager));
+    let query_manager = Arc::new(RwLock::new(q_manager));
 
     // Check if the database connection is open.
     let q_manager = query_manager
-        .lock()
+        .read()
         .expect("[SYMDB]/main: Failed to lock QueryDBManager");
 
     let is_open = q_manager.is_open().await;
-    drop(q_manager);
 
     if is_open {
         println!("✅ Database Connection OK!");
@@ -79,7 +78,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Close the DB Connection pool.
     let q_manager = query_manager
-        .lock()
+        .read()
         .expect("[SYMDB]/main: Failed to lock QueryDBManager");
 
     q_manager.close().await;

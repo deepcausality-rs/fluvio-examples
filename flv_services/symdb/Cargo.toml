@@ -19,6 +19,8 @@ common = {workspace = true}
 config_manager = {workspace = true}
 db_query_manager = {workspace = true}
 proto = {workspace = true}
+symbol_manager = {workspace = true}
+
 
 service_utils = {workspace = true}
 

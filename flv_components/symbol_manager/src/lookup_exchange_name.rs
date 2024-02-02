@@ -40,7 +40,7 @@ impl SymbolManager {
     /// Looks up the `exchange_id` key in the `index_to_exchange` map.
     /// If found, returns the exchange name.
     /// If not found, returns a `LookupError`.
-    pub fn get_exchange_name(&mut self, exchange_id: u16) -> Result<String, LookupError> {
+    pub fn get_exchange_name(&self, exchange_id: u16) -> Result<String, LookupError> {
         let exchange_name = match self.index_to_exchange.get(&exchange_id) {
             Some(symbol) => symbol,
             None => {

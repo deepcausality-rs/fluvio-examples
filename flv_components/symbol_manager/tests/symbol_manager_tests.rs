@@ -104,7 +104,7 @@ fn test_get_all_symbol_ids() {
 fn test_get_exchange_name() {
     let exchanges = get_test_exchanges();
     let symbols = get_test_symbols();
-    let mut symbol_manager =
+    let symbol_manager =
         SymbolManager::new(symbols, exchanges).expect("Failed to create symbol manager");
 
     let exchange_id = 1;
