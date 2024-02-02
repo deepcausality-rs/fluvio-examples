@@ -3,15 +3,18 @@ SHELL := /usr/bin/env bash
 
 .PHONY: help
 help:
+	@echo '    make qdgw   	Start the Start the Quant Data Gateway (QDGW).'
+	@echo '    make symdb   	Start the Symbol Master Database Service (SYMDB)'
+	@echo '    make example     	Run the example code in flv_examples.'
+#
 	@echo '    make build   	Builds the code base incrementally (fast) for dev.'
 	@echo '    make check   	Checks the code base for security vulnerabilities.'
 	@echo '    make doc   		Builds, tests, and opens api docs in a browser.'
-	@echo '    make example     	Runs the example code in flv_qd_client_examples.'
 	@echo '    make fix   		Fixes linting issues as reported by clippy.'
 	@echo '    make import   	Imports tick data from CSV into QuestDB.'
 	@echo '    make format   	Formats call code according to cargo fmt style.'
 	@echo '    make setup   	Tests and installs all make script dependencies.'
-	@echo '    make run   		Runs the binary defined in scripts/run.sh.'
+	@echo '    make run   		Runs the default binary (QDGW).'
 	@echo '    make update   	Update rust, update and build the project.'
 	@echo '    make test   	Tests across all crates.'
 	@echo '    make sbe   		Generates Rust bindings from the SBE schema.'
@@ -77,6 +80,16 @@ docker:
 .PHONY: release
 release:
 	@source scripts/release.sh
+
+
+.PHONY: qdgw
+qdgw:
+	@source scripts/qdgw.sh
+
+
+.PHONY: symdb
+symdb:
+	@source scripts/symdb.sh
 
 
 .PHONY: run
