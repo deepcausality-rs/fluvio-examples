@@ -9,7 +9,9 @@ use serde::{Deserialize, Serialize};
 /// # Variants
 ///
 /// `Default` - Default value, ID = 0
+/// `Database` - Database service, ID = 99
 /// `QDGW` - Quote Data Gateway service, ID = 1
+/// `SYMDB` - Symbol Master Service, ID = 2
 ///
 /// # Implements
 ///
@@ -26,7 +28,9 @@ use serde::{Deserialize, Serialize};
 pub enum ServiceID {
     #[default]
     Default = 0x0_u8,
+    Database = 99_u8,
     QDGW = 0x1_u8,
+    SYMDB = 0x2_u8,
 }
 
 impl ServiceID {
@@ -82,6 +86,8 @@ impl From<u8> for ServiceID {
         match v {
             0x0_u8 => ServiceID::Default,
             0x1_u8 => ServiceID::QDGW,
+            0x2_u8 => Self::SYMDB,
+            99_u8 => Self::Database,
             _ => Self::Default,
         }
     }
@@ -110,6 +116,8 @@ impl ServiceID {
         match n {
             "Default" => Some(ServiceID::Default),
             "QDGW" => Some(ServiceID::QDGW),
+            "SYMDB" => Some(ServiceID::SYMDB),
+            "Database" => Some(ServiceID::Database),
             _ => None,
         }
     }
@@ -119,7 +127,9 @@ impl Display for ServiceID {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             ServiceID::Default => write!(f, "Default"),
+            ServiceID::Database => write!(f, "Database"),
             ServiceID::QDGW => write!(f, "QDGW"),
+            ServiceID::SYMDB => write!(f, "SYMDB"),
         }
     }
 }

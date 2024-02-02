@@ -1,6 +1,6 @@
 use common::prelude::{DBConfig, EnvironmentType, ExchangeID, ServiceConfig, ServiceID};
 use db_specs::prelude::{get_cluster_db_config, get_local_db_config};
-use service_specs::prelude::get_qdgw_service_config;
+use service_specs::prelude::{get_qdgw_service_config, get_symdb_service_config};
 use std::collections::HashMap;
 use std::env;
 use std::path::Path;
@@ -100,6 +100,8 @@ pub(crate) fn get_db_config(env_type: &EnvironmentType) -> DBConfig {
 pub(crate) fn get_service_config(id: &ServiceID) -> ServiceConfig {
     match id {
         ServiceID::QDGW => get_qdgw_service_config(),
+        ServiceID::SYMDB => get_symdb_service_config(),
+        ServiceID::Database => ServiceConfig::default(),
         ServiceID::Default => ServiceConfig::default(),
     }
 }

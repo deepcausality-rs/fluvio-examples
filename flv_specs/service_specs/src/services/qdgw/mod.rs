@@ -12,9 +12,9 @@ use common::prelude::{MetricConfig, ServiceConfig, ServiceID};
 /// - description: "QDGW gives access to quantitative tick data"
 /// - health_check_uri: "health"
 /// - local_host: "0.0.0.0"
-/// - local_port: [9000, 9003, 9005, 9010]
+/// - local_port: [9000, 9003, 9005, 9010, 8080]
 /// - cluster_host: "qdgw-service.default.svc.cluster.local"
-/// - cluster_port: [9000, 9003, 9005, 9010]
+/// - cluster_port: [9000, 9003, 9005, 9010, 8080]
 /// - dependencies: None
 /// - metrics:  MetricConfig with:
 /// - metric_uri: "metrics"
@@ -30,14 +30,15 @@ pub fn get_qdgw_service_config() -> ServiceConfig {
     let name = "qdgwv1".to_string();
     let version = 1;
     let online = false;
-    let description = "QDGW gives access to quantitative tick data".to_string();
+    let description =
+        "QDGW QDGW (Quantitative Data Gateway) gives access to quantitative tick data".to_string();
     let health_check_uri = "health".to_string();
     let local_host = "0.0.0.0".to_string();
-    let local_port = Vec::from([9000, 9003, 9005, 9010]);
     let cluster_host = "qdgw-service.default.svc.cluster.local".to_string();
-    let cluster_port = Vec::from([9000, 9003, 9005, 9010]);
+    let local_port = get_qdgw_ports();
+    let cluster_port = get_qdgw_ports();
     let dependencies = None;
-    let metrics = get_metric_config();
+    let metrics = get_qdgw_metric_config();
 
     ServiceConfig::new(
         id,
@@ -55,6 +56,24 @@ pub fn get_qdgw_service_config() -> ServiceConfig {
     )
 }
 
+/// Returns a vector of u16 containing the ports used by the QDGW service.
+///
+/// The ports returned are:
+///
+/// - 9000: Fluvio Streaming port
+/// - 9003: Fluvio Streaming port
+/// - 9005: Fluvio Streaming port
+/// - 9010: Metrics port
+/// - 8080: Prometheus metrics port (default)
+///
+/// # Returns
+///
+/// A vector of u16 containing the ports: [9000, 9003, 9005, 9010, 8080]
+///
+fn get_qdgw_ports() -> Vec<u16> {
+    Vec::from([9000, 9003, 9005, 9010, 8080])
+}
+
 /// Returns a MetricConfig for the QDGW service.
 ///
 /// # Returns
@@ -66,8 +85,9 @@ pub fn get_qdgw_service_config() -> ServiceConfig {
 ///
 /// # Remarks
 ///
-/// Used to configure metrics for the QDGW service.
-fn get_metric_config() -> MetricConfig {
+/// Used to configure prometheus metrics for the QDGW service.
+///
+fn get_qdgw_metric_config() -> MetricConfig {
     let metric_host = "0.0.0.0".to_string();
     let metric_uri = "metrics".to_string();
     // Default port for prometheus metrics is 8080
