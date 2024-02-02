@@ -4,17 +4,18 @@ resolver = "2"
 
 members = [
     "flv_cli/data_importer",
-    "flv_qd_client",
-    "flv_qd_client_examples/basic_data_stream",
-    "flv_qd_client_examples/causal_data_inference",
-    "flv_qd_client_examples/causal_model",
-    "flv_qd_client_examples/client_utils",
+    "flv_clients/symdb_client",
+    "flv_clients/flv_qd_client",
     "flv_common",
     "flv_components/client_manager",
     "flv_components/config_manager",
     "flv_components/db_query_manager",
     "flv_components/db_quest_manager",
     "flv_components/symbol_manager",
+    "flv_examples/basic_data_stream",
+    "flv_examples/causal_data_inference",
+    "flv_examples/causal_model",
+    "flv_examples/client_utils",
     "flv_proto",
     "flv_sbe/bindings",
     "flv_sbe/sbe_messages",
@@ -38,7 +39,7 @@ authors = ["Marvin Hansen <marvin.hansen@gmail.com>"]
 [workspace.dependencies]
 #
 # Internal crates
-causal_model = {path = "flv_qd_client_examples/causal_model" }
+causal_model = {path = "flv_examples/causal_model" }
 common = {path = "flv_common" }
 client_manager = {path = "flv_components/client_manager" }
 config_manager = {path = "flv_components/config_manager" }
@@ -46,11 +47,12 @@ db_query_manager = { path = "flv_components/db_query_manager" }
 db_quest_manager = {path = "flv_components/db_quest_manager" }
 symbol_manager = {path = "flv_components/symbol_manager" }
 proto = {path = "flv_proto"}
-qd_client = { path = "flv_qd_client" }
+qd_client = { path = "flv_clients/flv_qd_client" }
 sbe_bindings = {path = "flv_sbe/bindings" }
 sbe_messages = {path = "flv_sbe/sbe_messages" }
+symdb_client = {path = "flv_clients/symdb_client"}
 service_utils = { path = "flv_services/service_utils" }
-client_utils = { path = "flv_qd_client_examples/client_utils" }
+client_utils = { path = "flv_examples/client_utils" }
 db_specs = { path = "flv_specs/db_specs" }
 exchange_specs = { path = "flv_specs/exchange_specs" }
 service_specs = {path = "flv_specs/service_specs" }

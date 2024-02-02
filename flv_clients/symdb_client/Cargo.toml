@@ -1,0 +1,18 @@
+[package]
+name = "symdb_client"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+readme.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+
+[lib]
+name = "qd_client"
+path = "src/lib.rs"
+
+
+[dependencies]
+# Internal crates
+common = { workspace = true }
