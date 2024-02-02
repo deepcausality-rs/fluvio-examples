@@ -22,7 +22,7 @@ impl ConfigManager {
     pub fn get_svc_socket_addr(&self) -> String {
         let host = DEFAULT_HOST;
         let local_ports = self.svc_config.local_port();
-        let port = local_ports.get(1).unwrap();
+        let port = local_ports.first().unwrap();
 
         format!("{}:{}", host, port)
     }

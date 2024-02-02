@@ -1,14 +1,13 @@
 use autometrics::autometrics;
+use common::prelude::LookupError;
 use std::sync::{Arc, RwLock};
 use tonic::{Request, Response, Status};
-use common::prelude::LookupError;
 
 use proto::binding::symdb_service_server::SymdbService;
 use proto::binding::*;
 use symbol_manager::SymbolManager;
 
 const FN_NAME: &str = "[SymdbClient/service]: ";
-
 
 #[derive(Clone)]
 pub struct SYMDBServer {
@@ -153,7 +152,10 @@ impl SymdbService for SYMDBServer {
                 symbol_id: symbol_id as i32,
             })),
             Err(e) => {
-                let msg = format!("Symbol not found for name: {} and exchange: {}", symbol, exchange_name);
+                let msg = format!(
+                    "Symbol not found for name: {} and exchange: {}",
+                    symbol, exchange_name
+                );
                 return Err(get_status(msg.as_str(), e));
             }
         };
@@ -161,10 +163,5 @@ impl SymdbService for SYMDBServer {
 }
 
 fn get_status(msg: &str, e: LookupError) -> Status {
-    Status::internal(format!(
-        "{} {} because of error: {}",
-        FN_NAME,
-        msg,
-        e
-    ))
+    Status::internal(format!("{} {} because of error: {}", FN_NAME, msg, e))
 }

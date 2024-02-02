@@ -15,6 +15,42 @@ use warp::Filter;
 
 const SVC_ID: ServiceID = ServiceID::SYMDB;
 
+/// This module sets up and starts the SYMDB gRPC service and metrics server.
+///
+/// ## Initialization
+///
+/// - Initializes the Prometheus metrics exporter.
+/// - Creates a `ConfigManager` instance to handle configuration.
+///
+/// ## Metrics Server Setup
+///
+/// - Gets metrics host, port, and URI from `ConfigManager`.
+/// - Creates a `SocketAddr` for the metrics server.
+/// - Creates a Warp filter to handle Prometheus metric requests.
+///
+/// ## gRPC Service Setup
+///
+/// - Gets the symbol table for the default exchange from `ConfigManager`.
+/// - Creates a `QueryDBManager` to fetch symbols from the database.
+/// - Fetches all symbols for the default exchange.
+/// - Creates a `SymbolManager` to manage the symbol data.
+/// - Closes `QueryDBManager` as it is no longer needed.
+/// - Configures the gRPC service address from `ConfigManager`.
+/// - Creates the gRPC service with a `SYMDBServer`.
+/// - Adds a health service to the gRPC server.
+///
+/// ## Starting Servers
+///
+/// - Starts the gRPC server and metrics server concurrently.
+/// - Spawns each as a `tokio` task.
+/// - Collects the results to check for errors.
+///
+/// ## On shutdown:
+///
+/// - Shuts down HTTP server
+/// - Shuts down gRPC server
+/// - Prints service stop message
+///
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Initialize the metrics exporter.
@@ -49,7 +85,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let exchanges = cfg_manager.exchanges_id_names().to_owned();
     let exchange_symbol_table = cfg_manager
         .get_symbol_table(default_exchange)
-        .expect("[QDGW]/main: Failed to get symbol table for default exchange.");
+        .expect("[SYMDB]/main: Failed to get symbol table for default exchange.");
 
     // Create a new QueryDBManager instance.
     let db_config = cfg_manager.db_config();
@@ -61,14 +97,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let symbols = q_manager
         .get_all_symbols_with_ids(&exchange_symbol_table)
         .await
-        .expect("[QDGW]/main: Failed to get all symbols for SymbolManager.");
+        .expect("[SYMDB]/main: Failed to get all symbols for SymbolManager.");
 
     // Create a new SymbolManager instance.
     let symbol_manager = async {
-        Arc::new(RwLock::new(
-            SymbolManager::new(symbols, exchanges)
-                .expect("[QDGW]/main: Failed to create SymbolManager instance."),
-        ))
+        Arc::new(RwLock::new(SymbolManager::new(symbols, exchanges).expect(
+            "[SYMDB]/main: Failed to create SymbolManager instance.",
+        )))
     }
     .await;
 
@@ -100,7 +135,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .serve_with_shutdown(grpc_addr, signal);
 
     // print the start message on the console.
-    print_utils::print_start_header_grpc_service(&SVC_ID, &service_addr, &metrics_addr, &metrics_uri);
+    print_utils::print_start_header_grpc_service(
+        &SVC_ID,
+        &service_addr,
+        &metrics_addr,
+        &metrics_uri,
+    );
 
     // Free up some memory before starting the service,
     drop(cfg_manager);
