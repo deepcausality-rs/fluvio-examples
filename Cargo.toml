@@ -5,7 +5,7 @@ resolver = "2"
 members = [
     "flv_cli/data_importer",
     "flv_clients/symdb_client",
-    "flv_clients/flv_qd_client",
+    "flv_clients/qd_client",
     "flv_common",
     "flv_components/client_manager",
     "flv_components/config_manager",
@@ -47,7 +47,7 @@ db_query_manager = { path = "flv_components/db_query_manager" }
 db_quest_manager = {path = "flv_components/db_quest_manager" }
 symbol_manager = {path = "flv_components/symbol_manager" }
 proto = {path = "flv_proto"}
-qd_client = { path = "flv_clients/flv_qd_client" }
+qd_client = { path = "flv_clients/qd_client" }
 sbe_bindings = {path = "flv_sbe/bindings" }
 sbe_messages = {path = "flv_sbe/sbe_messages" }
 symdb_client = {path = "flv_clients/symdb_client"}

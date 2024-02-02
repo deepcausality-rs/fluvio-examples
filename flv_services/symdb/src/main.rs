@@ -115,7 +115,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
     }
 
-
     //Prints the stop headers for the current service.
     print_utils::print_stop_header(&SVC_ID);
 
