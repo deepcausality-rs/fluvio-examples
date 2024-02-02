@@ -15,4 +15,10 @@ path = "src/lib.rs"
 
 [dependencies]
 # Internal crates
-common = { workspace = true }
+common = {workspace = true}
+proto = {workspace = true}
+
+# Exteral crates
+tokio = { workspace = true }
+tonic = { workspace = true }
+prost = { workspace = true }
