@@ -121,7 +121,7 @@ Please ensure that:
 Run in a dedicated terminal:
 
 ```bash
-    make run
+    make qdgw
 ```
 
 which should show:
@@ -137,6 +137,30 @@ which should show:
 When you want to shut down the QDGW, just press `ctrl+c`, which then
 gracefully shutdowns the gateway.
 
+## 🚀 Start the Symbol Master Database Service (SYMDB)
+
+Please ensure that:
+
+1) Fluvio is up and running
+2) QuestDB is up and running
+3) QDGW starts without any error
+
+Run in another dedicated terminal:
+
+```bash
+    make symdb
+```
+
+which should show:
+
+``` 
+    ||  QDGW  ||
+    ==========================================
+    Listening on TOPIC: qdgw-control
+    Metrics on endpoint: 0.0.0.0:8080/metrics
+    ==========================================
+```
+
 ## ⚙️ Run the example client 
 
 Run in a dedicated terminal:
@@ -148,15 +172,19 @@ Run in a dedicated terminal:
 which will show:
 
 ``` 
---------------------------------
+-----------------------------------------
 Select the number of the example to run:
---------------------------------
-base: Basic Data Stream Example
-quit: Exit
---------------------------------
+-----------------------------------------
+1) base: Basic Data Stream Example. Requires QDGW running
+2) causal: Real-Time Causal Inference Example. Requires QDGW running
+3) Symbol Master Example. Requires QDGW and SYMDB running
+4) quit: Exit
+-----------------------------------------
 
 1) base
-2) quit
+2) causal
+3) symbol
+4) qui
 #?
 ```
 
@@ -236,15 +264,17 @@ please see the following guide:
 Make sure all cargo tools are installed, as described in the [installation guide](doc/install.md). After all tools have been installed, the following commands are ready to use.
 ```
 make
+    make qdgw   	Start the Start the Quant Data Gateway (QDGW).
+    make symdb   	Start the Symbol Master Database Service (SYMDB)
+    make example    Run the example code in flv_examples.
     make build   	Builds the code base incrementally (fast) for dev.
     make check   	Checks the code base for security vulnerabilities.
     make doc   		Builds, tests, and opens api docs in a browser.
-    make example     	Runs the example code in flv_qd_client_examples.
     make fix   		Fixes linting issues as reported by clippy.
     make import   	Imports tick data from CSV into QuestDB.
     make format   	Formats call code according to cargo fmt style.
     make setup   	Tests and installs all make script dependencies.
-    make run   		Runs the binary defined in scripts/run.sh.
+    make run   		Runs the default binary (QDGW).
     make update   	Update rust, update and build the project.
     make test   	Tests across all crates.
     make sbe   		Generates Rust bindings from the SBE schema.

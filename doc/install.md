@@ -39,18 +39,20 @@ After all dependencies have been installed, the following commands are ready to 
 
 ```
 make
+    make qdgw   	Start the Start the Quant Data Gateway (QDGW).
+    make symdb   	Start the Symbol Master Database Service (SYMDB)
+    make example     	Run the example code in flv_examples.
     make build   	Builds the code base incrementally (fast) for dev.
     make check   	Checks the code base for security vulnerabilities.
     make doc   		Builds, tests, and opens api docs in a browser.
-    make example     	Runs the example code in flv_qd_client_examples.
     make fix   		Fixes linting issues as reported by clippy.
     make import   	Imports tick data from CSV into QuestDB.
     make format   	Formats call code according to cargo fmt style.
     make setup   	Tests and installs all make script dependencies.
-    make run   		Runs the binary defined in scripts/run.sh.
+    make run   		Runs the default binary (QDGW).
     make update   	Update rust, update and build the project.
     make test   	Tests across all crates.
-    make sbe   		Generates Rust bindings from the SBE schema.
+    make sbe   		Generates Rust bindings from the SBE schema. 
 ```
 
 The scripts called by each make command are located in the [script folder.](../scripts)
