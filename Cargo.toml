@@ -16,6 +16,7 @@ members = [
     "flv_examples/causal_data_inference",
     "flv_examples/causal_model",
     "flv_examples/client_utils",
+    "flv_examples/symbol_master",
     "flv_proto",
     "flv_sbe/bindings",
     "flv_sbe/sbe_messages",
@@ -24,7 +25,7 @@ members = [
     "flv_services/qdgw",
     "flv_specs/db_specs",
     "flv_specs/exchange_specs",
-    "flv_specs/service_specs",
+    "flv_specs/service_specs", 
 ]
 
 

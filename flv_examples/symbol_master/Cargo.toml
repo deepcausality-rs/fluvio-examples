@@ -1,0 +1,26 @@
+[package]
+name = "symbol_master"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+readme.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+
+[[bin]]
+name = "symbol_master"
+path = "src/main.rs"
+
+
+[dependencies]
+# Internal crates
+common = { workspace = true }
+client_utils = { workspace = true }
+qd_client = { workspace = true }
+sbe_messages = { workspace = true }
+symdb_client = { workspace = true }
+# External crates
+futures = {workspace = true}
+tokio = { workspace = true }
+fluvio = { workspace = true }
