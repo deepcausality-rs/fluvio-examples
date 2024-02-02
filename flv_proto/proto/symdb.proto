@@ -28,20 +28,15 @@ message LookupSymbolIDRequest {
 // Response
 
 message LookupExchangeNameResponse {
-  bool exchange_found = 1;
-  string exchange_name =2;
+  string exchange_name =1;
 }
 
 message LookupSymbolResponse {
-  bool exchange_found = 1;
-  string exchange_name =2;
-  bool symbol_found = 3;
-  string symbol =4;
+  string exchange_name =1;
+  string symbol =2;
 }
 
 message LookupSymbolIDResponse {
-  bool exchange_found = 1;
-  string exchange_name =2;
-  bool symbol_found = 3;
-  int32 symbol_id =4;
+  string exchange_name =1;
+  int32 symbol_id =2;
 }

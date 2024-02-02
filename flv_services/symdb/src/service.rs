@@ -49,10 +49,7 @@ impl SymdbService for SYMDBServer {
 
         // Lock up exchange name & handle error
         return match sym_manager.get_exchange_name(exchange_id as u16) {
-            Ok(exchange_name) => Ok(Response::new(LookupExchangeNameResponse {
-                exchange_found: true,
-                exchange_name,
-            })),
+            Ok(exchange_name) => Ok(Response::new(LookupExchangeNameResponse { exchange_name })),
             Err(e) => Err(Status::internal(e.to_string())),
         };
     }
@@ -100,9 +97,7 @@ impl SymdbService for SYMDBServer {
 
         return match sym_manager.get_symbol(symbol_id as u16) {
             Ok(symbol) => Ok(Response::new(LookupSymbolResponse {
-                exchange_found: true,
                 exchange_name,
-                symbol_found: true,
                 symbol,
             })),
             Err(e) => {
@@ -159,9 +154,7 @@ impl SymdbService for SYMDBServer {
         // Lookup ID for Sy,bol & handle error
         return match sym_manager.get_symbol_id(&symbol) {
             Ok(symbol_id) => Ok(Response::new(LookupSymbolIdResponse {
-                exchange_found: true,
                 exchange_name,
-                symbol_found: true,
                 symbol_id: symbol_id as i32,
             })),
             Err(e) => {

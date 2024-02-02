@@ -39,7 +39,7 @@ impl SymbolManager {
     ///
     /// # Example
     ///
-    /// ```rust
+    /// ```no_run
     /// use common::prelude::DBConfig;
     /// use symbol_manager::SymbolManager;
     ///

@@ -9,7 +9,7 @@ authors.workspace = true
 
 
 [lib]
-name = "qd_client"
+name = "symdb_client"
 path = "src/lib.rs"
 
 
