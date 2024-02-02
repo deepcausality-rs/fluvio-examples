@@ -21,7 +21,7 @@ members = [
     "flv_services/qdgw",
     "flv_specs/db_specs",
     "flv_specs/exchange_specs",
-    "flv_specs/service_specs",
+    "flv_specs/service_specs", "flv_services/symdb",
 ]
 
 

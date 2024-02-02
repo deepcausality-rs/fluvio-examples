@@ -1,5 +1,19 @@
 use common::prelude::ServiceID;
 
+pub fn print_start_header_grpc_service(
+    service_id: &ServiceID,
+    service_addr: &str,
+    metrics_addr: &str,
+    metrics_uri: &str,
+) {
+    println!("||  {}  ||", service_id);
+    println!("==========================================");
+    println!("Service on endpoint: {}", service_addr);
+    println!("Metrics on endpoint: {}/{}", metrics_addr, metrics_uri);
+    println!("==========================================");
+    println!();
+}
+
 /// Prints a start header for a message-based service.
 ///
 /// # Arguments
