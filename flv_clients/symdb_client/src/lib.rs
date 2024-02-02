@@ -2,18 +2,17 @@ mod error;
 mod lookup;
 mod utils_proto;
 
-use tonic::transport::{Channel, Uri};
 use common::prelude::HostEndpoint;
 use proto::binding::symdb_service_client::SymdbServiceClient;
+use tonic::transport::{Channel, Uri};
 
 #[derive(Debug, Clone)]
-pub struct SymdbClient{
-    client: SymdbServiceClient<Channel>
+pub struct SymdbClient {
+    client: SymdbServiceClient<Channel>,
 }
 
 impl SymdbClient {
     pub async fn new(config: HostEndpoint) -> Self {
-
         let port = config.port();
         let host = config.host_uri();
 

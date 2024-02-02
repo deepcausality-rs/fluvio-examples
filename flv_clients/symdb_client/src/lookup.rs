@@ -1,6 +1,3 @@
 use crate::SymdbClient;
 
-impl SymdbClient {
-
-}
-
+impl SymdbClient {}
