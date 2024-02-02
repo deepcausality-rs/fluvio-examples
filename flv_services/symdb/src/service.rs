@@ -1,10 +1,14 @@
 use autometrics::autometrics;
 use std::sync::{Arc, RwLock};
 use tonic::{Request, Response, Status};
+use common::prelude::LookupError;
 
 use proto::binding::symdb_service_server::SymdbService;
 use proto::binding::*;
 use symbol_manager::SymbolManager;
+
+const FN_NAME: &str = "[SymdbClient/service]: ";
+
 
 #[derive(Clone)]
 pub struct SYMDBServer {
@@ -87,11 +91,8 @@ impl SymdbService for SYMDBServer {
         let exchange_name = match sym_manager.get_exchange_name(exchange_id as u16) {
             Ok(exchange_id) => exchange_id,
             Err(e) => {
-                return Err(Status::internal(format!(
-                    "Exchange not found for ID: {} because of error: {}",
-                    exchange_id,
-                    e.to_string()
-                )))
+                let msg = format!("Exchange not found for ID: {}", exchange_id);
+                return Err(get_status(msg.as_str(), e));
             }
         };
 
@@ -101,11 +102,8 @@ impl SymdbService for SYMDBServer {
                 symbol,
             })),
             Err(e) => {
-                return Err(Status::internal(format!(
-                    "Symbol not found for ID: {} because of error: {}",
-                    symbol_id,
-                    e.to_string()
-                )))
+                let msg = format!("Symbol not found for ID: {}", symbol_id);
+                return Err(get_status(msg.as_str(), e));
             }
         };
     }
@@ -143,11 +141,8 @@ impl SymdbService for SYMDBServer {
         let exchange_name = match sym_manager.get_exchange_name(exchange_id as u16) {
             Ok(exchange_id) => exchange_id,
             Err(e) => {
-                return Err(Status::internal(format!(
-                    "Exchange not found for ID: {} because of error: {}",
-                    exchange_id,
-                    e.to_string()
-                )))
+                let msg = format!("Exchange not found for ID: {}", exchange_id);
+                return Err(get_status(msg.as_str(), e));
             }
         };
 
@@ -158,12 +153,18 @@ impl SymdbService for SYMDBServer {
                 symbol_id: symbol_id as i32,
             })),
             Err(e) => {
-                return Err(Status::internal(format!(
-                    "Symbol ID not found for Symbol: {} because of error: {}",
-                    symbol,
-                    e.to_string()
-                )))
+                let msg = format!("Symbol not found for name: {} and exchange: {}", symbol, exchange_name);
+                return Err(get_status(msg.as_str(), e));
             }
         };
     }
+}
+
+fn get_status(msg: &str, e: LookupError) -> Status {
+    Status::internal(format!(
+        "{} {} because of error: {}",
+        FN_NAME,
+        msg,
+        e
+    ))
 }

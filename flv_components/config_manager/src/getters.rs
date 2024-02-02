@@ -4,6 +4,8 @@ use common::prelude::{
     ServiceID,
 };
 
+const DEFAULT_HOST: &str = "0.0.0.0";
+
 impl ConfigManager {
     /// Get the default ExchangeID configured for this service.
     ///
@@ -13,6 +15,16 @@ impl ConfigManager {
     /// set as the default for this service.
     pub fn get_symbol_table(&self, exchange_id: ExchangeID) -> Option<String> {
         self.exchanges_symbol_tables.get(&exchange_id).cloned()
+    }
+}
+
+impl ConfigManager {
+    pub fn get_svc_socket_addr(&self) -> String {
+        let host = DEFAULT_HOST;
+        let local_ports = self.svc_config.local_port();
+        let port = local_ports.get(1).unwrap();
+
+        format!("{}:{}", host, port)
     }
 }
 

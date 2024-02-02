@@ -5,10 +5,12 @@ use autometrics::prometheus_exporter;
 use common::prelude::ServiceID;
 use config_manager::ConfigManager;
 use db_query_manager::QueryDBManager;
+use proto::binding::symdb_service_server::SymdbServiceServer;
 use service_utils::{print_utils, shutdown_utils};
 use std::net::SocketAddr;
 use std::sync::{Arc, RwLock};
 use symbol_manager::SymbolManager;
+use tonic::transport::Server;
 use warp::Filter;
 
 const SVC_ID: ServiceID = ServiceID::SYMDB;
@@ -42,9 +44,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let signal = shutdown_utils::signal_handler("Http web server");
     let (_, web_server) = warp::serve(routes).bind_with_graceful_shutdown(web_addr, signal);
 
-    //Creates a new Tokio task for the HTTP web server.
-    let web_handle = tokio::spawn(web_server);
-
     // Get the symbol table for the default exchange.
     let default_exchange = cfg_manager.default_exchange();
     let exchanges = cfg_manager.exchanges_id_names().to_owned();
@@ -73,20 +72,35 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
     .await;
 
-    // Create new rpc service
-    let _service = SYMDBServer::new(symbol_manager);
-
-    // Create rpc Health endpoint
-
-    //
-    // Configure & Construct gRPC via auto config
-    //
-
     // Close the DB Connection as its not needed anymore.
     q_manager.close().await;
 
+    // Configure & Construct gRPC via auto config
+    let service_addr = cfg_manager.get_svc_socket_addr();
+
+    // Set up socket address for gRPC service
+    let grpc_addr = service_addr
+        .parse()
+        .expect("[CMDB]: Failed to parse address");
+
+    // Create new gRPC service
+    let grpc_svc = SymdbServiceServer::new(SYMDBServer::new(symbol_manager));
+
+    // Build health service for gRPC server
+    let (mut health_reporter, health_svc) = tonic_health::server::health_reporter();
+    health_reporter
+        .set_serving::<SymdbServiceServer<SYMDBServer>>()
+        .await;
+
+    // Build gRPC server with health service and signal sigint handler
+    let signal = shutdown_utils::signal_handler("gRPC server");
+    let grpc_server = Server::builder()
+        .add_service(grpc_svc)
+        .add_service(health_svc)
+        .serve_with_shutdown(grpc_addr, signal);
+
     // print the start message on the console.
-    print_utils::print_start_header_grpc_service(&SVC_ID, "", &metrics_addr, &metrics_uri);
+    print_utils::print_start_header_grpc_service(&SVC_ID, &service_addr, &metrics_addr, &metrics_uri);
 
     // Free up some memory before starting the service,
     drop(cfg_manager);
@@ -94,9 +108,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     drop(metrics_uri);
     drop(metrics_addr);
     drop(q_manager);
+    drop(service_addr);
+
+    //Creates a new Tokio task for each server.
+    // https://github.com/hyperium/tonic/discussions/740
+    let grpc_handle = tokio::spawn(grpc_server);
+    let web_handle = tokio::spawn(web_server);
 
     //Starts both servers concurrently.
-    match tokio::try_join!(web_handle) {
+    match tokio::try_join!(grpc_handle, web_handle) {
         Ok(_) => {}
         Err(e) => {
             println!(
