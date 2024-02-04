@@ -3,6 +3,20 @@ use crate::QueryDBManager;
 use common::prelude::TradeBar;
 
 impl QueryDBManager {
+    /// Builds a SQL query to get all trades from a trade table.
+    ///
+    /// # Arguments
+    ///
+    /// * `trade_table` - The name of the trade table to query
+    ///
+    /// # Returns
+    ///
+    /// Returns a SQL query string to retrieve all timestamps, prices, and volumes from the given trade table.
+    ///
+    pub fn build_get_trades_query(&self, trade_table: &str) -> String {
+        format!("SELECT timestamp, price, volume FROM {};", trade_table)
+    }
+
     /// Retrieves all trade bars for the given symbol table from the database.
     ///
     /// # Arguments

@@ -3,6 +3,20 @@ use crate::QueryDBManager;
 use sqlx::Row;
 
 impl QueryDBManager {
+    /// Builds a SQL query to get all symbol IDs and symbols from a symbol table.
+    ///
+    /// # Arguments
+    ///
+    /// * `symbol_table` - The name of the symbol table to query
+    ///
+    /// # Returns
+    ///
+    /// Returns a SQL query string to retrieve all symbol IDs and symbols from the given symbol table.
+    ///
+    pub fn build_get_symbol_id_query(&self, symbol_table: &str) -> String {
+        format!("SELECT symbol_id, symbol FROM {};", symbol_table)
+    }
+
     /// Retrieves all symbols and their IDs from the given symbol table.
     ///
     /// # Arguments

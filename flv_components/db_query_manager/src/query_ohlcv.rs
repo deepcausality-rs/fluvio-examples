@@ -3,6 +3,38 @@ use crate::QueryDBManager;
 use common::prelude::{OHLCVBar, TimeResolution};
 
 impl QueryDBManager {
+    /// Builds a SQL query to get OHLCV bars from a trade table at a given time resolution.
+    ///
+    /// # Arguments
+    ///
+    /// * `trade_table` - The name of the trade table to query
+    /// * `time_resolution` - The time resolution to resample the trades to
+    ///
+    /// # Returns
+    ///
+    /// Returns a SQL query string to retrieve OHLCV bars from the trade table resampled to the time resolution.
+    ///
+    pub fn build_get_ohlcv_bars_query(
+        &self,
+        trade_table: &str,
+        time_resolution: &TimeResolution,
+    ) -> String {
+        format!(
+            "SELECT
+              timestamp,
+              first(price) open,
+              max(price) high,
+              min(price) low,
+              last(price) close,
+              sum(volume) volume,
+
+            FROM {}
+            SAMPLE BY {}
+            ALIGN TO CALENDAR WITH OFFSET '00:00';",
+            trade_table, time_resolution,
+        )
+    }
+
     /// Retrieves all OHLCV data bars for the given symbol table and time resolution.
     ///
     /// # Parameters
