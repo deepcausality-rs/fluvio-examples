@@ -1,7 +1,7 @@
 use crate::error::QueryError;
 use crate::QueryDBManager;
 use common::prelude::{TimeResolution, ValidationError};
-use sqlx::postgres::PgRow;
+use sqlx::postgres::{PgRow};
 
 impl QueryDBManager {
     /// Utils that executes a SQL query against the database.
@@ -71,7 +71,7 @@ impl QueryDBManager {
     ) -> String {
         format!(
             "SELECT
-              timestamp datetime,
+              timestamp,
               first(price) open,
               max(price) high,
               min(price) low,

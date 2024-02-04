@@ -72,10 +72,10 @@ impl OHLCVBar {
     /// # Returns
     ///
     /// A new OHLCVBar instance populated with the data parsed from the row.
-    pub fn from_pg_row(row: &PgRow, symbol_id: u16) -> OHLCVBar {
+    pub fn from_pg_row(row: PgRow, symbol_id: u16) -> OHLCVBar {
         //
         let timestamp = row
-            .try_get(0)
+            .try_get("timestamp")
             .expect("[DataBar]: Could not parse timestamp");
 
         let o = row

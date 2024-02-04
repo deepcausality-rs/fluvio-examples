@@ -9,6 +9,7 @@ pub enum QueryError {
     InvalidTableName(ValidationError),
     EmptyTableName(ValidationError),
     TableNameTooLong(ValidationError),
+    TableDoesNotExist(String, String),
 }
 
 impl Error for QueryError {}
@@ -17,28 +18,19 @@ impl fmt::Display for QueryError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             QueryError::QueryFailed(e) =>
-                write!(f,
-                       "Query to DB failed: {}",
-                       e
-                ),
+                write!(f, "Query to DB failed: {e}"),
 
             QueryError::InvalidTableName(e) =>
-                write!(f,
-                       "Invalid table name provided: Only use alphanumeric characters and underscores as table name. Error: {}",
-                       e,
-                ),
+                write!(f, "Invalid table name provided: Only use alphanumeric characters and underscores as table name. Error: {e}"),
 
             QueryError::EmptyTableName(e) =>
-                write!(f,
-                       "Empty table name provided: Table must have a name. Error: {}",
-                       e
-                ),
+                write!(f, "Empty table name provided: Table must have a name. Error: {e}"),
 
             QueryError::TableNameTooLong(e) =>
-                write!(f,
-                       "Table name exceeds maximum length: Table can only be 63 characters long. Error: {}",
-                       e
-                ),
+                write!(f, "Table name exceeds maximum length: Table can only be 63 characters long. Error: {e}"),
+
+            QueryError::TableDoesNotExist(table_name, e) =>
+                write!(f, "Table does not exist: Table {table_name} does not exist. Error: {e}"),
         }
     }
 }

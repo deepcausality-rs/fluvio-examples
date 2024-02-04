@@ -1,6 +1,7 @@
 use common::prelude::{DBConfig, TimeResolution};
 use db_query_manager::QueryDBManager;
 use std::str::FromStr;
+use futures::StreamExt;
 
 fn get_local_db_config() -> DBConfig {
     DBConfig::new(9009, "0.0.0.0".to_string())
@@ -70,6 +71,34 @@ async fn test_get_all_trades() {
 
     // Verify result is ok
     assert!(result.is_ok());
+
+    // Close connection
+    manager.close().await;
+}
+
+#[tokio::test]
+async fn test_stream_trades() {
+    let db_config = get_local_db_config();
+    let manager = QueryDBManager::new(db_config)
+        .await
+        .expect("Failed to create db connection");
+    assert!(!manager.is_close().await);
+
+    // trade table name
+    // ethaed has only 43 records so this is a good and fast test
+    let trade_table = "kraken_ethaed";
+    let symbol_id = 284; // 284 = ethaed on Kraken
+
+    // Call method under tes
+    let mut stream = manager.stream_trades(symbol_id, trade_table).await;
+
+    while let  Some(record) = stream.next().await {
+        assert!(record.is_ok());
+        let record = record.unwrap();
+        println!("Got {:?}", record);
+    }
+
+    assert!(!manager.is_close().await);
 
     // Close connection
     manager.close().await;

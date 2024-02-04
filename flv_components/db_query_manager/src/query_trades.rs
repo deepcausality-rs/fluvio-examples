@@ -74,7 +74,7 @@ impl QueryDBManager {
         let mut trades = Vec::with_capacity(result_rows.len());
 
         // Iterate over the rows, convert each row to a trade bar, and add it to the vector.
-        for row in &result_rows {
+        for row in result_rows {
             let trade = TradeBar::from_pg_row(symbol_id, row);
             trades.push(trade);
         }

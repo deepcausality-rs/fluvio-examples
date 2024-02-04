@@ -81,7 +81,7 @@ impl QueryDBManager {
 
         // Iterate over the rows, convert each row to a data bar, and add the bar to the vector.
         for row in result_rows {
-            let trade_bar = OHLCVBar::from_pg_row(&row, symbol_id);
+            let trade_bar = OHLCVBar::from_pg_row(row, symbol_id);
             trades.push(trade_bar);
         }
 
