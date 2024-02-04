@@ -8,13 +8,12 @@ impl QueryDBManager {
     /// Stream trade bars for the given symbol from the database.
     ///
     /// This returns a stream of `TradeBar` structs for the specified `symbol_id`.
-    /// Trade bars are fetched in batches from the database and yielded as they
-    /// become available.
+    /// Trade bars are fetched from the database and yielded as they become available.
     ///
     /// # Arguments
     ///
     /// * `symbol_id` - The symbol ID to fetch trade bars for
-    /// * `trade_table` - The name of the trade table to query
+    /// * `trade_table` - The name of the DB table to query and stream
     ///
     /// # Errors
     ///
@@ -38,10 +37,10 @@ impl QueryDBManager {
     ///
     ///     let mut stream = query_manager.stream_trades(symbol_id, trade_table).await;
     ///
-    ///     while let  Some(record) = stream.next().await {
+    ///     while let Some(record) = stream.next().await {
     ///         assert!(record.is_ok());
-    ///         let record = record.unwrap();
-    ///         println!("Got {:?}", record);
+    ///         let trade_bar = record.unwrap();
+    ///         println!("{:?}", trade_bar);
     ///     }
     ///
     ///   // Close the connection pool
@@ -59,7 +58,6 @@ impl QueryDBManager {
             .fetch(&self.pool)
             .map_ok(move |row| {
                 TradeBar::from_pg_row(symbol_id, row)
-
             })
             .boxed()
     }
