@@ -3,8 +3,8 @@ mod query_ohlcv;
 mod query_symbols;
 mod query_trades;
 mod query_utils;
-mod stream_trades;
 mod stream_ohlcv;
+mod stream_trades;
 
 use common::prelude::DBConfig;
 use sqlx::{postgres::PgPoolOptions, Pool, Postgres};

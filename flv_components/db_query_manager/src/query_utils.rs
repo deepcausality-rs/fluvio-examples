@@ -1,7 +1,7 @@
 use crate::error::QueryError;
 use crate::QueryDBManager;
-use common::prelude::{ValidationError};
-use sqlx::postgres::{PgRow};
+use common::prelude::ValidationError;
+use sqlx::postgres::PgRow;
 
 impl QueryDBManager {
     /// Utils that executes a SQL query against the database.

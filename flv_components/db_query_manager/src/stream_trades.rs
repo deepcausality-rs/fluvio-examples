@@ -2,7 +2,7 @@ use crate::QueryDBManager;
 use common::prelude::TradeBar;
 use futures::stream::BoxStream;
 use futures::{StreamExt, TryStreamExt};
-use sqlx::{Error};
+use sqlx::Error;
 
 impl QueryDBManager {
     /// Stream trade bars for the given symbol from the database.
@@ -52,13 +52,10 @@ impl QueryDBManager {
         symbol_id: u16,
         trade_table: &'a str,
     ) -> BoxStream<Result<TradeBar, Error>> {
-
         // returns BoxStream<Result<PgRow, Error>>
         sqlx::query(trade_table)
             .fetch(&self.pool)
-            .map_ok(move |row| {
-                TradeBar::from_pg_row(symbol_id, row)
-            })
+            .map_ok(move |row| TradeBar::from_pg_row(symbol_id, row))
             .boxed()
     }
 }

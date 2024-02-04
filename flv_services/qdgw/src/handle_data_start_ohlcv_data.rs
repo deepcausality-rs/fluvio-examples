@@ -1,53 +1,98 @@
 use crate::service::Server;
-use common::prelude::{MessageProcessingError, OHLCVBar};
-use sbe_messages::prelude::DataErrorType;
+use common::prelude::{MessageProcessingError, TimeResolution};
+use futures::StreamExt;
+use sbe_messages::prelude::{DataErrorType, DataType, SbeOHLCVBar};
 
 impl Server {
     /// Sends a stream of OHLCV bar data to the client.
     ///
-    /// Sends a first bar message, followed by the OHLCV bars, and finally a last bar message.
+    /// This will:
     ///
-    /// # Parameters
+    /// 1. Send a first OHLCV bar message to indicate the start of the stream.
+    /// 2. Stream OHLCV bars from the database for the given symbol and time resolution.
+    /// 3. Encode each OHLCV bar into an SBE message.
+    /// 4. Send the encoded OHLCV bar messages to the client.
+    /// 5. Send a last OHLCV bar message to indicate the end of the stream.
     ///
-    /// * `client_id` - The client ID to send the data to
-    /// * `first_bar` - Encoded bytes of the first bar message
-    /// * `data_bars` - The OHLCV bars to send
-    /// * `last_bar` - Encoded bytes of the last bar message
+    /// # Arguments
     ///
-    /// # Returns
+    /// * `client_id` - The id of the client to stream OHLCV bars to.
+    /// * `symbol_id` - The symbol id to stream OHLCV bars for.
+    /// * `trade_table` - The database table to stream OHLCV bars from.
+    /// * `time_resolution` - The time resolution of the OHLCV bars.
     ///
-    /// Returns a `Result` with `()` if successful, otherwise returns a
-    /// `(DataErrorType, MessageProcessingError)` tuple on failure to:
+    /// # Errors
+    ///
+    /// Returns a Result with the error variants:
+    ///
+    /// - `(DataErrorType, MessageProcessingError)` - Error streaming OHLCV bars.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use flv_services::qdgw::Server;
+    /// use common::prelude::TimeResolution;
+    /// async fn example(server: &Server)
+    ///     -> Result<(), (DataErrorType, MessageProcessingError)> {
+    ///
+    ///     let client_id = 1;
+    ///     let symbol_id = 2;
+    ///     let trade_table = "trades";
+    ///     let time_resolution = TimeResolution::OneMinute;
+    ///
+    ///     server
+    ///     .start_ohlcv_data(client_id, symbol_id, trade_table, &time_resolution)
+    ///     .await?;
+    ///
+    /// Ok(())
+    /// }
+    /// ```
     ///
     pub(crate) async fn start_ohlcv_data(
         &self,
         client_id: u16,
-        first_bar: Vec<u8>,
-        data_bars: &[OHLCVBar],
-        last_bar: Vec<u8>,
+        symbol_id: u16,
+        trade_table: &str,
+        time_resolution: &TimeResolution,
     ) -> Result<(), (DataErrorType, MessageProcessingError)> {
-        // Send first  bar message to inform the client that the data stream starts
-        match self.send_single_data(client_id, first_bar).await {
+        // Set the data type to OHLCV
+        let data_type = DataType::OHLCVData;
+        // Disables the flushing after each message thus increasing throughput by batch sending.
+        let flush = false;
+
+        // Send the first bar message to inform the client that the data stream starts
+        match self.send_first_bar(client_id, symbol_id, &data_type).await {
             Ok(_) => {}
-            Err(e) => {
-                return Err(e);
-            }
+            Err(e) => return Err(e),
         }
 
-        // Send the OHLCV bar data vector in bulk to the client
-        match self.send_bulk_ohlcv_data(client_id, data_bars).await {
-            Ok(_) => {}
-            Err(e) => {
-                return Err(e);
+        // Lock the query manager
+        let q_manager = self.query_manager.lock().await;
+
+        // Build the query for the data stream
+        let query = q_manager.build_get_ohlcv_bars_query(trade_table, time_resolution);
+
+        // Create a stream of trade bars from the database
+        let mut stream = q_manager.stream_ohlcv(symbol_id, &query).await;
+
+        // Process OHLCV bars from the stream as they come in
+        while let Some(Ok(record)) = stream.next().await {
+            // Encode the trade bar message
+            let (_, enc_trade_bar) = SbeOHLCVBar::encode(record).unwrap();
+
+            // Send trade bar message to the client
+            match self.send_single_data(client_id, enc_trade_bar, flush).await {
+                Ok(_) => {}
+                Err(e) => {
+                    return Err(e);
+                }
             }
         }
 
         // Send the last bar message to inform the client that the data stream has ended
-        match self.send_single_data(client_id, last_bar).await {
+        match self.send_last_bar(client_id, symbol_id, &data_type).await {
             Ok(_) => {}
-            Err(e) => {
-                return Err(e);
-            }
+            Err(e) => return Err(e),
         }
 
         Ok(())

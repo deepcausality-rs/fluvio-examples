@@ -1,7 +1,7 @@
 use common::prelude::{DBConfig, TimeResolution};
 use db_query_manager::QueryDBManager;
-use std::str::FromStr;
 use futures::StreamExt;
+use std::str::FromStr;
 
 fn get_local_db_config() -> DBConfig {
     DBConfig::new(9009, "0.0.0.0".to_string())
@@ -92,7 +92,7 @@ async fn test_stream_trades() {
     // Call method under tes
     let mut stream = manager.stream_trades(symbol_id, trade_table).await;
 
-    while let  Some(record) = stream.next().await {
+    while let Some(record) = stream.next().await {
         assert!(record.is_ok());
         let record = record.unwrap();
         println!("Got {:?}", record);

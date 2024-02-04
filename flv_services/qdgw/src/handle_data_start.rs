@@ -63,7 +63,6 @@ impl Server {
         }
 
         // println!("[::handle_start_data_message]: Client is logged in, proceed.");
-        // println!("[::handle_start_data_message]: Get trade data table.");
         let trade_table = match self.get_trade_table_name(exchange_id, symbol_id).await {
             Ok(table) => table,
             Err(err) => {
@@ -137,40 +136,18 @@ impl Server {
                     }
                 }
             }
+            //
             DataType::TradeData => {
-                // println!("[::handle_start_data_message]: Get all trade bars.");
                 // println!("[::handle_start_data_message]: Symbol: {}, trade table: {}", symbol_id, trade_table);
-                let result = self.get_trade_bars(symbol_id, &trade_table).await;
-
-                // Handle query error error
-                let trade_bars = match result {
-                    Ok(bars) => bars,
-                    Err(err) => {
-                        let data_err = DataErrorType::DataUnavailableError;
-                        match self.send_data_error(client_id, data_err).await {
-                            Ok(_) => {}
-                            Err(err) => {
-                                println!(
-                                    "[QDGW/handle_start_data_message]: Failed to get last bar: {}",
-                                    err
-                                );
-                            }
-                        }
-
-                        return Err(MessageProcessingError(format!(
-                            "[QDGW/handle_start_data_message]: Failed to get trade bars: {}",
-                            err
-                        )));
-                    }
-                };
-
-                // println!("[::handle_start_data_message]: send all trade bars to the client.");
                 match self
-                    .start_trade_data(client_id, first_bar, &trade_bars, last_bar)
+                    .start_trade_data_stream(client_id, symbol_id, &trade_table)
                     .await
                 {
-                    Ok(_) => {}
+                    Ok(_) => {
+                        // println!("[::handle_start_data_message]: send all trade bars to the client.");
+                    }
                     Err((data_err, err)) => {
+                        // println!("[::handle_start_data_message]: send error back to the client.");
                         match self.send_data_error(client_id, data_err).await {
                             Ok(_) => {}
                             Err(err) => {
@@ -190,39 +167,15 @@ impl Server {
             }
             DataType::OHLCVData => {
                 // println!("[::handle_start_data_message]: Get all OHLCV bars.");
-
                 let time_resolution = &start_data_msg.time_resolution();
-                // Handle query error error
-                let ohlcv_bars = match self
-                    .get_ohlcv_bars(symbol_id, time_resolution, &trade_table)
-                    .await
-                {
-                    Ok(bars) => bars,
-                    Err(err) => {
-                        let data_err = DataErrorType::DataUnavailableError;
-                        match self.send_data_error(client_id, data_err).await {
-                            Ok(_) => {}
-                            Err(err) => {
-                                println!(
-                                    "[QDGW/handle_start_data_message]: Failed to get last bar: {}",
-                                    err
-                                );
-                            }
-                        }
 
-                        return Err(MessageProcessingError(format!(
-                            "[QDGW/handle_start_data_message]: Failed to get trade bars: {}",
-                            err
-                        )));
-                    }
-                };
-
-                // println!("[::handle_start_data_message]: send all OHLCV bars to the client.");
                 match self
-                    .start_ohlcv_data(client_id, first_bar, &ohlcv_bars, last_bar)
+                    .start_ohlcv_data(client_id, symbol_id, &trade_table, &time_resolution)
                     .await
                 {
-                    Ok(_) => {}
+                    Ok(_) => {
+                        // println!("[::handle_start_data_message]: stream OHLCV bars to the client.");
+                    }
                     Err((data_err, err)) => {
                         match self.send_data_error(client_id, data_err).await {
                             Ok(_) => {}

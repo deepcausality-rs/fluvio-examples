@@ -46,9 +46,13 @@ impl TradeBar {
             .try_get("timestamp")
             .expect("[TradeBar]: Could not parse timestamp");
 
-        let p = row.try_get("price").expect("[TradeBar]: Could not parse price");
+        let p = row
+            .try_get("price")
+            .expect("[TradeBar]: Could not parse price");
 
-        let v = row.try_get("volume").expect("[TradeBar]: Could not parse volume");
+        let v = row
+            .try_get("volume")
+            .expect("[TradeBar]: Could not parse volume");
 
         let date_time = Utc.from_local_datetime(&timestamp).unwrap();
 

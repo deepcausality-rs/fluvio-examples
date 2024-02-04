@@ -8,7 +8,6 @@ mod handle_data_stop;
 mod handle_data_stop_all;
 mod service;
 mod utils;
-mod utils_data;
 mod utils_data_encoding;
 mod utils_error;
 mod utils_fluvio;
