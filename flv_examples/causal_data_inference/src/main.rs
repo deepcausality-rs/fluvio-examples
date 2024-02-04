@@ -83,7 +83,7 @@ async fn main() {
         .expect("Failed to send start trade data message");
 
     println!("{FN_NAME}: Wait a moment to let the data stream complete...");
-    sleep(Duration::from_secs(1)).await;
+    sleep(Duration::from_secs(2)).await;
 
     println!("{FN_NAME}: Closing client");
     client.close().await.expect("Failed to close client");
