@@ -46,7 +46,7 @@ pub fn handle_data_message(value: Vec<u8>) -> Result<(), Box<dyn Error + Send>> 
             println!("{:?}", first_ohlcv_bar);
         }
         MessageType::OHLCVBar => {
-            let ohlcv_bar = SbeOHLCVBar::decode_data_bar_message(buffer).unwrap();
+            let ohlcv_bar = SbeOHLCVBar::decode(buffer).unwrap();
             println!("{:?}", ohlcv_bar);
         }
         MessageType::LastOHLCVBar => {

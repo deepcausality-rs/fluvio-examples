@@ -27,7 +27,7 @@ impl SbeOHLCVBar {
     ///
     /// - The size of the encoded message
     /// - The encoded message buffer
-    pub fn encode_data_bar_message(bar: OHLCVBar) -> Result<(usize, Vec<u8>), SbeEncodeError> {
+    pub fn encode(bar: OHLCVBar) -> Result<(usize, Vec<u8>), SbeEncodeError> {
         sbe_encoder::encode_data_bar_message(bar)
     }
 
@@ -41,7 +41,7 @@ impl SbeOHLCVBar {
     ///
     /// A Result containing the decoded OHLCVBar or a decoding error.
     #[inline]
-    pub fn decode_data_bar_message(buffer: &[u8]) -> Result<OHLCVBar, SbeDecodeError> {
+    pub fn decode(buffer: &[u8]) -> Result<OHLCVBar, SbeDecodeError> {
         sbe_decoder::decode_data_bar_message(buffer)
     }
 }
