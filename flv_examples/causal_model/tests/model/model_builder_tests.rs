@@ -1,4 +1,4 @@
-use causal_model::prelude::model::model_builder;
+use causal_model::prelude::model::model;
 use causal_model::prelude::CustomContext;
 use deep_causality::prelude::Identifiable;
 
@@ -6,7 +6,7 @@ use deep_causality::prelude::Identifiable;
 fn test_build_causal_model() {
     let context = CustomContext::with_capacity(0, "test_build_causal_model", 10);
 
-    let model = model_builder::build_causal_model(&context);
+    let model = model::build_causal_model(&context);
 
     assert_eq!(model.id(), 42);
     assert_eq!(
