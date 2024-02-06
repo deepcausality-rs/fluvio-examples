@@ -21,7 +21,7 @@ const CLIENT_ID: u16 = 23;
 /// It creates a QDClient for streaming data from the exchange.
 /// It spawns tasks to concurrently handle incoming data and error messages.
 /// It looks up the symbol ID for the "ethaed" symbol name using the SymdbClient.
-/// Using the symbol ID, it tells the QDClient to start streaming trade data 
+/// Using the symbol ID, it tells the QDClient to start streaming trade data
 /// for that symbol from the Kraken exchange
 /// It waits briefly to allow some data to stream.
 /// Finally it closes the QDClient to end the streaming.
@@ -32,7 +32,7 @@ const CLIENT_ID: u16 = 23;
 /// - Waits briefly to let data flow
 /// - Closes the client when done
 ///
-/// The main purpose is demonstrating how to stream  trade data for a 
+/// The main purpose is demonstrating how to stream  trade data for a
 /// specific symbol from the QDGW using the QD client and SYMDB client.
 ///
 

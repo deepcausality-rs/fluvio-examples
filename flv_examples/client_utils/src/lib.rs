@@ -5,7 +5,7 @@
 ///It contains functions for:
 ///
 ///- Printing formatted output
-///- Handling data streams 
+///- Handling data streams
 ///- Handling errors
 ///- Working with symbols
 ///- Loading historical data
@@ -15,7 +15,7 @@
 ///
 ///# Modules
 ///
-///- print_utils - Formatted printing of headers, messages 
+///- print_utils - Formatted printing of headers, messages
 ///- handle_utils - Handle streaming data and errors
 ///- symbol_utils - Lookup symbol IDs and names
 ///- data_utils - Functions for loading historical data
