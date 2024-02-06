@@ -1,4 +1,4 @@
-use causal_model::prelude::{BarRange, RangeData, Rangeable};
+use causal_model::prelude::{BarRange, RangeData, RangeExt};
 use deep_causality::prelude::Identifiable;
 use rust_decimal::Decimal;
 

@@ -16,6 +16,6 @@ use crate::types::bar_range::BarRange;
 /// * `close_above_open` - Whether the closing price is above the opening price
 /// * `close_below_open` - Whether the closing price is below the opening price
 ///
-pub trait Rangeable: Datable {
+pub trait RangeExt: Datable {
     fn data_range(&self) -> BarRange;
 }

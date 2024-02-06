@@ -1,4 +1,28 @@
+use crate::types::alias::CustomContext;
 use deep_causality::prelude::{Indexable, TimeScale};
+
+
+/// Implements the [`TimeIndexExt`] trait for [`CustomContext`].
+///
+/// This allows a [`CustomContext`] to use the time indexing
+/// functionality from [`TimeIndexExt`], like getting/setting
+/// the current and previous year and month indices.
+///
+/// The default implementation of [`TimeIndexExt`] is located in:
+/// lib/protocols/time_indexable
+///
+/// # Example
+///
+/// ```
+/// use causal_model::prelude::{CustomContext, TimeIndexExt};
+///
+/// let mut context = CustomContext::with_capacity(1,"TestContext", 10);
+///
+/// context.set_current_year_index(2022);
+/// let current_year = context.get_current_year_index();
+/// ```
+impl TimeIndexExt for CustomContext<'_> {}
+
 
 ///
 /// Trait for types that support indexing date components.
@@ -19,7 +43,7 @@ use deep_causality::prelude::{Indexable, TimeScale};
 ///
 /// This allows storing date component values as global context indices.
 ///
-pub trait TimeIndexable: Indexable {
+pub trait TimeIndexExt: Indexable {
     /// Get the current year index.
     ///
     /// # Returns
@@ -108,3 +132,4 @@ pub trait TimeIndexable: Indexable {
         self.set_index(key, index, false)
     }
 }
+

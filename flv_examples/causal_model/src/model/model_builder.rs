@@ -1,4 +1,4 @@
-use crate::prelude::{context_utils, CustomCausaloid, CustomContext, TimeIndexable};
+use crate::prelude::{context_utils, CustomCausaloid, CustomContext, TimeIndexExt};
 use deep_causality::errors::CausalityError;
 use deep_causality::prelude::{Causaloid, NumericalValue};
 use rust_decimal::Decimal;

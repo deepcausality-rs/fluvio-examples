@@ -1,4 +1,4 @@
-use crate::prelude::{CustomContext, TimeIndexable};
+use crate::prelude::{CustomContext, TimeIndexExt};
 use crate::utils::{context_utils, counter, time_utils};
 use chrono::Datelike;
 use common::prelude::SampledDataBars;

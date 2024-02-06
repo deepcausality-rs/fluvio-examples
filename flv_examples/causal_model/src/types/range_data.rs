@@ -1,4 +1,4 @@
-use crate::prelude::{BarRange, Rangeable};
+use crate::prelude::{BarRange, RangeExt};
 use deep_causality::prelude::{Datable, Identifiable};
 use std::fmt::{Display, Formatter};
 
@@ -43,7 +43,7 @@ impl Identifiable for RangeData {
     }
 }
 
-impl Rangeable for RangeData {
+impl RangeExt for RangeData {
     fn data_range(&self) -> BarRange {
         self.data_range
     }

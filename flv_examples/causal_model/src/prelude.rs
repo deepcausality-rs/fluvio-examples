@@ -1,12 +1,10 @@
 // Context
 pub use crate::context;
 // Extensions
-pub use crate::extensions::time_indexable;
+pub use crate::extensions::range::RangeExt;
+pub use crate::extensions::time_index::TimeIndexExt;
 // Model
 pub use crate::model;
-// Protocols
-pub use crate::protocols::indexable::TimeIndexable;
-pub use crate::protocols::rangeable::Rangeable;
 // Types
 pub use crate::types::alias::*;
 pub use crate::types::bar_range::BarRange;

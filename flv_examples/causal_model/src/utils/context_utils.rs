@@ -1,4 +1,4 @@
-use crate::prelude::{time_utils, BarRange, CustomContext, RangeData, Rangeable};
+use crate::prelude::{time_utils, BarRange, CustomContext, RangeData, RangeExt};
 use common::prelude::OHLCVBar;
 use deep_causality::errors::CausalityError;
 use deep_causality::prelude::{BaseNumberType, Contextuable, ContextuableGraph, Time, TimeScale};
