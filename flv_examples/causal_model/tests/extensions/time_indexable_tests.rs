@@ -1,4 +1,4 @@
-use causal_model::prelude::{CustomContext, TimeIndexable};
+use causal_model::prelude::{CustomContext, TimeIndexExt};
 use deep_causality::prelude::Context;
 
 fn get_indexable_context() -> CustomContext<'static> {
