@@ -2,6 +2,8 @@ use deep_causality::prelude::Datable;
 
 use crate::types::bar_range::BarRange;
 
+// Extension trait http://xion.io/post/code/rust-extension-traits.html
+
 /// The Rangeable trait defines the behavior for types that can provide a data range.
 ///
 /// This trait requires that the implementor also implements the Datable trait.

@@ -1,6 +1,9 @@
 use crate::types::alias::CustomContext;
 use deep_causality::prelude::{Indexable, TimeScale};
 
+// Extension trait
+// http://xion.io/post/code/rust-extension-traits.html
+
 /// Implements the [`TimeIndexExt`] trait for [`CustomContext`].
 ///
 /// This allows a [`CustomContext`] to use the time indexing
