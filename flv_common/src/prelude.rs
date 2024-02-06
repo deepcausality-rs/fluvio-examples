@@ -1,9 +1,9 @@
 // Errors
-pub use crate::errors::InitError;
-pub use crate::errors::LookupError;
-pub use crate::errors::MessageClientConfigError;
-pub use crate::errors::MessageProcessingError;
-pub use crate::errors::ValidationError;
+pub use crate::types::error_types::InitError;
+pub use crate::types::error_types::LookupError;
+pub use crate::types::error_types::MessageClientConfigError;
+pub use crate::types::error_types::MessageProcessingError;
+pub use crate::types::error_types::ValidationError;
 // Config types
 pub use crate::types::config_types::client_channel::ClientChannel;
 pub use crate::types::config_types::db_config::DBConfig;
