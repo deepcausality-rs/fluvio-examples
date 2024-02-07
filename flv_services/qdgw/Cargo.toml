@@ -28,4 +28,3 @@ fluvio = { workspace = true }
 futures = { workspace = true }
 tokio = { workspace = true }
 warp = { workspace = true }
-log = { workspace = true }
