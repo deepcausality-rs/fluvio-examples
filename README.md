@@ -6,8 +6,8 @@ This project is a simple example of how to use Fluvio and DeepCausality to build
 a real-time causal inference pipeline. Specifically, the project illustrates:
 
 1) How to replay and resample trade data.
-2) How to stream SBE Encoded trade data using Fluvio's message system.
-3) How to pass forward causal inference results to downstream systems via Fluvio's in-flight computation.
+2) How to stream SBE Encoded data using Fluvio's message system.
+3) How to do causal inference on real-time data streams with DeepCausality. 
 
 ### 👉 **Fluvio**
 
