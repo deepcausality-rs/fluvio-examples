@@ -81,7 +81,7 @@ serde = { version = "1", features = ["derive"] }
 tokio = { version = "1", features = ["macros", "net", "rt-multi-thread", "signal"] }
 # proto / gRPC deps
 prost = "0.12"
-tonic-health = "0.10"
+tonic-health = "0.11"
 tonic = "0.10"
 tonic-build = "0.10"
 # Quest DB uses the postgres wire protocol for queries; hence both, the questdb-rs and sqlx crates
