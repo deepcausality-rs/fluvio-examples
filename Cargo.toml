@@ -83,7 +83,7 @@ tokio = { version = "1", features = ["macros", "net", "rt-multi-thread", "signal
 prost = "0.12"
 tonic-health = "0.10"
 tonic = "0.10"
-tonic-build = "0.10"
+tonic-build = "0.11"
 # Quest DB uses the postgres wire protocol for queries; hence both, the questdb-rs and sqlx crates
 questdb-rs = { version = "3.1" }
 sqlx = { version = "0.7", features = ["runtime-tokio", "postgres", "uuid", "chrono"] }
