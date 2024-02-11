@@ -1,1 +1,2 @@
-data_folder="/Users/marvin/RustroverProjects/fluvio-examples/data/Kraken_Trading_History"
+data_folder="data/Kraken_Trading_History"
+parallel=true

@@ -62,6 +62,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
     let mut imported_files = 1;
 
     for file_path in &files {
+        // get file name without extension
         let file = file_path
             .file_name()
             .expect("Failed to get file name")
@@ -69,10 +70,12 @@ pub fn run() -> Result<(), Box<dyn Error>> {
             .expect("Failed to convert file name to str")
             .replace(".csv", "");
 
+        // get file path
         let path = file_path
             .to_str()
             .expect("Failed to convert file path to str");
 
+        // read CSV into TradeBars
         let trade_bars = match csv_utils::read_csv_file(path) {
             Ok(bars) => bars,
             Err(e) => return Err(e),

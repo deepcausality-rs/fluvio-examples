@@ -1,0 +1,32 @@
+[package]
+name = "csv_import"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+readme.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+
+[[bin]]
+name = "csv_import"
+path = "src/bin/csv_import/main.rs"
+
+
+[lib]
+name = "lib_csv_import"
+path = "src/lib/mod.rs"
+
+
+[dependencies]
+# Internal crates
+common = { workspace = true }
+db_specs = { workspace = true }
+# External crates
+config-file = { workspace = true }
+csv = { workspace = true }
+chrono = { workspace = true }
+encoding_rs = { workspace = true }
+rust_decimal = { workspace = true }
+serde = { workspace = true }
+rayon = { workspace = true }
