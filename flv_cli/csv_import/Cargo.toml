@@ -20,6 +20,7 @@ path = "src/lib/mod.rs"
 
 [dependencies]
 # Internal crates
+client_utils = { workspace = true }
 common = { workspace = true }
 db_specs = { workspace = true }
 # External crates
@@ -27,6 +28,7 @@ config-file = { workspace = true }
 csv = { workspace = true }
 chrono = { workspace = true }
 encoding_rs = { workspace = true }
+proton_client = { workspace = true }
 rust_decimal = { workspace = true }
-serde = { workspace = true }
 rayon = { workspace = true }
+serde = { workspace = true }

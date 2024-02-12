@@ -12,6 +12,9 @@ pub fn run() -> Result<(), Box<dyn Error>> {
     let start = Instant::now();
     let vrb = true;
 
+    print_utils::dbg_print(vrb, "Build Proton Client");
+    let client = proton_client::prelude::ProtonClient::default();
+
     print_utils::print_import_header();
 
     print_utils::dbg_print(vrb, "Build import config");
@@ -29,24 +32,31 @@ pub fn run() -> Result<(), Box<dyn Error>> {
 
     print_utils::dbg_print(vrb, format!("Found {} files", files.len()).as_str());
 
-    let mut imported_files = 1;
+    let mut imported_files = 0;
 
     if config.parallel() {
         println!("Importing files in parallel");
-        files.par_iter()
-            .for_each(|file_path|
-                process_file::process(file_path, imported_files)
-                    .expect("Failed to import file")
-            );
+        // Parallel iterator requires an atomic counter for thread safety
+        let counter = client_utils::atomic_counter::RelaxedAtomicCounter::new();
 
-        imported_files = files.len() as i64;
+        files.par_iter().for_each(|file_path| {
+            process_file::process(
+                &client,
+                file_path,
+                counter.increment_and_get() as i64,
+                META_DATA_TABLE,
+            )
+            .expect("Failed to import file")
+        });
+
+        imported_files = counter.get_counter() as i64;
     } else {
         println!("Importing files in sequence");
         for file_path in &files {
-            process_file::process(file_path, imported_files)
-                .expect("Failed to import file");
-            ;
+            // Sequential iterator requires only a simple mutable counter
             imported_files += 1;
+            process_file::process(&client, file_path, imported_files, META_DATA_TABLE)
+                .expect("Failed to import file");
         }
     }
 

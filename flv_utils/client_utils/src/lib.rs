@@ -15,12 +15,14 @@
 ///
 ///# Modules
 ///
+/// - atomic_counter - Atomic counter for unique IDs
 ///- print_utils - Formatted printing of headers, messages
 ///- handle_utils - Handle streaming data and errors
 ///- symbol_utils - Lookup symbol IDs and names
 ///- data_utils - Functions for loading historical data
 ///- handle_error_utils - Print formatted errors from streams
 ///
+pub mod atomic_counter;
 pub mod data_utils;
 pub mod handle_error_utils;
 pub mod handle_utils;

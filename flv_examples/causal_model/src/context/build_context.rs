@@ -1,6 +1,7 @@
 use crate::prelude::{CustomContext, TimeIndexExt};
-use crate::utils::{context_utils, counter, time_utils};
+use crate::utils::{context_utils, time_utils};
 use chrono::Datelike;
+use client_utils::prelude::atomic_counter;
 use common::prelude::SampledDataBars;
 use deep_causality::prelude::{
     Context, Contextoid, ContextoidType, ContextuableGraph, RelationKind, Root, TimeScale,
@@ -47,7 +48,7 @@ pub fn build_time_data_context<'l>(
 ) -> Result<CustomContext<'l>, Box<dyn Error>> {
     //
     // println!("{FN_NAME}: Creating a new atomic counter.");
-    let counter = counter::RelaxedAtomicCounter::new();
+    let counter = atomic_counter::RelaxedAtomicCounter::new();
 
     // println!("{FN_NAME}: Creating a new context.");
     let mut g = Context::with_capacity(1, "Causal Context", node_capacity);

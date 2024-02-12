@@ -1,8 +1,14 @@
-use lib_csv_import::utils::csv_utils;
+use lib_csv_import::utils::{csv_utils, proton_utils};
+use proton_client::ProtonClient;
 use std::error::Error;
 use std::path::PathBuf;
 
-pub fn process(file_path: &PathBuf, imported_files: i64) -> Result<(), Box<dyn Error>> {
+pub fn process(
+    client: &ProtonClient,
+    file_path: &PathBuf,
+    imported_files: i64,
+    meta_data_table: &str,
+) -> Result<(), Box<dyn Error>> {
     // get file name without extension
     let file = file_path
         .file_name()
@@ -27,9 +33,30 @@ pub fn process(file_path: &PathBuf, imported_files: i64) -> Result<(), Box<dyn E
         return Ok(());
     }
 
-    // let table_name = format!("KRAKEN_{}", file).to_lowercase();
-    // let symbol = file.to_lowercase();
-    // let symbol_id = imported_files;
+    // Construct some fields
+    let number_of_rows = trade_bars.len() as i64;
+    let table_name = format!("KRAKEN_{}", file).to_lowercase();
+    let symbol = file.to_lowercase();
+    let symbol_id = imported_files;
+
+    // insert trade bars into Proton stream table
+    match proton_utils::insert_trade_bars(&client, &trade_bars, &table_name, &symbol, symbol_id) {
+        Ok(_) => (),
+        Err(e) => return Err(e),
+    };
+
+    // insert meta data into Proton meta data table
+    match proton_utils::insert_meta_data(
+        &client,
+        &symbol,
+        symbol_id,
+        number_of_rows,
+        &table_name,
+        meta_data_table,
+    ) {
+        Ok(_) => (),
+        Err(e) => return Err(e),
+    }
 
     Ok(())
 }
