@@ -1,9 +1,8 @@
-# Fluvio DeepCausality Example Project
+# Real-time Streaming Analytics with Fluvio, DeepCausality, and Rust
 
 ## Overview
  
-This project is a simple example of how to use Fluvio and DeepCausality to build 
-a real-time causal inference pipeline. Specifically, the project illustrates:
+This project accompanies the blog post ["Real-time Streaming Analytics with Fluvio, DeepCausality, and Rust"](https://deepcausality.com/blog/real-time-streaming-analytics/) and demonstrates how to build a real-time causal inference pipeline. Specifically, the project illustrates:
 
 1) How to replay and resample trade data.
 2) How to stream SBE Encoded data using Fluvio's message system.
