@@ -27,13 +27,6 @@ const META_DATA_TABLE: &str = "kraken_symbols";
 /// This function may panic if there is an unexpected error during the import process, such as
 /// an issue with the underlying file system or a problem with the database connection.
 ///
-/// # Examples
-///
-/// ```
-/// // Assuming the function is part of a CLI application, it can be called as follows:
-/// if let Err(e) = run() {
-///     eprintln!("Import failed with error: {}", e);
-/// }
 /// ```
 pub fn run() -> Result<(), Box<dyn Error>> {
     let start = Instant::now();
