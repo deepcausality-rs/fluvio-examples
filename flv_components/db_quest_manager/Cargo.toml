@@ -17,5 +17,6 @@ path = "src/lib.rs"
 # Internal crates
 common = { workspace = true }
 # External crates
+chrono = {workspace = true }
 questdb-rs =  { workspace = true }
 rust_decimal =  { workspace = true }

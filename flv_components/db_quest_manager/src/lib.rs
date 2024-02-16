@@ -51,59 +51,61 @@ impl QuestDBManager {
 }
 
 impl QuestDBManager {
-    /// Inserts trade bars into QuestDB.
-    ///
-    /// # Arguments
-    ///
-    /// * `trade_bars` - The vector of trade bars to insert.
-    /// * `table_name` - The name of the table to insert the trade bars into.
-    /// * `symbol` - The symbol the trade bars are for.
-    /// * `symbol_id` - The numeric id of the symbol.
-    /// * `symbol_table_name` - The name of the symbol metadata table.
-    ///
-    /// # Returns
-    ///
-    /// Returns a `QuestDBResult<()>` indicating success or failure.
-    ///
-    /// # Functionality
-    ///
-    /// This function takes a vector of `TradeBar` structs and inserts them into the
-    /// specified QuestDB table. It also inserts a metadata record into a separate
-    /// symbol table with the symbol name, id, number of rows inserted, and destination
-    /// table name.
-    ///
-    /// The trade bars are inserted in batches based on the configured buffer size.
-    /// Timestamps are extracted from the `TradeBar` and converted to nanoseconds.
-    /// Price and volume decimal values are converted to `f64`.
-    ///
-    ///
-    /// # Arguments
-    ///
-    /// * `trade_bars` - The vector of trade bars to insert.
-    /// * `table_name` - The name of the table to insert the trade bars into.
-    /// * `symbol` - The symbol the trade bars are for.
-    /// * `symbol_id` - The numeric id of the symbol.
-    /// * `symbol_table_name` - The name of the symbol metadata table.
-    ///
-    /// # Returns
-    ///
-    /// Returns a `QuestDBResult<()>` indicating success or failure.
-    ///
-    /// # Functionality
-    ///
-    /// This function takes a vector of `TradeBar` structs and inserts them into the
-    /// specified QuestDB table. It also inserts a metadata record into a separate
-    /// symbol table with the symbol name, id, number of rows inserted, and destination
-    /// table name.
-    ///
-    /// The trade bars are inserted in batches based on the configured buffer size.
-    /// Timestamps are extracted from the `TradeBar` and converted to nanoseconds.
-    /// Price and volume decimal values are converted to `f64`.
-    ///
-    /// # Example:
-    ///
-    /// See file: `flv_cli/data_importer/src/bin/import_kraken_data/run.rs`
-    ///
+
+    /// Inserts a batch of trade bars into a specified QuestDB table.
+///
+/// This function takes a vector of `TradeBar` structs and inserts them into the
+/// specified QuestDB table. It also inserts a metadata record into a separate
+/// symbol table with the symbol name, id, number of rows inserted, and destination
+/// table name.
+///
+/// The trade bars are inserted in batches based on the configured buffer size.
+/// Timestamps are extracted from the `TradeBar` and converted to nanoseconds.
+/// Price and volume decimal values are converted to `f64`.
+///
+/// # Arguments
+///
+/// * `trade_bars` - A vector of `TradeBar` structs to be inserted.
+/// * `table_name` - The name of the QuestDB table where the trade bars will be inserted.
+/// * `symbol` - The financial symbol associated with the trade bars.
+/// * `symbol_id` - A numeric identifier for the symbol.
+/// * `meta_data_table` - The name of the table where symbol metadata will be inserted.
+///
+/// # Returns
+///
+/// A `QuestDBResult<()>` indicating the success or failure of the insert operation.
+///
+/// # Errors
+///
+/// If any step of the process fails, an error is returned and the insertion is aborted.
+/// This includes failures in setting table names, encoding price and volume, setting timestamps,
+/// and flushing the buffer to QuestDB.
+///
+/// # Examples
+///
+/// ```no_run
+/// use common::prelude::DBConfig;
+/// use db_quest_manager::QuestDBManager;
+/// use common::prelude::TradeBar;
+/// use chrono::{DateTime, Utc};
+/// use rust_decimal::Decimal;
+///
+/// let db_config = DBConfig::new(9009, "0.0.0.0".into());
+/// let mut manager = QuestDBManager::new(db_config);
+///
+/// let trade_bars = vec![
+///     TradeBar::new(123, Utc::now(), Decimal::from(175), Decimal::from(5000)),
+///     // ... add more trade bars ...
+/// ];
+///
+/// manager.insert_trade_bars(
+///     trade_bars,
+///     "nyse_apple_trades",
+///     "AAPL",
+///     123,
+///     "symbol_meta_table",
+/// ).expect("Failed to insert trade bars into QuestDB");
+/// ```
     pub fn insert_trade_bars(
         &mut self,
         trade_bars: Vec<TradeBar>,
