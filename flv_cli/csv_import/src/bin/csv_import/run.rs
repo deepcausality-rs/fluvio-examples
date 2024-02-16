@@ -8,6 +8,33 @@ use std::time::Instant;
 const CONFIG_FILE_NAME: &str = "import_config.toml";
 const META_DATA_TABLE: &str = "kraken_symbols";
 
+/// Executes the CSV import process.
+///
+/// This function orchestrates the import of CSV files into the database. It initializes the
+/// necessary components, reads the import configuration, and processes each file found in the
+/// specified data folder. Files can be processed either in parallel or sequentially based on
+/// the configuration.
+///
+/// # Errors
+///
+/// This function will return an error if:
+/// - The import configuration file is not found.
+/// - There is a failure reading files from the data folder.
+/// - There is a failure during the processing of individual files.
+///
+/// # Panics
+///
+/// This function may panic if there is an unexpected error during the import process, such as
+/// an issue with the underlying file system or a problem with the database connection.
+///
+/// # Examples
+///
+/// ```
+/// // Assuming the function is part of a CLI application, it can be called as follows:
+/// if let Err(e) = run() {
+///     eprintln!("Import failed with error: {}", e);
+/// }
+/// ```
 pub fn run() -> Result<(), Box<dyn Error>> {
     let start = Instant::now();
     let vrb = true;
