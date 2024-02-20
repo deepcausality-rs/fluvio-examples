@@ -20,11 +20,6 @@ DeepCausality is a hyper-geometric computational causality library that enables 
 reasoning over complex multi-stage causality models. Deep Causality adds only minimal overhead and thus is suitable for
 real-time applications. Read more on the [DeepCausality website](https://www.deepcausality.com).
 
-### 👉 **QuestDB**
-
-QuestDB is an open-source high performance time series database with enhanced SQL analytics for time series data. Read
-more on the [QuestDB website](https://questdb.io).
-
 ### 👉 **SBE: Simple Binary Encoding**
 
 Simple Binary Encoding is a highly efficient fixed sized binary codec used for  message encoding & decoding. Read more on the [SBE GitHub repo](https://github.com/real-logic/simple-binary-encoding) and on the [FIX community standard page](https://www.fixtrading.org/standards/sbe/). Note, the SBE Rust bindings are generated with the [official SBE tool.](https://github.com/real-logic/simple-binary-encoding/wiki/Sbe-Tool-Guide)
