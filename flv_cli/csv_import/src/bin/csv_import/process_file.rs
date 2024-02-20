@@ -1,4 +1,3 @@
-use lib_csv_import::utils::{csv_utils, proton_utils};
 use proton_client::ProtonClient;
 use std::error::Error;
 use std::path::PathBuf;
@@ -22,41 +21,45 @@ pub fn process(
         .to_str()
         .expect("Failed to convert file path to str");
 
-    // read CSV into TradeBars
-    let trade_bars = match csv_utils::read_csv_file(path) {
-        Ok(bars) => bars,
-        Err(e) => return Err(e),
-    };
+    println!("Processing file: {}", path);
 
-    // skip empty data records
-    if trade_bars.is_empty() {
-        return Ok(());
-    }
+    // let query = generate_insert_query(&file, path);
+    //
+    // println!("Query: {}", query);
 
-    // Construct some fields
-    let number_of_rows = trade_bars.len() as i64;
-    let table_name = format!("KRAKEN_{}", file).to_lowercase();
-    let symbol = file.to_lowercase();
-    let symbol_id = imported_files;
+    let count_query = generate_count_query(path);
 
-    // insert trade bars into Proton stream table
-    match proton_utils::insert_trade_bars(&client, &trade_bars, &table_name, &symbol, symbol_id) {
-        Ok(_) => (),
-        Err(e) => return Err(e),
-    };
+    println!("Count Query: {}", count_query);
+
+    //  INSERT INTO stream AS
+    // SELECT * FROM file('test.csv', 'CSV', 'timestamp int64, price float64, volume float64')
+    // https://clickhouse.com/docs/en/sql-reference/table-functions/file#inserting-data-from-a-file-into-a-table
+
+
+
+    // // Construct some fields
+    // let number_of_rows = 0_i64;
+    // let table_name = format!("KRAKEN_{}", file).to_lowercase();
+    // let symbol = file.to_lowercase();
+    // let symbol_id = imported_files;
+
 
     // insert meta data into Proton meta data table
-    match proton_utils::insert_meta_data(
-        &client,
-        &symbol,
-        symbol_id,
-        number_of_rows,
-        &table_name,
-        meta_data_table,
-    ) {
-        Ok(_) => (),
-        Err(e) => return Err(e),
-    }
+
 
     Ok(())
+}
+
+fn generate_insert_query(file: &str, path: &str) -> String {
+    let table_name = format!("KRAKEN_{}", file).to_lowercase();
+    //  INSERT INTO stream AS SELECT * FROM file('test.csv', 'CSV', 'timestamp int64, price float64, volume float64')
+    // https://clickhouse.com/docs/en/sql-reference/table-functions/file#select-from-a-csv-file
+    format!("INSERT INTO {table_name} AS SELECT * FROM file('{path}', 'CSV', \
+    'timestamp int64, price float64, volume float64')")
+}
+
+fn generate_count_query(path: &str) -> String {
+    // SELECT count(*) FROM file('test.csv', 'CSV', 'timestamp int64, price float64, volume float64')
+    // https://clickhouse.com/docs/en/sql-reference/table-functions/file#select-from-a-csv-file
+    format!("SELECT count(*) FROM file({path} 'CSV', 'timestamp int64, price float64, volume float64')")
 }
