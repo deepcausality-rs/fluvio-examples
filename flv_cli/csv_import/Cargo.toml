@@ -32,3 +32,4 @@ proton_client = { workspace = true }
 rust_decimal = { workspace = true }
 rayon = { workspace = true }
 serde = { workspace = true }
+tokio = { workspace = true, features = ["rt", "rt-multi-thread", "macros"] }

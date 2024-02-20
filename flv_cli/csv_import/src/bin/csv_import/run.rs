@@ -28,7 +28,8 @@ const META_DATA_TABLE: &str = "kraken_symbols";
 /// an issue with the underlying file system or a problem with the database connection.
 ///
 /// ```
-pub fn run() -> Result<(), Box<dyn Error>> {
+///
+pub async fn run() -> Result<(), Box<dyn Error>> {
     let start = Instant::now();
     let vrb = true;
 
@@ -52,30 +53,31 @@ pub fn run() -> Result<(), Box<dyn Error>> {
 
     print_utils::dbg_print(vrb, format!("Found {} files", files.len()).as_str());
 
-    let mut imported_files = 0;
+    let mut symbol_id = 0;
 
     if config.parallel() {
         println!("Importing files in parallel");
         // Parallel iterator requires an atomic counter for thread safety
         let counter = client_utils::atomic_counter::RelaxedAtomicCounter::new();
 
-        files.par_iter().for_each(|file_path| {
-            process_file::process(
-                &client,
-                file_path,
-                counter.increment_and_get() as i64,
-                META_DATA_TABLE,
-            )
-            .expect("Failed to import file")
-        });
+        // files.par_iter().for_each(async move |file_path| {
+        //     process_file::process(
+        //         &client,
+        //         file_path,
+        //         counter.increment_and_get() as i64,
+        //         META_DATA_TABLE,
+        //     ).await
+        //     .expect("Failed to import file")
+        // });
 
-        imported_files = counter.get_counter() as i64;
+        symbol_id = counter.get_counter() as i64;
     } else {
         println!("Importing files in sequence");
         for file_path in &files {
             // Sequential iterator requires only a simple mutable counter
-            imported_files += 1;
-            process_file::process(&client, file_path, imported_files, META_DATA_TABLE)
+            symbol_id += 1;
+            process_file::process(&client, file_path, symbol_id, META_DATA_TABLE)
+                .await
                 .expect("Failed to import file");
         }
     }
@@ -83,7 +85,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
     println!();
     print_utils::dbg_print(
         vrb,
-        format!("Imported {} files out of {}", imported_files, files.len()).as_str(),
+        format!("Imported {} files out of {}", symbol_id, files.len()).as_str(),
     );
 
     print_utils::print_duration(&start.elapsed());

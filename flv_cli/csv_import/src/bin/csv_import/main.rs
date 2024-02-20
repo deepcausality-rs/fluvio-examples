@@ -18,8 +18,9 @@ mod run;
 ///
 /// Calls process::exit()
 ///
-fn main() {
-    if let Err(e) = run::run() {
+#[tokio::main]
+async fn main() {
+    if let Err(e) = run::run().await {
         eprintln!("Error: {e}");
         process::exit(1);
     }
