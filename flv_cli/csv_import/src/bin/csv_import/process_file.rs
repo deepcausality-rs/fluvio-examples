@@ -8,7 +8,7 @@ pub fn process(
     symbol_id: u64,
     meta_data_table: &str,
 ) -> Result<(), Box<dyn Error>> {
-    // get file name without extension
+    // Get file name without extension
     let file = file_path
         .file_name()
         .expect("Failed to get file name")
@@ -16,7 +16,7 @@ pub fn process(
         .expect("Failed to convert file name to str")
         .replace(".csv", "");
 
-    // get file path
+    // Get file path
     let path = file_path
         .to_str()
         .expect("Failed to convert file path to str");
@@ -33,12 +33,13 @@ pub fn process(
     let fut = binding.fetch_one(&count_query);
     let number_of_rows: u64 = rt.block_on(fut).expect("Failed to count inserted data");
 
-    // Insert the data into the database
+    // Insert trade data into the database
     let query = generate_insert_query(&file, path);
     let binding = client.clone();
     let fut = binding.execute_query(&query);
     let res = rt.block_on(fut);
 
+    // Check for error
     if res.is_err() {
         println!("[main/insert]: Failed to insert trade data into DB");
         return Err(Box::try_from(res.err().unwrap()).unwrap());
@@ -61,6 +62,8 @@ pub fn process(
     let binding = client.clone();
     let fut = binding.execute_query(&query);
     let res = rt.block_on(fut);
+
+    // Check for error
     if res.is_err() {
         println!("[main/insert]: Failed to insert meta data into DB");
         return Err(Box::try_from(res.err().unwrap()).unwrap());
