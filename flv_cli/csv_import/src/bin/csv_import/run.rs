@@ -29,7 +29,7 @@ const META_DATA_TABLE: &str = "kraken_symbols";
 ///
 /// ```
 ///
-pub async fn run() -> Result<(), Box<dyn Error>> {
+pub fn run() -> Result<(), Box<dyn Error>> {
     let start = Instant::now();
     let vrb = true;
 
@@ -60,24 +60,23 @@ pub async fn run() -> Result<(), Box<dyn Error>> {
         // Parallel iterator requires an atomic counter for thread safety
         let counter = client_utils::atomic_counter::RelaxedAtomicCounter::new();
 
-        // files.par_iter().for_each(async move |file_path| {
-        //     process_file::process(
-        //         &client,
-        //         file_path,
-        //         counter.increment_and_get() as i64,
-        //         META_DATA_TABLE,
-        //     ).await
-        //     .expect("Failed to import file")
-        // });
+        files.par_iter().for_each(|file_path| {
+            process_file::process(
+                &client,
+                file_path,
+                counter.increment_and_get(),
+                META_DATA_TABLE,
+            )
+            .expect("Failed to import file")
+        });
 
-        symbol_id = counter.get_counter() as i64;
+        symbol_id = counter.get_counter();
     } else {
         println!("Importing files in sequence");
         for file_path in &files {
             // Sequential iterator requires only a simple mutable counter
             symbol_id += 1;
             process_file::process(&client, file_path, symbol_id, META_DATA_TABLE)
-                .await
                 .expect("Failed to import file");
         }
     }
