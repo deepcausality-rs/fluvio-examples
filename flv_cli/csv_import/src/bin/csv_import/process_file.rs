@@ -1,8 +1,11 @@
+use crate::query_gen;
 use proton_client::ProtonClient;
 use std::error::Error;
 use std::path::PathBuf;
+use tokio::runtime::Runtime;
 
 pub fn process(
+    rt: &Runtime,
     client: &ProtonClient,
     file_path: &PathBuf,
     symbol_id: u64,
@@ -21,20 +24,14 @@ pub fn process(
         .to_str()
         .expect("Failed to convert file path to str");
 
-    // Create a Tokio runtime to wrap the asynchronous code
-    let rt = tokio::runtime::Builder::new_current_thread()
-        .enable_all()
-        .build()
-        .unwrap();
-
     // Count the number of rows in the file
-    let count_query = generate_count_query(path);
+    let count_query = query_gen::generate_count_query(path);
     let binding = client.clone();
     let fut = binding.fetch_one(&count_query);
     let number_of_rows: u64 = rt.block_on(fut).expect("Failed to count inserted data");
 
     // Insert trade data into the database
-    let query = generate_insert_query(&file, path);
+    let query = query_gen::generate_insert_query(&file, path);
     let binding = client.clone();
     let fut = binding.execute_query(&query);
     let res = rt.block_on(fut);
@@ -50,7 +47,7 @@ pub fn process(
     let symbol = file.to_lowercase();
 
     // Build query to insert meta data
-    let query = generate_insert_meta_data_query(
+    let query = query_gen::generate_insert_meta_data_query(
         meta_data_table,
         &table_name,
         &symbol,
@@ -70,35 +67,4 @@ pub fn process(
     }
 
     Ok(())
-}
-
-fn generate_count_query(path: &str) -> String {
-    // SELECT count(*) FROM file('test.csv', 'CSV', 'timestamp int64, price float64, volume float64')
-    // https://clickhouse.com/docs/en/sql-reference/table-functions/file#select-from-a-csv-file
-    // DateTime64 3 (milliseconds)
-    // https://clickhouse.com/docs/en/sql-reference/data-types/datetime64
-    format!(
-        "SELECT count(*) FROM file('{path}', 'CSV', 'timestamp DateTime64(3), price float64, volume float64')"
-    )
-}
-
-fn generate_insert_query(file: &str, path: &str) -> String {
-    let table_name = format!("KRAKEN_{}", file).to_lowercase();
-    //  INSERT INTO stream AS SELECT * FROM file('test.csv', 'CSV', 'timestamp int64, price float64, volume float64')
-    // https://clickhouse.com/docs/en/sql-reference/table-functions/file#select-from-a-csv-file
-    format!(
-        "INSERT INTO {table_name} AS SELECT * FROM file('{path}', 'CSV', 'timestamp DateTime64(3), price float64, volume float64')"
-    )
-}
-
-fn generate_insert_meta_data_query(
-    meta_data_table: &str,
-    _table_name: &str,
-    _symbol: &str,
-    _symbol_id: u64,
-    _number_of_rows: u64,
-) -> String {
-    format!(
-        "INSERT INTO {meta_data_table}  'timestamp DateTime64(3), price float64, volume float64'"
-    )
 }
