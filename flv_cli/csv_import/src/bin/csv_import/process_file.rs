@@ -5,6 +5,7 @@ use std::error::Error;
 use std::path::PathBuf;
 use tokio::runtime::Runtime;
 use crate::meta_data::MetaData;
+use crate::trade_data::TradeData;
 
 /// Process a CSV file for import into TimePlus Proton.
 ///
@@ -48,6 +49,7 @@ use crate::meta_data::MetaData;
 pub fn process(
     rt: &Runtime,
     client: &ProtonClient,
+    trade_data: Vec<TradeData>,
     file_path: &PathBuf,
     symbol_id: u64,
     meta_data_table: &str,
@@ -97,14 +99,30 @@ pub fn process(
     }
 
     print_utils::dbg_print(vrb, "Insert trade data into the trade table");
-
-
     let binding = client.clone();
-    let fut = binding.execute_query(&query);
+    let fut = binding.insert(&table_name);
     let res = rt.block_on(fut);
     // Check for error
     if res.is_err() {
-        println!("[main/insert]: Failed to insert trade data into DB");
+        println!("[main/insert]: Failed to get inserter for trade data");
+        return Err(Box::try_from(res.err().unwrap()).unwrap());
+    }
+    // Write meta data into Proton meta data table
+    let mut insert = res.unwrap();
+
+    for trade_bar in trade_data {
+        let res = rt.block_on(insert.write(&trade_bar));
+        // Check for error
+        if res.is_err() {
+            println!("[main/insert]: Failed to insert trade data into DB");
+            return Err(Box::try_from(res.err().unwrap()).unwrap());
+        }
+    }
+
+    let res = rt.block_on(insert.end());
+    // Check for error
+    if res.is_err() {
+        println!("[main/insert]: Failed to end insert");
         return Err(Box::try_from(res.err().unwrap()).unwrap());
     }
 
@@ -124,6 +142,13 @@ pub fn process(
     // Check for error
     if res.is_err() {
         println!("[main/insert]: Failed to insert meta data into DB");
+        return Err(Box::try_from(res.err().unwrap()).unwrap());
+    }
+
+    let res = rt.block_on(insert.end());
+    // Check for error
+    if res.is_err() {
+        println!("[main/insert]: Failed to end insert");
         return Err(Box::try_from(res.err().unwrap()).unwrap());
     }
 
