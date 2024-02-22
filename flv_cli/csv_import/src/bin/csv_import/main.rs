@@ -11,12 +11,16 @@ const VERBOSE: bool = true;
 
 fn main() {
     let start = Instant::now();
+
+    print_utils::print_import_header();
+
+    // Enables verbose output for main
     let vrb = VERBOSE;
+    // Enables verbose output for process_file.
+    let vrb_prc = VERBOSE;
 
     print_utils::dbg_print(vrb, "Build Proton Client");
     let client = proton_client::prelude::ProtonClient::default();
-
-    print_utils::print_import_header();
 
     print_utils::dbg_print(vrb, "Build import config");
     let config =
@@ -36,11 +40,22 @@ fn main() {
     let mut symbol_id = 0;
 
     print_utils::dbg_print(vrb, "Build a Tokio runtime to wrap the asynchronous code");
-    let rt = tokio::runtime::Builder::new_multi_thread()
-        // .max_blocking_threads(4)
+    let rt = tokio::runtime::Builder::new_current_thread()
         .enable_all()
         .build()
         .unwrap();
+
+    print_utils::dbg_print(vrb, "Build metadata table");
+    let query = query_gen::generate_metadata_table_ddl(META_DATA_TABLE);
+    let binding = client.clone();
+    let fut = binding.execute_query(&query);
+    let res = rt.block_on(fut);
+
+    // Check for error
+    if res.is_err() {
+        println!("[main]: Failed to create metadata table. Please check the error, check the generated DDL and try again.");
+        panic!("{:?}", res.err().unwrap());
+    }
 
     if config.parallel() {
         println!("Importing files in parallel");
@@ -54,6 +69,7 @@ fn main() {
                 file_path,
                 counter.increment_and_get(),
                 META_DATA_TABLE,
+                vrb_prc,
             )
             .expect("Failed to import file")
         });
@@ -64,7 +80,7 @@ fn main() {
         for file_path in &files {
             // Sequential iterator requires only a simple mutable counter
             symbol_id += 1;
-            process_file::process(&rt, &client, file_path, symbol_id, META_DATA_TABLE)
+            process_file::process(&rt, &client, file_path, symbol_id, META_DATA_TABLE, vrb_prc)
                 .expect("Failed to import file");
         }
     }

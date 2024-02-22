@@ -1,3 +1,16 @@
+pub(crate) fn generate_trade_table_ddl(table_name: &str) -> String {
+    format!(
+        "CREATE STREAM IF NOT EXISTS {table_name} ( \
+            timestamp DateTime64(3), \
+            price Float64, \
+            volume Float64 \
+        ) ENGINE = MergeTree() \
+        ORDER BY timestamp \
+        primary key timestamp\
+        SETTINGS event_time_column='timestamp'",
+    )
+}
+
 pub(crate) fn generate_count_query(path: &str) -> String {
     // SELECT count(*) FROM file('test.csv', 'CSV', 'timestamp int64, price float64, volume float64')
     // https://clickhouse.com/docs/en/sql-reference/table-functions/file#select-from-a-csv-file
@@ -17,14 +30,16 @@ pub(crate) fn generate_insert_query(file: &str, path: &str) -> String {
     )
 }
 
-pub(crate) fn generate_insert_meta_data_query(
-    meta_data_table: &str,
-    _table_name: &str,
-    _symbol: &str,
-    _symbol_id: u64,
-    _number_of_rows: u64,
-) -> String {
+pub(crate) fn generate_metadata_table_ddl(meta_data_table: &str) -> String {
     format!(
-        "INSERT INTO {meta_data_table}  'timestamp DateTime64(3), price float64, volume float64'"
+        "CREATE STREAM IF NOT EXISTS {meta_data_table} ( \
+            symbol string, \
+            symbol_id uint64, \
+            table_name string, \
+            number_of_rows uint64 \
+        ) ENGINE = MergeTree() \
+        ORDER BY symbol \
+        primary key symbol\
+     ",
     )
 }

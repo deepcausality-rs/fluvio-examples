@@ -24,6 +24,8 @@ client_utils = { workspace = true }
 common = { workspace = true }
 db_specs = { workspace = true }
 # External crates
+clickhouse = { workspace = true }
+clickhouse-derive =  { workspace = true }
 config-file = { workspace = true }
 csv = { workspace = true }
 chrono = { workspace = true }
