@@ -1,9 +1,10 @@
-use lib_csv_import::utils::{config_utils, file_utils, print_utils};
+use client_utils::prelude::{config_utils, file_utils, print_utils,atomic_counter};
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 use std::time::Instant;
 
 mod process_file;
 mod query_gen;
+mod meta_data;
 
 const CONFIG_FILE_NAME: &str = "import_config.toml";
 const META_DATA_TABLE: &str = "kraken_symbols";
@@ -59,7 +60,7 @@ fn main() {
     if config.parallel() {
         println!("Importing files in parallel");
         // Parallel iterator requires an atomic counter for thread safety
-        let counter = client_utils::atomic_counter::RelaxedAtomicCounter::new();
+        let counter = atomic_counter::RelaxedAtomicCounter::new();
 
         files.par_iter().for_each(|file_path| {
             process_file::process(

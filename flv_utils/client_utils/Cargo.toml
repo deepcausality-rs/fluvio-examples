@@ -14,8 +14,19 @@ authors.workspace = true
 common = { workspace = true }
 config_manager = { workspace = true }
 db_query_manager = { workspace = true }
+db_specs = { workspace = true }
 sbe_messages = { workspace = true }
 symbol_manager = { workspace = true }
 # External crates
 futures = {workspace = true}
 fluvio = { workspace = true }
+clickhouse = { workspace = true }
+clickhouse-derive =  { workspace = true }
+config-file = { workspace = true }
+csv = { workspace = true }
+chrono = { workspace = true }
+encoding_rs = { workspace = true }
+proton_client = { workspace = true }
+rust_decimal = { workspace = true }
+rayon = { workspace = true }
+serde = { workspace = true }

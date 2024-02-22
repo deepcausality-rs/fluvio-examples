@@ -13,11 +13,6 @@ name = "csv_import"
 path = "src/bin/csv_import/main.rs"
 
 
-[lib]
-name = "lib_csv_import"
-path = "src/lib/mod.rs"
-
-
 [dependencies]
 # Internal crates
 client_utils = { workspace = true }
@@ -26,12 +21,7 @@ db_specs = { workspace = true }
 # External crates
 clickhouse = { workspace = true }
 clickhouse-derive =  { workspace = true }
-config-file = { workspace = true }
-csv = { workspace = true }
-chrono = { workspace = true }
-encoding_rs = { workspace = true }
 proton_client = { workspace = true }
-rust_decimal = { workspace = true }
 rayon = { workspace = true }
 serde = { workspace = true }
 tokio = { workspace = true, features = ["rt", "rt-multi-thread", "macros"] }

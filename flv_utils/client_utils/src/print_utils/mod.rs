@@ -1,8 +1,16 @@
 use std::time::Duration;
 
+pub fn print_example_header(example: &str) {
+    println!();
+    println!("==========================================");
+    println!("Running example: {}", example);
+    println!("==========================================");
+    println!();
+}
+
 pub fn print_import_header() {
     println!();
-    println!("import_kraken: Imports trade tick data from CSV into Proton.");
+    println!("import_kraken: Imports trade tick data from CSV into QuestDB.");
     println!();
 }
 

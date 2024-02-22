@@ -13,20 +13,9 @@ name = "import_kraken"
 path = "src/bin/import_kraken_data/main.rs"
 
 
-[lib]
-name = "lib_import"
-path = "src/lib/mod.rs"
-
-
 [dependencies]
 # Internal crates
 common = { workspace = true }
+client_utils = { workspace = true }
 db_quest_manager = { workspace = true }
 db_specs = { workspace = true }
-# External crates
-config-file = { workspace = true }
-csv = { workspace = true }
-chrono = { workspace = true }
-encoding_rs = { workspace = true }
-rust_decimal = { workspace = true }
-serde = { workspace = true }

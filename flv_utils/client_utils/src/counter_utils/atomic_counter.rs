@@ -26,7 +26,7 @@ impl RelaxedAtomicCounter {
     /// # Examples
     ///
     /// ```
-    /// use client_utils::atomic_counter::RelaxedAtomicCounter;
+    /// use client_utils::prelude::atomic_counter::RelaxedAtomicCounter;
     ///
     /// let counter = RelaxedAtomicCounter::new();
     ///

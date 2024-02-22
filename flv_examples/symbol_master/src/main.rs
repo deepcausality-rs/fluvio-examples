@@ -1,5 +1,5 @@
 use crate::handle_data::handle_data_message;
-use client_utils::{handle_error_utils, handle_utils, print_utils};
+use client_utils::prelude::{handle_error_utils, handle_utils, print_utils};
 use common::prelude::{ExchangeID, MessageClientConfig};
 use qd_client::QDClient;
 use std::time::Duration;

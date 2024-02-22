@@ -1,10 +1,10 @@
 use crate::query_gen;
-use lib_csv_import::types::meta_data::MetaData;
-use lib_csv_import::utils::print_utils;
+use client_utils::print_utils;
 use proton_client::ProtonClient;
 use std::error::Error;
 use std::path::PathBuf;
 use tokio::runtime::Runtime;
+use crate::meta_data::MetaData;
 
 /// Process a CSV file for import into TimePlus Proton.
 ///
@@ -97,11 +97,7 @@ pub fn process(
     }
 
     print_utils::dbg_print(vrb, "Insert trade data into the trade table");
-    let query = query_gen::generate_insert_query(&file, path);
 
-    println!();
-    println!("{}", query);
-    println!();
 
     let binding = client.clone();
     let fut = binding.execute_query(&query);
