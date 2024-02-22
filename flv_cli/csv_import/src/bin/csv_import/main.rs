@@ -50,7 +50,6 @@ fn main() {
     let binding = client.clone();
     let fut = binding.execute_query(&query);
     let res = rt.block_on(fut);
-
     // Check for error
     if res.is_err() {
         println!("[main]: Failed to create metadata table. Please check the error, check the generated DDL and try again.");

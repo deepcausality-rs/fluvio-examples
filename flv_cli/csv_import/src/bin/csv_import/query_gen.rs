@@ -1,13 +1,11 @@
 pub(crate) fn generate_trade_table_ddl(table_name: &str) -> String {
     format!(
-        "CREATE STREAM IF NOT EXISTS {table_name} ( \
-            timestamp DateTime64(3), \
-            price Float64, \
-            volume Float64 \
+        "CREATE STREAM IF NOT EXISTS {table_name} (timestamp DateTime64(3), \
+            price float64, \
+            volume float64 \
         ) ENGINE = MergeTree() \
         ORDER BY timestamp \
-        primary key timestamp\
-        SETTINGS event_time_column='timestamp'",
+        primary key timestamp",
     )
 }
 
@@ -26,7 +24,7 @@ pub(crate) fn generate_insert_query(file: &str, path: &str) -> String {
     //  INSERT INTO stream AS SELECT * FROM file('test.csv', 'CSV', 'timestamp int64, price float64, volume float64')
     // https://clickhouse.com/docs/en/sql-reference/table-functions/file#select-from-a-csv-file
     format!(
-        "INSERT INTO {table_name} AS SELECT * FROM file('{path}', 'CSV', 'timestamp DateTime64(3), price float64, volume float64')"
+        "INSERT INTO {table_name} AS SELECT * FROM file('{path}', 'CSV', 'timestamp DateTime64(3), price float64, volume float64');"
     )
 }
 

@@ -36,12 +36,18 @@ pub fn process(
     let binding = client.clone();
     let fut = binding.fetch_one(&count_query);
     let number_of_rows: u64 = rt.block_on(fut).expect("Failed to count inserted data");
+    println!("Number of rows: {}", number_of_rows);
 
     print_utils::dbg_print(
         vrb,
         "Create the trade data table if it doesn't exist in the database",
     );
     let query = query_gen::generate_trade_table_ddl(&table_name);
+
+    println!();
+    println!("{}", query);
+    println!();
+
     let binding = client.clone();
     let fut = binding.execute_query(&query);
     let res = rt.block_on(fut);
@@ -53,6 +59,11 @@ pub fn process(
 
     print_utils::dbg_print(vrb, "Insert trade data into the trade table");
     let query = query_gen::generate_insert_query(&file, path);
+
+    println!();
+    println!("{}", query);
+    println!();
+
     let binding = client.clone();
     let fut = binding.execute_query(&query);
     let res = rt.block_on(fut);
