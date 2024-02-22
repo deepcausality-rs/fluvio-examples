@@ -5,8 +5,7 @@ pub(crate) fn generate_trade_table_ddl(table_name: &str) -> String {
             volume float64 \
         ) ENGINE = MergeTree() \
         ORDER BY timestamp \
-        primary key timestamp\
-        ;",
+        primary key timestamp",
     )
 }
 
@@ -16,8 +15,7 @@ pub(crate) fn generate_count_query(path: &str) -> String {
     // DateTime64 3 (milliseconds)
     // https://clickhouse.com/docs/en/sql-reference/data-types/datetime64
     format!(
-        "SELECT count(*) FROM file('{path}', 'CSV', 'timestamp DateTime64(3), price float64, volume float64')\
-        ;"
+        "SELECT count(*) FROM file('{path}', 'CSV', 'timestamp DateTime64(3), price float64, volume float64')"
     )
 }
 
@@ -26,8 +24,7 @@ pub(crate) fn generate_insert_query(file: &str, path: &str) -> String {
     //  INSERT INTO stream AS SELECT * FROM file('test.csv', 'CSV', 'timestamp int64, price float64, volume float64')
     // https://clickhouse.com/docs/en/sql-reference/table-functions/file#select-from-a-csv-file
     format!(
-        "INSERT INTO {table_name} AS SELECT * FROM file('{path}', 'CSV', 'timestamp DateTime64(3), price float64, volume float64')\
-        ;"
+        "INSERT INTO {table_name} AS SELECT * FROM file('{path}', 'CSV', 'timestamp DateTime64(3), price float64, volume float64')"
     )
 }
 
@@ -40,7 +37,6 @@ pub(crate) fn generate_metadata_table_ddl(meta_data_table: &str) -> String {
             number_of_rows uint64 \
         ) ENGINE = MergeTree() \
         ORDER BY symbol \
-        primary key symbol\
-     ;",
+        primary key symbol",
     )
 }
