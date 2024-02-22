@@ -6,6 +6,45 @@ use std::error::Error;
 use std::path::PathBuf;
 use tokio::runtime::Runtime;
 
+/// Process a CSV file for import into TimePlus Proton.
+///
+/// # Arguments
+///
+/// * `rt` - Tokio runtime
+/// * `client` - Proton client
+/// * `file_path` - Path to CSV file
+/// * `symbol_id` - Unique symbol ID
+/// * `meta_data_table` - Name of Proton meta data table
+/// * `vrb` - Verbose boolean flag
+///
+/// # The process:
+/// * Extracts the filename and path from the input file path
+/// * Generates a SQL query to count the number of rows in the CSV file
+/// * Executes the count query and saves the number of rows
+/// * Generates a SQL CREATE TABLE statement for a new table to hold the CSV data
+/// * Executes the CREATE TABLE statement
+/// * Generates a SQL INSERT statement to populate the new table from the CSV
+/// * Executes the INSERT statement
+/// * Creates a MetaData struct with metadata about the imported CSV
+/// * Inserts the MetaData into the Proton metadata table
+///
+/// # Returns
+///
+/// Returns Ok() on success, or an error if any step fails.
+///
+/// # Errors
+///
+/// Will return an error if:
+///
+/// - Failed to get file name
+/// - Failed to convert file name to string
+/// - Failed to convert file path to string
+/// - Failed to count rows in CSV file
+/// - Failed to create trade table in QuestDB
+/// - Failed to insert trade data into QuestDB
+/// - Failed to get Proton inserter for meta data
+/// - Failed to insert meta data into Proton
+///
 pub fn process(
     rt: &Runtime,
     client: &ProtonClient,

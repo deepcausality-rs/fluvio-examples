@@ -7,8 +7,6 @@ pub(crate) fn generate_trade_table_ddl(table_name: &str) -> String {
 }
 
 pub(crate) fn generate_count_query(path: &str) -> String {
-    // SELECT count(*) FROM file('test.csv', 'CSV', 'timestamp int64, price float64, volume float64')
-    // https://clickhouse.com/docs/en/sql-reference/table-functions/file#select-from-a-csv-file
     format!(
         "SELECT count(*) FROM file('{path}', 'CSV', 'timestamp datetime64(3), price float64, volume float64')"
     )
