@@ -1,12 +1,12 @@
-use client_utils::prelude::{config_utils, file_utils, print_utils, atomic_counter};
+use client_utils::prelude::{atomic_counter, config_utils, file_utils, print_utils};
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 use std::time::Instant;
 
+mod csv;
+mod meta_data;
 mod process_file;
 mod query_gen;
-mod meta_data;
 mod trade_data;
-mod csv;
 
 const CONFIG_FILE_NAME: &str = "import_config.toml";
 const META_DATA_TABLE: &str = "kraken_symbols";
@@ -20,7 +20,7 @@ fn main() {
     // Enables verbose output for main
     let vrb = VERBOSE;
     // Enables verbose output for process_file.
-    let vrb_prc = VERBOSE;
+    let vrb_prc = false;
 
     print_utils::dbg_print(vrb, "Build Proton Client");
     let client = proton_client::prelude::ProtonClient::default();
@@ -65,7 +65,6 @@ fn main() {
         let counter = atomic_counter::RelaxedAtomicCounter::new();
 
         files.par_iter().for_each(|file_path| {
-
             // get file path
             let path = file_path
                 .to_str()
@@ -88,14 +87,13 @@ fn main() {
                 META_DATA_TABLE,
                 vrb_prc,
             )
-                .expect("Failed to import file")
+            .expect("Failed to import file")
         });
 
         symbol_id = counter.get_counter();
     } else {
         println!("Importing files in sequence");
         for file_path in &files {
-
             // get file path
             let path = file_path
                 .to_str()
@@ -111,8 +109,16 @@ fn main() {
 
             // Sequential iterator requires only a simple mutable counter
             symbol_id += 1;
-            process_file::process(&rt, &client, trade_bars, file_path, symbol_id, META_DATA_TABLE, vrb_prc)
-                .expect("Failed to import file");
+            process_file::process(
+                &rt,
+                &client,
+                trade_bars,
+                file_path,
+                symbol_id,
+                META_DATA_TABLE,
+                vrb_prc,
+            )
+            .expect("Failed to import file");
         }
     }
 

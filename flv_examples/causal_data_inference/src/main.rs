@@ -1,6 +1,8 @@
 use crate::handle_data::MessageHandler;
 use causal_model::{context::build_context, model::model};
-use client_utils::prelude::{data_utils, handle_error_utils, handle_utils, print_utils, symbol_utils};
+use client_utils::prelude::{
+    data_utils, handle_error_utils, handle_utils, print_utils, symbol_utils,
+};
 use common::prelude::{ExchangeID, MessageClientConfig, SampledDataBars, ServiceID};
 use config_manager::ConfigManager;
 use deep_causality::prelude::TimeScale;

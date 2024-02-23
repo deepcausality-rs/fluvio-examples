@@ -1,13 +1,13 @@
+use crate::trade_data::TradeData;
+use csv::ReaderBuilder;
+use encoding_rs::UTF_8;
 use std::error::Error;
 use std::fs;
 use std::path::Path;
-use csv::ReaderBuilder;
-use encoding_rs::UTF_8;
-use crate::trade_data::TradeData;
 
 pub(crate) fn read_csv<P>(path: P) -> Result<Vec<TradeData>, Box<dyn Error>>
-    where
-        P: AsRef<Path>,
+where
+    P: AsRef<Path>,
 {
     let file = fs::read(path).expect("[csv_utils/read_csv_lines]: Could not read file");
     let (res, _, _) = UTF_8.decode(&file);
@@ -18,10 +18,8 @@ pub(crate) fn read_csv<P>(path: P) -> Result<Vec<TradeData>, Box<dyn Error>>
         .has_headers(false)
         .from_reader(res.as_bytes());
 
-
     // https://docs.rs/csv/latest/csv/struct.Reader.html
     for result in rdr.records() {
-
         match result {
             Ok(record) => {
                 let timestamp = record[0]
@@ -35,16 +33,12 @@ pub(crate) fn read_csv<P>(path: P) -> Result<Vec<TradeData>, Box<dyn Error>>
                     .parse::<f64>()
                     .expect("[csv_utils/read_csv_lines]: Could not parse volume");
 
-
                 let trade_data = TradeData::new(timestamp, p, v);
                 content.push(trade_data);
             }
 
             Err(err) => {
-                println!(
-                    "[csv/read_csv_lines]: error reading CSV line: {}",
-                    err
-                );
+                println!("[csv/read_csv_lines]: error reading CSV line: {}", err);
             }
         }
     }
