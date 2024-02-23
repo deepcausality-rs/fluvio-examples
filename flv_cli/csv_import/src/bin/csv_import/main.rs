@@ -65,23 +65,10 @@ fn main() {
         let counter = atomic_counter::RelaxedAtomicCounter::new();
 
         files.par_iter().for_each(|file_path| {
-            // get file path
-            let path = file_path
-                .to_str()
-                .expect("Failed to convert file path to str");
-
-            // read CSV into TradeBars
-            let trade_bars = csv::read_csv(path).expect("Failed to read CSV file");
-
-            // skip empty data records
-            if trade_bars.is_empty() {
-                return;
-            }
 
             process_file::process(
                 &rt,
                 &client,
-                trade_bars,
                 file_path,
                 counter.increment_and_get(),
                 META_DATA_TABLE,
@@ -94,25 +81,12 @@ fn main() {
     } else {
         println!("Importing files in sequence");
         for file_path in &files {
-            // get file path
-            let path = file_path
-                .to_str()
-                .expect("Failed to convert file path to str");
-
-            // read CSV into TradeBars
-            let trade_bars = csv::read_csv(path).expect("Failed to read CSV file");
-
-            // skip empty data records
-            if trade_bars.is_empty() {
-                break;
-            }
 
             // Sequential iterator requires only a simple mutable counter
             symbol_id += 1;
             process_file::process(
                 &rt,
                 &client,
-                trade_bars,
                 file_path,
                 symbol_id,
                 META_DATA_TABLE,

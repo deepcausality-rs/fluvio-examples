@@ -1,6 +1,5 @@
 use crate::meta_data::MetaData;
 use crate::query_gen;
-use crate::trade_data::TradeData;
 use client_utils::print_utils;
 use proton_client::ProtonClient;
 use std::error::Error;
@@ -50,7 +49,6 @@ use tokio::runtime::Runtime;
 pub fn process(
     rt: &Runtime,
     client: &ProtonClient,
-    trade_data: Vec<TradeData>,
     file_path: &PathBuf,
     symbol_id: u64,
     meta_data_table: &str,
@@ -98,7 +96,15 @@ pub fn process(
     }
 
     print_utils::dbg_print(vrb, "Insert trade data into the trade table");
-    rt.block_on(insert_data(&client, trade_data, &table_name));
+    let query = query_gen::generate_insert_query(&file, &path);
+    let binding = client.clone();
+    let fut = binding.execute_query(&query);
+    let res = rt.block_on(fut);
+    // Check for error
+    if res.is_err() {
+        println!("[main/insert]: Failed to insert data");
+        return Err(Box::try_from(res.err().unwrap()).unwrap());
+    }
 
     print_utils::dbg_print(vrb, "Insert meta data into Proton meta data table");
     let meta_data = MetaData::new(&table_name, &symbol, symbol_id, number_of_rows);
@@ -127,29 +133,4 @@ pub fn process(
     }
 
     Ok(())
-}
-
-async fn insert_data(
-    client: &ProtonClient,
-    trade_data: Vec<TradeData>,
-    table_name: &str,
-) {
-    // Build bulk inserter
-    let mut inserter = client
-        .insert(&table_name)
-        .await
-        .unwrap();
-
-    // Insert trade data into DB
-    // The bulk inserter will automatically batch the data and commit after each batch.
-    for trade_bar in trade_data {
-        inserter
-            .write(&trade_bar)
-            .await
-            .expect("Failed to insert trade data into DB");
-    }
-
-    // inserter.commit().await.expect("Failed to commit bulk insert");
-
-    inserter.end().await.expect("Failed to end bulk insert");
 }
