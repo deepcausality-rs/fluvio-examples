@@ -61,7 +61,6 @@ pub fn get_local_db_config() -> DBConfig {
 #[derive(Deserialize, Debug, Clone, PartialEq, PartialOrd)]
 pub struct ConfigFile {
     data_folder: String,
-    parallel: bool,
 }
 
 impl ConfigFile {
@@ -86,11 +85,9 @@ impl ConfigFile {
             ConfigFile::from_config_file(path).expect("ConfigFile: Failed to parse config file");
 
         let data_folder = config.data_folder;
-        let parallel = config.parallel;
 
         Ok(Self {
             data_folder,
-            parallel,
         })
     }
 }
@@ -105,23 +102,14 @@ impl ConfigFile {
     pub fn data_folder(&self) -> &str {
         &self.data_folder
     }
-
-    /// Gets a reference to the parallel field.
-    ///
-    /// # Returns
-    ///
-    /// bool - true when parallel is enabled, false otherwise
-    pub fn parallel(&self) -> bool {
-        self.parallel
-    }
 }
 
 impl Display for ConfigFile {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "data_folder: {}\n parallel: {}",
-            self.data_folder, self.parallel
+            "data_folder: {}\n",
+            self.data_folder
         )
     }
 }

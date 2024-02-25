@@ -1,7 +1,6 @@
 [workspace]
 resolver = "2"
 
-
 members = [
     "flv_cli/data_importer",
     "flv_cli/csv_import",
@@ -75,8 +74,6 @@ fluvio = { version = "0.21", default-features = false, features = ["rustls"] }
 futures = "0.3"
 lru = "0.12"
 petgraph = "0.6"
-proton_client = { version = "0.1" }
-rayon = "1.8"
 # default-features = false mitigates a warning of a yanked sub-sub dependency
 # db-postgres enables type conversion from postgres numeric to rust native numeric
 # https://stackoverflow.com/questions/72594101/how-to-parse-a-postgresql-numeric-type-to-rust-native-ones-upon-request

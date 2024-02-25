@@ -21,6 +21,5 @@ Cargo.lock
 # Exclude the data directory from git b/c file size exceeds github's 100MB limit
 data/Kraken_Trading_History/
 
-# Everything proton and the proton directory
-proton
-proton-data
+# clickhouse
+ch

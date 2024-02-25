@@ -1,6 +1,6 @@
-use proton_client::prelude::Row;
 use serde::{Deserialize, Serialize};
 use std::fmt;
+use clickhouse_derive::Row;
 
 #[derive(Debug, Row, Serialize, Deserialize)]
 pub struct MetaData<'l> {

@@ -21,10 +21,8 @@ db_specs = { workspace = true }
 # External crates
 clickhouse = { workspace = true }
 clickhouse-derive =  { workspace = true }
-proton_client = { workspace = true }
 csv = { workspace = true }
 chrono = { workspace = true }
 encoding_rs = { workspace = true }
-rayon = { workspace = true }
 serde = { workspace = true }
 tokio = { workspace = true, features = ["rt", "rt-multi-thread", "macros"] }
