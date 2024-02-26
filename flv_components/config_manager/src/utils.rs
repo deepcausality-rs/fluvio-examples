@@ -1,4 +1,4 @@
-use common::prelude::{DBConfig, EnvironmentType, ExchangeID, ServiceConfig, ServiceID};
+use common::prelude::{ClickHouseConfig, EnvironmentType, ExchangeID, ServiceConfig, ServiceID};
 use db_specs::prelude::{get_cluster_db_config, get_local_db_config};
 use service_specs::prelude::{get_qdgw_service_config, get_symdb_service_config};
 use std::collections::HashMap;
@@ -73,7 +73,7 @@ pub(crate) fn get_env_type() -> EnvironmentType {
 /// - EnvironmentType::Local - Calls get_local_db_config()
 /// - EnvironmentType::Cluster - Calls get_cluster_db_config()
 ///
-pub(crate) fn get_db_config(env_type: &EnvironmentType) -> DBConfig {
+pub(crate) fn get_db_config(env_type: &EnvironmentType) -> ClickHouseConfig {
     match env_type {
         EnvironmentType::Local => get_local_db_config(),
         EnvironmentType::Cluster => get_cluster_db_config(),

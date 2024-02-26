@@ -1,7 +1,7 @@
 use chrono::{DateTime, TimeZone, Utc};
-use rust_decimal::Decimal;
 use klickhouse::{DateTime64, Row};
 use rust_decimal::prelude::FromPrimitive;
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Row, Serialize, Deserialize)]

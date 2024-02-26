@@ -1,7 +1,7 @@
 use crate::ConfigManager;
 use common::prelude::{
-    DBConfig, EnvironmentType, ExchangeID, MessageClientConfig, MetricConfig, ServiceConfig,
-    ServiceID,
+    ClickHouseConfig, EnvironmentType, ExchangeID, MessageClientConfig, MetricConfig,
+    ServiceConfig, ServiceID,
 };
 
 const DEFAULT_HOST: &str = "0.0.0.0";
@@ -52,7 +52,7 @@ impl ConfigManager {
     /// # Returns
     ///
     /// A cloned DBConfig value.
-    pub fn db_config(&self) -> DBConfig {
+    pub fn db_config(&self) -> ClickHouseConfig {
         self.db_config.clone()
     }
 

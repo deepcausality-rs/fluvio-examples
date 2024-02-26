@@ -1,5 +1,5 @@
-use std::fmt;
 use serde::{Deserialize, Serialize};
+use std::fmt;
 
 #[derive(Debug, Eq, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ClickHouseConfig {
@@ -11,8 +11,20 @@ pub struct ClickHouseConfig {
 }
 
 impl ClickHouseConfig {
-    pub fn new(url: String, port: u16, username: String, password: String, database: String) -> Self {
-        Self { url, port, username, password, database }
+    pub fn new(
+        url: String,
+        port: u16,
+        username: String,
+        password: String,
+        database: String,
+    ) -> Self {
+        Self {
+            url,
+            port,
+            username,
+            password,
+            database,
+        }
     }
 }
 
@@ -54,7 +66,10 @@ impl ClickHouseConfig {
 
 impl fmt::Display for ClickHouseConfig {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "ClickHouseConfig {{ url: {}, port: {}, database: {}, username: {} }}",
-               self.url, self.port, self.database, self.username)
+        write!(
+            f,
+            "ClickHouseConfig {{ url: {}, port: {}, database: {}, username: {} }}",
+            self.url, self.port, self.database, self.username
+        )
     }
 }

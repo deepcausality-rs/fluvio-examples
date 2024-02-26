@@ -2,7 +2,6 @@
 resolver = "2"
 
 members = [
-    "flv_cli/data_importer",
     "flv_cli/csv_import",
     "flv_clients/symdb_client",
     "flv_clients/qd_client",
@@ -10,7 +9,6 @@ members = [
     "flv_components/client_manager",
     "flv_components/config_manager",
     "flv_components/db_query_manager",
-    "flv_components/db_quest_manager",
     "flv_components/symbol_manager",
     "flv_examples/basic_data_stream",
     "flv_examples/causal_data_inference",
@@ -45,7 +43,6 @@ common = { path = "flv_common" }
 client_manager = { path = "flv_components/client_manager" }
 config_manager = { path = "flv_components/config_manager" }
 db_query_manager = { path = "flv_components/db_query_manager" }
-db_quest_manager = { path = "flv_components/db_quest_manager" }
 symbol_manager = { path = "flv_components/symbol_manager" }
 proto = { path = "flv_proto" }
 qd_client = { path = "flv_clients/qd_client" }
@@ -76,18 +73,13 @@ futures = "0.3"
 lru = "0.12"
 petgraph = "0.6"
 # default-features = false mitigates a warning of a yanked sub-sub dependency
-# db-postgres enables type conversion from postgres numeric to rust native numeric
-rust_decimal = { version = "1", default-features = false, features = ["serde", "db-postgres"] }
+rust_decimal = { version = "1", default-features = false, features = ["serde"] }
 serde = { version = "1", features = ["derive"] }
 tokio = { version = "1", features = ["macros", "net", "rt-multi-thread", "signal"] }
-# proto / gRPC deps
 prost = "0.12"
 tonic-health = "0.11"
 tonic = "0.11"
 tonic-build = "0.11"
-# Quest DB uses the postgres wire protocol for queries; hence both, the questdb-rs and sqlx crates
-questdb-rs = { version = "3.1" }
-sqlx = { version = "0.7", features = ["runtime-tokio", "postgres", "uuid", "chrono"] }
 warp = { version = "0.3", features = ["multipart"] }
 
 

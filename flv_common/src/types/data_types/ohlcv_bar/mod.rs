@@ -1,9 +1,8 @@
 use chrono::{DateTime, Utc};
+use clickhouse::Row;
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use std::fmt::Debug;
-use clickhouse::Row;
-
 
 mod default;
 mod display;

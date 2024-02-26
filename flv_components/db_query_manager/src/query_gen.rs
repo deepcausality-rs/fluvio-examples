@@ -1,7 +1,6 @@
 use common::prelude::TimeResolution;
 
 impl crate::QueryDBManager {
-
     /// Builds a SQL query to get all symbol IDs and symbols from a symbol table.
     ///
     /// # Arguments

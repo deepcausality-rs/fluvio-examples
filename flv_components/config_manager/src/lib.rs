@@ -1,4 +1,4 @@
-use common::prelude::{DBConfig, EnvironmentType, ExchangeID, ServiceConfig, ServiceID};
+use common::prelude::{ClickHouseConfig, EnvironmentType, ExchangeID, ServiceConfig, ServiceID};
 use std::collections::HashMap;
 
 mod getters;
@@ -11,7 +11,7 @@ pub struct ConfigManager {
     /// Detected environment of this service.
     env_type: EnvironmentType,
     /// DB configuration relative to the detected environment.
-    db_config: DBConfig,
+    db_config: ClickHouseConfig,
     /// Configuration of this service.
     svc_config: ServiceConfig,
     /// Default exchange

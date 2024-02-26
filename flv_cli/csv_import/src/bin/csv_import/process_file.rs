@@ -1,11 +1,10 @@
 use crate::meta_data::MetaData;
-use crate::{query_gen};
+use crate::query_gen;
+use clickhouse::Client;
 use client_utils::print_utils;
 use std::error::Error;
 use std::path::PathBuf;
-use clickhouse::Client;
 use tokio::runtime::Runtime;
-
 
 /// Process a CSV file for import into TimePlus Proton.
 ///
@@ -80,14 +79,17 @@ pub fn process(
     }
 
     print_utils::dbg_print(vrb, "Create the trade data table if it doesn't exist");
-    rt.block_on(create_trade_data_table(&client, &table_name)).expect("Failed to create trade table");
+    rt.block_on(create_trade_data_table(&client, &table_name))
+        .expect("Failed to create trade table");
 
     print_utils::dbg_print(vrb, "Insert trade data into the trade table");
-    rt.block_on(insert_trade_data(&client, &file, path)).expect("Failed to insert trade data");
+    rt.block_on(insert_trade_data(&client, &file, path))
+        .expect("Failed to insert trade data");
 
     print_utils::dbg_print(vrb, "Insert meta data into meta data table");
     let meta_data = MetaData::new(&table_name, &symbol, symbol_id, number_of_rows);
-    rt.block_on(insert_meta_data(&client, &meta_data, meta_data_table)).expect("Failed to insert meta data");
+    rt.block_on(insert_meta_data(&client, &meta_data, meta_data_table))
+        .expect("Failed to insert meta data");
 
     Ok(())
 }
@@ -103,7 +105,10 @@ pub(crate) async fn count_rows(client: &Client, path: &str) -> Result<u64, Box<d
     Ok(number_of_rows)
 }
 
-pub(crate) async fn create_trade_data_table(client: &Client, table_name: &str) -> Result<(), Box<dyn Error>> {
+pub(crate) async fn create_trade_data_table(
+    client: &Client,
+    table_name: &str,
+) -> Result<(), Box<dyn Error>> {
     let query = query_gen::generate_trade_table_ddl(table_name);
     client
         .query(&query)
@@ -114,7 +119,11 @@ pub(crate) async fn create_trade_data_table(client: &Client, table_name: &str) -
     Ok(())
 }
 
-pub(crate) async fn insert_trade_data(client: &Client, file: &str, path: &str) -> Result<(), Box<dyn Error>> {
+pub(crate) async fn insert_trade_data(
+    client: &Client,
+    file: &str,
+    path: &str,
+) -> Result<(), Box<dyn Error>> {
     let query = query_gen::generate_insert_query(&file, &path);
     client
         .query(&query)
@@ -125,7 +134,10 @@ pub(crate) async fn insert_trade_data(client: &Client, file: &str, path: &str) -
     Ok(())
 }
 
-pub(crate) async fn create_meta_data_table(client: &Client, meta_data_table: &str) -> Result<(), Box<dyn Error>> {
+pub(crate) async fn create_meta_data_table(
+    client: &Client,
+    meta_data_table: &str,
+) -> Result<(), Box<dyn Error>> {
     let query = query_gen::generate_metadata_table_ddl(meta_data_table);
     client
         .query(&query)
@@ -136,10 +148,17 @@ pub(crate) async fn create_meta_data_table(client: &Client, meta_data_table: &st
     Ok(())
 }
 
-pub(crate) async fn insert_meta_data(client: &Client, meta_data: &MetaData<'_>, meta_data_table: &str) -> Result<(), Box<dyn Error>> {
+pub(crate) async fn insert_meta_data(
+    client: &Client,
+    meta_data: &MetaData<'_>,
+    meta_data_table: &str,
+) -> Result<(), Box<dyn Error>> {
     let mut insert = client.inserter(meta_data_table).unwrap();
 
-    insert.write(meta_data).await.expect("Failed to write meta data");
+    insert
+        .write(meta_data)
+        .await
+        .expect("Failed to write meta data");
 
     insert.end().await.expect("Failed to end insert");
 

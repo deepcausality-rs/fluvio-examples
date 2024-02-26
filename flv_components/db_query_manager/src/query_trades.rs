@@ -1,8 +1,7 @@
 use crate::error::QueryError;
-use crate::{FN_NAME, QueryDBManager};
+use crate::types::TradeRow;
+use crate::{QueryDBManager, FN_NAME};
 use common::prelude::TradeBar;
-use crate::types::{TradeRow};
-
 
 impl QueryDBManager {
     /// Retrieves all trade bars for the given symbol table from the database.
@@ -64,7 +63,6 @@ impl QueryDBManager {
             .await
             .expect(format!("{} Failed to execute query: {}", FN_NAME, query).as_str());
 
-
         // Check for empty result
         if trade_rows.is_empty() {
             return Ok(Vec::new());
@@ -72,10 +70,10 @@ impl QueryDBManager {
 
         let mut trades = Vec::with_capacity(trade_rows.len());
 
-         for row in trade_rows {
-             let bar = TradeBar::new(symbol_id, row.date_time(), row.price(), row.volume());
-             trades.push(bar);
-         }
+        for row in trade_rows {
+            let bar = TradeBar::new(symbol_id, row.date_time(), row.price(), row.volume());
+            trades.push(bar);
+        }
 
         Ok(trades)
     }

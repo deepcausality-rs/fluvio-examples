@@ -1,7 +1,7 @@
 use common::prelude::{ClickHouseConfig, TimeResolution};
 use db_query_manager::QueryDBManager;
-use std::str::FromStr;
 use futures::StreamExt;
+use std::str::FromStr;
 
 fn get_local_db_config() -> ClickHouseConfig {
     ClickHouseConfig::default()
@@ -35,7 +35,6 @@ async fn test_get_all_symbol_ids() {
 
     let expected_symbol = &"1incheur".to_string();
     assert_eq!(expected_symbol, actual_symbol);
-
 }
 
 #[tokio::test]
@@ -71,10 +70,9 @@ async fn test_stream_trades() {
     // Call method under tes
     let mut stream = manager.stream_trades(trade_table).await;
 
-    while let Some(Ok(record))  = stream.next().await{
-            println!("Got {:?}", record);
+    while let Some(Ok(record)) = stream.next().await {
+        println!("Got {:?}", record);
     }
-
 }
 
 #[tokio::test]
@@ -117,5 +115,4 @@ async fn test_get_all_ohlcv_bars() {
     assert_eq!(expected_low, first_bar.low());
     assert_eq!(expected_close, first_bar.close());
     assert_eq!(expected_volume, first_bar.volume());
-
 }

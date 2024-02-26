@@ -1,5 +1,4 @@
 pub(crate) fn generate_trade_table_ddl(table_name: &str) -> String {
-
     format!(
         r"
         CREATE TABLE IF NOT EXISTS default.{table_name}
@@ -15,7 +14,6 @@ pub(crate) fn generate_trade_table_ddl(table_name: &str) -> String {
 }
 
 pub(crate) fn generate_insert_query(file: &str, path: &str) -> String {
-
     let table_name = format!("KRAKEN_{}", file).to_lowercase();
     format!(
         r"
@@ -26,7 +24,6 @@ pub(crate) fn generate_insert_query(file: &str, path: &str) -> String {
         "
     )
 }
-
 
 pub(crate) fn generate_count_query(path: &str) -> String {
     format!(

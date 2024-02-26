@@ -1,7 +1,7 @@
+use crate::process_file::create_meta_data_table;
+use clickhouse::Client;
 use client_utils::prelude::{config_utils, file_utils, print_utils};
 use std::time::Instant;
-use clickhouse::Client;
-use crate::process_file::create_meta_data_table;
 
 mod meta_data;
 mod process_file;
@@ -56,14 +56,8 @@ fn main() {
     // Iterate over the files
     for file_path in &files {
         symbol_id += 1;
-        process_file::process(
-            &rt,
-            &client,
-            file_path,
-            symbol_id,
-            META_DATA_TABLE,
-            vrb_prc,
-        ).expect("Failed to import file");
+        process_file::process(&rt, &client, file_path, symbol_id, META_DATA_TABLE, vrb_prc)
+            .expect("Failed to import file");
     }
 
     println!();

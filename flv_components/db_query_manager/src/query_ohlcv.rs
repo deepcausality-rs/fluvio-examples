@@ -1,8 +1,8 @@
 use crate::error::QueryError;
-use crate::QueryDBManager;
-use common::prelude::{OHLCVBar, TimeResolution};
 use crate::types::OHLCVRow;
+use crate::QueryDBManager;
 use crate::FN_NAME;
+use common::prelude::{OHLCVBar, TimeResolution};
 
 impl QueryDBManager {
     /// Retrieves all OHLCV data bars for the given symbol table and time resolution.
@@ -55,7 +55,9 @@ impl QueryDBManager {
         time_resolution: &TimeResolution,
     ) -> Result<Vec<OHLCVBar>, QueryError> {
         // Sanitize table name input to prevent SQL injection.
-        let sanitized_name =  self.sanitize_table_name(symbol_table).expect("Failed to sanitize table name");
+        let sanitized_name = self
+            .sanitize_table_name(symbol_table)
+            .expect("Failed to sanitize table name");
 
         // Build the query
         let query = self.build_get_ohlcv_bars_query(sanitized_name, time_resolution);
@@ -75,7 +77,15 @@ impl QueryDBManager {
         let mut bars = Vec::with_capacity(ohlcv_rows.len());
 
         for row in ohlcv_rows {
-            let bar = OHLCVBar::new(symbol_id, row.date_time(), row.open(), row.high(), row.low(), row.close(), row.volume());
+            let bar = OHLCVBar::new(
+                symbol_id,
+                row.date_time(),
+                row.open(),
+                row.high(),
+                row.low(),
+                row.close(),
+                row.volume(),
+            );
             bars.push(bar);
         }
 

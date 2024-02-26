@@ -1,4 +1,5 @@
 pub mod error;
+mod query_gen;
 mod query_ohlcv;
 mod query_symbols;
 mod query_trades;
@@ -6,16 +7,15 @@ mod query_utils;
 mod stream_ohlcv;
 mod stream_trades;
 mod types;
-mod query_gen;
 
-use common::prelude::{ClickHouseConfig};
-use std::fmt::Error;
+use common::prelude::ClickHouseConfig;
 use klickhouse::{Client, ClientOptions};
+use std::fmt::Error;
 
 const FN_NAME: &str = "[QueryDBManager]:";
 
 pub struct QueryDBManager {
-    client: Client
+    client: Client,
 }
 
 impl QueryDBManager {
@@ -42,5 +42,11 @@ impl QueryDBManager {
             .expect(format!("{} Failed to connect to {}", FN_NAME, &destination).as_str());
 
         Ok(Self { client })
+    }
+}
+
+impl QueryDBManager {
+    pub async fn is_open(&self) -> bool {
+        !self.client.is_closed()
     }
 }

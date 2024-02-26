@@ -1,8 +1,8 @@
+use crate::types::TradeRow;
+use crate::{QueryDBManager, FN_NAME};
 use futures::stream::BoxStream;
 use futures::StreamExt;
 use klickhouse::KlickhouseError;
-use crate::{FN_NAME, QueryDBManager};
-use crate::types::TradeRow;
 
 impl QueryDBManager {
     /// Stream trade bars for the given symbol from the database.
@@ -55,8 +55,7 @@ impl QueryDBManager {
         // Build the query
         let query = self.build_get_trades_query(sanitized_name);
 
-        self
-            .client
+        self.client
             .query::<TradeRow>(query)
             .await
             .expect(format!("{} Failed to execute stream_trades query ", FN_NAME).as_str())

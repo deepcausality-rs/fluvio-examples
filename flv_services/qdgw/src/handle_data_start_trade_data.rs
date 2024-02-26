@@ -1,5 +1,5 @@
 use crate::service::Server;
-use common::prelude::MessageProcessingError;
+use common::prelude::{MessageProcessingError, TradeBar};
 use futures::StreamExt;
 use sbe_messages::prelude::{DataErrorType, DataType, SbeTradeBar};
 
@@ -62,16 +62,19 @@ impl Server {
         // Lock the query manager
         let q_manager = self.query_manager.lock().await;
 
-        // Build the query to get trade bars from the database
-        let query = q_manager.build_get_trades_query(trade_table);
-
         // Create a stream of trade bars from the database
-        let mut stream = q_manager.stream_trades(symbol_id, &query).await;
+        let mut stream = q_manager.stream_trades(&trade_table).await;
 
         // Process trade bars from the stream as they come in
         while let Some(Ok(record)) = stream.next().await {
+            let bar = TradeBar::new(
+                symbol_id,
+                record.date_time(),
+                record.price(),
+                record.volume(),
+            );
             // Encode the trade bar message
-            let (_, enc_trade_bar) = SbeTradeBar::encode(record).unwrap();
+            let (_, enc_trade_bar) = SbeTradeBar::encode(bar).unwrap();
 
             // Send trade bar message to the client
             match self.send_single_data(client_id, enc_trade_bar, flush).await {

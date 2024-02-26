@@ -107,9 +107,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
     .await;
 
-    // Close the DB Connection as its not needed anymore.
-    q_manager.close().await;
-
     // Configure & Construct gRPC via auto config
     let service_addr = cfg_manager.get_svc_socket_addr();
 

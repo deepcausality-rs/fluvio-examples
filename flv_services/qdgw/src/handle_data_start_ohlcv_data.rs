@@ -1,5 +1,5 @@
 use crate::service::Server;
-use common::prelude::{MessageProcessingError, TimeResolution};
+use common::prelude::{MessageProcessingError, OHLCVBar, TimeResolution};
 use futures::StreamExt;
 use sbe_messages::prelude::{DataErrorType, DataType, SbeOHLCVBar};
 
@@ -69,16 +69,22 @@ impl Server {
         // Lock the query manager
         let q_manager = self.query_manager.lock().await;
 
-        // Build the query for the data stream
-        let query = q_manager.build_get_ohlcv_bars_query(trade_table, time_resolution);
-
         // Create a stream of trade bars from the database
-        let mut stream = q_manager.stream_ohlcv(symbol_id, &query).await;
+        let mut stream = q_manager.stream_ohlcv(trade_table, time_resolution).await;
 
         // Process OHLCV bars from the stream as they come in
         while let Some(Ok(record)) = stream.next().await {
+            let bar = OHLCVBar::new(
+                symbol_id,
+                record.date_time(),
+                record.open(),
+                record.high(),
+                record.low(),
+                record.close(),
+                record.volume(),
+            );
             // Encode the trade bar message
-            let (_, enc_trade_bar) = SbeOHLCVBar::encode(record).unwrap();
+            let (_, enc_trade_bar) = SbeOHLCVBar::encode(bar).unwrap();
 
             // Send trade bar message to the client
             match self.send_single_data(client_id, enc_trade_bar, flush).await {

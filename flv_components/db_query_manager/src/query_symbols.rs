@@ -1,7 +1,6 @@
 use crate::error::QueryError;
-use crate::{FN_NAME, QueryDBManager};
-use crate::types::{SymbolRow};
-
+use crate::types::SymbolRow;
+use crate::{QueryDBManager, FN_NAME};
 
 impl QueryDBManager {
     /// Retrieves all symbols and their IDs from the given symbol table.

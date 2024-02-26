@@ -1,4 +1,4 @@
-use common::prelude::DBConfig;
+use common::prelude::ClickHouseConfig;
 use std::error::Error;
 
 use config_file::FromConfigFile;
@@ -37,7 +37,7 @@ pub fn get_config_file(path: &str) -> Result<ConfigFile, Box<dyn Error>> {
 ///
 /// The `DBConfig` for connecting to the local database.
 ///
-pub fn get_local_db_config() -> DBConfig {
+pub fn get_local_db_config() -> ClickHouseConfig {
     db_specs::prelude::get_local_db_config()
 }
 
@@ -86,9 +86,7 @@ impl ConfigFile {
 
         let data_folder = config.data_folder;
 
-        Ok(Self {
-            data_folder,
-        })
+        Ok(Self { data_folder })
     }
 }
 
@@ -106,10 +104,6 @@ impl ConfigFile {
 
 impl Display for ConfigFile {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "data_folder: {}\n",
-            self.data_folder
-        )
+        write!(f, "data_folder: {}\n", self.data_folder)
     }
 }
