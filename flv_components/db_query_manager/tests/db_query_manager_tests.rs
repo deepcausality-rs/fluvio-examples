@@ -1,4 +1,4 @@
-use common::prelude::{ClickHouseConfig, DBConfig, TimeResolution};
+use common::prelude::{ClickHouseConfig, TimeResolution};
 use db_query_manager::QueryDBManager;
 use futures::StreamExt;
 use std::str::FromStr;
@@ -76,10 +76,9 @@ async fn test_stream_trades() {
     // trade table name
     // ethaed has only 43 records so this is a good and fast test
     let trade_table = "kraken_ethaed";
-    let symbol_id = 284; // 284 = ethaed on Kraken
 
     // Call method under tes
-    let mut stream = manager.stream_trades(symbol_id, trade_table).await;
+    let mut stream = manager.stream_trades(trade_table).await;
 
     while let Some(record) = stream.next().await {
         assert!(record.is_ok());
