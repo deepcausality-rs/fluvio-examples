@@ -63,8 +63,7 @@ impl QueryDBManager {
         // Execute query
         let ohlcv_rows = self
             .client
-            .query(&query)
-            .fetch_all::<OHLCVRow>()
+            .query_collect::<OHLCVRow>(&query)
             .await
             .expect(format!("{} Failed to execute query: {}", FN_NAME, query).as_str());
 

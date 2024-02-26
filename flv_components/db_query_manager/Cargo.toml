@@ -18,9 +18,9 @@ path = "src/lib.rs"
 common = { workspace = true }
 # External crates
 chrono = { workspace = true }
-clickhouse = { workspace = true }
-clickhouse-derive =  { workspace = true }
+klickhouse = { workspace = true }
 futures = { workspace = true }
+#futures-util =  { workspace = true }
 rust_decimal = { workspace = true }
 tokio = { workspace = true }
 sqlx = { workspace = true }

@@ -19,8 +19,8 @@ impl ClickHouseConfig {
 impl Default for ClickHouseConfig {
     fn default() -> Self {
         Self {
-            url: "http://localhost".to_string(),
-            port: 8123,
+            url: "127.0.0.1".to_string(),
+            port: 9000,
             username: "".to_string(),
             password: "".to_string(),
             database: "default".to_string(),

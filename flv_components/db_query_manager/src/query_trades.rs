@@ -1,7 +1,7 @@
 use crate::error::QueryError;
 use crate::{FN_NAME, QueryDBManager};
 use common::prelude::TradeBar;
-use crate::types::TradeRow;
+use crate::types::{TradeRow};
 
 
 impl QueryDBManager {
@@ -60,10 +60,10 @@ impl QueryDBManager {
         // Execute query
         let trade_rows = self
             .client
-            .query(&query)
-            .fetch_all::<TradeRow>()
+            .query_collect::<TradeRow>(&query)
             .await
             .expect(format!("{} Failed to execute query: {}", FN_NAME, query).as_str());
+
 
         // Check for empty result
         if trade_rows.is_empty() {

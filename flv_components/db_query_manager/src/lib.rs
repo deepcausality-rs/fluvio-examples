@@ -10,7 +10,7 @@ mod query_gen;
 
 use common::prelude::{ClickHouseConfig};
 use std::fmt::Error;
-use clickhouse::Client;
+use klickhouse::{Client, ClientOptions};
 
 const FN_NAME: &str = "[QueryDBManager]:";
 
@@ -36,8 +36,11 @@ impl QueryDBManager {
     /// # Example
     ///
     pub async fn new(db_config: ClickHouseConfig) -> Result<Self, Error> {
-        let url = db_config.connection_string();
-        let client = Client::default().with_url(url);
+        let destination = db_config.connection_string();
+        let client = Client::connect(destination.clone(), ClientOptions::default())
+            .await
+            .expect(format!("{} Failed to connect to {}", FN_NAME, &destination).as_str());
+
         Ok(Self { client })
     }
 }

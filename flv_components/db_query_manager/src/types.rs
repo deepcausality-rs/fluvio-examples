@@ -1,55 +1,56 @@
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, TimeZone, Utc};
 use rust_decimal::Decimal;
-use clickhouse_derive::Row;
+use klickhouse::{DateTime64, Row};
+use rust_decimal::prelude::FromPrimitive;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Eq, Clone, PartialEq, Row, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Row, Serialize, Deserialize)]
 pub struct TradeRow {
-    date_time: DateTime<Utc>,
-    price: Decimal,
-    volume: Decimal,
+    date_time: DateTime64<3>,
+    price: f64,
+    volume: f64,
 }
 
 impl TradeRow {
     pub fn date_time(&self) -> DateTime<Utc> {
-        self.date_time
+        Utc.timestamp_millis_opt(self.date_time.1 as i64).unwrap()
     }
     pub fn price(&self) -> Decimal {
-        self.price
+        Decimal::from_f64(self.price).unwrap()
     }
     pub fn volume(&self) -> Decimal {
-        self.volume
+        Decimal::from_f64(self.volume).unwrap()
     }
 }
 
-#[derive(Debug, Eq, Clone, PartialEq, Row, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Row, Serialize, Deserialize)]
 pub struct OHLCVRow {
-    date_time: DateTime<Utc>,
-    open: Decimal,
-    high: Decimal,
-    low: Decimal,
-    close: Decimal,
-    volume: Decimal,
+    datetime: u32,
+    open: f64,
+    high: f64,
+    low: f64,
+    close: f64,
+    volume: f64,
 }
 
 impl OHLCVRow {
     pub fn date_time(&self) -> DateTime<Utc> {
-        self.date_time
+        Utc.timestamp_millis_opt(self.datetime as i64).unwrap()
     }
     pub fn open(&self) -> Decimal {
-        self.open
+        Decimal::from_f64(self.open).unwrap()
     }
     pub fn high(&self) -> Decimal {
-        self.high
+        Decimal::from_f64(self.high).unwrap()
     }
     pub fn low(&self) -> Decimal {
-        self.low
+        Decimal::from_f64(self.low).unwrap()
     }
     pub fn close(&self) -> Decimal {
-        self.close
+        Decimal::from_f64(self.close).unwrap()
     }
     pub fn volume(&self) -> Decimal {
-        self.volume
+        Decimal::from_f64(self.volume).unwrap()
     }
 }
 

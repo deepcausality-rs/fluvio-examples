@@ -1,6 +1,6 @@
 use crate::error::QueryError;
 use crate::{FN_NAME, QueryDBManager};
-use crate::types::SymbolRow;
+use crate::types::{SymbolRow};
 
 
 impl QueryDBManager {
@@ -61,10 +61,9 @@ impl QueryDBManager {
         let query = self.build_get_symbol_id_query(sanitized_name);
 
         // Execute query
-        let result_rows:Vec<SymbolRow> = self
+        let result_rows = self
             .client
-            .query(&query)
-            .fetch_all()
+            .query_collect::<SymbolRow>(&query)
             .await
             .expect(format!("{} Failed to execute query: {}", FN_NAME, query).as_str());
 

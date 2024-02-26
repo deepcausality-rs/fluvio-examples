@@ -1,4 +1,6 @@
-use clickhouse::query::RowCursor;
+use futures::stream::BoxStream;
+use futures::StreamExt;
+use klickhouse::KlickhouseError;
 use crate::{FN_NAME, QueryDBManager};
 use crate::types::TradeRow;
 
@@ -45,8 +47,7 @@ impl QueryDBManager {
     pub async fn stream_trades<'a>(
         &'a self,
         trade_table: &'a str,
-    ) ->  RowCursor<TradeRow>{
-
+    ) -> BoxStream<Result<TradeRow, KlickhouseError>> {
         let sanitized_name = self
             .sanitize_table_name(trade_table)
             .expect("Invalid table name");
@@ -56,8 +57,9 @@ impl QueryDBManager {
 
         self
             .client
-            .query(&query)
-            .fetch::<TradeRow>()
-            .expect(format!("{} Failed to execute stream query: {}", FN_NAME, query).as_str())
+            .query::<TradeRow>(query)
+            .await
+            .expect(format!("{} Failed to execute stream_trades query ", FN_NAME).as_str())
+            .boxed()
     }
 }

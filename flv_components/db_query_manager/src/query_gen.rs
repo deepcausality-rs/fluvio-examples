@@ -13,7 +13,7 @@ impl crate::QueryDBManager {
     /// Returns a SQL query string to retrieve all symbol IDs and symbols from the given symbol table.
     ///
     pub fn build_get_symbol_id_query(&self, symbol_table: &str) -> String {
-        format!("SELECT symbol_id, symbol FROM {};", symbol_table)
+        format!("SELECT symbol_id, symbol FROM {}", symbol_table)
     }
 
     /// Builds a SQL query to get OHLCV bars from a trade table at a given time resolution.
@@ -33,21 +33,17 @@ impl crate::QueryDBManager {
         time_resolution: &TimeResolution,
     ) -> String {
         format!(
-            r"
-            SELECT
-              toStartOfInterval(timestamp, INTERVAL {})AS datetime,
+            r"SELECT toUnixTimestamp(toStartOfInterval(timestamp, INTERVAL {time_resolution})) AS datetime,
               argMin(price, timestamp) AS open,
               max(price) AS high,
               min(price) AS low,
               argMax(price, timestamp) AS close,
               sum(volume) AS volume
 
-            FROM {}
+            FROM {trade_table}
             GROUP BY datetime
-            ORDER BY datetime
-            ",
-            trade_table, time_resolution,
-        )
+            ORDER BY datetime"
+        ).to_string()
     }
 
     /// Builds a SQL query to get all trades from a trade table.
@@ -61,6 +57,6 @@ impl crate::QueryDBManager {
     /// Returns a SQL query string to retrieve all timestamps, prices, and volumes from the given trade table.
     ///
     pub fn build_get_trades_query(&self, trade_table: &str) -> String {
-        format!("SELECT timestamp, price, volume FROM {};", trade_table)
+        format!("SELECT timestamp, price, volume FROM {}", trade_table)
     }
 }
