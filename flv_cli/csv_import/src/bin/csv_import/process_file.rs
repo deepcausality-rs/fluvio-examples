@@ -50,7 +50,7 @@ pub fn process(
     rt: &Runtime,
     client: &Client,
     file_path: &PathBuf,
-    symbol_id: u64,
+    symbol_id: u32,
     meta_data_table: &str,
     vrb: bool,
 ) -> Result<(), Box<dyn Error>> {

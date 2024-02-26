@@ -23,3 +23,8 @@ https://support.kraken.com/hc/en-us/articles/360047543791-Downloadable-historica
 Kraken_Trading_History
 
 before copying it in the data folder otherwise the data import will fail due to unrecognized file path. 
+
+
+FIX:
+
+ETH2SETH.csv

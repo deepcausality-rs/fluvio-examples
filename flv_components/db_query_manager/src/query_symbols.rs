@@ -1,22 +1,9 @@
 use crate::error::QueryError;
-use crate::QueryDBManager;
-use sqlx::Row;
+use crate::{FN_NAME, QueryDBManager};
+use crate::types::SymbolRow;
+
 
 impl QueryDBManager {
-    /// Builds a SQL query to get all symbol IDs and symbols from a symbol table.
-    ///
-    /// # Arguments
-    ///
-    /// * `symbol_table` - The name of the symbol table to query
-    ///
-    /// # Returns
-    ///
-    /// Returns a SQL query string to retrieve all symbol IDs and symbols from the given symbol table.
-    ///
-    pub fn build_get_symbol_id_query(&self, symbol_table: &str) -> String {
-        format!("SELECT symbol_id, symbol FROM {};", symbol_table)
-    }
-
     /// Retrieves all symbols and their IDs from the given symbol table.
     ///
     /// # Arguments
@@ -39,19 +26,17 @@ impl QueryDBManager {
     /// # Example
     ///
     /// ```rust
-    /// use common::prelude::DBConfig;
+    /// use common::prelude::ClickHouseConfig;
     /// use db_query_manager::QueryDBManager;
     /// #[tokio::main]
     /// async fn main() {
-    ///  let db_config =  DBConfig::new(9009, "0.0.0.0".into());
+    /// let db_config =  ClickHouseConfig::default();
     ///  let mut query_manager = QueryDBManager::new(db_config).await.expect("Failed to create db connection");
     ///
     ///  let symbols = query_manager.get_all_symbols_with_ids("kraken_symbols")
     ///             .await
     ///             .expect("Failed to query all symbols from symbols table");
     ///
-    ///   // Close the connection pool
-    ///   query_manager.close().await;
     /// }
     /// ```
     ///
@@ -76,13 +61,12 @@ impl QueryDBManager {
         let query = self.build_get_symbol_id_query(sanitized_name);
 
         // Execute query
-        let result = self.query(&query).await;
-
-        // Handle query errors
-        let result_rows = match result {
-            Ok(rows) => rows,
-            Err(e) => return Err(e),
-        };
+        let result_rows:Vec<SymbolRow> = self
+            .client
+            .query(&query)
+            .fetch_all()
+            .await
+            .expect(format!("{} Failed to execute query: {}", FN_NAME, query).as_str());
 
         // Check for empty result
         if result_rows.is_empty() {
@@ -94,8 +78,8 @@ impl QueryDBManager {
 
         // Iterate through the rows and add the symbol ID and symbol name to the vector.
         for row in result_rows {
-            let symbol_id: i64 = row.get(0);
-            let symbol: String = row.get(1);
+            let symbol_id: i64 = row.symbol_id() as i64;
+            let symbol: String = row.symbol();
 
             symbol_id_name_pairs.push((symbol_id as u16, symbol));
         }

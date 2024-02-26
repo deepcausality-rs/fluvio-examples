@@ -1,30 +1,8 @@
 use crate::error::QueryError;
 use crate::QueryDBManager;
 use common::prelude::ValidationError;
-use sqlx::postgres::PgRow;
 
 impl QueryDBManager {
-    /// Utils that executes a SQL query against the database.
-    ///
-    /// # Arguments
-    ///
-    /// * `query` - The SQL query string to execute
-    ///
-    /// # Returns
-    ///
-    /// A `Result` containing a `Vec` of `postgres::Row` representing the result rows if the query
-    /// executed successfully. Returns a `postgres::Error` if there was an error executing the query.
-    ///
-    pub(crate) async fn query(&mut self, query: &str) -> Result<Vec<PgRow>, QueryError> {
-        // https://gist.github.com/jeremychone/34d1e3daffc38eb602b1a9ab21298d10
-        let select_query = sqlx::query(query).fetch_all(&self.pool).await;
-
-        match select_query {
-            Ok(rows) => Ok(rows),
-            Err(e) => Err(QueryError::QueryFailed(e.to_string())),
-        }
-    }
-
     /// Sanitizes the provided table name to prevent SQL injection attacks.
     ///
     /// # Arguments

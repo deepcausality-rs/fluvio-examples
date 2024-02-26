@@ -1,10 +1,10 @@
-use common::prelude::{DBConfig, TimeResolution};
+use common::prelude::{ClickHouseConfig, DBConfig, TimeResolution};
 use db_query_manager::QueryDBManager;
 use futures::StreamExt;
 use std::str::FromStr;
 
-fn get_local_db_config() -> DBConfig {
-    DBConfig::new(9009, "0.0.0.0".to_string())
+fn get_local_db_config() -> ClickHouseConfig {
+    ClickHouseConfig::default()
 }
 
 #[tokio::test]
@@ -14,9 +14,6 @@ async fn test_new_query_db_manager() {
         .await
         .expect("Failed to create db connection");
 
-    assert!(!manager.is_close().await);
-
-    manager.close().await;
 }
 
 #[tokio::test]
@@ -25,7 +22,6 @@ async fn test_get_all_symbol_ids() {
     let mut manager = QueryDBManager::new(db_config)
         .await
         .expect("Failed to create db connection");
-    assert!(!manager.is_close().await);
 
     // symbol table
     let symbol_table = "kraken_symbols";
@@ -49,8 +45,6 @@ async fn test_get_all_symbol_ids() {
     let expected_symbol = &"apeusdt".to_string();
     assert_eq!(expected_symbol, actual_symbol);
 
-    // Close connection
-    manager.close().await;
 }
 
 #[tokio::test]
@@ -59,7 +53,6 @@ async fn test_get_all_trades() {
     let mut manager = QueryDBManager::new(db_config)
         .await
         .expect("Failed to create db connection");
-    assert!(!manager.is_close().await);
 
     // trade table name
     // ethaed has only 43 records so this is a good and fast test
@@ -71,9 +64,6 @@ async fn test_get_all_trades() {
 
     // Verify result is ok
     assert!(result.is_ok());
-
-    // Close connection
-    manager.close().await;
 }
 
 #[tokio::test]
@@ -82,7 +72,6 @@ async fn test_stream_trades() {
     let manager = QueryDBManager::new(db_config)
         .await
         .expect("Failed to create db connection");
-    assert!(!manager.is_close().await);
 
     // trade table name
     // ethaed has only 43 records so this is a good and fast test
@@ -100,8 +89,6 @@ async fn test_stream_trades() {
 
     assert!(!manager.is_close().await);
 
-    // Close connection
-    manager.close().await;
 }
 
 #[tokio::test]
@@ -110,7 +97,6 @@ async fn test_get_all_ohlcv_bars() {
     let mut manager = QueryDBManager::new(db_config)
         .await
         .expect("Failed to create db connection");
-    assert!(!manager.is_close().await);
 
     // trade table name
     // ethaed has only 43 records so this is a good and fast test
@@ -146,6 +132,4 @@ async fn test_get_all_ohlcv_bars() {
     assert_eq!(expected_close, first_bar.close());
     assert_eq!(expected_volume, first_bar.volume());
 
-    // Close connection
-    manager.close().await;
 }

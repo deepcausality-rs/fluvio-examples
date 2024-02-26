@@ -12,6 +12,8 @@ authors.workspace = true
 [dependencies]
 # External crates
 chrono = { workspace = true }
+clickhouse = { workspace = true }
+clickhouse-derive = { workspace = true }
 rust_decimal = { workspace = true }
 serde = { workspace = true }
 sqlx = { workspace = true }

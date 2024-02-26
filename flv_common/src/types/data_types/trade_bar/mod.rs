@@ -1,15 +1,14 @@
-use chrono::{DateTime, TimeZone, Utc};
-use rust_decimal::prelude::FromPrimitive;
+use chrono::{DateTime, Utc};
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
-use sqlx::postgres::PgRow;
-use sqlx::Row;
+use clickhouse::Row;
+
 
 mod default;
 mod display;
 mod getters;
 
-#[derive(Debug, Eq, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Eq, Clone, PartialEq, Row, Serialize, Deserialize)]
 pub struct TradeBar {
     symbol_id: u16,
     date_time: DateTime<Utc>,
@@ -30,36 +29,6 @@ impl TradeBar {
     ///
     /// A new TradeBar instance with the given date_time, price and volume.
     pub fn new(symbol_id: u16, date_time: DateTime<Utc>, price: Decimal, volume: Decimal) -> Self {
-        Self {
-            symbol_id,
-            date_time,
-            price,
-            volume,
-        }
-    }
-}
-
-impl TradeBar {
-    pub fn from_pg_row(symbol_id: u16, row: PgRow) -> Self {
-        //
-        let timestamp = row
-            .try_get("timestamp")
-            .expect("[TradeBar]: Could not parse timestamp");
-
-        let p = row
-            .try_get("price")
-            .expect("[TradeBar]: Could not parse price");
-
-        let v = row
-            .try_get("volume")
-            .expect("[TradeBar]: Could not parse volume");
-
-        let date_time = Utc.from_local_datetime(&timestamp).unwrap();
-
-        let price = Decimal::from_f64(p).expect("[TradeBar]: Could not parse price from f64");
-
-        let volume = Decimal::from_f64(v).expect("[TradeBar]: Could not parse volume from f64");
-
         Self {
             symbol_id,
             date_time,

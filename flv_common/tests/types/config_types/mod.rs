@@ -1,3 +1,6 @@
+
+#[cfg(test)]
+mod click_house_config_tests;
 #[cfg(test)]
 mod client_channel_tests;
 #[cfg(test)]

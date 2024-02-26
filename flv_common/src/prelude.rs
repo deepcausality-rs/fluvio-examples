@@ -5,6 +5,7 @@ pub use crate::types::error_types::MessageClientConfigError;
 pub use crate::types::error_types::MessageProcessingError;
 pub use crate::types::error_types::ValidationError;
 // Config types
+pub use crate::types::config_types::click_house_config::ClickHouseConfig;
 pub use crate::types::config_types::client_channel::ClientChannel;
 pub use crate::types::config_types::db_config::DBConfig;
 pub use crate::types::config_types::environment_types::EnvironmentType;

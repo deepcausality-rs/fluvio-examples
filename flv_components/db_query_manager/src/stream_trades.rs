@@ -1,8 +1,6 @@
-use crate::QueryDBManager;
-use common::prelude::TradeBar;
-use futures::stream::BoxStream;
-use futures::{StreamExt, TryStreamExt};
-use sqlx::Error;
+use clickhouse::query::RowCursor;
+use crate::{FN_NAME, QueryDBManager};
+use crate::types::TradeRow;
 
 impl QueryDBManager {
     /// Stream trade bars for the given symbol from the database.
@@ -22,40 +20,44 @@ impl QueryDBManager {
     /// # Example
     ///
     /// ```
-    /// use common::prelude::DBConfig;
+    /// use common::prelude::ClickHouseConfig;
     /// use db_query_manager::QueryDBManager;
     ///  use futures::StreamExt;
     ///
     /// #[tokio::main]
     /// async fn main() {
     ///
-    /// let db_config =  DBConfig::new(9009, "0.0.0.0".into());
+    /// let db_config =  ClickHouseConfig::default();
     ///
     /// let query_manager = QueryDBManager::new(db_config).await.expect("Failed to create db connection");    ///
-    /// let trade_table = "kraken_ethaed";    ///
+    /// let trade_table = "kraken_ethaed";
     /// let symbol_id = 284; // 284 = ethaed on Kraken
     ///
-    ///     let mut stream = query_manager.stream_trades(symbol_id, trade_table).await;
+    ///     let mut stream = query_manager.stream_trades( trade_table).await;
     ///
     ///     while let Some(record) = stream.next().await {
     ///         assert!(record.is_ok());
     ///         let trade_bar = record.unwrap();
     ///         println!("{:?}", trade_bar);
     ///     }
-    ///
-    ///   // Close the connection pool
-    ///   query_manager.close().await;
     /// }
     /// ```
     pub async fn stream_trades<'a>(
         &'a self,
-        symbol_id: u16,
         trade_table: &'a str,
-    ) -> BoxStream<Result<TradeBar, Error>> {
-        // returns BoxStream<Result<PgRow, Error>>
-        sqlx::query(trade_table)
-            .fetch(&self.pool)
-            .map_ok(move |row| TradeBar::from_pg_row(symbol_id, row))
-            .boxed()
+    ) ->  RowCursor<TradeRow>{
+
+        let sanitized_name = self
+            .sanitize_table_name(trade_table)
+            .expect("Invalid table name");
+
+        // Build the query
+        let query = self.build_get_trades_query(sanitized_name);
+
+        self
+            .client
+            .query(&query)
+            .fetch::<TradeRow>()
+            .expect(format!("{} Failed to execute stream query: {}", FN_NAME, query).as_str())
     }
 }

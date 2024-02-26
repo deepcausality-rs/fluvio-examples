@@ -6,12 +6,12 @@ use clickhouse_derive::Row;
 pub struct MetaData<'l> {
     table_name: &'l str,
     symbol: &'l str,
-    symbol_id: u64,
+    symbol_id: u32,
     number_of_rows: u64,
 }
 
 impl<'l> MetaData<'l> {
-    pub fn new(table_name: &'l str, symbol: &'l str, symbol_id: u64, number_of_rows: u64) -> Self {
+    pub fn new(table_name: &'l str, symbol: &'l str, symbol_id: u32, number_of_rows: u64) -> Self {
         Self {
             table_name,
             symbol,

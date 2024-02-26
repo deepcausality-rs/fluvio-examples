@@ -28,8 +28,9 @@ pub enum TimeResolution {
     ThirtyMin = 4_u8,
     OneHour = 5_u8,
     OneDay = 6_u8,
-    OneMonth = 7_u8,
-    OneYear = 8_u8,
+    OneWeek = 7_u8,
+    OneMonth = 8_u8,
+    OneYear = 9_u8,
 }
 
 impl From<u8> for TimeResolution {
@@ -59,8 +60,9 @@ impl From<u8> for TimeResolution {
             4_u8 => Self::ThirtyMin,
             5_u8 => Self::OneHour,
             6_u8 => Self::OneDay,
-            7_u8 => Self::OneMonth,
-            8_u8 => Self::OneYear,
+            7_u8 => Self::OneWeek,
+            8_u8 => Self::OneMonth,
+            9_u8 => Self::OneYear,
             _ => Self::NoValue,
         }
     }
@@ -70,14 +72,15 @@ impl fmt::Display for TimeResolution {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             TimeResolution::NoValue => write!(f, "NoValue"),
-            TimeResolution::OneMin => write!(f, "1m"),
-            TimeResolution::FiveMin => write!(f, "5m"),
-            TimeResolution::FifteenMin => write!(f, "15m"),
-            TimeResolution::ThirtyMin => write!(f, "30m"),
-            TimeResolution::OneHour => write!(f, "1h"),
-            TimeResolution::OneDay => write!(f, "1d"),
-            TimeResolution::OneMonth => write!(f, "1M"),
-            TimeResolution::OneYear => write!(f, "1y"),
+            TimeResolution::OneMin => write!(f, "1 minute"),
+            TimeResolution::FiveMin => write!(f, "5 minute"),
+            TimeResolution::FifteenMin => write!(f, "15 minute"),
+            TimeResolution::ThirtyMin => write!(f, "30 minute"),
+            TimeResolution::OneHour => write!(f, "1 hour"),
+            TimeResolution::OneDay => write!(f, "1 day"),
+            TimeResolution::OneWeek => write!(f, "1 week"),
+            TimeResolution::OneMonth => write!(f, "1 month"),
+            TimeResolution::OneYear => write!(f, "1 year"),
         }
     }
 }

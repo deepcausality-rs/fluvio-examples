@@ -1,40 +1,10 @@
 use crate::error::QueryError;
 use crate::QueryDBManager;
 use common::prelude::{OHLCVBar, TimeResolution};
+use crate::types::OHLCVRow;
+use crate::FN_NAME;
 
 impl QueryDBManager {
-    /// Builds a SQL query to get OHLCV bars from a trade table at a given time resolution.
-    ///
-    /// # Arguments
-    ///
-    /// * `trade_table` - The name of the trade table to query
-    /// * `time_resolution` - The time resolution to resample the trades to
-    ///
-    /// # Returns
-    ///
-    /// Returns a SQL query string to retrieve OHLCV bars from the trade table resampled to the time resolution.
-    ///
-    pub fn build_get_ohlcv_bars_query(
-        &self,
-        trade_table: &str,
-        time_resolution: &TimeResolution,
-    ) -> String {
-        format!(
-            "SELECT
-              timestamp,
-              first(price) open,
-              max(price) high,
-              min(price) low,
-              last(price) close,
-              sum(volume) volume,
-
-            FROM {}
-            SAMPLE BY {}
-            ALIGN TO CALENDAR WITH OFFSET '00:00';",
-            trade_table, time_resolution,
-        )
-    }
-
     /// Retrieves all OHLCV data bars for the given symbol table and time resolution.
     ///
     /// # Parameters
@@ -68,15 +38,14 @@ impl QueryDBManager {
     ///
     /// #[tokio::main]
     /// async fn main() {
-    /// let db_config =  DBConfig::new(9009, "0.0.0.0".into());
+    /// use common::prelude::ClickHouseConfig;
+    /// let db_config =  ClickHouseConfig::default();
     ///  let mut query_manager = QueryDBManager::new(db_config).await.expect("Failed to create db connection");
     ///
     ///  let time_resolution = TimeResolution::FiveMin;
     ///  let trades = query_manager.get_all_ohlcv_bars(278, "kraken_ethaed", &time_resolution)
     ///               .await.expect("Failed to get all trades");
     ///
-    ///   // Close the connection pool
-    ///   query_manager.close().await;
     /// }
     /// ```
     pub async fn get_all_ohlcv_bars(
@@ -86,37 +55,31 @@ impl QueryDBManager {
         time_resolution: &TimeResolution,
     ) -> Result<Vec<OHLCVBar>, QueryError> {
         // Sanitize table name input to prevent SQL injection.
-        let sanitized_name = match self.sanitize_table_name(symbol_table) {
-            Ok(name) => name,
-            Err(e) => return Err(e),
-        };
+        let sanitized_name =  self.sanitize_table_name(symbol_table).expect("Failed to sanitize table name");
 
         // Build the query
         let query = self.build_get_ohlcv_bars_query(sanitized_name, time_resolution);
 
         // Execute query
-        let result = self.query(&query).await;
-
-        // Handle query errors
-        let result_rows = match result {
-            Ok(rows) => rows,
-            Err(e) => return Err(e),
-        };
+        let ohlcv_rows = self
+            .client
+            .query(&query)
+            .fetch_all::<OHLCVRow>()
+            .await
+            .expect(format!("{} Failed to execute query: {}", FN_NAME, query).as_str());
 
         // Check for empty result
-        if result_rows.is_empty() {
+        if ohlcv_rows.is_empty() {
             return Ok(Vec::new());
         }
 
-        // Build the vector holding the OHLCV data bars,
-        let mut trades = Vec::with_capacity(result_rows.len());
+        let mut bars = Vec::with_capacity(ohlcv_rows.len());
 
-        // Iterate over the rows, convert each row to a data bar, and add the bar to the vector.
-        for row in result_rows {
-            let trade_bar = OHLCVBar::from_pg_row(row, symbol_id);
-            trades.push(trade_bar);
+        for row in ohlcv_rows {
+            let bar = OHLCVBar::new(symbol_id, row.date_time(), row.open(), row.high(), row.low(), row.close(), row.volume());
+            bars.push(bar);
         }
 
-        Ok(trades)
+        Ok(bars)
     }
 }

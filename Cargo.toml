@@ -76,7 +76,6 @@ lru = "0.12"
 petgraph = "0.6"
 # default-features = false mitigates a warning of a yanked sub-sub dependency
 # db-postgres enables type conversion from postgres numeric to rust native numeric
-# https://stackoverflow.com/questions/72594101/how-to-parse-a-postgresql-numeric-type-to-rust-native-ones-upon-request
 rust_decimal = { version = "1", default-features = false, features = ["serde", "db-postgres"] }
 serde = { version = "1", features = ["derive"] }
 tokio = { version = "1", features = ["macros", "net", "rt-multi-thread", "signal"] }
