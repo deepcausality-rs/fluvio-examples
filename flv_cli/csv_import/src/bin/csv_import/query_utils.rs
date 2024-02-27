@@ -9,7 +9,7 @@ pub(crate) async fn count_rows(client: &Client, path: &str) -> Result<u64, Box<d
     let number_of_rows: CountRow = client
         .query_one(&count_query)
         .await
-        .expect("Failed to count rows in CSV file");
+        .expect("Failed to count rows in table");
 
     Ok(number_of_rows.count())
 }
@@ -59,14 +59,13 @@ pub(crate) async fn create_meta_data_table(
 
 pub(crate) async fn insert_meta_data(
     client: &Client,
-    meta_data: MetaData,
+    meta_data: &MetaData,
     meta_data_table: &str,
 ) -> Result<(), Box<dyn Error>> {
-    let query = query_gen::generate_meta_data_insert_query(meta_data_table);
-    let rows = vec![meta_data];
+    let query = query_gen::generate_meta_data_insert_query(meta_data_table, meta_data);
 
     client
-        .insert_native_block(query, rows)
+        .execute(&query)
         .await
         .expect("[insert_meta_data] Failed to write meta data");
 

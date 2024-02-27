@@ -32,6 +32,21 @@ impl MetaData {
     }
 }
 
+impl MetaData {
+    pub fn table_name(&self) -> &str {
+        &self.table_name
+    }
+    pub fn symbol(&self) -> &str {
+        &self.symbol
+    }
+    pub fn symbol_id(&self) -> u32 {
+        self.symbol_id
+    }
+    pub fn number_of_rows(&self) -> u64 {
+        self.number_of_rows
+    }
+}
+
 impl fmt::Display for MetaData {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(

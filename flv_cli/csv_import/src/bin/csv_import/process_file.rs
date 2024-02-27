@@ -69,14 +69,6 @@ pub(crate) async fn process(
     let table_name = format!("KRAKEN_{}", file).to_lowercase();
     let symbol = file.to_lowercase();
 
-    print_utils::dbg_print(vrb, "Count number of rows in file");
-    let number_of_rows: u64 = query_utils::count_rows(&client, path)
-        .await
-        .expect("Failed to count inserted data");
-    if vrb {
-        println!("Number of rows: {}", number_of_rows);
-    }
-
     print_utils::dbg_print(vrb, "Create the trade data table if it doesn't exist");
     query_utils::create_trade_data_table(&client, &table_name)
         .await
@@ -87,9 +79,17 @@ pub(crate) async fn process(
         .await
         .expect("Failed to insert trade data");
 
+    print_utils::dbg_print(vrb, "Count number of rows imported");
+    let number_of_rows: u64 = query_utils::count_rows(&client, &table_name)
+        .await
+        .expect("Failed to count imported data");
+    if vrb {
+        println!("Number of rows: {}", number_of_rows);
+    }
+
     print_utils::dbg_print(vrb, "Insert meta data into meta data table");
     let meta_data = MetaData::new(table_name, symbol, symbol_id, number_of_rows);
-    query_utils::insert_meta_data(&client, meta_data, meta_data_table)
+    query_utils::insert_meta_data(&client, &meta_data, meta_data_table)
         .await
         .expect("Failed to insert meta data");
 

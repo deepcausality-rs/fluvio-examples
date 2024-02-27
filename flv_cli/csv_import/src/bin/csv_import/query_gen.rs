@@ -1,3 +1,5 @@
+use crate::types::MetaData;
+
 pub(crate) fn generate_trade_table_ddl(table_name: &str) -> String {
     format!(
         r"
@@ -25,10 +27,10 @@ pub(crate) fn generate_insert_query(file: &str, path: &str) -> String {
     )
 }
 
-pub(crate) fn generate_count_query(path: &str) -> String {
+pub(crate) fn generate_count_query(table_name: &str) -> String {
     format!(
         r"
-    SELECT count(*) FROM file('{path}', 'CSV', 'timestamp Datetime64(3), price Float64, volume Float64')
+    SELECT count(*) FROM {table_name}
     "
     )
 }
@@ -50,10 +52,18 @@ pub(crate) fn generate_metadata_table_ddl(meta_data_table: &str) -> String {
     )
 }
 
-pub(crate) fn generate_meta_data_insert_query(meta_data_table: &str) -> String {
+pub(crate) fn generate_meta_data_insert_query(
+    meta_data_table: &str,
+    meta_data: &MetaData,
+) -> String {
+    let symbol = meta_data.symbol();
+    let symbol_id = meta_data.symbol_id();
+    let table_name = meta_data.table_name();
+    let number_of_rows = meta_data.number_of_rows();
+
     format!(
         r"
-    INSERT INTO {meta_data_table} FORMAT native
+        INSERT INTO {meta_data_table}  VALUES ('{symbol}', {symbol_id},' {table_name}', {number_of_rows}) ;
     "
     )
 }
