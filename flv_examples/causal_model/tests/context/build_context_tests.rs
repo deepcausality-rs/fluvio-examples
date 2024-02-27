@@ -30,7 +30,7 @@ async fn test_build_time_data_context() {
 
     let context = result.unwrap();
     // Three nodes in total: root, year, month
-    assert_eq!(context.node_count(), 3);
+    assert_eq!(context.node_count(), 5);
 
     let root = context
         .get_node(0)

@@ -1,4 +1,4 @@
-use causal_model::prelude::RelaxedAtomicCounter;
+use client_utils::prelude::atomic_counter::RelaxedAtomicCounter;
 
 #[test]
 fn test_increment() {
