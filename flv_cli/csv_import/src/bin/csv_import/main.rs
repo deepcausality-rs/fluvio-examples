@@ -1,17 +1,20 @@
-use crate::process_file::create_meta_data_table;
-use clickhouse::Client;
-use client_utils::prelude::{config_utils, file_utils, print_utils};
-use std::time::Instant;
-
-mod meta_data;
 mod process_file;
 mod query_gen;
+mod query_utils;
+mod types;
+
+use client_utils::prelude::{config_utils, file_utils, print_utils};
+use common::prelude::ClickHouseConfig;
+use klickhouse::{Client, ClientOptions};
+use query_utils::create_meta_data_table;
+use std::time::Instant;
 
 const CONFIG_FILE_NAME: &str = "import_config.toml";
 const META_DATA_TABLE: &str = "kraken_symbols";
 const VERBOSE: bool = true;
 
-fn main() {
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let start = Instant::now();
     print_utils::print_import_header();
     // Enables verbose output for main
@@ -19,8 +22,12 @@ fn main() {
     // Enables verbose output for process_file.
     let vrb_prc = false;
 
-    print_utils::dbg_print(vrb, "Build Proton Client");
-    let client = Client::default().with_url("http://localhost:8123");
+    print_utils::dbg_print(vrb, "Build DB Client");
+    let db_config = ClickHouseConfig::default();
+    let destination = db_config.connection_string();
+    let client = Client::connect(destination.clone(), ClientOptions::default())
+        .await
+        .expect(format!("Failed to connect to {}", &destination).as_str());
 
     print_utils::dbg_print(vrb, "Build import config");
     let config =
@@ -37,18 +44,10 @@ fn main() {
 
     print_utils::dbg_print(vrb, format!("Found {} files", files.len()).as_str());
 
-    print_utils::dbg_print(vrb, "Build a Tokio runtime to wrap the asynchronous code");
-    let rt = tokio::runtime::Builder::new_current_thread()
-        .enable_all()
-        .build()
-        .unwrap();
-
     print_utils::dbg_print(vrb, "Build metadata table");
-    let res = rt.block_on(create_meta_data_table(&client, META_DATA_TABLE));
-    if res.is_err() {
-        println!("[main]: Failed to create metadata table. Please check the error, check the generated DDL and try again.");
-        panic!("{:?}", res.err().unwrap());
-    }
+    create_meta_data_table(&client, META_DATA_TABLE)
+        .await
+        .expect("Failed to create metadata table");
 
     println!("Importing files");
     // Sequential iterator requires a simple mutable counter
@@ -56,7 +55,8 @@ fn main() {
     // Iterate over the files
     for file_path in &files {
         symbol_id += 1;
-        process_file::process(&rt, &client, file_path, symbol_id, META_DATA_TABLE, vrb_prc)
+        process_file::process(&client, file_path, symbol_id, META_DATA_TABLE, vrb_prc)
+            .await
             .expect("Failed to import file");
     }
 
@@ -67,4 +67,5 @@ fn main() {
     );
 
     print_utils::print_duration(&start.elapsed());
+    Ok(())
 }

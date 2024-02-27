@@ -20,8 +20,6 @@ symbol_manager = { workspace = true }
 # External crates
 futures = {workspace = true}
 fluvio = { workspace = true }
-clickhouse = { workspace = true }
-clickhouse-derive =  { workspace = true }
 config-file = { workspace = true }
 csv = { workspace = true }
 chrono = { workspace = true }

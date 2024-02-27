@@ -19,10 +19,9 @@ client_utils = { workspace = true }
 common = { workspace = true }
 db_specs = { workspace = true }
 # External crates
-clickhouse = { workspace = true }
-clickhouse-derive =  { workspace = true }
 csv = { workspace = true }
 chrono = { workspace = true }
 encoding_rs = { workspace = true }
+klickhouse = { workspace = true }
 serde = { workspace = true }
 tokio = { workspace = true, features = ["rt", "rt-multi-thread", "macros"] }

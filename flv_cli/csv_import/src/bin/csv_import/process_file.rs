@@ -1,10 +1,9 @@
-use crate::meta_data::MetaData;
-use crate::query_gen;
-use clickhouse::Client;
+use crate::query_utils;
+use crate::types::MetaData;
 use client_utils::print_utils;
+use klickhouse::Client;
 use std::error::Error;
 use std::path::PathBuf;
-use tokio::runtime::Runtime;
 
 /// Process a CSV file for import into TimePlus Proton.
 ///
@@ -45,8 +44,7 @@ use tokio::runtime::Runtime;
 /// - Failed to get Proton inserter for meta data
 /// - Failed to insert meta data into Proton
 ///
-pub fn process(
-    rt: &Runtime,
+pub(crate) async fn process(
     client: &Client,
     file_path: &PathBuf,
     symbol_id: u32,
@@ -54,6 +52,7 @@ pub fn process(
     vrb: bool,
 ) -> Result<(), Box<dyn Error>> {
     print_utils::dbg_print(vrb, "Get file name without extension");
+
     let file = file_path
         .file_name()
         .expect("Failed to get file name")
@@ -71,96 +70,28 @@ pub fn process(
     let symbol = file.to_lowercase();
 
     print_utils::dbg_print(vrb, "Count number of rows in file");
-    let number_of_rows: u64 = rt
-        .block_on(count_rows(&client, path))
+    let number_of_rows: u64 = query_utils::count_rows(&client, path)
+        .await
         .expect("Failed to count inserted data");
     if vrb {
         println!("Number of rows: {}", number_of_rows);
     }
 
     print_utils::dbg_print(vrb, "Create the trade data table if it doesn't exist");
-    rt.block_on(create_trade_data_table(&client, &table_name))
+    query_utils::create_trade_data_table(&client, &table_name)
+        .await
         .expect("Failed to create trade table");
 
     print_utils::dbg_print(vrb, "Insert trade data into the trade table");
-    rt.block_on(insert_trade_data(&client, &file, path))
+    query_utils::insert_trade_data(&client, &file, path)
+        .await
         .expect("Failed to insert trade data");
 
     print_utils::dbg_print(vrb, "Insert meta data into meta data table");
-    let meta_data = MetaData::new(&table_name, &symbol, symbol_id, number_of_rows);
-    rt.block_on(insert_meta_data(&client, &meta_data, meta_data_table))
+    let meta_data = MetaData::new(table_name, symbol, symbol_id, number_of_rows);
+    query_utils::insert_meta_data(&client, meta_data, meta_data_table)
+        .await
         .expect("Failed to insert meta data");
-
-    Ok(())
-}
-
-pub(crate) async fn count_rows(client: &Client, path: &str) -> Result<u64, Box<dyn Error>> {
-    let count_query = query_gen::generate_count_query(path);
-    let number_of_rows: u64 = client
-        .query(&count_query)
-        .fetch_one()
-        .await
-        .expect("Failed to count rows in CSV file");
-
-    Ok(number_of_rows)
-}
-
-pub(crate) async fn create_trade_data_table(
-    client: &Client,
-    table_name: &str,
-) -> Result<(), Box<dyn Error>> {
-    let query = query_gen::generate_trade_table_ddl(table_name);
-    client
-        .query(&query)
-        .execute()
-        .await
-        .expect("[main/create_trade_data_table]: Failed to create trade table");
-
-    Ok(())
-}
-
-pub(crate) async fn insert_trade_data(
-    client: &Client,
-    file: &str,
-    path: &str,
-) -> Result<(), Box<dyn Error>> {
-    let query = query_gen::generate_insert_query(&file, &path);
-    client
-        .query(&query)
-        .execute()
-        .await
-        .expect("Failed to insert data");
-
-    Ok(())
-}
-
-pub(crate) async fn create_meta_data_table(
-    client: &Client,
-    meta_data_table: &str,
-) -> Result<(), Box<dyn Error>> {
-    let query = query_gen::generate_metadata_table_ddl(meta_data_table);
-    client
-        .query(&query)
-        .execute()
-        .await
-        .expect("[main/create_meta_data_table]: Failed to create meta data table");
-
-    Ok(())
-}
-
-pub(crate) async fn insert_meta_data(
-    client: &Client,
-    meta_data: &MetaData<'_>,
-    meta_data_table: &str,
-) -> Result<(), Box<dyn Error>> {
-    let mut insert = client.inserter(meta_data_table).unwrap();
-
-    insert
-        .write(meta_data)
-        .await
-        .expect("Failed to write meta data");
-
-    insert.end().await.expect("Failed to end insert");
 
     Ok(())
 }

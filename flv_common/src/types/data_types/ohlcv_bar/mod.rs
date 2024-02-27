@@ -1,5 +1,4 @@
 use chrono::{DateTime, Utc};
-use clickhouse::Row;
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use std::fmt::Debug;
@@ -8,7 +7,7 @@ mod default;
 mod display;
 mod getters;
 
-#[derive(Debug, Eq, Clone, PartialEq, Row, Serialize, Deserialize)]
+#[derive(Debug, Eq, Clone, PartialEq, Serialize, Deserialize)]
 pub struct OHLCVBar {
     symbol_id: u16,
     date_time: DateTime<Utc>,
