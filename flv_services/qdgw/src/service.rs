@@ -1,12 +1,13 @@
 use client_manager::ClientManager;
 use common::prelude::{IggyConfig, IggyUser, MessageProcessingError};
 use db_query_manager::QueryDBManager;
-use fluvio::{Offset, TopicProducer};
+use fluvio::{TopicProducer};
 use futures::StreamExt;
 use iggy_utils;
 use std::collections::HashMap;
 use std::future::Future;
 use std::sync::Arc;
+use iggy::client::MessageClient;
 use iggy::messages::poll_messages::{PollingStrategy, PollMessages};
 use symbol_manager::SymbolManager;
 use tokio::sync::RwLock;
@@ -87,16 +88,6 @@ impl Server {
         let signal_future = signal;
         pin!(signal_future);
 
-        let consumer = fluvio::consumer(&self.channel_topic, 0)
-            .await
-            .expect("[QDGW/Service:run]: Failed to create a consumer for data topic");
-
-        // Creates a stream of messages from the topic.
-        let mut stream = consumer
-            .stream(Offset::end())
-            .await
-            .expect("[QDGW/Service:run]: Failed to create a stream");
-
         let client = iggy_utils::get_iggy_client()
             .await
             .expect("Failed to create client");
@@ -122,35 +113,22 @@ impl Server {
                          break;
                     }
 
-                // polled_messages =
-                //         client
-                //         .poll_messages(&command)
-                //         .await
-                //         .expect("Failed to poll messages")
-                //
-                // if polled_messages.messages.is_empty() {
-                //     continue;
-                // }
-
-
-                    record = stream.next() => {
-                        if let Some(res) = record {
-                                     match res {
-                                         Ok(record) => {
-                                             match self.handle_record(&record).await{
-                                            Ok(()) => {},
-                                            Err(e) => {
-                                                return Err(e);
-                                            }
-                                        }
-                                     },
-                                        Err(e) =>{
-                                             return Err(MessageProcessingError(e.to_string()));
-                                         }
-                                 }
-                             }
-                }// end stream.next()
+                polled_messages = client.poll_messages(&command).await => {
+                    match polled_messages {
+                        Ok(polled_messages) => {
+                            for polled_message in polled_messages.messages {
+                                self.handle_record(polled_message)
+                                   .await.expect("Failed to process message");
+                            }
+                        },
+                        Err(e) => {
+                            println!("[QDGW/Service:run]: Error polling messages: {}", e);
+                            break;
+                        }
+                    }
+                } // end match polled messages
             } // end select
+
         } // end loop
 
         // Shutdown iggy
