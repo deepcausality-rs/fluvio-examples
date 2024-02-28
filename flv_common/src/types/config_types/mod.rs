@@ -22,6 +22,7 @@ pub mod client_channel;
 pub mod db_config;
 pub mod environment_types;
 pub mod host_endpoint;
+pub mod iggy_config;
 pub mod iggy_user;
 pub mod message_client_config;
 pub mod metric_config;

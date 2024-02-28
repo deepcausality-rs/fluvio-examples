@@ -15,7 +15,7 @@ fn get_tcp_server_addr() -> String {
 }
 
 /// `get_client` is used to create a new client to interact with the server.
-pub async fn get_client() -> Result<IggyClient, IggyError> {
+pub async fn get_iggy_client() -> Result<IggyClient, IggyError> {
     IggyClientBuilder::new()
         .with_tcp()
         .with_server_address(get_tcp_server_addr())
@@ -77,17 +77,23 @@ pub async fn create_user(client: &IggyClient, user: &IggyUser) -> Result<(), Box
 }
 
 /// `create_token` command is used to create a new personal access token.
-pub async fn create_token(client: &IggyClient, token_name: String) -> Result<(), Box<dyn Error>> {
-    match client
+pub async fn create_token(
+    client: &IggyClient,
+    token_name: String,
+) -> Result<String, Box<dyn Error>> {
+    let token = match client
         .create_personal_access_token(&CreatePersonalAccessToken {
             name: token_name,
             expiry: None,
         })
         .await
     {
-        Ok(_) => println!("Token created."),
-        Err(_) => println!("Token already exists."),
-    }
+        Ok(raw_token) => raw_token.token,
+        Err(err) => {
+            println!("Error creating token: {}", err.as_string());
+            return Err(err.into());
+        }
+    };
 
-    Ok(())
+    Ok(token)
 }

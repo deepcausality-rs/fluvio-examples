@@ -1,17 +1,20 @@
 use client_manager::ClientManager;
-use common::prelude::MessageProcessingError;
+use common::prelude::{IggyConfig, IggyUser, MessageProcessingError};
 use db_query_manager::QueryDBManager;
 use fluvio::{Offset, TopicProducer};
 use futures::StreamExt;
+use iggy_utils;
 use std::collections::HashMap;
 use std::future::Future;
 use std::sync::Arc;
+use iggy::messages::poll_messages::{PollingStrategy, PollMessages};
 use symbol_manager::SymbolManager;
 use tokio::sync::RwLock;
 use tokio::{pin, select};
 
 pub struct Server {
     channel_topic: String,
+    iggy_config: IggyConfig,
     // Future RwLock implements sync + send and works well
     // with tokio async https://stackoverflow.com/questions/67277282/async-function-the-trait-stdmarkersend-is-not-implemented-for-stdsync
     pub(crate) client_manager: Arc<RwLock<ClientManager>>,
@@ -37,6 +40,7 @@ impl Server {
     ///
     pub fn new(
         channel_topic: String,
+        iggy_config: IggyConfig,
         client_manager: Arc<RwLock<ClientManager>>,
         query_manager: Arc<RwLock<QueryDBManager>>,
         symbol_manager: Arc<RwLock<SymbolManager>>,
@@ -46,6 +50,7 @@ impl Server {
 
         Self {
             channel_topic,
+            iggy_config,
             client_manager,
             query_manager,
             symbol_manager,
@@ -92,11 +97,41 @@ impl Server {
             .await
             .expect("[QDGW/Service:run]: Failed to create a stream");
 
+        let client = iggy_utils::get_iggy_client()
+            .await
+            .expect("Failed to create client");
+
+        let user = IggyUser::default();
+        iggy_utils::init(&client, &user)
+            .await
+            .expect("Failed to initialize iggy");
+
+        let command = PollMessages {
+            consumer: Default::default(),
+            stream_id: self.iggy_config.stream_id(),
+            topic_id: self.iggy_config.topic_id(),
+            partition_id: self.iggy_config.partition_id(),
+            strategy: PollingStrategy::last(),
+            count: self.iggy_config.messages_per_batch(),
+            auto_commit: self.iggy_config.auto_commit(),
+        };
+
         loop {
             select! {
                     _ = &mut signal_future => {
                          break;
                     }
+
+                // polled_messages =
+                //         client
+                //         .poll_messages(&command)
+                //         .await
+                //         .expect("Failed to poll messages")
+                //
+                // if polled_messages.messages.is_empty() {
+                //     continue;
+                // }
+
 
                     record = stream.next() => {
                         if let Some(res) = record {
@@ -117,6 +152,11 @@ impl Server {
                 }// end stream.next()
             } // end select
         } // end loop
+
+        // Shutdown iggy
+        iggy_utils::shutdown(&client)
+            .await
+            .expect("Failed to shutdown iggy");
 
         Ok(())
     }

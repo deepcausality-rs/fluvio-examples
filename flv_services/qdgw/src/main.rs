@@ -16,7 +16,7 @@ mod utils_iggy;
 use crate::service::Server;
 use autometrics::prometheus_exporter;
 use client_manager::ClientManager;
-use common::prelude::ServiceID;
+use common::prelude::{IggyConfig, ServiceID};
 use config_manager::ConfigManager;
 use db_query_manager::QueryDBManager;
 use service_utils::{print_utils, shutdown_utils};
@@ -127,9 +127,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let msg_config = cfg_manager.message_client_config();
     let service_topic = msg_config.control_channel();
 
+    let iggy_config = IggyConfig::from_client_id(SVC_ID.id() as u32,50, false);
+
     //Creates a new server
     let server = Server::new(
         service_topic.clone(),
+        iggy_config,
         client_manager,
         query_manager.clone(),
         symbol_manager,

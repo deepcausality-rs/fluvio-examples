@@ -5,7 +5,7 @@ use iggy::users::login_user::LoginUser;
 #[tokio::main]
 async fn main() {
     println!("Hello, Iggy!");
-    let client = iggy_utils::get_client()
+    let client = iggy_utils::get_iggy_client()
         .await
         .expect("Failed to build iggy client");
 
@@ -30,10 +30,12 @@ async fn main() {
         .await
         .expect("Failed to login user");
 
-    println!("Creating token...");
-    iggy_utils::create_token(&client, "qdgw_token".to_string())
+    println!("Creating new token...");
+    let token = iggy_utils::create_token(&client, "qdgw_token".to_string())
         .await
         .expect("Failed to create token");
+
+    println!("Token: {}", token);
 
     iggy_utils::shutdown(&client)
         .await

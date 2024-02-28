@@ -11,5 +11,6 @@ authors.workspace = true
 [dependencies]
 # External crates
 chrono = { workspace = true }
+iggy = { workspace = true }
 rust_decimal = { workspace = true }
 serde = { workspace = true }

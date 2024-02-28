@@ -19,6 +19,7 @@ common = {workspace = true}
 client_manager = {workspace = true}
 config_manager = {workspace = true}
 db_query_manager = {workspace = true}
+iggy_utils = {workspace = true}
 symbol_manager = {workspace = true}
 sbe_messages = {workspace = true}
 service_utils = {workspace = true}
