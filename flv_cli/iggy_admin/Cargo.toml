@@ -1,0 +1,19 @@
+[package]
+name = "iggy_admin"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+readme.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+
+[[bin]]
+name = "iggy_admin"
+path = "src/main.rs"
+
+
+[dependencies]
+# External crates
+iggy = {workspace = true }
+tokio = { workspace = true, features = ["rt", "rt-multi-thread", "macros"] }

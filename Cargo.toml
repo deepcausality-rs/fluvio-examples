@@ -3,6 +3,7 @@ resolver = "2"
 
 members = [
     "flv_cli/csv_import",
+    "flv_cli/iggy_admin",
     "flv_clients/symdb_client",
     "flv_clients/qd_client",
     "flv_common",
@@ -67,6 +68,7 @@ deep_causality = { git = "https://github.com/marvin-hansen/deep_causality.git", 
 encoding_rs = "0.8"
 fluvio = { version = "0.21", default-features = false, features = ["rustls"] }
 futures = "0.3"
+iggy = "0.2.6"
 klickhouse = {version = "0.11"}
 lru = "0.12"
 petgraph = "0.6"
