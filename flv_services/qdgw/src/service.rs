@@ -2,23 +2,23 @@ use client_manager::ClientManager;
 use common::prelude::MessageProcessingError;
 use db_query_manager::QueryDBManager;
 use fluvio::{Offset, TopicProducer};
-use futures::lock::Mutex;
 use futures::StreamExt;
 use std::collections::HashMap;
 use std::future::Future;
 use std::sync::Arc;
 use symbol_manager::SymbolManager;
+use tokio::sync::RwLock;
 use tokio::{pin, select};
 
 pub struct Server {
     channel_topic: String,
     // Future Mutex implements sync + send and works well
     // with tokio async https://stackoverflow.com/questions/67277282/async-function-the-trait-stdmarkersend-is-not-implemented-for-stdsync
-    pub(crate) client_manager: Arc<Mutex<ClientManager>>,
-    pub(crate) query_manager: Arc<Mutex<QueryDBManager>>,
-    pub(crate) symbol_manager: Arc<Mutex<SymbolManager>>,
+    pub(crate) client_manager: Arc<RwLock<ClientManager>>,
+    pub(crate) query_manager: Arc<RwLock<QueryDBManager>>,
+    pub(crate) symbol_manager: Arc<RwLock<SymbolManager>>,
     // Store a data producer for each client on login to send data back to the client
-    pub(crate) client_data_producers: Arc<Mutex<HashMap<u16, TopicProducer>>>,
+    pub(crate) client_data_producers: Arc<RwLock<HashMap<u16, TopicProducer>>>,
 }
 
 impl Server {
@@ -37,12 +37,12 @@ impl Server {
     ///
     pub fn new(
         channel_topic: String,
-        client_manager: Arc<Mutex<ClientManager>>,
-        query_manager: Arc<Mutex<QueryDBManager>>,
-        symbol_manager: Arc<Mutex<SymbolManager>>,
+        client_manager: Arc<RwLock<ClientManager>>,
+        query_manager: Arc<RwLock<QueryDBManager>>,
+        symbol_manager: Arc<RwLock<SymbolManager>>,
     ) -> Self {
         // Create a new HashMap to store data producers for each client
-        let client_data_producers = Arc::new(Mutex::new(HashMap::new()));
+        let client_data_producers = Arc::new(RwLock::new(HashMap::new()));
 
         Self {
             channel_topic,
@@ -82,12 +82,6 @@ impl Server {
         let signal_future = signal;
         pin!(signal_future);
 
-        //
-        // Somehow we need to keep the consumer alive
-        // otherwise the consumer close the connection with the following error:
-        //
-        // connection error: connection closed
-        //
         let consumer = fluvio::consumer(&self.channel_topic, 0)
             .await
             .expect("[QDGW/Service:run]: Failed to create a consumer for data topic");

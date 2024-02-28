@@ -12,11 +12,6 @@ mod utils_data_encoding;
 mod utils_error;
 mod utils_fluvio;
 
-use futures::lock::Mutex;
-use std::net::SocketAddr;
-use std::sync::Arc;
-use warp::Filter;
-
 use crate::service::Server;
 use autometrics::prometheus_exporter;
 use client_manager::ClientManager;
@@ -24,7 +19,11 @@ use common::prelude::ServiceID;
 use config_manager::ConfigManager;
 use db_query_manager::QueryDBManager;
 use service_utils::{print_utils, shutdown_utils};
+use std::net::SocketAddr;
+use std::sync::Arc;
 use symbol_manager::SymbolManager;
+use tokio::sync::RwLock;
+use warp::Filter;
 
 const SVC_ID: ServiceID = ServiceID::QDGW;
 
@@ -82,7 +81,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let web_handle = tokio::spawn(web_server);
 
     // Wrap ClientManager into Arc/Mutex to allow multi-threaded access.
-    let client_manager = Arc::new(Mutex::new(ClientManager::new()));
+    let client_manager = Arc::new(RwLock::new(ClientManager::new()));
 
     // Get the symbol table for the default exchange.
     let default_exchange = cfg_manager.default_exchange();
@@ -105,7 +104,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Create a new SymbolManager instance.
     let symbol_manager = async {
-        Arc::new(Mutex::new(
+        Arc::new(RwLock::new(
             SymbolManager::new(symbols, exchanges)
                 .expect("[QDGW]/main: Failed to create SymbolManager instance."),
         ))
@@ -113,12 +112,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     .await;
 
     // Wrap the QueryDBManager instance into an Arc/Mutex to allow multi-threaded access.
-    let query_manager = Arc::new(Mutex::new(q_manager));
+    let query_manager = Arc::new(RwLock::new(q_manager));
 
     // Check if the database connection is open.
-    let q_manager = query_manager.lock().await;
+    let q_manager = query_manager.read().await;
     let is_open = q_manager.is_open().await;
-    drop(q_manager);
 
     if is_open {
         println!("✅ Database Connection OK!");

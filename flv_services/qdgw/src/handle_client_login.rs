@@ -121,7 +121,7 @@ impl Server {
     ///
     pub(crate) async fn client_login(&self, client_id: u16) -> Result<(), MessageProcessingError> {
         // Lock the client_manager
-        let mut client_db = self.client_manager.lock().await;
+        let mut client_db = self.client_manager.write().await;
 
         // Create a new config for the client
         let config = MessageClientConfig::new(client_id);
@@ -147,7 +147,7 @@ impl Server {
             .expect("[send_error]: Failed to get error channel producer");
 
         // lock the client_data_producers hashmap
-        let mut client_data_producers = self.client_data_producers.lock().await;
+        let mut client_data_producers = self.client_data_producers.write().await;
 
         // add the client data producer to the hashmap
         client_data_producers.insert(client_id, producer);

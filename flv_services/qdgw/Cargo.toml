@@ -26,5 +26,6 @@ service_utils = {workspace = true}
 autometrics = { workspace = true }
 fluvio = { workspace = true }
 futures = { workspace = true }
+iggy = { workspace = true }
 tokio = { workspace = true }
 warp = { workspace = true }
