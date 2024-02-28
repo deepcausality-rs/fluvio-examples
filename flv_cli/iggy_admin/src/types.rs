@@ -29,7 +29,10 @@ impl Default for User {
 
 impl fmt::Display for User {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "User {{ username: {}, password: {} }}",
-               self.username, self.password)
+        write!(
+            f,
+            "User {{ username: {}, password: {} }}",
+            self.username, self.password
+        )
     }
 }

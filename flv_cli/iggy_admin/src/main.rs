@@ -1,10 +1,10 @@
+use crate::types::User;
 use iggy::client::UserClient;
 use iggy::users::login_user::LoginUser;
-use crate::types::User;
 
 mod iggy_utils;
-mod types;
 mod tasks;
+mod types;
 
 #[tokio::main]
 async fn main() {
@@ -26,10 +26,11 @@ async fn main() {
         .expect("Failed to create new user");
 
     println!("Login new user...");
-    client.login_user(&LoginUser {
-        username: new_user.username().to_string(),
-        password: new_user.password().to_string(),
-    })
+    client
+        .login_user(&LoginUser {
+            username: new_user.username().to_string(),
+            password: new_user.password().to_string(),
+        })
         .await
         .expect("Failed to login user");
 
