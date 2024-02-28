@@ -1,10 +1,6 @@
-use crate::types::User;
+use common::prelude::IggyUser;
 use iggy::client::UserClient;
 use iggy::users::login_user::LoginUser;
-
-mod iggy_utils;
-mod tasks;
-mod types;
 
 #[tokio::main]
 async fn main() {
@@ -13,15 +9,15 @@ async fn main() {
         .await
         .expect("Failed to build iggy client");
 
-    let user = User::default();
+    let user = IggyUser::default();
     iggy_utils::init(&client, &user)
         .await
         .expect("Failed to init");
 
-    let new_user = User::new("qdgw", "qdgw");
+    let new_user = IggyUser::new("qdgw", "qdgw");
 
     println!("Creating new user...");
-    tasks::create_user(&client, &new_user)
+    iggy_utils::create_user(&client, &new_user)
         .await
         .expect("Failed to create new user");
 
@@ -35,7 +31,7 @@ async fn main() {
         .expect("Failed to login user");
 
     println!("Creating token...");
-    tasks::create_token(&client, "qdgw_token".to_string())
+    iggy_utils::create_token(&client, "qdgw_token".to_string())
         .await
         .expect("Failed to create token");
 

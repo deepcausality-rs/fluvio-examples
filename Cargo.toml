@@ -14,11 +14,12 @@ members = [
     "flv_examples/basic_data_stream",
     "flv_examples/causal_data_inference",
     "flv_examples/causal_model",
-    "flv_utils/client_utils",
     "flv_examples/symbol_master",
     "flv_proto",
     "flv_sbe/bindings",
     "flv_sbe/sbe_messages",
+    "flv_utils/client_utils",
+    "flv_utils/iggy_utils",
     "flv_utils/service_utils",
     "flv_services/symdb",
     "flv_services/qdgw",
@@ -50,8 +51,9 @@ qd_client = { path = "flv_clients/qd_client" }
 sbe_bindings = { path = "flv_sbe/bindings" }
 sbe_messages = { path = "flv_sbe/sbe_messages" }
 symdb_client = { path = "flv_clients/symdb_client" }
-service_utils = { path = "flv_utils/service_utils" }
 client_utils = { path = "flv_utils/client_utils" }
+iggy_utils = { path = "flv_utils/iggy_utils" }
+service_utils = { path = "flv_utils/service_utils" }
 db_specs = { path = "flv_specs/db_specs" }
 exchange_specs = { path = "flv_specs/exchange_specs" }
 service_specs = { path = "flv_specs/service_specs" }

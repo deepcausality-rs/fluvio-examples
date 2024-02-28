@@ -10,6 +10,7 @@ pub use crate::types::config_types::client_channel::ClientChannel;
 pub use crate::types::config_types::db_config::DBConfig;
 pub use crate::types::config_types::environment_types::EnvironmentType;
 pub use crate::types::config_types::host_endpoint::HostEndpoint;
+pub use crate::types::config_types::iggy_user::IggyUser;
 pub use crate::types::config_types::message_client_config::MessageClientConfig;
 pub use crate::types::config_types::metric_config::MetricConfig;
 pub use crate::types::config_types::service_config::ServiceConfig;

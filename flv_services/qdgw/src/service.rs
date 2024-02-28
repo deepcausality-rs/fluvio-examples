@@ -12,7 +12,7 @@ use tokio::{pin, select};
 
 pub struct Server {
     channel_topic: String,
-    // Future Mutex implements sync + send and works well
+    // Future RwLock implements sync + send and works well
     // with tokio async https://stackoverflow.com/questions/67277282/async-function-the-trait-stdmarkersend-is-not-implemented-for-stdsync
     pub(crate) client_manager: Arc<RwLock<ClientManager>>,
     pub(crate) query_manager: Arc<RwLock<QueryDBManager>>,

@@ -1,12 +1,12 @@
 use std::fmt;
 
 #[derive(Debug, Eq, Clone, PartialEq)]
-pub(crate) struct User {
+pub struct IggyUser {
     username: String,
     password: String,
 }
 
-impl User {
+impl IggyUser {
     pub fn new(username: &str, password: &str) -> Self {
         Self {
             username: username.to_string(),
@@ -21,13 +21,13 @@ impl User {
     }
 }
 
-impl Default for User {
+impl Default for IggyUser {
     fn default() -> Self {
         Self::new("iggy", "iggy")
     }
 }
 
-impl fmt::Display for User {
+impl fmt::Display for IggyUser {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,

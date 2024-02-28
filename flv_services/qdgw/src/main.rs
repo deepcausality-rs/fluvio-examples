@@ -11,6 +11,7 @@ mod utils;
 mod utils_data_encoding;
 mod utils_error;
 mod utils_fluvio;
+mod utils_iggy;
 
 use crate::service::Server;
 use autometrics::prometheus_exporter;
