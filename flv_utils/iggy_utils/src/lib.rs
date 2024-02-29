@@ -1,10 +1,12 @@
-use common::prelude::IggyUser;
-use iggy::client::PersonalAccessTokenClient;
+use common::prelude::{IggyConfig, IggyUser};
 use iggy::client::{Client, UserClient};
+use iggy::client::{PersonalAccessTokenClient, StreamClient, TopicClient};
 use iggy::clients::client::{IggyClient, IggyClientBuilder};
 use iggy::error::IggyError;
 use iggy::models::user_status::UserStatus;
 use iggy::personal_access_tokens::create_personal_access_token::CreatePersonalAccessToken;
+use iggy::streams::create_stream::CreateStream;
+use iggy::topics::create_topic::CreateTopic;
 use iggy::users::create_user::CreateUser;
 use iggy::users::login_user::LoginUser;
 use iggy::users::logout_user::LogoutUser;
@@ -43,7 +45,7 @@ pub async fn get_iggy_client() -> Result<IggyClient, IggyError> {
 /// The `Ok` variant indicates that the user was successfully logged in, while the `Err` variant indicates that there was an error while logging in.
 ///
 ///
-pub async fn init(client: &IggyClient, user: &IggyUser) -> Result<(), Box<dyn Error>> {
+pub async fn init_client(client: &IggyClient, user: &IggyUser) -> Result<(), Box<dyn Error>> {
     client
         .connect()
         .await
@@ -58,6 +60,40 @@ pub async fn init(client: &IggyClient, user: &IggyUser) -> Result<(), Box<dyn Er
     {
         Ok(_) => println!("User logged in."),
         Err(_) => println!("User already logged in."),
+    }
+
+    Ok(())
+}
+
+pub async fn init_producer(
+    client: &IggyClient,
+    iggy_config: &IggyConfig,
+) -> Result<(), Box<dyn Error>> {
+    match client
+        .create_stream(&CreateStream {
+            stream_id: Some(iggy_config.stream_id().get_u32_value().unwrap()),
+            name: "sample-stream".to_string(),
+        })
+        .await
+    {
+        Ok(_) => (),
+        Err(err) => return Err(Box::from(err)),
+    }
+
+    match client
+        .create_topic(&CreateTopic {
+            stream_id: iggy_config.stream_id(),
+            topic_id: Some(iggy_config.stream_id().get_u32_value().unwrap()),
+            partitions_count: 1,
+            name: "sample-topic".to_string(),
+            message_expiry: None,
+            max_topic_size: None,
+            replication_factor: 1,
+        })
+        .await
+    {
+        Ok(_) => (),
+        Err(err) => return Err(Box::from(err)),
     }
 
     Ok(())

@@ -67,7 +67,7 @@ impl Server {
         }
 
         // Lock the query manager
-        let q_manager = self.query_manager.read().await;
+        let q_manager = self.query_manager().read().await;
 
         // Create a stream of trade bars from the database
         let mut stream = q_manager.stream_ohlcv(trade_table, time_resolution).await;

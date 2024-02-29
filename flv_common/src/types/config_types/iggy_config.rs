@@ -1,6 +1,7 @@
 use iggy::identifier::Identifier;
 use std::fmt::{Display, Formatter};
 
+// Add stream_name and topic_name to the IggyConfig struct
 pub struct IggyConfig {
     stream_id: Identifier,
     topic_id: Identifier,

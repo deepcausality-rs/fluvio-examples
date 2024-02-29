@@ -10,7 +10,7 @@ async fn main() {
         .expect("Failed to build iggy client");
 
     let user = IggyUser::default();
-    iggy_utils::init(&client, &user)
+    iggy_utils::init_client(&client, &user)
         .await
         .expect("Failed to init");
 

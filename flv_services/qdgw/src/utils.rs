@@ -21,7 +21,7 @@ impl Server {
         symbol_id: u16,
     ) -> Result<String, MessageProcessingError> {
         // Lock the SymbolManager
-        let mut symbol_db = self.symbol_manager.write().await;
+        let mut symbol_db = self.symbol_manager().write().await;
 
         // look up the table name
         let res = symbol_db.get_symbol_table_name(exchange_id, symbol_id);
@@ -50,7 +50,7 @@ impl Server {
         &self,
         client_id: u16,
     ) -> Result<bool, MessageProcessingError> {
-        let client_db = self.client_manager.read().await;
+        let client_db = self.client_manager().read().await;
 
         let exists = client_db.check_client(client_id);
 
