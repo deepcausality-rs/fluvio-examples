@@ -93,6 +93,7 @@ impl Server {
             .await
             .expect("Failed to initialize iggy");
 
+        // Preconfigure the poll message command
         let command = PollMessages {
             consumer: Default::default(),
             stream_id: self.iggy_config.stream_id(),
@@ -113,12 +114,12 @@ impl Server {
                     match polled_messages {
                         Ok(polled_messages) => {
                             for polled_message in polled_messages.messages {
-                                self.handle_record(polled_message.payload.to_vec())
+                                self.handle_message(polled_message.payload.as_ref())
                                    .await.expect("Failed to process message");
                             }
                         },
                         Err(e) => {
-                            println!("[QDGW/Service:run]: Error polling messages: {}", e);
+                            println!("[QDGW/Service:run]: Error polling messages from iggy message bus: {}", e);
                             break;
                         }
                     }
