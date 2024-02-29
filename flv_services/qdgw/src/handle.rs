@@ -1,6 +1,5 @@
 use crate::service::Server;
 use common::prelude::MessageProcessingError;
-use fluvio::dataplane::record::ConsumerRecord;
 use sbe_messages::prelude::{
     ClientLoginMessage, ClientLogoutMessage, MessageType, StartDataMessage, StopAllDataMessage,
     StopDataMessage,
@@ -27,12 +26,8 @@ impl Server {
     /// - An unknown message type is received
     /// - Any of the delegated handlers fail
     ///
-    pub(crate) async fn handle_record(
-        &self,
-        record: &ConsumerRecord,
-    ) -> Result<(), MessageProcessingError> {
+    pub(crate) async fn handle_record(&self, value: Vec<u8>) -> Result<(), MessageProcessingError> {
         //
-        let value = record.get_value().to_vec();
         let buffer = value.as_slice();
         let message_type = MessageType::from(buffer[2] as u16);
 

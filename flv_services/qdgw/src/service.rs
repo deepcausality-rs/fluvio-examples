@@ -1,20 +1,18 @@
 use client_manager::ClientManager;
 use common::prelude::{IggyConfig, IggyUser, MessageProcessingError};
 use db_query_manager::QueryDBManager;
-use fluvio::{TopicProducer};
-use futures::StreamExt;
+use fluvio::TopicProducer;
+use iggy::client::MessageClient;
+use iggy::messages::poll_messages::{PollMessages, PollingStrategy};
 use iggy_utils;
 use std::collections::HashMap;
 use std::future::Future;
 use std::sync::Arc;
-use iggy::client::MessageClient;
-use iggy::messages::poll_messages::{PollingStrategy, PollMessages};
 use symbol_manager::SymbolManager;
 use tokio::sync::RwLock;
 use tokio::{pin, select};
 
 pub struct Server {
-    channel_topic: String,
     iggy_config: IggyConfig,
     // Future RwLock implements sync + send and works well
     // with tokio async https://stackoverflow.com/questions/67277282/async-function-the-trait-stdmarkersend-is-not-implemented-for-stdsync
@@ -40,7 +38,6 @@ impl Server {
     /// A new Server instance
     ///
     pub fn new(
-        channel_topic: String,
         iggy_config: IggyConfig,
         client_manager: Arc<RwLock<ClientManager>>,
         query_manager: Arc<RwLock<QueryDBManager>>,
@@ -50,7 +47,6 @@ impl Server {
         let client_data_producers = Arc::new(RwLock::new(HashMap::new()));
 
         Self {
-            channel_topic,
             iggy_config,
             client_manager,
             query_manager,
@@ -113,11 +109,11 @@ impl Server {
                          break;
                     }
 
-                polled_messages = client.poll_messages(&command).await => {
+                polled_messages = client.poll_messages(&command) => {
                     match polled_messages {
                         Ok(polled_messages) => {
                             for polled_message in polled_messages.messages {
-                                self.handle_record(polled_message)
+                                self.handle_record(polled_message.payload.to_vec())
                                    .await.expect("Failed to process message");
                             }
                         },
@@ -128,7 +124,6 @@ impl Server {
                     }
                 } // end match polled messages
             } // end select
-
         } // end loop
 
         // Shutdown iggy

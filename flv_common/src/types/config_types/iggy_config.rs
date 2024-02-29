@@ -1,5 +1,5 @@
-use std::fmt::{Display, Formatter};
 use iggy::identifier::Identifier;
+use std::fmt::{Display, Formatter};
 
 pub struct IggyConfig {
     stream_id: Identifier,
@@ -10,14 +10,26 @@ pub struct IggyConfig {
 }
 
 impl IggyConfig {
-    pub fn new(stream_id: Identifier, topic_id: Identifier, partition_id: Option<u32>, messages_per_batch: u32, auto_commit: bool) -> Self {
-        Self { stream_id, topic_id, partition_id, messages_per_batch, auto_commit }
+    pub fn new(
+        stream_id: Identifier,
+        topic_id: Identifier,
+        partition_id: Option<u32>,
+        messages_per_batch: u32,
+        auto_commit: bool,
+    ) -> Self {
+        Self {
+            stream_id,
+            topic_id,
+            partition_id,
+            messages_per_batch,
+            auto_commit,
+        }
     }
 
-    pub fn from_client_id(client_id: u32,  messages_per_batch: u32, auto_commit: bool) -> Self {
-        Self{
+    pub fn from_client_id(client_id: u32, messages_per_batch: u32, auto_commit: bool) -> Self {
+        Self {
             stream_id: Identifier::numeric(client_id).unwrap(),
-            topic_id:  Identifier::numeric(client_id).unwrap(),
+            topic_id: Identifier::numeric(client_id).unwrap(),
             partition_id: Some(client_id),
             messages_per_batch,
             auto_commit,
