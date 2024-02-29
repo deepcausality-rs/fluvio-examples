@@ -6,25 +6,20 @@ use sbe_messages::prelude::{
 };
 
 impl Server {
-    /// Handles a consumer record received from the Fluvio message bus.
+    /// Handles a single message by processing it and sending it to the appropriate
+    /// manager for further processing.
     ///
-    /// Parses the message type and delegates to the appropriate handlers.
+    /// This method takes a message payload, processes it by calling the `process_message`
+    /// method, and sends it to the appropriate handler for further processing.
     ///
     /// # Parameters
     ///
-    /// * `record` - The Fluvio consumer record to handle
+    /// * `self` - The Server instance
+    /// * `message` - The message payload to be processed
     ///
     /// # Returns
-    ///
-    /// Returns a `Result` with `()` if successful, otherwise returns a
-    /// `MessageProcessingError` on failure.
-    ///
-    /// # Errors
-    ///
-    /// Can fail with a `MessageProcessingError` if:
-    ///
-    /// - An unknown message type is received
-    /// - Any of the delegated handlers fail
+    /// * Ok on success,
+    /// * Err on any processing error
     ///
     pub(crate) async fn handle_message(
         &self,
@@ -57,12 +52,9 @@ impl Server {
                 let stop_all_data_msg = StopAllDataMessage::from(raw_message);
                 self.handle_stop_all_data(&stop_all_data_msg).await
             }
-            _ => {
-                Err(MessageProcessingError(
-                    "[QDGW/handle::handle_record]: Unknown message type. Abort processing"
-                        .to_string(),
-                ))
-            }
+            _ => Err(MessageProcessingError(
+                "[QDGW/handle::handle_record]: Unknown message type. Abort processing".to_string(),
+            )),
         }
     }
 }

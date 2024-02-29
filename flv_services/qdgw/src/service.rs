@@ -59,18 +59,16 @@ impl Server {
 impl Server {
     /// Runs the server, listening for signals and incoming messages.
     ///
+    /// This method will create a consumer for the channel topic to receive messages,
+    /// create a stream of messages from the consumer, and enter a loop selecting on
+    /// the shutdown signal future and stream.
+    /// If the signal arrives, the loop will break and shutdown.
+    /// If the stream has a message, the `handle_record()` method will be called to process it.
+    ///
     /// # Parameters
     ///
     /// * `self` - The Server instance
     /// * `signal` - A future that resolves when a shutdown signal is received
-    ///
-    /// # Functionality
-    ///
-    /// - Creates a consumer for the channel topic to receive messages
-    /// - Creates a stream of messages from the consumer
-    /// - Enters a loop selecting on the shutdown signal future and stream:
-    ///   - If signal arrives, breaks the loop to shutdown
-    ///   - If stream has a message, calls handle_record() to process it
     ///
     /// # Returns
     /// * Ok on success,

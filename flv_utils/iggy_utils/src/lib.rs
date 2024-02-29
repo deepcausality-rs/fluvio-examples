@@ -14,7 +14,15 @@ fn get_tcp_server_addr() -> String {
     "127.0.0.1:8090".to_string()
 }
 
-/// `get_client` is used to create a new client to interact with the server.
+/// Creates a new `IggyClient` instance and returns it.
+///
+/// # Returns
+///
+/// A `Result` type, which can either be an `Ok` variant containing a new `IggyClient` instance
+/// or an `Err` variant containing a boxed dynamic error.
+/// The `Ok` variant indicates that the `IggyClient` instance was successfully created,
+/// while the `Err` variant indicates that there was an error while creating the instance.
+///
 pub async fn get_iggy_client() -> Result<IggyClient, IggyError> {
     IggyClientBuilder::new()
         .with_tcp()
@@ -22,7 +30,19 @@ pub async fn get_iggy_client() -> Result<IggyClient, IggyError> {
         .build()
 }
 
-/// `init` command is used to login to the server.
+/// Initializes the connection to the Iggy server and logs in the user.
+///
+/// # Arguments
+///
+/// * `client` - A reference to an `IggyClient` instance, which is used to connect to the Iggy server and perform operations on it.
+/// * `user` - A reference to an `IggyUser` instance, which contains the information about the user that is being logged in.
+///
+/// # Returns
+///
+/// A `Result` type, which can either be an `Ok` variant containing a unit value (`()`) or an `Err` variant containing a boxed dynamic error.
+/// The `Ok` variant indicates that the user was successfully logged in, while the `Err` variant indicates that there was an error while logging in.
+///
+///
 pub async fn init(client: &IggyClient, user: &IggyUser) -> Result<(), Box<dyn Error>> {
     client
         .connect()
@@ -43,7 +63,18 @@ pub async fn init(client: &IggyClient, user: &IggyUser) -> Result<(), Box<dyn Er
     Ok(())
 }
 
-/// `shutdown` command is used to logout and disconnect from the server.
+/// Shuts down the connection to the Iggy server and logs out the user.
+///
+/// # Arguments
+///
+/// * `client` - A reference to an `IggyClient` instance, which is used to connect to the Iggy server and perform operations on it.
+///
+/// # Returns
+///
+/// A `Result` type, which can either be an `Ok` variant containing a unit value (`()`) or an `Err` variant containing a boxed dynamic error.
+/// The `Ok` variant indicates that the user was successfully logged out and the connection was closed, while the `Err` variant indicates that there was an error while logging out or closing the connection.
+///
+///
 pub async fn shutdown(client: &IggyClient) -> Result<(), Box<dyn Error>> {
     match client.logout_user(&LogoutUser {}).await {
         Ok(_) => println!("User logged out."),
@@ -58,7 +89,19 @@ pub async fn shutdown(client: &IggyClient) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-/// `create_user` command is used to create a new user.
+/// Creates a new user on the Iggy server.
+///
+/// # Arguments
+///
+/// * `client` - A reference to an `IggyClient` instance, which is used to connect to the Iggy server and perform operations on it.
+/// * `user` - A reference to an `IggyUser` instance, which contains the information about the user that is being created.
+///
+/// # Returns
+///
+/// A `Result` type, which can either be an `Ok` variant containing a unit value (`()`) or an `Err` variant containing a boxed dynamic error.
+/// The `Ok` variant indicates that the user was successfully created, while the `Err` variant indicates that the user already exists.
+///
+///
 pub async fn create_user(client: &IggyClient, user: &IggyUser) -> Result<(), Box<dyn Error>> {
     match client
         .create_user(&CreateUser {
@@ -76,7 +119,18 @@ pub async fn create_user(client: &IggyClient, user: &IggyUser) -> Result<(), Box
     Ok(())
 }
 
-/// `create_token` command is used to create a new personal access token.
+/// Creates a new token for the logged in user.
+///
+/// This method takes a name and creates a new token with that name for the logged in user.
+///
+/// # Parameters
+///
+/// * `client` - The IggyClient instance
+/// * `token_name` - The name of the token to create
+///
+/// # Returns
+/// * A string containing the new token
+///
 pub async fn create_token(
     client: &IggyClient,
     token_name: String,
