@@ -30,20 +30,21 @@ impl Server {
         let signal_future = signal;
         pin!(signal_future);
 
+        // move into constructor
         let client = iggy_utils::get_iggy_client()
             .await
             .expect("Failed to create client");
 
+        // get user or token from config file
         let user = IggyUser::default();
+        // rename to init consumer
         iggy_utils::init_client(&client, &user)
             .await
             .expect("Failed to initialize iggy");
 
         loop {
             select! {
-                    _ = &mut signal_future => {
-                         break;
-                    }
+                    _ = &mut signal_future => {break;}
 
                 polled_messages = client.poll_messages(self.poll_command()) => {
                     match polled_messages {
@@ -54,7 +55,7 @@ impl Server {
                             }
                         },
                         Err(e) => {
-                            println!("[QDGW/Service:run]: Error polling messages from iggy message bus: {}", e);
+                            println!("[QDGW/run]: Error polling messages from iggy message bus: {}", e);
                             break;
                         }
                     }
