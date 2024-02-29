@@ -12,8 +12,35 @@ use iggy::users::login_user::LoginUser;
 use iggy::users::logout_user::LogoutUser;
 use std::error::Error;
 
-fn get_tcp_server_addr() -> String {
-    "127.0.0.1:8090".to_string()
+pub async fn get_consumer(
+    iggy_config: &IggyConfig,
+    user: &IggyUser,
+) -> Result<IggyClient, IggyError> {
+    let tcp_server_addr = iggy_config.tcp_server_addr();
+
+    let consumer = get_iggy_client(tcp_server_addr)
+        .await
+        .expect("Failed to build iggy client");
+
+    init_consumer(&consumer, &user)
+        .await
+        .expect("Failed to initialize iggy");
+
+    Ok(consumer)
+}
+
+pub async fn get_producer(iggy_config: &IggyConfig) -> Result<IggyClient, IggyError> {
+    let tcp_server_addr = iggy_config.tcp_server_addr();
+
+    let producer = get_iggy_client(tcp_server_addr)
+        .await
+        .expect("Failed to create consumer client");
+
+    init_producer(&producer, &iggy_config)
+        .await
+        .expect("Failed to initialize iggy");
+
+    Ok(producer)
 }
 
 /// Creates a new `IggyClient` instance and returns it.
@@ -25,10 +52,10 @@ fn get_tcp_server_addr() -> String {
 /// The `Ok` variant indicates that the `IggyClient` instance was successfully created,
 /// while the `Err` variant indicates that there was an error while creating the instance.
 ///
-pub async fn get_iggy_client() -> Result<IggyClient, IggyError> {
+pub async fn get_iggy_client(tcp_server_addr: String) -> Result<IggyClient, IggyError> {
     IggyClientBuilder::new()
         .with_tcp()
-        .with_server_address(get_tcp_server_addr())
+        .with_server_address(tcp_server_addr)
         .build()
 }
 
@@ -45,7 +72,7 @@ pub async fn get_iggy_client() -> Result<IggyClient, IggyError> {
 /// The `Ok` variant indicates that the user was successfully logged in, while the `Err` variant indicates that there was an error while logging in.
 ///
 ///
-pub async fn init_client(client: &IggyClient, user: &IggyUser) -> Result<(), Box<dyn Error>> {
+pub async fn init_consumer(client: &IggyClient, user: &IggyUser) -> Result<(), Box<dyn Error>> {
     client
         .connect()
         .await
@@ -65,6 +92,30 @@ pub async fn init_client(client: &IggyClient, user: &IggyUser) -> Result<(), Box
     Ok(())
 }
 
+/// Initializes a producer by creating a stream and a topic in the Iggy platform.
+///
+/// This asynchronous function takes an `IggyClient` and `IggyConfig` references to create a stream
+/// and a topic with the specified configurations. It ensures that the necessary infrastructure
+/// is set up in Iggy for producing messages.
+///
+/// # Arguments
+///
+/// * `client` - A reference to the `IggyClient` used to interact with the Iggy platform.
+/// * `iggy_config` - A reference to the `IggyConfig` which contains the configuration for the stream and topic.
+///
+/// # Returns
+///
+/// A `Result` type that is either:
+/// - `Ok(())` - Indicates successful creation of both the stream and topic.
+/// - `Err(Box<dyn Error>)` - An error occurred during the creation process. The error is boxed to allow for any type of `Error` trait object.
+///
+///
+/// # Errors
+///
+/// This function will return an error if the stream or topic creation fails.
+/// The error will be a boxed `Error` trait object,
+/// which can represent any error that implements the `Error` trait.
+///
 pub async fn init_producer(
     client: &IggyClient,
     iggy_config: &IggyConfig,
@@ -72,7 +123,7 @@ pub async fn init_producer(
     match client
         .create_stream(&CreateStream {
             stream_id: Some(iggy_config.stream_id().get_u32_value().unwrap()),
-            name: "sample-stream".to_string(),
+            name: iggy_config.stream_name().to_string(),
         })
         .await
     {
@@ -85,7 +136,7 @@ pub async fn init_producer(
             stream_id: iggy_config.stream_id(),
             topic_id: Some(iggy_config.stream_id().get_u32_value().unwrap()),
             partitions_count: 1,
-            name: "sample-topic".to_string(),
+            name: iggy_config.topic_name().to_string(),
             message_expiry: None,
             max_topic_size: None,
             replication_factor: 1,

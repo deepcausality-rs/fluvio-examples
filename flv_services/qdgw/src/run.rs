@@ -1,5 +1,5 @@
 use crate::service::Server;
-use common::prelude::{IggyUser, MessageProcessingError};
+use common::prelude::MessageProcessingError;
 use iggy::client::MessageClient;
 use std::future::Future;
 use tokio::{pin, select};
@@ -30,23 +30,11 @@ impl Server {
         let signal_future = signal;
         pin!(signal_future);
 
-        // move into constructor
-        let client = iggy_utils::get_iggy_client()
-            .await
-            .expect("Failed to create client");
-
-        // get user or token from config file
-        let user = IggyUser::default();
-        // rename to init consumer
-        iggy_utils::init_client(&client, &user)
-            .await
-            .expect("Failed to initialize iggy");
-
         loop {
             select! {
                     _ = &mut signal_future => {break;}
 
-                polled_messages = client.poll_messages(self.poll_command()) => {
+                polled_messages = self.consumer().poll_messages(self.poll_command()) => {
                     match polled_messages {
                         Ok(polled_messages) => {
                             for polled_message in polled_messages.messages {
@@ -64,7 +52,7 @@ impl Server {
         } // end loop
 
         // Shutdown iggy
-        iggy_utils::shutdown(&client)
+        iggy_utils::shutdown(&self.consumer())
             .await
             .expect("Failed to shutdown iggy");
 

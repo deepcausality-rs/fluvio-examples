@@ -1,34 +1,45 @@
 use client_manager::ClientManager;
-use common::prelude::IggyConfig;
+use common::prelude::{IggyConfig, IggyUser};
 use db_query_manager::QueryDBManager;
-use fluvio::TopicProducer;
+use iggy::clients::client::IggyClient;
 use iggy::messages::poll_messages::{PollMessages, PollingStrategy};
 use std::collections::HashMap;
-use std::sync::Arc;
 use symbol_manager::SymbolManager;
-// Future RwLock implements sync + send and works well with tokio async
+
+// tokio RwLock implements sync + send and works well with tokio async
 // https://stackoverflow.com/questions/67277282/async-function-the-trait-stdmarkersend-is-not-implemented-for-stdsync
-use tokio::sync::RwLock;
+type Guarded<T> = std::sync::Arc<tokio::sync::RwLock<T>>;
 
 pub struct Server {
-    // Add iggy producer to the server struct
-    // Add iggy consumer to the server struct
-    // iggy_config: IggyConfig,
+    consumer: IggyClient,
+    producer: IggyClient,
     poll_command: PollMessages,
-   client_manager: Arc<RwLock<ClientManager>>,
-    query_manager: Arc<RwLock<QueryDBManager>>,
-    symbol_manager: Arc<RwLock<SymbolManager>>,
-    // Store a data producer for each client on login to send data back to the client
-    client_data_producers: Arc<RwLock<HashMap<u16, TopicProducer>>>,
+    client_manager: Guarded<ClientManager>,
+    query_manager: Guarded<QueryDBManager>,
+    symbol_manager: Guarded<SymbolManager>,
+    client_producers: Guarded<HashMap<u16, IggyClient>>,
 }
 
 impl Server {
-    pub fn new(
+    pub async fn new(
         iggy_config: IggyConfig,
-        client_manager: Arc<RwLock<ClientManager>>,
-        query_manager: Arc<RwLock<QueryDBManager>>,
-        symbol_manager: Arc<RwLock<SymbolManager>>,
+        client_manager: Guarded<ClientManager>,
+        query_manager: Guarded<QueryDBManager>,
+        symbol_manager: Guarded<SymbolManager>,
     ) -> Self {
+        // Move authentication info into the iggy config
+        let user = IggyUser::default();
+
+        // Create an iggy client and initialize it as consumer
+        let consumer = iggy_utils::get_consumer(&iggy_config, &user)
+            .await
+            .expect("Failed to create consumer client");
+
+        // Create an iggy client and initialize it as producer
+        let producer = iggy_utils::get_producer(&iggy_config)
+            .await
+            .expect("Failed to create producer client");
+
         // Preconfigure the poll message command
         let poll_command = PollMessages {
             consumer: Default::default(),
@@ -41,33 +52,40 @@ impl Server {
         };
 
         // Create a new HashMap to store data producers for each client
-        let client_data_producers = Arc::new(RwLock::new(HashMap::new()));
+        let client_producers = std::sync::Arc::new(tokio::sync::RwLock::new(HashMap::new()));
 
         Self {
-            // iggy_config,
+            consumer,
+            producer,
             poll_command,
             client_manager,
             query_manager,
             symbol_manager,
-            client_data_producers,
+            client_producers,
         }
     }
 }
 
 impl Server {
-    pub fn client_manager(&self) -> &Arc<RwLock<ClientManager>> {
+    pub fn client_manager(&self) -> &Guarded<ClientManager> {
         &self.client_manager
+    }
+    pub fn client_data_producers(&self) -> &Guarded<HashMap<u16, IggyClient>> {
+        &self.client_producers
+    }
+    pub fn consumer(&self) -> &IggyClient {
+        &self.consumer
     }
     pub fn poll_command(&self) -> &PollMessages {
         &self.poll_command
     }
-    pub fn query_manager(&self) -> &Arc<RwLock<QueryDBManager>> {
+    pub fn producer(&self) -> &IggyClient {
+        &self.producer
+    }
+    pub fn query_manager(&self) -> &Guarded<QueryDBManager> {
         &self.query_manager
     }
-    pub fn symbol_manager(&self) -> &Arc<RwLock<SymbolManager>> {
+    pub fn symbol_manager(&self) -> &Guarded<SymbolManager> {
         &self.symbol_manager
-    }
-    pub fn client_data_producers(&self) -> &Arc<RwLock<HashMap<u16, TopicProducer>>> {
-        &self.client_data_producers
     }
 }

@@ -5,12 +5,12 @@ use iggy::users::login_user::LoginUser;
 #[tokio::main]
 async fn main() {
     println!("Hello, Iggy!");
-    let client = iggy_utils::get_iggy_client()
+    let client = iggy_utils::get_iggy_client("127.0.0.1:8090".to_string())
         .await
         .expect("Failed to build iggy client");
 
     let user = IggyUser::default();
-    iggy_utils::init_client(&client, &user)
+    iggy_utils::init_consumer(&client, &user)
         .await
         .expect("Failed to init");
 

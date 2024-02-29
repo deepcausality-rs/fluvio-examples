@@ -128,7 +128,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let msg_config = cfg_manager.message_client_config();
     let service_topic = msg_config.control_channel();
 
-    let iggy_config = IggyConfig::from_client_id(SVC_ID.id() as u32, 50, false);
+    let iggy_config = IggyConfig::from_client_id("127.0.0.1:8090", SVC_ID.id() as u32, 50, false);
 
     //Creates a new server
     let server = Server::new(
@@ -136,7 +136,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         client_manager,
         query_manager.clone(),
         symbol_manager,
-    );
+    )
+    .await;
 
     //Creates a new Tokio task for the server.
     let signal = shutdown_utils::signal_handler("Fluvio connector");
