@@ -28,6 +28,7 @@ impl Server {
         query_manager: Guarded<QueryDBManager>,
         symbol_manager: Guarded<SymbolManager>,
     ) -> Self {
+        //
         // Move authentication info into the iggy config
         let user = IggyUser::default();
 
@@ -37,7 +38,7 @@ impl Server {
             .expect("Failed to create consumer client");
 
         // Create an iggy client and initialize it as producer
-        let producer = iggy_utils::get_producer(&iggy_config)
+        let producer = iggy_utils::get_producer(&iggy_config,&user)
             .await
             .expect("Failed to create producer client");
 

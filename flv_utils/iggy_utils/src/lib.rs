@@ -29,14 +29,14 @@ pub async fn get_consumer(
     Ok(consumer)
 }
 
-pub async fn get_producer(iggy_config: &IggyConfig) -> Result<IggyClient, IggyError> {
+pub async fn get_producer(iggy_config: &IggyConfig, user: &IggyUser) -> Result<IggyClient, IggyError> {
     let tcp_server_addr = iggy_config.tcp_server_addr();
 
     let producer = get_iggy_client(tcp_server_addr)
         .await
         .expect("Failed to create consumer client");
 
-    init_producer(&producer, &iggy_config)
+    init_producer(&producer, &iggy_config, &user)
         .await
         .expect("Failed to initialize iggy");
 
@@ -119,7 +119,25 @@ pub async fn init_consumer(client: &IggyClient, user: &IggyUser) -> Result<(), B
 pub async fn init_producer(
     client: &IggyClient,
     iggy_config: &IggyConfig,
+    user: &IggyUser,
 ) -> Result<(), Box<dyn Error>> {
+
+    client
+        .connect()
+        .await
+        .expect("Failed to connect to iggy server");
+
+    match client
+        .login_user(&LoginUser {
+            username: user.username().to_string(),
+            password: user.password().to_string(),
+        })
+        .await
+    {
+        Ok(_) => (),
+        Err(err) => return Err(Box::from(err)),
+    }
+
     match client
         .create_stream(&CreateStream {
             stream_id: Some(iggy_config.stream_id().get_u32_value().unwrap()),

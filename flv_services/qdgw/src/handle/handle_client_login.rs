@@ -1,6 +1,6 @@
 use crate::service::Server;
 use autometrics::autometrics;
-use common::prelude::{IggyConfig, MessageClientConfig, MessageProcessingError};
+use common::prelude::{IggyConfig, IggyUser, MessageClientConfig, MessageProcessingError};
 use sbe_messages::prelude::{ClientErrorType, ClientLoginMessage};
 
 impl Server {
@@ -139,11 +139,14 @@ impl Server {
         // Unlock the client_manager
         drop(client_db);
 
+        // Move authentication info into the iggy config
+        let user = IggyUser::default();
+
         // Create an iggy config for the client
         let iggy_config = IggyConfig::from_client_id(client_id as u32, 50000, false);
 
         // Create an iggy client and initialize it as producer
-        let producer = iggy_utils::get_producer(&iggy_config)
+        let producer = iggy_utils::get_producer(&iggy_config, &user)
             .await
             .expect("Failed to create producer client");
 
