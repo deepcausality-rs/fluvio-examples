@@ -1,18 +1,7 @@
 mod handle;
-mod handle_client_login;
-mod handle_client_logout;
-mod handle_data_start;
-mod handle_data_start_ohlcv_data;
-mod handle_data_start_trade_data;
-mod handle_data_stop;
-mod handle_data_stop_all;
 mod run;
 mod service;
-mod utils_data_encoding;
-mod utils_error;
-mod utils_iggy;
-mod utils_login;
-mod utils_message;
+mod utils;
 
 use crate::service::Server;
 use autometrics::prometheus_exporter;
