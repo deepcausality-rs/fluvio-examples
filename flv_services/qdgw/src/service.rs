@@ -13,6 +13,7 @@ type Guarded<T> = std::sync::Arc<tokio::sync::RwLock<T>>;
 pub struct Server {
     consumer: IggyClient,
     producer: IggyClient,
+    iggy_config: IggyConfig,
     poll_command: PollMessages,
     client_manager: Guarded<ClientManager>,
     query_manager: Guarded<QueryDBManager>,
@@ -40,12 +41,12 @@ impl Server {
             .await
             .expect("Failed to create producer client");
 
-        // Preconfigure the poll message command
+        // Preconfigure the poll message command for the consumer client
         let poll_command = PollMessages {
             consumer: Default::default(),
             stream_id: iggy_config.stream_id(),
             topic_id: iggy_config.topic_id(),
-            partition_id: iggy_config.partition_id(),
+            partition_id: Option::from(iggy_config.partition_id()),
             strategy: PollingStrategy::last(),
             count: iggy_config.messages_per_batch(),
             auto_commit: iggy_config.auto_commit(),
@@ -57,6 +58,7 @@ impl Server {
         Self {
             consumer,
             producer,
+            iggy_config,
             poll_command,
             client_manager,
             query_manager,
@@ -75,6 +77,9 @@ impl Server {
     }
     pub fn consumer(&self) -> &IggyClient {
         &self.consumer
+    }
+    pub fn iggy_config(&self) -> &IggyConfig {
+        &self.iggy_config
     }
     pub fn poll_command(&self) -> &PollMessages {
         &self.poll_command

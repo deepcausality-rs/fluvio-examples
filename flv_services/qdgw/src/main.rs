@@ -8,11 +8,11 @@ mod handle_data_stop;
 mod handle_data_stop_all;
 mod run;
 mod service;
-mod utils;
 mod utils_data_encoding;
 mod utils_error;
-mod utils_fluvio;
 mod utils_iggy;
+mod utils_login;
+mod utils_message;
 
 use crate::service::Server;
 use autometrics::prometheus_exporter;
@@ -29,27 +29,6 @@ use warp::Filter;
 
 const SVC_ID: ServiceID = ServiceID::QDGW;
 
-/// The main entry point for the qdgw service.
-///
-/// This will:
-///
-/// - Initialize Prometheus metrics exporter
-/// - Create ConfigManager instance for autoconfiguration
-/// - Configure Prometheus metrics HTTP server
-/// - Create Fluvio consumer for control topic
-/// - Initialize ClientManager
-/// - Get symbol table and symbols for the default exchange
-/// - Create QueryDBManager and SymbolManager for the default exchange
-/// - Create Server instance
-/// - Spawn tasks for HTTP server and Fluvio server
-/// - Print service start messages
-///
-/// On shutdown:
-///
-/// - Prints service stop message
-/// - Shuts down HTTP server
-/// - Shuts down Fluvio server
-///
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Initialize the metrics exporter.
@@ -128,7 +107,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let msg_config = cfg_manager.message_client_config();
     let service_topic = msg_config.control_channel();
 
-    let iggy_config = IggyConfig::from_client_id("127.0.0.1:8090", SVC_ID.id() as u32, 50, false);
+    let iggy_config = IggyConfig::from_client_id(SVC_ID.id() as u32, 50, false);
 
     //Creates a new server
     let server = Server::new(
@@ -140,7 +119,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     .await;
 
     //Creates a new Tokio task for the server.
-    let signal = shutdown_utils::signal_handler("Fluvio connector");
+    let signal = shutdown_utils::signal_handler("Message Bus connector");
     let service_handle = tokio::spawn(server.run(signal));
 
     // Prints the start header for the service
@@ -164,7 +143,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         Ok(_) => {}
         Err(e) => {
             println!(
-                "[QDGW]/main: Failed to start Fluvio and HTTP/Metric server: {:?}",
+                "[QDGW]/main: Failed to start Message service and HTTP/Metric server: {:?}",
                 e
             );
         }

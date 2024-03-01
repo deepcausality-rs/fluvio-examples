@@ -6,7 +6,7 @@ mod query_trades;
 mod query_utils;
 mod stream_ohlcv;
 mod stream_trades;
-mod types;
+pub mod types;
 
 use common::prelude::ClickHouseConfig;
 use klickhouse::{Client, ClientOptions};

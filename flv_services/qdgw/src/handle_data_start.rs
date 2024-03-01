@@ -81,47 +81,6 @@ impl Server {
             }
         };
 
-        // println!("[::handle_start_data_message]: Get first bar.");
-        let first_bar = match self.encode_first_bar(data_type, symbol_id).await {
-            Ok(bar) => bar,
-            Err((data_err, err)) => {
-                match self.send_data_error(client_id, data_err).await {
-                    Ok(_) => {}
-                    Err(err) => {
-                        println!(
-                            "[QDGW/handle_start_data_message]: Failed to get first bar: {}",
-                            err
-                        );
-                    }
-                }
-                return Err(MessageProcessingError(format!(
-                    "[QDGW/handle_start_data_message]: Failed to get first bar: {}",
-                    err
-                )));
-            }
-        };
-
-        // println!("[::handle_start_data_message]: Get last bar.");
-        let last_bar = match self.encode_last_bar(data_type, symbol_id).await {
-            Ok(bar) => bar,
-            Err((data_err, err)) => {
-                match self.send_data_error(client_id, data_err).await {
-                    Ok(_) => {}
-                    Err(err) => {
-                        println!(
-                            "[QDGW/handle_start_data_message]: Failed to get last bar: {}",
-                            err
-                        );
-                    }
-                }
-
-                return Err(MessageProcessingError(format!(
-                    "[QDGW/handle_start_data_message]: Failed to get last bar: {}",
-                    err
-                )));
-            }
-        };
-
         // println!("[::handle_start_data_message]: Get trade bars for data type.");
         match data_type {
             DataType::UnknownDataType => {
@@ -198,5 +157,36 @@ impl Server {
 
         // println!("[handle_start_data_message]: Date send successfully to client: {}", client_id);
         Ok(())
+    }
+
+    /// Retrieves the trade table name for the given exchange ID.
+    ///
+    /// Locks the SymbolManager mutex and looks up the table name for the exchange.
+    ///
+    /// # Parameters
+    ///
+    /// - `symbol_manager` - The SymbolManager instance
+    /// - `exchange_id` - The exchange ID
+    ///
+    /// # Returns
+    ///
+    /// The name of the trade table as a `String`, or a `MessageProcessingError` if lookup fails.
+    ///
+    pub(crate) async fn get_trade_table_name(
+        &self,
+        exchange_id: u16,
+        symbol_id: u16,
+    ) -> Result<String, MessageProcessingError> {
+        // Lock the SymbolManager
+        let mut symbol_db = self.symbol_manager().write().await;
+
+        // look up the table name
+        let res = symbol_db.get_symbol_table_name(exchange_id, symbol_id);
+
+        // Return the table name, or an error if the lookup failed
+        match res {
+            Ok(table_name) => Ok(table_name),
+            Err(e) => Err(MessageProcessingError(e.to_string())),
+        }
     }
 }

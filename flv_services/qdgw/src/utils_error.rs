@@ -1,6 +1,8 @@
 use crate::service::Server;
-use common::prelude::{ClientChannel, MessageProcessingError};
-use fluvio::RecordKey;
+use common::prelude::MessageProcessingError;
+use iggy::bytes_serializable::BytesSerializable;
+use iggy::client::MessageClient;
+use iggy::messages::send_messages::{Message, Partitioning, SendMessages};
 use sbe_messages::prelude::{ClientErrorMessage, ClientErrorType, DataErrorMessage, DataErrorType};
 
 impl Server {
@@ -27,7 +29,9 @@ impl Server {
         assert!(enc.is_ok());
 
         let (_, buffer) = enc.unwrap();
-        self.send_error(client_id, buffer).await?;
+        self.send_error(buffer)
+            .await
+            .expect("Failed to send client error message");
 
         Ok(())
     }
@@ -55,7 +59,9 @@ impl Server {
         assert!(enc.is_ok());
 
         let (_, buffer) = enc.unwrap();
-        self.send_error(client_id, buffer).await?;
+        self.send_error(buffer)
+            .await
+            .expect("Failed to send error message");
 
         Ok(())
     }
@@ -74,25 +80,22 @@ impl Server {
     ///
     pub(crate) async fn send_error(
         &self,
-        client_id: u16,
         error_buffer: Vec<u8>,
     ) -> Result<(), MessageProcessingError> {
-        // Get the producer for the error channel
-        let producer = self
-            .get_channel_producer(ClientChannel::ErrorChannel, client_id)
+        let message = Message::from_bytes(error_buffer.try_into().unwrap())
+            .expect("Failed to create message");
+
+        self.producer()
+            .send_messages(&mut SendMessages {
+                stream_id: self.iggy_config().stream_id(),
+                topic_id: self.iggy_config().topic_id(),
+                partitioning: Partitioning::partition_id(self.iggy_config().partition_id()),
+                messages: vec![message],
+            })
             .await
-            .expect("[QDGW/utils_error:send_error]: Failed to get error channel producer");
+            .expect("Failed to send error");
 
         // Send the error message
-        producer.send(RecordKey::NULL, error_buffer).await.expect(
-            "[QDGW/utils_error:send_error]: Failed to send DataError: DataUnavailableError!",
-        );
-
-        // Flush the producer to the message bus
-        producer
-            .flush()
-            .await
-            .expect("[QDGW/utils_error:send_error]: Failed to flush to message bus.");
 
         Ok(())
     }

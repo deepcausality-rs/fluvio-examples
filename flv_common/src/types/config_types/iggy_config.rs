@@ -9,7 +9,7 @@ pub struct IggyConfig {
     topic_id: Identifier,
     topic_name: String,
     tcp_server_addr: String,
-    partition_id: Option<u32>,
+    partition_id: u32,
     messages_per_batch: u32,
     auto_commit: bool,
 }
@@ -21,7 +21,7 @@ impl IggyConfig {
         stream_name: String,
         topic_id: Identifier,
         topic_name: String,
-        partition_id: Option<u32>,
+        partition_id: u32,
         messages_per_batch: u32,
         auto_commit: bool,
     ) -> Self {
@@ -37,19 +37,14 @@ impl IggyConfig {
         }
     }
 
-    pub fn from_client_id(
-        tcp_server_addr: &str,
-        client_id: u32,
-        messages_per_batch: u32,
-        auto_commit: bool,
-    ) -> Self {
+    pub fn from_client_id(client_id: u32, messages_per_batch: u32, auto_commit: bool) -> Self {
         Self {
             stream_id: Identifier::numeric(client_id).unwrap(),
             stream_name: format!("stream_{}", client_id),
             topic_id: Identifier::numeric(client_id).unwrap(),
             topic_name: format!("topic_{}", client_id),
-            tcp_server_addr: tcp_server_addr.to_owned(),
-            partition_id: Some(client_id),
+            tcp_server_addr: "127.0.0.1:8090".to_owned(),
+            partition_id: client_id,
             messages_per_batch,
             auto_commit,
         }
@@ -69,7 +64,7 @@ impl IggyConfig {
     pub fn topic_name(&self) -> &str {
         &self.topic_name
     }
-    pub fn partition_id(&self) -> Option<u32> {
+    pub fn partition_id(&self) -> u32 {
         self.partition_id
     }
     pub fn messages_per_batch(&self) -> u32 {
@@ -96,7 +91,7 @@ impl Display for IggyConfig {
             self.stream_name,
             self.topic_id,
             self.topic_name,
-            self.partition_id.unwrap_or(0),
+            self.partition_id,
             self.messages_per_batch,
             self.auto_commit,
         )

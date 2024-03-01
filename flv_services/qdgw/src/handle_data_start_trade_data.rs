@@ -1,7 +1,7 @@
 use crate::service::Server;
-use common::prelude::{MessageProcessingError, TradeBar};
+use common::prelude::MessageProcessingError;
 use futures::StreamExt;
-use sbe_messages::prelude::{DataErrorType, DataType, SbeTradeBar};
+use sbe_messages::prelude::{DataErrorType, DataType};
 
 impl Server {
     /// Sends a stream of trade bar data to the client.
@@ -50,8 +50,6 @@ impl Server {
     ) -> Result<(), (DataErrorType, MessageProcessingError)> {
         // Set the data type to trade data
         let data_type = DataType::TradeData;
-        // Disables the flushing after each message thus increasing throughput by batch sending.
-        let flush = false;
 
         // Send the first bar message to inform the client that the data stream starts
         match self.send_first_bar(client_id, symbol_id, &data_type).await {
@@ -67,22 +65,9 @@ impl Server {
 
         // Process trade bars from the stream as they come in
         while let Some(Ok(record)) = stream.next().await {
-            let bar = TradeBar::new(
-                symbol_id,
-                record.date_time(),
-                record.price(),
-                record.volume(),
-            );
-            // Encode the trade bar message
-            let (_, enc_trade_bar) = SbeTradeBar::encode(bar).unwrap();
-
-            // Send trade bar message to the client
-            match self.send_single_data(client_id, enc_trade_bar, flush).await {
-                Ok(_) => {}
-                Err(e) => {
-                    return Err(e);
-                }
-            }
+            self.send_trade_bar(client_id, symbol_id, &record)
+                .await
+                .expect("Failed to send trade bar");
         }
 
         // Send the last bar message to inform the client that the data stream has ended

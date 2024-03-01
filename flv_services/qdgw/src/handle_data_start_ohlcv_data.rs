@@ -1,7 +1,7 @@
 use crate::service::Server;
-use common::prelude::{MessageProcessingError, OHLCVBar, TimeResolution};
+use common::prelude::{MessageProcessingError, TimeResolution};
 use futures::StreamExt;
-use sbe_messages::prelude::{DataErrorType, DataType, SbeOHLCVBar};
+use sbe_messages::prelude::{DataErrorType, DataType};
 
 impl Server {
     /// Sends a stream of OHLCV bar data to the client.
@@ -57,8 +57,6 @@ impl Server {
     ) -> Result<(), (DataErrorType, MessageProcessingError)> {
         // Set the data type to OHLCV
         let data_type = DataType::OHLCVData;
-        // Disables the flushing after each message thus increasing throughput by batch sending.
-        let flush = false;
 
         // Send the first bar message to inform the client that the data stream starts
         match self.send_first_bar(client_id, symbol_id, &data_type).await {
@@ -74,25 +72,9 @@ impl Server {
 
         // Process OHLCV bars from the stream as they come in
         while let Some(Ok(record)) = stream.next().await {
-            let bar = OHLCVBar::new(
-                symbol_id,
-                record.date_time(),
-                record.open(),
-                record.high(),
-                record.low(),
-                record.close(),
-                record.volume(),
-            );
-            // Encode the trade bar message
-            let (_, enc_trade_bar) = SbeOHLCVBar::encode(bar).unwrap();
-
-            // Send trade bar message to the client
-            match self.send_single_data(client_id, enc_trade_bar, flush).await {
-                Ok(_) => {}
-                Err(e) => {
-                    return Err(e);
-                }
-            }
+            self.send_ohlcv_bar(client_id, symbol_id, &record)
+                .await
+                .expect("Failed to send OHLCV bar");
         }
 
         // Send the last bar message to inform the client that the data stream has ended

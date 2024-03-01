@@ -1,6 +1,6 @@
 use crate::service::Server;
 use autometrics::autometrics;
-use common::prelude::{ClientChannel, MessageClientConfig, MessageProcessingError};
+use common::prelude::{IggyConfig, MessageClientConfig, MessageProcessingError};
 use sbe_messages::prelude::{ClientErrorType, ClientLoginMessage};
 
 impl Server {
@@ -139,11 +139,13 @@ impl Server {
         // Unlock the client_manager
         drop(client_db);
 
-        // create a new client topic producer for the client
-        let producer = self
-            .get_channel_producer(ClientChannel::DataChannel, client_id)
+        // Create an iggy config for the client
+        let iggy_config = IggyConfig::from_client_id(client_id as u32, 50000, false);
+
+        // Create an iggy client and initialize it as producer
+        let producer = iggy_utils::get_producer(&iggy_config)
             .await
-            .expect("[send_error]: Failed to get error channel producer");
+            .expect("Failed to create producer client");
 
         // lock the client_data_producers hashmap
         let mut client_data_producers = self.client_data_producers().write().await;
