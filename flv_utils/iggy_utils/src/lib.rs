@@ -85,8 +85,8 @@ pub async fn init_consumer(client: &IggyClient, user: &IggyUser) -> Result<(), B
         })
         .await
     {
-        Ok(_) => println!("User logged in."),
-        Err(_) => println!("User already logged in."),
+        Ok(_) => (),
+        Err(err) => return Err(Box::from(err)),
     }
 
     Ok(())
@@ -182,8 +182,8 @@ pub async fn init_producer(
 ///
 pub async fn shutdown(client: &IggyClient) -> Result<(), Box<dyn Error>> {
     match client.logout_user(&LogoutUser {}).await {
-        Ok(_) => println!("User logged out."),
-        Err(_) => println!("User was already logged out."),
+        Ok(_) => println!("* Iggy user logged out."),
+        Err(_) => println!("* Iggy user was already logged out."),
     }
 
     client
