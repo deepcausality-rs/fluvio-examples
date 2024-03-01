@@ -1,10 +1,12 @@
-use common::prelude::{ClickHouseConfig, EnvironmentType, ExchangeID, ServiceConfig, ServiceID};
+use common::prelude::{
+    ClickHouseConfig, EnvironmentType, ExchangeID, IggyConfig, ServiceConfig, ServiceID,
+};
 use std::collections::HashMap;
 
 mod getters;
 mod utils;
 
-#[derive(Debug, Clone, Eq, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct ConfigManager {
     /// ID of this service.
     svc_id: ServiceID,
@@ -22,6 +24,8 @@ pub struct ConfigManager {
     exchanges_id_names: Vec<(u16, String)>,
     /// Maps exchange IDs to their symbol table. Used to configure Query Manager
     exchanges_symbol_tables: HashMap<ExchangeID, String>,
+    //
+    iggy_config: IggyConfig,
 }
 
 impl ConfigManager {
@@ -85,6 +89,8 @@ impl ConfigManager {
         // Get hashmap of symbol tables for all supported exchanges
         let exchanges_symbol_tables = utils::get_exchange_symbol_tables();
 
+        let iggy_config = utils::get_iggy_config(&env_type, svc_id);
+
         Self {
             svc_id,
             env_type,
@@ -94,6 +100,7 @@ impl ConfigManager {
             exchanges,
             exchanges_id_names,
             exchanges_symbol_tables,
+            iggy_config,
         }
     }
 }

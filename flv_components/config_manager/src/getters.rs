@@ -1,6 +1,6 @@
 use crate::ConfigManager;
 use common::prelude::{
-    ClickHouseConfig, EnvironmentType, ExchangeID, MessageClientConfig, MetricConfig,
+    ClickHouseConfig, EnvironmentType, ExchangeID, IggyConfig, MessageClientConfig, MetricConfig,
     ServiceConfig, ServiceID,
 };
 
@@ -112,5 +112,9 @@ impl ConfigManager {
     /// set as the default for this service.
     pub fn default_exchange(&self) -> ExchangeID {
         self.default_exchange
+    }
+
+    pub fn iggy_config(&self) -> IggyConfig {
+        self.iggy_config.clone()
     }
 }

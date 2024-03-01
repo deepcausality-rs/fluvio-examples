@@ -17,7 +17,7 @@ mod utils_message;
 use crate::service::Server;
 use autometrics::prometheus_exporter;
 use client_manager::ClientManager;
-use common::prelude::{IggyConfig, ServiceID};
+use common::prelude::ServiceID;
 use config_manager::ConfigManager;
 use db_query_manager::QueryDBManager;
 use service_utils::{print_utils, shutdown_utils};
@@ -103,11 +103,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         println!("✅ Database Connection OK!");
     }
 
-    // Autoconfigures message channel
-    let msg_config = cfg_manager.message_client_config();
-    let service_topic = msg_config.control_channel();
-
-    let iggy_config = IggyConfig::from_client_id(SVC_ID.id() as u32, 50, false);
+    // Autoconfigure message bus connector.
+    let iggy_config = cfg_manager.iggy_config();
+    let service_topic = iggy_config.topic_name().to_string();
 
     //Creates a new server
     let server = Server::new(
@@ -133,7 +131,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Free up some memory before starting the service,
     drop(db_config);
     drop(cfg_manager);
-    drop(msg_config);
     drop(metrics_host);
     drop(metrics_uri);
     drop(metrics_addr);

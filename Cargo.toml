@@ -25,6 +25,7 @@ members = [
     "flv_services/qdgw",
     "flv_specs/db_specs",
     "flv_specs/exchange_specs",
+    "flv_specs/message_specs",
     "flv_specs/service_specs",
 ]
 
@@ -38,7 +39,6 @@ authors = ["Marvin Hansen <marvin.hansen@gmail.com>"]
 
 
 [workspace.dependencies]
-#
 # Internal crates
 causal_model = { path = "flv_examples/causal_model" }
 common = { path = "flv_common" }
@@ -56,8 +56,8 @@ iggy_utils = { path = "flv_utils/iggy_utils" }
 service_utils = { path = "flv_utils/service_utils" }
 db_specs = { path = "flv_specs/db_specs" }
 exchange_specs = { path = "flv_specs/exchange_specs" }
+message_specs = { path = "flv_specs/message_specs" }
 service_specs = { path = "flv_specs/service_specs" }
-#
 # External crates
 async-trait = { version = "0.1.77" }
 autometrics = { version = "1", features = ["prometheus-exporter"] }

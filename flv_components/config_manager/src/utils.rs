@@ -1,5 +1,8 @@
-use common::prelude::{ClickHouseConfig, EnvironmentType, ExchangeID, ServiceConfig, ServiceID};
+use common::prelude::{
+    ClickHouseConfig, EnvironmentType, ExchangeID, IggyConfig, ServiceConfig, ServiceID,
+};
 use db_specs::prelude::{get_cluster_db_config, get_local_db_config};
+use message_specs::prelude::{get_cluster_iggy_config, get_local_iggy_config};
 use service_specs::prelude::{get_qdgw_service_config, get_symdb_service_config};
 use std::collections::HashMap;
 use std::env;
@@ -77,6 +80,16 @@ pub(crate) fn get_db_config(env_type: &EnvironmentType) -> ClickHouseConfig {
     match env_type {
         EnvironmentType::Local => get_local_db_config(),
         EnvironmentType::Cluster => get_cluster_db_config(),
+    }
+}
+
+/// Gets the Iggy configuration for the given environment type and service ID.
+///
+pub(crate) fn get_iggy_config(env_type: &EnvironmentType, svc_id: ServiceID) -> IggyConfig {
+    let client_id = svc_id as u32;
+    match env_type {
+        EnvironmentType::Local => get_local_iggy_config(client_id),
+        EnvironmentType::Cluster => get_cluster_iggy_config(client_id),
     }
 }
 
