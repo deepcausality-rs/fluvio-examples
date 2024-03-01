@@ -14,6 +14,25 @@ use iggy::users::login_user::LoginUser;
 use iggy::users::logout_user::LogoutUser;
 use std::error::Error;
 
+/// Asynchronously retrieves an initialized IggyClient configured as a consumer.
+///
+/// This function first establishes a connection to the Iggy service using the TCP server address
+/// provided by the `iggy_config`. It then initializes the client as a consumer with the given `user`
+/// and `iggy_config` details.
+///
+/// # Arguments
+/// * `iggy_config` - A reference to the `IggyConfig` which contains the configuration parameters, including the TCP server address.
+/// * `user` - A reference to the `IggyUser` which contains user-specific information required for initializing the consumer.
+///
+/// # Returns
+/// Returns a `Result<IggyClient, IggyError>`. On success, it returns `Ok(consumer)`, where `consumer` is an instance of `IggyClient` configured as a consumer.
+/// On failure, the function panics with an error message indicating the failure to create or initialize the consumer client.
+///
+/// # Panics
+/// This function panics if:
+/// - The IggyClient cannot be created due to connection issues.
+/// - The consumer cannot be initialized properly with the provided configuration.
+///
 pub async fn get_consumer(
     iggy_config: &IggyConfig,
     user: &IggyUser,
@@ -31,6 +50,25 @@ pub async fn get_consumer(
     Ok(consumer)
 }
 
+/// Asynchronously retrieves an initialized IggyClient configured as a producer.
+///
+/// This function first establishes a connection to the Iggy service using the TCP server address
+/// provided by the `iggy_config`. It then initializes the client as a producer with the given `user`
+/// and `iggy_config` details.
+///
+/// # Arguments
+/// * `iggy_config` - A reference to the `IggyConfig` which contains the configuration parameters, including the TCP server address.
+/// * `user` - A reference to the `IggyUser` which contains user-specific information required for initializing the producer.
+///
+/// # Returns
+/// Returns a `Result<IggyClient, IggyError>`. On success, it returns `Ok(producer)`, where `producer` is an instance of `IggyClient` configured as a producer.
+/// On failure, the function panics with an error message indicating the failure to create or initialize the producer client.
+///
+/// # Panics
+/// This function panics if:
+/// - The IggyClient cannot be created due to connection issues.
+/// - The producer cannot be initialized properly with the provided configuration.
+///
 pub async fn get_producer(
     iggy_config: &IggyConfig,
     user: &IggyUser,
@@ -172,6 +210,46 @@ pub async fn init_producer(
     Ok(())
 }
 
+/// Cleans up resources by deleting a topic and its associated stream from the Iggy service.
+///
+/// This asynchronous function attempts to delete a topic and a stream specified in the `iggy_config`.
+/// It performs the deletion in two steps:
+/// 1. Deletes the topic using the `delete_topic` method of the `client`.
+/// 2. If the topic is successfully deleted, it proceeds to delete the stream using the `delete_stream` method.
+///
+/// # Arguments
+/// * `client` - A reference to the `IggyClient` which provides the functionality to interact with the Iggy service.
+/// * `iggy_config` - A reference to the `IggyConfig` which contains the configuration parameters, including the stream and topic IDs.
+///
+/// # Returns
+/// This function returns a `Result<(), Box<dyn Error>>`. On success, it returns `Ok(())`, indicating that both the topic and stream have been deleted successfully.
+/// On failure, it returns `Err(Box<dyn Error>)` with the error encountered during the deletion process.
+///
+pub async fn cleanup(client: &IggyClient, iggy_config: &IggyConfig) -> Result<(), Box<dyn Error>> {
+    match client
+        .delete_topic(&DeleteTopic {
+            stream_id: iggy_config.stream_id(),
+            topic_id: iggy_config.topic_id(),
+        })
+        .await
+    {
+        Ok(_) => (),
+        Err(err) => return Err(Box::from(err)),
+    }
+
+    match client
+        .delete_stream(&DeleteStream {
+            stream_id: iggy_config.stream_id(),
+        })
+        .await
+    {
+        Ok(_) => (),
+        Err(err) => return Err(Box::from(err)),
+    }
+
+    Ok(())
+}
+
 /// Shuts down the connection to the Iggy server and logs out the user.
 ///
 /// # Arguments
@@ -184,34 +262,7 @@ pub async fn init_producer(
 /// The `Ok` variant indicates that the user was successfully logged out and the connection was closed, while the `Err` variant indicates that there was an error while logging out or closing the connection.
 ///
 ///
-pub async fn shutdown(
-    client: &IggyClient,
-    iggy_config: &IggyConfig,
-    delete: bool,
-) -> Result<(), Box<dyn Error>> {
-    if delete {
-        match client
-            .delete_topic(&DeleteTopic {
-                stream_id: iggy_config.stream_id(),
-                topic_id: iggy_config.topic_id(),
-            })
-            .await
-        {
-            Ok(_) => (),
-            Err(err) => return Err(Box::from(err)),
-        }
-
-        match client
-            .delete_stream(&DeleteStream {
-                stream_id: iggy_config.stream_id(),
-            })
-            .await
-        {
-            Ok(_) => (),
-            Err(err) => return Err(Box::from(err)),
-        }
-    }
-
+pub async fn shutdown(client: &IggyClient) -> Result<(), Box<dyn Error>> {
     match client.logout_user(&LogoutUser {}).await {
         Ok(_) => println!("* Iggy user logged out."),
         Err(_) => println!("* Iggy user was already logged out."),

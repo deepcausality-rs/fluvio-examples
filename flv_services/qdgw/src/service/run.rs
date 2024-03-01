@@ -1,6 +1,7 @@
 use crate::service::Server;
 use common::prelude::MessageProcessingError;
 use iggy::client::MessageClient;
+use std::error::Error;
 use std::future::Future;
 use tokio::{pin, select};
 
@@ -51,12 +52,26 @@ impl Server {
             } // end select
         } // end loop
 
-        // Shutdown consumer and producer
-        iggy_utils::shutdown(&self.consumer(), &self.iggy_config(), true)
+        self.shutdown_iggy().await.expect("Failed to shutdown iggy");
+
+        Ok(())
+    }
+}
+
+impl Server {
+    pub(super) async fn shutdown_iggy(&self) -> Result<(), Box<dyn Error>> {
+        // Delete stream and topic before shutting down.
+        iggy_utils::cleanup(&self.consumer(), &self.iggy_config())
+            .await
+            .expect("Failed to clean up iggy");
+
+        // Shutdown consumer
+        iggy_utils::shutdown(&self.consumer())
             .await
             .expect("Failed to shutdown iggy consumer");
 
-        iggy_utils::shutdown(&self.producer(), &self.iggy_config(), true)
+        // Shutdown producer
+        iggy_utils::shutdown(&self.producer())
             .await
             .expect("Failed to shutdown iggy producer");
 

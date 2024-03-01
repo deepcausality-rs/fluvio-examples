@@ -33,27 +33,6 @@ pub struct QDClient {
 
 impl QDClient {
     /// Creates a new QDClient instance.
-    ///
-    /// # Parameters
-    ///
-    /// * `client_id` - The unique ID for this client.
-    /// * `client_config` - The client configuration.
-    ///
-    /// # Returns
-    ///
-    /// Returns a `Result` with the new `QDClient` instance on success,
-    /// or an `Error` on failure.
-    ///
-    /// This does the following:
-    ///
-    /// - Gets a Fluvio admin client.
-    /// - Gets a producer for the gateway control topic.
-    /// - Creates the client topics.
-    /// - Creates the QDClient instance.
-    /// - Logs in to the gateway to register the client.
-    ///
-    /// Any errors will be returned as a `Result` with the error cause.
-    ///
     pub async fn new(
         client_id: u16,
         client_config: MessageClientConfig,

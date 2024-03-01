@@ -20,3 +20,4 @@ sbe_messages = { workspace = true }
 # External crates
 tokio = { workspace = true }
 fluvio = { workspace = true }
+iggy = {workspace = true}
