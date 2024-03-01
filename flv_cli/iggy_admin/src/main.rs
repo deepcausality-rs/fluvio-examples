@@ -1,6 +1,7 @@
 use common::prelude::IggyUser;
-use iggy::client::UserClient;
+use iggy::client::{Client, UserClient};
 use iggy::users::login_user::LoginUser;
+use iggy::users::logout_user::LogoutUser;
 
 #[tokio::main]
 async fn main() {
@@ -37,7 +38,10 @@ async fn main() {
 
     println!("Token: {}", token);
 
-    iggy_utils::shutdown(&client)
+    client
+        .logout_user(&LogoutUser {})
         .await
-        .expect("Failed to shutdown");
+        .expect("Failed to logout user");
+
+    client.disconnect().await.expect("Failed to disconnect");
 }

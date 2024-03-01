@@ -1,7 +1,4 @@
-mod handle;
-mod run;
 mod service;
-mod utils;
 
 use crate::service::Server;
 use autometrics::prometheus_exporter;

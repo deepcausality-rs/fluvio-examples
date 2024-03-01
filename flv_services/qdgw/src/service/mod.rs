@@ -6,6 +6,10 @@ use iggy::messages::poll_messages::{PollMessages, PollingStrategy};
 use std::collections::HashMap;
 use symbol_manager::SymbolManager;
 
+mod handle;
+mod run;
+mod utils;
+
 // tokio RwLock implements sync + send and works well with tokio async
 // https://stackoverflow.com/questions/67277282/async-function-the-trait-stdmarkersend-is-not-implemented-for-stdsync
 type Guarded<T> = std::sync::Arc<tokio::sync::RwLock<T>>;
@@ -38,7 +42,7 @@ impl Server {
             .expect("Failed to create consumer client");
 
         // Create an iggy client and initialize it as producer
-        let producer = iggy_utils::get_producer(&iggy_config,&user)
+        let producer = iggy_utils::get_producer(&iggy_config, &user)
             .await
             .expect("Failed to create producer client");
 

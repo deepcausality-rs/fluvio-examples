@@ -51,10 +51,14 @@ impl Server {
             } // end select
         } // end loop
 
-        // Shutdown iggy
-        iggy_utils::shutdown(&self.consumer())
+        // Shutdown consumer and producer
+        iggy_utils::shutdown(&self.consumer(), &self.iggy_config(), true)
             .await
-            .expect("Failed to shutdown iggy");
+            .expect("Failed to shutdown iggy consumer");
+
+        iggy_utils::shutdown(&self.producer(), &self.iggy_config(), true)
+            .await
+            .expect("Failed to shutdown iggy producer");
 
         Ok(())
     }

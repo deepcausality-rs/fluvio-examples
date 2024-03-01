@@ -6,7 +6,9 @@ use iggy::error::IggyError;
 use iggy::models::user_status::UserStatus;
 use iggy::personal_access_tokens::create_personal_access_token::CreatePersonalAccessToken;
 use iggy::streams::create_stream::CreateStream;
+use iggy::streams::delete_stream::DeleteStream;
 use iggy::topics::create_topic::CreateTopic;
+use iggy::topics::delete_topic::DeleteTopic;
 use iggy::users::create_user::CreateUser;
 use iggy::users::login_user::LoginUser;
 use iggy::users::logout_user::LogoutUser;
@@ -29,7 +31,10 @@ pub async fn get_consumer(
     Ok(consumer)
 }
 
-pub async fn get_producer(iggy_config: &IggyConfig, user: &IggyUser) -> Result<IggyClient, IggyError> {
+pub async fn get_producer(
+    iggy_config: &IggyConfig,
+    user: &IggyUser,
+) -> Result<IggyClient, IggyError> {
     let tcp_server_addr = iggy_config.tcp_server_addr();
 
     let producer = get_iggy_client(tcp_server_addr)
@@ -121,7 +126,6 @@ pub async fn init_producer(
     iggy_config: &IggyConfig,
     user: &IggyUser,
 ) -> Result<(), Box<dyn Error>> {
-
     client
         .connect()
         .await
@@ -180,7 +184,34 @@ pub async fn init_producer(
 /// The `Ok` variant indicates that the user was successfully logged out and the connection was closed, while the `Err` variant indicates that there was an error while logging out or closing the connection.
 ///
 ///
-pub async fn shutdown(client: &IggyClient) -> Result<(), Box<dyn Error>> {
+pub async fn shutdown(
+    client: &IggyClient,
+    iggy_config: &IggyConfig,
+    delete: bool,
+) -> Result<(), Box<dyn Error>> {
+    if delete {
+        match client
+            .delete_topic(&DeleteTopic {
+                stream_id: iggy_config.stream_id(),
+                topic_id: iggy_config.topic_id(),
+            })
+            .await
+        {
+            Ok(_) => (),
+            Err(err) => return Err(Box::from(err)),
+        }
+
+        match client
+            .delete_stream(&DeleteStream {
+                stream_id: iggy_config.stream_id(),
+            })
+            .await
+        {
+            Ok(_) => (),
+            Err(err) => return Err(Box::from(err)),
+        }
+    }
+
     match client.logout_user(&LogoutUser {}).await {
         Ok(_) => println!("* Iggy user logged out."),
         Err(_) => println!("* Iggy user was already logged out."),
