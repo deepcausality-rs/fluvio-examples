@@ -14,6 +14,22 @@ use iggy::users::login_user::LoginUser;
 use iggy::users::logout_user::LogoutUser;
 use std::error::Error;
 
+/// Creates a new `IggyClient` instance and returns it.
+///
+/// # Returns
+///
+/// A `Result` type, which can either be an `Ok` variant containing a new `IggyClient` instance
+/// or an `Err` variant containing a boxed dynamic error.
+/// The `Ok` variant indicates that the `IggyClient` instance was successfully created,
+/// while the `Err` variant indicates that there was an error while creating the instance.
+///
+pub async fn get_iggy_client(tcp_server_addr: String) -> Result<IggyClient, IggyError> {
+    IggyClientBuilder::new()
+        .with_tcp()
+        .with_server_address(tcp_server_addr)
+        .build()
+}
+
 /// Asynchronously retrieves an initialized IggyClient configured as a consumer.
 ///
 /// This function first establishes a connection to the Iggy service using the TCP server address
@@ -36,16 +52,18 @@ use std::error::Error;
 pub async fn get_consumer(
     iggy_config: &IggyConfig,
     user: &IggyUser,
-) -> Result<IggyClient, IggyError> {
+) -> Result<IggyClient, Box<dyn Error>> {
     let tcp_server_addr = iggy_config.tcp_server_addr();
 
-    let consumer = get_iggy_client(tcp_server_addr)
-        .await
-        .expect("Failed to build iggy client");
+    let consumer = match get_iggy_client(tcp_server_addr).await {
+        Ok(client) => client,
+        Err(err) => return Err(Box::from(err)),
+    };
 
-    init_consumer(&consumer, &user)
-        .await
-        .expect("Failed to initialize iggy");
+    match init_consumer(&consumer, &user).await {
+        Ok(_) => (),
+        Err(err) => return Err(Box::from(err)),
+    }
 
     Ok(consumer)
 }
@@ -72,34 +90,20 @@ pub async fn get_consumer(
 pub async fn get_producer(
     iggy_config: &IggyConfig,
     user: &IggyUser,
-) -> Result<IggyClient, IggyError> {
+) -> Result<IggyClient, Box<dyn Error>> {
     let tcp_server_addr = iggy_config.tcp_server_addr();
 
-    let producer = get_iggy_client(tcp_server_addr)
-        .await
-        .expect("Failed to create consumer client");
+    let producer = match get_iggy_client(tcp_server_addr).await {
+        Ok(client) => client,
+        Err(err) => return Err(Box::from(err)),
+    };
 
-    init_producer(&producer, &iggy_config, &user)
-        .await
-        .expect("Failed to initialize iggy");
+    match init_producer(&producer, &iggy_config, &user).await {
+        Ok(_) => (),
+        Err(err) => return Err(Box::from(err)),
+    };
 
     Ok(producer)
-}
-
-/// Creates a new `IggyClient` instance and returns it.
-///
-/// # Returns
-///
-/// A `Result` type, which can either be an `Ok` variant containing a new `IggyClient` instance
-/// or an `Err` variant containing a boxed dynamic error.
-/// The `Ok` variant indicates that the `IggyClient` instance was successfully created,
-/// while the `Err` variant indicates that there was an error while creating the instance.
-///
-pub async fn get_iggy_client(tcp_server_addr: String) -> Result<IggyClient, IggyError> {
-    IggyClientBuilder::new()
-        .with_tcp()
-        .with_server_address(tcp_server_addr)
-        .build()
 }
 
 /// Initializes the connection to the Iggy server and logs in the user.
