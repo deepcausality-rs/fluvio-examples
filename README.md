@@ -8,12 +8,6 @@ This project accompanies the blog post ["Real-time Streaming Analytics with Fluv
 2) How to stream SBE Encoded data using Fluvio's message system.
 3) How to do causal inference on real-time data streams with DeepCausality. 
 
-### 👉 **Fluvio**
-
-Fluvio is an open-source data streaming platform with in-flight computation capabilities to aggregate, correlate, and
-transform data records in real-time as they move through the network. Read more on
-the [Fluvio website](https://www.fluvio.io).
-
 ### 👉 **DeepCausality**
 
 DeepCausality is a hyper-geometric computational causality library that enables fast and deterministic context-aware

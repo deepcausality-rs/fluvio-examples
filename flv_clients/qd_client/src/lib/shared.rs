@@ -1,6 +1,8 @@
 use crate::QDClient;
-use fluvio::RecordKey;
 use std::error::Error;
+use iggy::bytes_serializable::BytesSerializable;
+use iggy::client::MessageClient;
+use iggy::messages::send_messages::{Message, Partitioning, SendMessages};
 
 impl QDClient {
     /// Sends a message using the given TopicProducer.
@@ -19,16 +21,23 @@ impl QDClient {
     ///
     pub(crate) async fn send_message(&self, buffer: Vec<u8>) -> Result<(), Box<dyn Error>> {
         // Send the message.
-        self.producer
-            .send(RecordKey::NULL, buffer)
-            .await
-            .expect("[QDClient/send_message]: Failed to send Done!");
 
-        // Flush the producer to ensure the message is sent.
-        self.producer
-            .flush()
+        let producer = self.producer();
+        let iggy_config = self.iggy_config();
+
+        // Build message from encoded first bar
+        let message = Message::from_bytes(buffer.try_into().unwrap())
+            .expect("Failed to create message");
+
+        producer.send_messages(&mut SendMessages{
+            stream_id: iggy_config.stream_id(),
+            topic_id: iggy_config.topic_id(),
+            partitioning: Partitioning::partition_id(iggy_config.partition_id()),
+            messages: vec![message],
+        })
             .await
-            .expect("[QDClient/send_message]: Failed to flush to message bus.");
+            .expect("Failed to send message!");
+
 
         Ok(())
     }

@@ -17,6 +17,7 @@ path = "src/lib/mod.rs"
 # Internal crates
 common = { workspace = true }
 sbe_messages = { workspace = true }
+iggy_utils = {workspace = true}
 # External crates
 tokio = { workspace = true }
 fluvio = { workspace = true }
