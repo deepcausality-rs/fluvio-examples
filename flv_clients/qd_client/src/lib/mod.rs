@@ -2,10 +2,10 @@ use std::error::Error;
 use std::time::Duration;
 
 use iggy::clients::client::IggyClient;
-use iggy::messages::poll_messages::{PollMessages, PollingStrategy};
+use iggy::messages::poll_messages::{PollingStrategy, PollMessages};
 use tokio::time::sleep;
 
-use common::prelude::IggyConfig;
+use common::prelude::{IggyConfig, IggyUser, ServiceID};
 
 mod getters;
 mod send_login;
@@ -28,20 +28,21 @@ impl QDClient {
         client_id: u16,
         iggy_config: IggyConfig,
     ) -> Result<Self, Box<dyn Error + Send>> {
-        // Get poll command.
-        let poll_command = get_poll_command(&iggy_config);
+        // Producer is configured to send messages to the  QD gateway channel
+        let producer_user = IggyUser::default();
+        let producer_id = ServiceID::QDGW.id() as u32;
+        let producer_config = IggyConfig::from_client_id(producer_user, producer_id, 50000, false);
+        let producer = iggy_utils::get_producer(&producer_config)
+            .await
+            .expect("Failed to create iggy producer");
 
-        // Consumer needs to be configured for listing to the QD gateway channel
-        // Create an iggy client and initialize it as consumer
+        // The poll command is using the producer config for polling for messages from the QD gateway
+        let poll_command = get_poll_command(&producer_config);
+
+        // Consumer is configured for listing for incoming messages on the client channel
         let consumer = iggy_utils::get_consumer(&iggy_config)
             .await
-            .expect("Failed to create consumer client");
-
-        // Producer needs to be configured for sending to the QD gateway via the client channel
-        // Create an iggy client and initialize it as producer
-        let producer = iggy_utils::get_producer(&iggy_config)
-            .await
-            .expect("Failed to create producer client");
+            .expect("Failed to create iggy consumer");
 
         // Create client.
         let client = Self {
@@ -52,8 +53,7 @@ impl QDClient {
             iggy_config,
         };
 
-        // login to the QD gateway and register the clients data channel
-        // to receive data streamed from the gateway.
+        // Login to the QD gateway and register the clients data channel
         client
             .login()
             .await
@@ -97,7 +97,7 @@ impl QDClient {
         // Delete stream and topic before shutting down.
         iggy_utils::cleanup(&self.consumer(), &self.iggy_config())
             .await
-            .expect("Failed to clean up iggy");
+            .expect("Failed to clean up iggy consumer");
 
         // Shutdown consumer
         iggy_utils::shutdown(&self.consumer())
