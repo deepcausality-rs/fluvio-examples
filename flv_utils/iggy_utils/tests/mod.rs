@@ -19,11 +19,11 @@ async fn test_get_iggy_client() {
 #[tokio::test]
 async fn test_get_consumer() {
     // Arrange
-    let iggy_config = IggyConfig::from_client_id(5, 50, true);
     let user = IggyUser::default();
+    let iggy_config = IggyConfig::from_client_id(user, 5, 50, true);
 
     // Act
-    let result = get_consumer(&iggy_config, &user).await;
+    let result = get_consumer(&iggy_config).await;
 
     // Assert
     assert!(result.is_ok());
@@ -34,11 +34,11 @@ async fn test_get_consumer() {
 #[tokio::test]
 async fn test_get_consumer_init_error() {
     // Arrange
-    let iggy_config = IggyConfig::from_client_id(5, 50, true);
     let user = IggyUser::new("invalid", "invalid");
+    let iggy_config = IggyConfig::from_client_id(user, 5, 50, true);
 
     // Act
-    let result = get_consumer(&iggy_config, &user).await;
+    let result = get_consumer(&iggy_config).await;
 
     // Assert
     assert!(result.is_err());
@@ -47,11 +47,11 @@ async fn test_get_consumer_init_error() {
 #[tokio::test]
 async fn test_get_producer() {
     // Arrange
-    let iggy_config = IggyConfig::from_client_id(5, 50, true);
     let user = IggyUser::default();
+    let iggy_config = IggyConfig::from_client_id(user, 5, 50, true);
 
     // Act
-    let result = get_producer(&iggy_config, &user).await;
+    let result = get_producer(&iggy_config).await;
 
     // Assert
     assert!(result.is_ok());
@@ -67,11 +67,11 @@ async fn test_get_producer() {
 #[tokio::test]
 async fn test_get_producer_init_error() {
     // Arrange
-    let config = IggyConfig::from_client_id(5, 50, true);
     let user = IggyUser::new("invalid", "invalid");
+    let config = IggyConfig::from_client_id(user, 5, 50, true);
 
     // Act
-    let result = get_producer(&config, &user).await;
+    let result = get_producer(&config).await;
 
     // Assert
     assert!(result.is_err());

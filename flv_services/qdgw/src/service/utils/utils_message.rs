@@ -1,10 +1,12 @@
-use crate::service::Server;
-use common::prelude::{IggyConfig, MessageProcessingError, OHLCVBar, TradeBar};
-use db_query_manager::types::{OHLCVRow, TradeRow};
 use iggy::bytes_serializable::BytesSerializable;
 use iggy::client::MessageClient;
 use iggy::messages::send_messages::{Message, Partitioning, SendMessages};
+
+use common::prelude::{IggyConfig, IggyUser, MessageProcessingError, OHLCVBar, TradeBar};
+use db_query_manager::types::{OHLCVRow, TradeRow};
 use sbe_messages::prelude::{DataErrorType, DataType, SbeOHLCVBar, SbeTradeBar};
+
+use crate::service::Server;
 
 impl Server {
     /// Sends a first bar message to the client to indicate the start of a data stream.
@@ -157,7 +159,9 @@ impl Server {
             .get(&client_id)
             .expect("[QDGW/utils_message::send_client_data]: No producer found");
 
-        let iggy_config = IggyConfig::from_client_id(client_id as u32, 50, false);
+        // Move this to a collection to retrieve the values
+        let user = IggyUser::default();
+        let iggy_config = IggyConfig::from_client_id(user, client_id as u32, 50, false);
 
         producer
             .send_messages(&mut SendMessages {

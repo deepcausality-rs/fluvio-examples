@@ -1,4 +1,5 @@
-use common::prelude::{IggyConfig, IggyUser};
+use std::error::Error;
+
 use iggy::client::{Client, UserClient};
 use iggy::client::{PersonalAccessTokenClient, StreamClient, TopicClient};
 use iggy::clients::client::{IggyClient, IggyClientBuilder};
@@ -12,7 +13,8 @@ use iggy::topics::delete_topic::DeleteTopic;
 use iggy::users::create_user::CreateUser;
 use iggy::users::login_user::LoginUser;
 use iggy::users::logout_user::LogoutUser;
-use std::error::Error;
+
+use common::prelude::{IggyConfig, IggyUser};
 
 /// Creates a new `IggyClient` instance and returns it.
 ///
@@ -49,11 +51,10 @@ pub async fn get_iggy_client(tcp_server_addr: String) -> Result<IggyClient, Iggy
 /// - The IggyClient cannot be created due to connection issues.
 /// - The consumer cannot be initialized properly with the provided configuration.
 ///
-pub async fn get_consumer(
-    iggy_config: &IggyConfig,
-    user: &IggyUser,
-) -> Result<IggyClient, Box<dyn Error>> {
+pub async fn get_consumer(iggy_config: &IggyConfig) -> Result<IggyClient, Box<dyn Error>> {
     let tcp_server_addr = iggy_config.tcp_server_addr();
+
+    let user = iggy_config.user();
 
     let consumer = match get_iggy_client(tcp_server_addr).await {
         Ok(client) => client,
@@ -87,11 +88,10 @@ pub async fn get_consumer(
 /// - The IggyClient cannot be created due to connection issues.
 /// - The producer cannot be initialized properly with the provided configuration.
 ///
-pub async fn get_producer(
-    iggy_config: &IggyConfig,
-    user: &IggyUser,
-) -> Result<IggyClient, Box<dyn Error>> {
+pub async fn get_producer(iggy_config: &IggyConfig) -> Result<IggyClient, Box<dyn Error>> {
     let tcp_server_addr = iggy_config.tcp_server_addr();
+
+    let user = iggy_config.user();
 
     let producer = match get_iggy_client(tcp_server_addr).await {
         Ok(client) => client,

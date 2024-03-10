@@ -5,7 +5,7 @@ use iggy::clients::client::IggyClient;
 use iggy::messages::poll_messages::{PollingStrategy, PollMessages};
 use tokio::time::sleep;
 
-use common::prelude::{IggyConfig, IggyUser};
+use common::prelude::IggyConfig;
 
 mod getters;
 mod send_login;
@@ -28,21 +28,18 @@ impl QDClient {
         client_id: u16,
         iggy_config: IggyConfig,
     ) -> Result<Self, Box<dyn Error + Send>> {
-        //
+        // Get poll command.
         let poll_command = get_poll_command(&iggy_config);
-
-        // Move authentication info into the iggy config
-        let user = IggyUser::default();
 
         // Consumer needs to be configured for listing to the QD gateway channel
         // Create an iggy client and initialize it as consumer
-        let consumer = iggy_utils::get_consumer(&iggy_config, &user)
+        let consumer = iggy_utils::get_consumer(&iggy_config)
             .await
             .expect("Failed to create consumer client");
 
         // Producer needs to be configured for sending to the QD gateway via the client channel
         // Create an iggy client and initialize it as producer
-        let producer = iggy_utils::get_producer(&iggy_config, &user)
+        let producer = iggy_utils::get_producer(&iggy_config)
             .await
             .expect("Failed to create producer client");
 

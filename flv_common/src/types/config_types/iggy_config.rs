@@ -1,9 +1,13 @@
+use std::fmt::{Display, Formatter};
+
 use iggy::identifier::Identifier;
 use serde::{Deserialize, Serialize};
-use std::fmt::{Display, Formatter};
+
+use crate::prelude::IggyUser;
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 pub struct IggyConfig {
+    user: IggyUser,
     stream_id: Identifier,
     stream_name: String,
     topic_id: Identifier,
@@ -16,6 +20,7 @@ pub struct IggyConfig {
 
 impl IggyConfig {
     pub fn new(
+        user: IggyUser,
         tcp_server_addr: &str,
         stream_id: Identifier,
         stream_name: String,
@@ -26,6 +31,7 @@ impl IggyConfig {
         auto_commit: bool,
     ) -> Self {
         Self {
+            user,
             stream_id,
             stream_name,
             topic_id,
@@ -37,8 +43,14 @@ impl IggyConfig {
         }
     }
 
-    pub fn from_client_id(client_id: u32, messages_per_batch: u32, auto_commit: bool) -> Self {
+    pub fn from_client_id(
+        user: IggyUser,
+        client_id: u32,
+        messages_per_batch: u32,
+        auto_commit: bool,
+    ) -> Self {
         Self {
+            user,
             stream_id: Identifier::numeric(client_id).unwrap(),
             stream_name: format!("stream_{}", client_id),
             topic_id: Identifier::numeric(client_id).unwrap(),
@@ -73,9 +85,11 @@ impl IggyConfig {
     pub fn auto_commit(&self) -> bool {
         self.auto_commit
     }
-
     pub fn tcp_server_addr(&self) -> String {
         self.tcp_server_addr.to_owned()
+    }
+    pub fn user(&self) -> &IggyUser {
+        &self.user
     }
 }
 
@@ -84,8 +98,9 @@ impl Display for IggyConfig {
         write!(
             f,
             "IggyConfig: \
-             tcp_server_addr: {}, stream_id: {}, stream_name: {}, topic_id: {}, topic_name: {}, \
+            iggy_user: {} tcp_server_addr: {}, stream_id: {}, stream_name: {}, topic_id: {}, topic_name: {}, \
              partition_id: {}, messages_per_batch: {}, auto_commit: {}",
+            self.user.username(),
             self.tcp_server_addr,
             self.stream_id,
             self.stream_name,

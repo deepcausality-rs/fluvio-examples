@@ -1,6 +1,8 @@
 use std::fmt;
 
-#[derive(Debug, Eq, Clone, PartialEq)]
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 pub struct IggyUser {
     username: String,
     password: String,
@@ -29,10 +31,6 @@ impl Default for IggyUser {
 
 impl fmt::Display for IggyUser {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "User {{ username: {}, password: {} }}",
-            self.username, self.password
-        )
+        write!(f, "User {{ username: {} }}", self.username,)
     }
 }

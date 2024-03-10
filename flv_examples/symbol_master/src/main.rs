@@ -3,7 +3,7 @@ use std::time::Duration;
 use tokio::time::sleep;
 
 use client_utils::prelude::print_utils;
-use common::prelude::{ExchangeID, IggyConfig};
+use common::prelude::{ExchangeID, IggyConfig, IggyUser};
 use qd_client::QDClient;
 use symdb_client::SymdbClient;
 
@@ -42,7 +42,8 @@ async fn main() {
     print_utils::print_example_header(EXAMPLE);
 
     println!("{FN_NAME}: Build Client config for client ID: {CLIENT_ID}",);
-    let client_config = IggyConfig::from_client_id(CLIENT_ID as u32, 50000, false);
+    let user = IggyUser::default();
+    let client_config = IggyConfig::from_client_id(user, CLIENT_ID as u32, 50000, false);
 
     println!("{FN_NAME}: Build SYMDB Client config");
     let symdb_client_config = utils::get_symdb_config();

@@ -1,9 +1,11 @@
-use client_manager::ClientManager;
-use common::prelude::{IggyConfig, IggyUser};
-use db_query_manager::QueryDBManager;
+use std::collections::HashMap;
+
 use iggy::clients::client::IggyClient;
 use iggy::messages::poll_messages::{PollMessages, PollingStrategy};
-use std::collections::HashMap;
+
+use client_manager::ClientManager;
+use common::prelude::IggyConfig;
+use db_query_manager::QueryDBManager;
 use symbol_manager::SymbolManager;
 
 mod handle;
@@ -32,17 +34,13 @@ impl Server {
         query_manager: Guarded<QueryDBManager>,
         symbol_manager: Guarded<SymbolManager>,
     ) -> Self {
-        //
-        // Move authentication info into the iggy config
-        let user = IggyUser::default();
-
         // Create an iggy client and initialize it as consumer
-        let consumer = iggy_utils::get_consumer(&iggy_config, &user)
+        let consumer = iggy_utils::get_consumer(&iggy_config)
             .await
             .expect("Failed to create consumer client");
 
         // Create an iggy client and initialize it as producer
-        let producer = iggy_utils::get_producer(&iggy_config, &user)
+        let producer = iggy_utils::get_producer(&iggy_config)
             .await
             .expect("Failed to create producer client");
 
