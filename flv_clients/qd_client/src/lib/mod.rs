@@ -2,7 +2,7 @@ use std::error::Error;
 use std::time::Duration;
 
 use iggy::clients::client::IggyClient;
-use iggy::messages::poll_messages::{PollingStrategy, PollMessages};
+use iggy::messages::poll_messages::{PollMessages, PollingStrategy};
 use tokio::time::sleep;
 
 use common::prelude::IggyConfig;

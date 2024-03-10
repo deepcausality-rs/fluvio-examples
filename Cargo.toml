@@ -7,7 +7,6 @@ members = [
     "flv_clients/symdb_client",
     "flv_clients/qd_client",
     "flv_common",
-    "flv_components/client_manager",
     "flv_components/config_manager",
     "flv_components/db_query_manager",
     "flv_components/symbol_manager",
@@ -42,7 +41,6 @@ authors = ["Marvin Hansen <marvin.hansen@gmail.com>"]
 # Internal crates
 causal_model = { path = "flv_examples/causal_model" }
 common = { path = "flv_common" }
-client_manager = { path = "flv_components/client_manager" }
 config_manager = { path = "flv_components/config_manager" }
 db_query_manager = { path = "flv_components/db_query_manager" }
 symbol_manager = { path = "flv_components/symbol_manager" }

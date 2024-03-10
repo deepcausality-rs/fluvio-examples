@@ -1,9 +1,8 @@
 use std::collections::HashMap;
 
 use iggy::clients::client::IggyClient;
-use iggy::messages::poll_messages::{PollMessages, PollingStrategy};
+use iggy::messages::poll_messages::{PollingStrategy, PollMessages};
 
-use client_manager::ClientManager;
 use common::prelude::IggyConfig;
 use db_query_manager::QueryDBManager;
 use symbol_manager::SymbolManager;
@@ -21,16 +20,15 @@ pub struct Server {
     producer: IggyClient,
     iggy_config: IggyConfig,
     poll_command: PollMessages,
-    client_manager: Guarded<ClientManager>,
     query_manager: Guarded<QueryDBManager>,
     symbol_manager: Guarded<SymbolManager>,
+    client_configs: Guarded<HashMap<u16, IggyConfig>>,
     client_producers: Guarded<HashMap<u16, IggyClient>>,
 }
 
 impl Server {
     pub async fn new(
         iggy_config: IggyConfig,
-        client_manager: Guarded<ClientManager>,
         query_manager: Guarded<QueryDBManager>,
         symbol_manager: Guarded<SymbolManager>,
     ) -> Self {
@@ -55,6 +53,9 @@ impl Server {
             auto_commit: iggy_config.auto_commit(),
         };
 
+        // Create a new HashMap to store configs for each client
+        let client_configs = std::sync::Arc::new(tokio::sync::RwLock::new(HashMap::new()));
+
         // Create a new HashMap to store data producers for each client
         let client_producers = std::sync::Arc::new(tokio::sync::RwLock::new(HashMap::new()));
 
@@ -63,19 +64,19 @@ impl Server {
             producer,
             iggy_config,
             poll_command,
-            client_manager,
             query_manager,
             symbol_manager,
+            client_configs,
             client_producers,
         }
     }
 }
 
 impl Server {
-    pub fn client_manager(&self) -> &Guarded<ClientManager> {
-        &self.client_manager
+    pub fn client_configs(&self) -> &Guarded<HashMap<u16, IggyConfig>> {
+        &self.client_configs
     }
-    pub fn client_data_producers(&self) -> &Guarded<HashMap<u16, IggyClient>> {
+    pub fn client_producers(&self) -> &Guarded<HashMap<u16, IggyClient>> {
         &self.client_producers
     }
     pub fn consumer(&self) -> &IggyClient {

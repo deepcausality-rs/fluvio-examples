@@ -1,17 +1,19 @@
-mod service;
+use std::net::SocketAddr;
+use std::sync::Arc;
 
-use crate::service::Server;
 use autometrics::prometheus_exporter;
-use client_manager::ClientManager;
+use tokio::sync::RwLock;
+use warp::Filter;
+
 use common::prelude::ServiceID;
 use config_manager::ConfigManager;
 use db_query_manager::QueryDBManager;
 use service_utils::{print_utils, shutdown_utils};
-use std::net::SocketAddr;
-use std::sync::Arc;
 use symbol_manager::SymbolManager;
-use tokio::sync::RwLock;
-use warp::Filter;
+
+use crate::service::Server;
+
+mod service;
 
 const SVC_ID: ServiceID = ServiceID::QDGW;
 
@@ -46,9 +48,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     //Creates a new Tokio task for the HTTP web server.
     let web_handle = tokio::spawn(web_server);
-
-    // Wrap ClientManager into Arc/Mutex to allow multi-threaded access.
-    let client_manager = Arc::new(RwLock::new(ClientManager::new()));
 
     // Get the symbol table for the default exchange.
     let default_exchange = cfg_manager.default_exchange();
@@ -96,7 +95,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     //Creates a new server
     let server = Server::new(
         iggy_config,
-        client_manager,
         query_manager.clone(),
         symbol_manager,
     )

@@ -1,6 +1,6 @@
 use autometrics::autometrics;
 
-use common::prelude::{IggyConfig, IggyUser, MessageClientConfig, MessageProcessingError};
+use common::prelude::{IggyConfig, IggyUser, MessageProcessingError};
 use sbe_messages::prelude::{ClientErrorType, ClientLoginMessage};
 
 use crate::service::Server;
@@ -121,26 +121,6 @@ impl Server {
     /// - MessageProcessingError if there was an issue adding the client to the database.
     ///
     pub(crate) async fn client_login(&self, client_id: u16) -> Result<(), MessageProcessingError> {
-        // Lock the client_manager
-        let mut client_db = self.client_manager().write().await;
-
-        // Create a new config for the client
-        let config = MessageClientConfig::new(client_id);
-
-        // Add the client to the client_manager
-        match client_db.add_client(client_id, config) {
-            Ok(_) => {
-                // println!("[::client_login]: Client logged in successfully");
-            }
-            Err(e) => {
-                println!("[::client_login]: Failed to add client to client_manager");
-                return Err(MessageProcessingError(e.to_string()));
-            }
-        }
-
-        // Unlock the client_manager
-        drop(client_db);
-
         // Create an iggy config for the client
         let user = IggyUser::default();
         let iggy_config = IggyConfig::from_client_id(user, client_id as u32, 50000, false);
@@ -154,7 +134,7 @@ impl Server {
             .expect("Failed to create producer client");
 
         // lock the client_data_producers hashmap
-        let mut client_data_producers = self.client_data_producers().write().await;
+        let mut client_data_producers = self.client_producers().write().await;
 
         // add the client data producer to the hashmap
         client_data_producers.insert(client_id, producer);

@@ -1,5 +1,6 @@
-use crate::service::Server;
 use common::prelude::MessageProcessingError;
+
+use crate::service::Server;
 
 impl Server {
     /// Checks if a client with the given ID is logged in.
@@ -19,10 +20,8 @@ impl Server {
         &self,
         client_id: u16,
     ) -> Result<bool, MessageProcessingError> {
-        let client_db = self.client_manager().read().await;
+        let client_db = self.client_producers().read().await;
 
-        let exists = client_db.check_client(client_id);
-
-        Ok(exists)
+        Ok(client_db.contains_key(&client_id))
     }
 }

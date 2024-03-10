@@ -152,7 +152,7 @@ impl Server {
         messages: Vec<Message>,
     ) -> Result<(), (DataErrorType, MessageProcessingError)> {
         // lock the client_data_producers hashmap
-        let client_data_producers = self.client_data_producers().read().await;
+        let client_data_producers = self.client_producers().read().await;
 
         // Get the producer for the error channel
         let producer = client_data_producers

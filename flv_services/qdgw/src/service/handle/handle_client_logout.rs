@@ -1,7 +1,9 @@
-use crate::service::Server;
 use autometrics::autometrics;
+
 use common::prelude::MessageProcessingError;
 use sbe_messages::prelude::{ClientErrorType, ClientLogoutMessage};
+
+use crate::service::Server;
 
 impl Server {
     /// Handles a client logout message by validating the client ID and logging them out.
@@ -114,22 +116,13 @@ impl Server {
     ///
     pub(crate) async fn client_logout(&self, client_id: u16) -> Result<(), MessageProcessingError> {
         // lock the client_data_producers hashmap
-        let mut client_data_producers = self.client_data_producers().write().await;
+        let mut client_data_producers = self.client_producers().write().await;
 
         // Remove the client's data producer from the hashmap
         client_data_producers.remove(&client_id);
 
         // Unlock the client_data_producers hashmap
         drop(client_data_producers);
-
-        // Lock the client_manager
-        let mut client_db = self.client_manager().write().await;
-
-        // Remove the client from the client client_manager
-        client_db.remove_client(client_id);
-
-        // Unlock the client_manager
-        drop(client_db);
 
         // println!("[client_logout]: Client {:?} logged out successfully", client_id);
         Ok(())
