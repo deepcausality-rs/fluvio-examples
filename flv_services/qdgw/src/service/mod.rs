@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use iggy::clients::client::IggyClient;
-use iggy::messages::poll_messages::{PollingStrategy, PollMessages};
+use iggy::messages::poll_messages::{PollMessages, PollingStrategy};
 
 use common::prelude::IggyConfig;
 use db_query_manager::QueryDBManager;

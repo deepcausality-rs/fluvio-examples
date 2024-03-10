@@ -93,12 +93,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let service_topic = iggy_config.topic_name().to_string();
 
     //Creates a new server
-    let server = Server::new(
-        iggy_config,
-        query_manager.clone(),
-        symbol_manager,
-    )
-    .await;
+    let server = Server::new(iggy_config, query_manager.clone(), symbol_manager).await;
 
     //Creates a new Tokio task for the server.
     let signal = shutdown_utils::signal_handler("Message Bus connector");

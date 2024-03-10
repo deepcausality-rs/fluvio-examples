@@ -124,6 +124,15 @@ impl Server {
         // Unlock the client_data_producers hashmap
         drop(client_data_producers);
 
+        // Lock the client_configs hashmap
+        let mut client_configs = self.client_configs().write().await;
+
+        // Remove the client's config from the hashmap
+        client_configs.remove(&client_id);
+
+        // Unlock the client_configs hashmap
+        drop(client_configs);
+
         // println!("[client_logout]: Client {:?} logged out successfully", client_id);
         Ok(())
     }

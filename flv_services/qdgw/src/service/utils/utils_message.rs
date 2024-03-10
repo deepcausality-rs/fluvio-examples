@@ -2,7 +2,7 @@ use iggy::bytes_serializable::BytesSerializable;
 use iggy::client::MessageClient;
 use iggy::messages::send_messages::{Message, Partitioning, SendMessages};
 
-use common::prelude::{IggyConfig, IggyUser, MessageProcessingError, OHLCVBar, TradeBar};
+use common::prelude::{MessageProcessingError, OHLCVBar, TradeBar};
 use db_query_manager::types::{OHLCVRow, TradeRow};
 use sbe_messages::prelude::{DataErrorType, DataType, SbeOHLCVBar, SbeTradeBar};
 
@@ -146,11 +146,35 @@ impl Server {
         Ok(())
     }
 
+    /// Sends client data messages to the client's data channel.
+    ///
+    /// # Arguments
+    ///
+    /// * `client_id` - The ID of the client to send the data to
+    /// * `messages` - The vector of Message structs containing the data
+    ///
+    /// # Returns
+    ///
+    /// Returns a Result with `()` on success, or a (DataErrorType, MessageProcessingError) on failure.
+    ///
+    /// This function:
+    ///
+    /// - Locks the client_configs hashmap and gets the client's configuration
+    /// - Locks the client_data_producers hashmap and gets the client's producer
+    /// - Sends the messages to the client's topic/partition using the producer
+    /// - Unlocks the hashmaps
+    ///
     pub(crate) async fn send_client_data(
         &self,
         client_id: u16,
         messages: Vec<Message>,
     ) -> Result<(), (DataErrorType, MessageProcessingError)> {
+        // Lock the client_configs hashmap
+        let client_configs = self.client_configs().write().await;
+
+        // Get the client config for the client
+        let iggy_config = client_configs.get(&client_id).unwrap();
+
         // lock the client_data_producers hashmap
         let client_data_producers = self.client_producers().read().await;
 
@@ -158,10 +182,6 @@ impl Server {
         let producer = client_data_producers
             .get(&client_id)
             .expect("[QDGW/utils_message::send_client_data]: No producer found");
-
-        // Move this to a collection to retrieve the values
-        let user = IggyUser::default();
-        let iggy_config = IggyConfig::from_client_id(user, client_id as u32, 50, false);
 
         producer
             .send_messages(&mut SendMessages {
@@ -172,6 +192,12 @@ impl Server {
             })
             .await
             .expect("Failed to send error");
+
+        // Unlock the client_configs hashmap
+        drop(client_configs);
+
+        // Unlock the client_data_producers hashmap
+        drop(client_data_producers);
 
         Ok(())
     }

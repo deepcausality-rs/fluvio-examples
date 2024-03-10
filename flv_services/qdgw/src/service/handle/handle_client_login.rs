@@ -125,8 +125,14 @@ impl Server {
         let user = IggyUser::default();
         let iggy_config = IggyConfig::from_client_id(user, client_id as u32, 50000, false);
 
+        // Lock the client_configs hashmap
+        let mut client_configs = self.client_configs().write().await;
+
         // Add the iggy_config to a collection
-        //
+        client_configs.insert(client_id, iggy_config.clone());
+
+        // Unlock the client_configs hashmap
+        drop(client_configs);
 
         // Create an iggy client and initialize it as producer
         let producer = iggy_utils::get_producer(&iggy_config)
