@@ -1,16 +1,12 @@
 use std::error::Error;
 
-use bytes::Bytes;
-use iggy::bytes_serializable::BytesSerializable;
 use iggy::client::MessageClient;
-use iggy::messages::poll_messages::{PollingStrategy, PollMessages};
+use iggy::messages::poll_messages::{PollMessages, PollingStrategy};
 use iggy::messages::send_messages::{Message, Partitioning, SendMessages};
 
 use common::prelude::IggyConfig;
 
 use crate::QDClient;
-
-const NAME: &str = "QDClient";
 
 impl QDClient {
     /// Sends a message using the given TopicProducer.
@@ -27,17 +23,10 @@ impl QDClient {
     /// This sends the message using the given TopicProducer. It uses a NULL record key.
     /// After sending, it flushes the producer to ensure the message is sent.
     ///
-    pub(crate) async fn send_message(&self, buffer: Vec<u8>) -> Result<(), Box<dyn Error>> {
-
-        println!("{}: Get producer and producer config", NAME);
+    pub(crate) async fn send_message(&self, message: Message) -> Result<(), Box<dyn Error>> {
         let producer = self.producer();
         let producer_config = self.producer_config();
 
-        println!("{}: Build byte encoded message from Vec<u8>", NAME);
-        let bytes = Bytes::from(buffer);
-        let message = Message::from_bytes(bytes).expect("Failed to create message");
-
-        println!("{}: Send message", NAME);
         producer
             .send_messages(&mut SendMessages {
                 stream_id: producer_config.stream_id(),
@@ -48,7 +37,6 @@ impl QDClient {
             .await
             .expect("Failed to send message!");
 
-        println!("{}: OK", NAME);
         Ok(())
     }
 }

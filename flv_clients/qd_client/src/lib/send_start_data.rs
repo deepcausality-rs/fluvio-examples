@@ -1,7 +1,12 @@
-use crate::QDClient;
+use std::error::Error;
+
+use bytes::Bytes;
+use iggy::messages::send_messages::Message;
+
 use common::prelude::{ExchangeID, TimeResolution};
 use sbe_messages::prelude::{DataType, StartDataMessage};
-use std::error::Error;
+
+use crate::QDClient;
 
 impl QDClient {
     /// Sends a StartDataMessage to request trade data.
@@ -39,8 +44,11 @@ impl QDClient {
             .encode()
             .expect("[QDClient/start_trade_data]: Failed to encode message");
 
+        // Build iggy message wrapper
+        let message = Message::new(None, Bytes::from(buffer), None);
+
         // Send message to the gateway
-        self.send_message(buffer)
+        self.send_message(message)
             .await
             .expect("[QDClient/start_trade_data]: Failed to send StartDataMessage message!");
 
@@ -84,8 +92,11 @@ impl QDClient {
             .encode()
             .expect("[QDClient/start_ohlcv_data]: Failed to encode message");
 
+        // Build iggy message wrapper
+        let message = Message::new(None, Bytes::from(buffer), None);
+
         // Send message to the gateway
-        self.send_message(buffer)
+        self.send_message(message)
             .await
             .expect("[QDClient/start_ohlcv_data]: Failed to send StartDataMessage message!");
 

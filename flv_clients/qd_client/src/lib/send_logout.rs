@@ -1,6 +1,11 @@
-use crate::QDClient;
-use sbe_messages::prelude::ClientLogoutMessage;
 use std::error::Error;
+
+use bytes::Bytes;
+use iggy::messages::send_messages::Message;
+
+use sbe_messages::prelude::ClientLogoutMessage;
+
+use crate::QDClient;
 
 impl QDClient {
     /// Logs out of the client by sending a logout message to the gateway.
@@ -15,15 +20,18 @@ impl QDClient {
     ///
     pub(crate) async fn logout(&self) -> Result<(), Box<dyn Error + Send>> {
         // Construct logout message
-        let message = ClientLogoutMessage::new(self.client_id);
+        let logout_message = ClientLogoutMessage::new(self.client_id);
 
         // Encode message
-        let (_, buffer) = message
+        let (_, buffer) = logout_message
             .encode()
             .expect("[QDClient/logout]: Failed to encode message");
 
+        // Build iggy message wrapper
+        let message = Message::new(None, Bytes::from(buffer), None);
+
         // Send message to the gateway
-        self.send_message(buffer)
+        self.send_message(message)
             .await
             .expect("[QDClient/logout]: Failed to send logout message!");
 

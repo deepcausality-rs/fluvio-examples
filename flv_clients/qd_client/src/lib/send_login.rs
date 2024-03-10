@@ -1,6 +1,11 @@
-use crate::QDClient;
-use sbe_messages::prelude::ClientLoginMessage;
 use std::error::Error;
+
+use bytes::Bytes;
+use iggy::messages::send_messages::Message;
+
+use sbe_messages::prelude::ClientLoginMessage;
+
+use crate::QDClient;
 
 impl QDClient {
     /// Logs in the client by sending a login message to the gateway.
@@ -22,8 +27,11 @@ impl QDClient {
             .encode()
             .expect("[QDClient/login]: Failed to encode message");
 
+        // Build iggy message wrapper
+        let message = Message::new(None, Bytes::from(buffer), None);
+
         // Send message to the gateway
-        self.send_message(buffer)
+        self.send_message(message)
             .await
             .expect("[QDClient/login]: Failed to send login message!");
 
