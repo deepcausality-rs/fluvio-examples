@@ -238,6 +238,16 @@ pub async fn login_user(client: &IggyClient, user: &IggyUser) -> Result<(), Box<
     }
 }
 
+pub async fn logout_user(client: &IggyClient) -> Result<(), Box<dyn Error>> {
+    match client
+        .logout_user(&LogoutUser {})
+        .await
+    {
+        Ok(_) => Ok(()),
+        Err(err) => return Err(Box::from(err)),
+    }
+}
+
 /// Cleans up resources by deleting a topic and its associated stream from the Iggy service.
 ///
 /// This asynchronous function attempts to delete a topic and a stream specified in the `iggy_config`.
@@ -291,11 +301,6 @@ pub async fn cleanup(client: &IggyClient, iggy_config: &IggyConfig) -> Result<()
 ///
 ///
 pub async fn shutdown(client: &IggyClient) -> Result<(), Box<dyn Error>> {
-    match client.logout_user(&LogoutUser {}).await {
-        Ok(_) => println!("* Iggy user logged out."),
-        Err(_) => println!("* Iggy user was already logged out."),
-    }
-
     client
         .disconnect()
         .await

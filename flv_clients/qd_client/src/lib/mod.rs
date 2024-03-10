@@ -89,6 +89,11 @@ impl QDClient {
             .await
             .expect("Failed to clean up iggy consumer");
 
+        // Logout user. Call it just once as consumer and producer use the same user.
+        iggy_utils::logout_user(&self.consumer())
+            .await
+            .expect("Failed to logout user");
+
         // Shutdown consumer
         iggy_utils::shutdown(&self.consumer())
             .await
