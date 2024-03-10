@@ -239,10 +239,7 @@ pub async fn login_user(client: &IggyClient, user: &IggyUser) -> Result<(), Box<
 }
 
 pub async fn logout_user(client: &IggyClient) -> Result<(), Box<dyn Error>> {
-    match client
-        .logout_user(&LogoutUser {})
-        .await
-    {
+    match client.logout_user(&LogoutUser {}).await {
         Ok(_) => Ok(()),
         Err(err) => return Err(Box::from(err)),
     }

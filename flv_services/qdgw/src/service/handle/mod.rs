@@ -6,3 +6,4 @@ mod handle_data_start_trade_data;
 mod handle_data_stop;
 mod handle_data_stop_all;
 mod handle_message;
+mod handle_client_utils;
