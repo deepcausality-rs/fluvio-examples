@@ -1,10 +1,11 @@
-use crate::handle_data::handle_data_message;
-use client_utils::prelude::{handle_error_utils, handle_utils, print_utils};
-use common::prelude::{ExchangeID, MessageClientConfig};
-use qd_client::QDClient;
 use std::time::Duration;
-use symdb_client::SymdbClient;
+
 use tokio::time::sleep;
+
+use client_utils::prelude::print_utils;
+use common::prelude::{ExchangeID, IggyConfig};
+use qd_client::QDClient;
+use symdb_client::SymdbClient;
 
 mod handle_data;
 mod utils;
@@ -41,7 +42,7 @@ async fn main() {
     print_utils::print_example_header(EXAMPLE);
 
     println!("{FN_NAME}: Build Client config for client ID: {CLIENT_ID}",);
-    let client_config = MessageClientConfig::new(CLIENT_ID);
+    let client_config = IggyConfig::from_client_id(CLIENT_ID as u32, 50000, false);
 
     println!("{FN_NAME}: Build SYMDB Client config");
     let symdb_client_config = utils::get_symdb_config();
@@ -54,23 +55,23 @@ async fn main() {
         .await
         .expect("basic_data_stream/main: Failed to create QD Gateway client");
 
-    println!("{FN_NAME}: Start the data handler",);
-    let data_topic = client_config.data_channel();
-    tokio::spawn(async move {
-        if let Err(e) = handle_utils::handle_channel(&data_topic, handle_data_message).await {
-            eprintln!("[QDClient/new]: Consumer connection error: {}", e);
-        }
-    });
-
-    println!("{FN_NAME}: Start the error handler",);
-    let err_topic = client_config.error_channel();
-    tokio::spawn(async move {
-        if let Err(e) =
-            handle_utils::handle_channel(&err_topic, handle_error_utils::handle_error_message).await
-        {
-            eprintln!("[QDClient/new]: Consumer connection error: {}", e);
-        }
-    });
+    // println!("{FN_NAME}: Start the data handler",);
+    // let data_topic = client_config.data_channel();
+    // tokio::spawn(async move {
+    //     if let Err(e) = handle_utils::handle_channel(&data_topic, handle_data_message).await {
+    //         eprintln!("[QDClient/new]: Consumer connection error: {}", e);
+    //     }
+    // });
+    //
+    // println!("{FN_NAME}: Start the error handler",);
+    // let err_topic = client_config.error_channel();
+    // tokio::spawn(async move {
+    //     if let Err(e) =
+    //         handle_utils::handle_channel(&err_topic, handle_error_utils::handle_error_message).await
+    //     {
+    //         eprintln!("[QDClient/new]: Consumer connection error: {}", e);
+    //     }
+    // });
 
     let symbol = "ethaed".to_string();
 

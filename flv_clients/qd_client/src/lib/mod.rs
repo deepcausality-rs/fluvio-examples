@@ -1,15 +1,17 @@
-use common::prelude::{IggyConfig, IggyUser, MessageClientConfig};
-use iggy::clients::client::IggyClient;
-use iggy::messages::poll_messages::{PollingStrategy, PollMessages};
 use std::error::Error;
 use std::time::Duration;
+
+use iggy::clients::client::IggyClient;
+use iggy::messages::poll_messages::{PollingStrategy, PollMessages};
 use tokio::time::sleep;
 
+use common::prelude::{IggyConfig, IggyUser};
+
+mod getters;
 mod send_login;
 mod send_logout;
 mod send_start_data;
 mod shared;
-mod getters;
 
 /// The QDClient struct.
 pub struct QDClient {
@@ -17,38 +19,28 @@ pub struct QDClient {
     producer: IggyClient,
     consumer: IggyClient,
     poll_command: PollMessages,
-    client_config: MessageClientConfig,
     iggy_config: IggyConfig,
 }
-
 
 impl QDClient {
     /// Creates a new QDClient instance.
     pub async fn new(
         client_id: u16,
-        client_config: MessageClientConfig,
         iggy_config: IggyConfig,
     ) -> Result<Self, Box<dyn Error + Send>> {
-
-        // Preconfigure the poll message command for the consumer client
-        let poll_command = PollMessages {
-            consumer: Default::default(),
-            stream_id: iggy_config.stream_id(),
-            topic_id: iggy_config.topic_id(),
-            partition_id: Option::from(iggy_config.partition_id()),
-            strategy: PollingStrategy::last(),
-            count: iggy_config.messages_per_batch(),
-            auto_commit: iggy_config.auto_commit(),
-        };
+        //
+        let poll_command = get_poll_command(&iggy_config);
 
         // Move authentication info into the iggy config
         let user = IggyUser::default();
 
+        // Consumer needs to be configured for listing to the QD gateway channel
         // Create an iggy client and initialize it as consumer
         let consumer = iggy_utils::get_consumer(&iggy_config, &user)
             .await
             .expect("Failed to create consumer client");
 
+        // Producer needs to be configured for sending to the QD gateway via the client channel
         // Create an iggy client and initialize it as producer
         let producer = iggy_utils::get_producer(&iggy_config, &user)
             .await
@@ -60,7 +52,6 @@ impl QDClient {
             producer,
             consumer,
             poll_command,
-            client_config,
             iggy_config,
         };
 
@@ -72,6 +63,19 @@ impl QDClient {
             .expect("[QDClient/new]: Failed to log in to the QD Gateway");
 
         Ok(client)
+    }
+}
+
+// Preconfigure the poll message command for the consumer client
+fn get_poll_command(iggy_config: &IggyConfig) -> PollMessages {
+    PollMessages {
+        consumer: Default::default(),
+        stream_id: iggy_config.stream_id(),
+        topic_id: iggy_config.topic_id(),
+        partition_id: Option::from(iggy_config.partition_id()),
+        strategy: PollingStrategy::last(),
+        count: iggy_config.messages_per_batch(),
+        auto_commit: iggy_config.auto_commit(),
     }
 }
 

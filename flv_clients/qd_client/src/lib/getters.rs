@@ -1,6 +1,8 @@
 use iggy::clients::client::IggyClient;
 use iggy::messages::poll_messages::PollMessages;
-use common::prelude::{IggyConfig, MessageClientConfig};
+
+use common::prelude::IggyConfig;
+
 use crate::QDClient;
 
 impl QDClient {
@@ -16,10 +18,6 @@ impl QDClient {
     pub fn poll_command(&self) -> &PollMessages {
         &self.poll_command
     }
-    pub fn client_config(&self) -> &MessageClientConfig {
-        &self.client_config
-    }
-
     pub fn iggy_config(&self) -> &IggyConfig {
         &self.iggy_config
     }

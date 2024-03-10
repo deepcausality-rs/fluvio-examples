@@ -1,7 +1,8 @@
+use std::error::Error;
+
 use sbe_messages::prelude::{
     FirstOHLCVBar, FirstTradeBar, LastOHLCVBar, LastTradeBar, MessageType, SbeOHLCVBar, SbeTradeBar,
 };
-use std::error::Error;
 
 /// The handle_data_message function handles data messages received from the gateway.
 ///
@@ -33,7 +34,7 @@ use std::error::Error;
 ///
 /// It returns a Result with no value if successful, otherwise an error.
 ///
-pub fn handle_data_message(value: Vec<u8>) -> Result<(), Box<dyn Error + Send>> {
+pub fn _handle_data_message(value: Vec<u8>) -> Result<(), Box<dyn Error + Send>> {
     let buffer = value.as_slice();
 
     // The third byte of the buffer is always the message type.
