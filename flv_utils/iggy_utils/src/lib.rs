@@ -106,6 +106,29 @@ pub async fn get_producer(iggy_config: &IggyConfig) -> Result<IggyClient, Box<dy
     Ok(producer)
 }
 
+pub async fn get_client_producer(iggy_config: &IggyConfig) -> Result<IggyClient, Box<dyn Error>> {
+    let tcp_server_addr = iggy_config.tcp_server_addr();
+
+    let user = iggy_config.user();
+
+    let producer = match get_iggy_client(tcp_server_addr).await {
+        Ok(client) => client,
+        Err(err) => return Err(Box::from(err)),
+    };
+
+    producer
+        .connect()
+        .await
+        .expect("Failed to connect to iggy server");
+
+    match login_user(&producer, user).await {
+        Ok(_) => (),
+        Err(err) => return Err(Box::from(err)),
+    }
+
+    Ok(producer)
+}
+
 /// Initializes the connection to the Iggy server and logs in the user.
 ///
 /// # Arguments
@@ -125,13 +148,7 @@ pub async fn init_consumer(client: &IggyClient, user: &IggyUser) -> Result<(), B
         .await
         .expect("Failed to connect to iggy server");
 
-    match client
-        .login_user(&LoginUser {
-            username: user.username().to_string(),
-            password: user.password().to_string(),
-        })
-        .await
-    {
+    match login_user(client, user).await {
         Ok(_) => (),
         Err(err) => return Err(Box::from(err)),
     }
@@ -173,13 +190,7 @@ pub async fn init_producer(
         .await
         .expect("Failed to connect to iggy server");
 
-    match client
-        .login_user(&LoginUser {
-            username: user.username().to_string(),
-            password: user.password().to_string(),
-        })
-        .await
-    {
+    match login_user(client, user).await {
         Ok(_) => (),
         Err(err) => return Err(Box::from(err)),
     }
@@ -212,6 +223,19 @@ pub async fn init_producer(
     }
 
     Ok(())
+}
+
+pub async fn login_user(client: &IggyClient, user: &IggyUser) -> Result<(), Box<dyn Error>> {
+    match client
+        .login_user(&LoginUser {
+            username: user.username().to_string(),
+            password: user.password().to_string(),
+        })
+        .await
+    {
+        Ok(_) => Ok(()),
+        Err(err) => return Err(Box::from(err)),
+    }
 }
 
 /// Cleans up resources by deleting a topic and its associated stream from the Iggy service.

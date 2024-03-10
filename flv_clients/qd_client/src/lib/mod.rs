@@ -2,7 +2,7 @@ use std::error::Error;
 use std::time::Duration;
 
 use iggy::clients::client::IggyClient;
-use iggy::messages::poll_messages::{PollingStrategy, PollMessages};
+use iggy::messages::poll_messages::PollMessages;
 use tokio::time::sleep;
 
 use common::prelude::{IggyConfig, IggyUser, ServiceID};
@@ -14,12 +14,14 @@ mod send_start_data;
 mod shared;
 
 /// The QDClient struct.
+#[derive(Debug)]
 pub struct QDClient {
     client_id: u16,
     producer: IggyClient,
     consumer: IggyClient,
     poll_command: PollMessages,
-    iggy_config: IggyConfig,
+    consumer_config: IggyConfig,
+    producer_config: IggyConfig,
 }
 
 impl QDClient {
@@ -32,12 +34,12 @@ impl QDClient {
         let producer_user = IggyUser::default();
         let producer_id = ServiceID::QDGW.id() as u32;
         let producer_config = IggyConfig::from_client_id(producer_user, producer_id, 50000, false);
-        let producer = iggy_utils::get_producer(&producer_config)
+        let producer = iggy_utils::get_client_producer(&producer_config)
             .await
             .expect("Failed to create iggy producer");
 
         // The poll command is using the producer config for polling for messages from the QD gateway
-        let poll_command = get_poll_command(&producer_config);
+        let poll_command = shared::get_poll_command(&producer_config);
 
         // Consumer is configured for listing for incoming messages on the client channel
         let consumer = iggy_utils::get_consumer(&iggy_config)
@@ -50,7 +52,8 @@ impl QDClient {
             producer,
             consumer,
             poll_command,
-            iggy_config,
+            consumer_config: iggy_config,
+            producer_config,
         };
 
         // Login to the QD gateway and register the clients data channel
@@ -60,19 +63,6 @@ impl QDClient {
             .expect("[QDClient/new]: Failed to log in to the QD Gateway");
 
         Ok(client)
-    }
-}
-
-// Preconfigure the poll message command for the consumer client
-fn get_poll_command(iggy_config: &IggyConfig) -> PollMessages {
-    PollMessages {
-        consumer: Default::default(),
-        stream_id: iggy_config.stream_id(),
-        topic_id: iggy_config.topic_id(),
-        partition_id: Option::from(iggy_config.partition_id()),
-        strategy: PollingStrategy::last(),
-        count: iggy_config.messages_per_batch(),
-        auto_commit: iggy_config.auto_commit(),
     }
 }
 
@@ -95,7 +85,7 @@ impl QDClient {
         sleep(Duration::from_millis(25)).await;
 
         // Delete stream and topic before shutting down.
-        iggy_utils::cleanup(&self.consumer(), &self.iggy_config())
+        iggy_utils::cleanup(&self.consumer(), &self.consumer_config())
             .await
             .expect("Failed to clean up iggy consumer");
 

@@ -9,7 +9,7 @@ fn get_config() -> HostEndpoint {
 // Requires that the SYMDB server is running on localhost:7070
 // Start the server with:
 //
-// cargo run --bin symdb_server
+// cargo run --bin symdb
 //
 
 #[tokio::test]

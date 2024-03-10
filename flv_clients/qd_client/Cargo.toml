@@ -19,6 +19,6 @@ common = { workspace = true }
 sbe_messages = { workspace = true }
 iggy_utils = {workspace = true}
 # External crates
+bytes = { workspace = true }
 tokio = { workspace = true }
-fluvio = { workspace = true }
 iggy = {workspace = true}

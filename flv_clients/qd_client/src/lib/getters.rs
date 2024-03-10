@@ -18,7 +18,10 @@ impl QDClient {
     pub fn poll_command(&self) -> &PollMessages {
         &self.poll_command
     }
-    pub fn iggy_config(&self) -> &IggyConfig {
-        &self.iggy_config
+    pub fn consumer_config(&self) -> &IggyConfig {
+        &self.consumer_config
+    }
+    pub fn producer_config(&self) -> &IggyConfig {
+        &self.producer_config
     }
 }
