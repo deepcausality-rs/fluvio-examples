@@ -1,9 +1,11 @@
-use crate::service::Server;
-use common::prelude::MessageProcessingError;
-use iggy::bytes_serializable::BytesSerializable;
 use iggy::client::MessageClient;
 use iggy::messages::send_messages::{Message, Partitioning, SendMessages};
+use warp::hyper::body::Bytes;
+
+use common::prelude::MessageProcessingError;
 use sbe_messages::prelude::{ClientErrorMessage, ClientErrorType, DataErrorMessage, DataErrorType};
+
+use crate::service::Server;
 
 impl Server {
     /// Sends a ClientError message to the given producer.
@@ -29,7 +31,11 @@ impl Server {
         assert!(enc.is_ok());
 
         let (_, buffer) = enc.unwrap();
-        self.send_error(buffer)
+
+        // Build iggy message wrapper
+        let message = Message::new(None, Bytes::from(buffer), None);
+
+        self.send_error(message)
             .await
             .expect("Failed to send client error message");
 
@@ -55,11 +61,15 @@ impl Server {
         data_error: DataErrorType,
     ) -> Result<(), MessageProcessingError> {
         let message = DataErrorMessage::new(client_id, data_error);
-        let enc = message.encode();
-        assert!(enc.is_ok());
+        let (_, buffer) = message
+            .encode()
+            .expect("Failed to encode data error message");
 
-        let (_, buffer) = enc.unwrap();
-        self.send_error(buffer)
+        // Build iggy message wrapper
+        let message = Message::new(None, Bytes::from(buffer), None);
+
+        // Send message
+        self.send_error(message)
             .await
             .expect("Failed to send error message");
 
@@ -78,13 +88,7 @@ impl Server {
     /// Returns a `Result` with `()` if successful, otherwise returns a
     /// `MessageProcessingError` on failure to send.
     ///
-    pub(crate) async fn send_error(
-        &self,
-        error_buffer: Vec<u8>,
-    ) -> Result<(), MessageProcessingError> {
-        let message = Message::from_bytes(error_buffer.try_into().unwrap())
-            .expect("Failed to create message");
-
+    pub(crate) async fn send_error(&self, message: Message) -> Result<(), MessageProcessingError> {
         self.producer()
             .send_messages(&mut SendMessages {
                 stream_id: self.iggy_config().stream_id(),

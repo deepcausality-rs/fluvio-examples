@@ -1,6 +1,6 @@
-use iggy::bytes_serializable::BytesSerializable;
 use iggy::client::MessageClient;
 use iggy::messages::send_messages::{Message, Partitioning, SendMessages};
+use warp::hyper::body::Bytes;
 
 use common::prelude::{MessageProcessingError, OHLCVBar, TradeBar};
 use db_query_manager::types::{OHLCVRow, TradeRow};
@@ -35,9 +35,8 @@ impl Server {
             Err(e) => return Err(e),
         };
 
-        // Build message from encoded first bar
-        let message = Message::from_bytes(enc_first_bar.try_into().unwrap())
-            .expect("Failed to create message");
+        // Build iggy message wrapper
+        let message = Message::new(None, Bytes::from(enc_first_bar), None);
 
         // Send the first bar message to inform the client that the data stream starts
         match self.send_client_data(client_id, vec![message]).await {
@@ -74,9 +73,8 @@ impl Server {
             Err(e) => return Err(e),
         };
 
-        // Build message from encoded first bar
-        let message = Message::from_bytes(enc_last_bar.try_into().unwrap())
-            .expect("Failed to create message");
+        // Build iggy message wrapper
+        let message = Message::new(None, Bytes::from(enc_last_bar), None);
 
         // Send the first bar message to inform the client that the data stream starts
         match self.send_client_data(client_id, vec![message]).await {
@@ -102,9 +100,8 @@ impl Server {
         // Encode the trade bar message
         let (_, enc_trade_bar) = SbeTradeBar::encode(bar).unwrap();
 
-        // Build message from encoded first bar
-        let message = Message::from_bytes(enc_trade_bar.try_into().unwrap())
-            .expect("Failed to create message");
+        // Build iggy message wrapper
+        let message = Message::new(None, Bytes::from(enc_trade_bar), None);
 
         // Send trade bar message to inform the client that the data stream starts
         match self.send_client_data(client_id, vec![message]).await {
@@ -133,9 +130,8 @@ impl Server {
         // Encode the trade bar message
         let (_, enc_ohlcv_bar) = SbeOHLCVBar::encode(bar).unwrap();
 
-        // Build message from encoded first bar
-        let message = Message::from_bytes(enc_ohlcv_bar.try_into().unwrap())
-            .expect("Failed to create message");
+        // Build iggy message wrapper
+        let message = Message::new(None, Bytes::from(enc_ohlcv_bar), None);
 
         // Send the ohlcv bar message to inform the client that the data stream starts
         match self.send_client_data(client_id, vec![message]).await {
