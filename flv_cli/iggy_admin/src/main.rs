@@ -1,20 +1,60 @@
-use common::prelude::IggyUser;
-use iggy::client::{Client, UserClient};
+use std::error::Error;
+
+use iggy::client::UserClient;
+use iggy::clients::client::IggyClient;
 use iggy::users::login_user::LoginUser;
 use iggy::users::logout_user::LogoutUser;
 
+use common::prelude::{IggyConfig, IggyUser};
+
+const CLIENT_ID: u16 = 1;
+
 #[tokio::main]
 async fn main() {
-    println!("Hello, Iggy!");
+    let user = IggyUser::default();
+    let config = IggyConfig::from_client_id(user.clone(), CLIENT_ID as u32, 50000, false);
+
     let client = iggy_utils::get_iggy_client("127.0.0.1:8090".to_string())
         .await
         .expect("Failed to build iggy client");
 
-    let user = IggyUser::default();
-    iggy_utils::init_consumer(&client, &user)
+    init(&client, &user).await.expect("Failed to init");
+
+    create_new_user(&client)
+        .await
+        .expect("Failed to create new user");
+
+    cleanup(&client, &config).await.expect("Failed to cleanup");
+}
+
+async fn init(client: &IggyClient, user: &IggyUser) -> Result<(), Box<dyn Error>> {
+    iggy_utils::init_consumer(&client, user)
         .await
         .expect("Failed to init");
 
+    Ok(())
+}
+
+async fn cleanup(client: &IggyClient, iggy_config: &IggyConfig) -> Result<(), Box<dyn Error>> {
+    // Delete stream and topic before shutting down.
+    iggy_utils::cleanup(&client, &iggy_config)
+        .await
+        .expect("Failed to clean up iggy consumer");
+
+    // Logout user. Call it just once as consumer and producer use the same user.
+    iggy_utils::logout_user(&client)
+        .await
+        .expect("Failed to logout user");
+
+    // Shutdown consumer
+    iggy_utils::shutdown(&client)
+        .await
+        .expect("Failed to shutdown iggy consumer");
+
+    Ok(())
+}
+
+async fn create_new_user(client: &IggyClient) -> Result<IggyUser, Box<dyn Error>> {
     let new_user = IggyUser::new("qdgw", "qdgw");
 
     println!("Creating new user...");
@@ -43,5 +83,5 @@ async fn main() {
         .await
         .expect("Failed to logout user");
 
-    client.disconnect().await.expect("Failed to disconnect");
+    Ok(new_user)
 }
