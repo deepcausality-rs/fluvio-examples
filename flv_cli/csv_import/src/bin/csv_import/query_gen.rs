@@ -40,10 +40,10 @@ pub(crate) fn generate_metadata_table_ddl(meta_data_table: &str) -> String {
         r"
         CREATE TABLE IF NOT EXISTS {meta_data_table}
         (
-            symbol String,
-            symbol_id UInt64,
-            table_name String,
-            number_of_rows UInt64
+            symbol StringWithDictionary CODEC(LZ4),
+            symbol_id UInt64 CODEC(ZSTD(1)),
+            table_name StringWithDictionary CODEC(LZ4),
+            number_of_rows UInt64 CODEC(ZSTD(1)),
         )
         ENGINE = MergeTree
         PRIMARY KEY (symbol, symbol_id)

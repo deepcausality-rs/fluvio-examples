@@ -1,7 +1,9 @@
+use std::error::Error;
+
+use klickhouse::Client;
+
 use crate::query_gen;
 use crate::types::{CountRow, MetaData};
-use klickhouse::Client;
-use std::error::Error;
 
 pub(crate) async fn count_rows(client: &Client, path: &str) -> Result<u64, Box<dyn Error>> {
     let count_query = query_gen::generate_count_query(path);
@@ -19,7 +21,6 @@ pub(crate) async fn create_trade_data_table(
     table_name: &str,
 ) -> Result<(), Box<dyn Error>> {
     let query = query_gen::generate_trade_table_ddl(table_name);
-
     client
         .execute(&query)
         .await
