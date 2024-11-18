@@ -31,14 +31,31 @@ members = [
 
 [workspace.package]
 edition = "2021"
-rust-version = "1.75"
+rust-version = "1.80.0"
 readme = "README.md"
 repository = "https://github.com/marvin-hansen/fluvio-examples"
 authors = ["Marvin Hansen <marvin.hansen@gmail.com>"]
 
 
+# Optimize all crates
+[profile.release]
+opt-level = 3
+lto = true    # Enable Link Time Optimization (LTO)
+codegen-units = 1 # Reduce Parallel Code Generation Units to Increase Optimization
+
+
+# There's a Cargo feature named profile-overrides
+# that lets you override the optimization level of dependencies.
+# https://docs.rust-embedded.org/book/unsorted/speed-vs-size.html
+[profile.release.package."*"]
+opt-level = 3
+codegen-units = 1 # Reduce Parallel Code Generation Units to Increase Optimization
+
+
 [workspace.dependencies]
-# Internal crates
+#
+#Internal crates
+#
 causal_model = { path = "flv_examples/causal_model" }
 common = { path = "flv_common" }
 config_manager = { path = "flv_components/config_manager" }
@@ -56,7 +73,9 @@ db_specs = { path = "flv_specs/db_specs" }
 exchange_specs = { path = "flv_specs/exchange_specs" }
 message_specs = { path = "flv_specs/message_specs" }
 service_specs = { path = "flv_specs/service_specs" }
+#
 # External crates
+#
 async-trait = { version = "0.1.77" }
 autometrics = { version = "1", features = ["prometheus-exporter"] }
 bytes = {version = "1.5.0"}
@@ -77,23 +96,10 @@ petgraph = "0.6"
 rust_decimal = { version = "1", default-features = false, features = ["serde"] }
 serde = { version = "1", features = ["derive"] }
 tokio = { version = "1", features = ["macros", "net", "rt-multi-thread", "signal"] }
-prost = "0.12"
-tonic-health = "0.11"
-tonic = "0.11"
-tonic-build = "0.11"
+prost = "0.13.3"
+tonic-health = "0.12.3"
+tonic = "0.12.3"
+tonic-build = "0.12.3"
 warp = { version = "0.3", features = ["multipart"] }
 
 
-# Optimize all crates
-[profile.release]
-opt-level = 3
-lto = true    # Enable Link Time Optimization (LTO)
-codegen-units = 1 # Reduce Parallel Code Generation Units to Increase Optimization
-
-
-# There's a Cargo feature named profile-overrides
-# that lets you override the optimization level of dependencies.
-# https://docs.rust-embedded.org/book/unsorted/speed-vs-size.html
-[profile.release.package."*"]
-opt-level = 3
-codegen-units = 1 # Reduce Parallel Code Generation Units to Increase Optimization

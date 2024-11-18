@@ -3,6 +3,7 @@ use std::error::Error;
 use iggy::client::{Client, UserClient};
 use iggy::client::{PersonalAccessTokenClient, StreamClient, TopicClient};
 use iggy::clients::client::{IggyClient, IggyClientBuilder};
+use iggy::compression::compression_algorithm::CompressionAlgorithm;
 use iggy::error::IggyError;
 use iggy::models::user_status::UserStatus;
 use iggy::personal_access_tokens::create_personal_access_token::CreatePersonalAccessToken;
@@ -213,8 +214,9 @@ pub async fn init_producer(
             partitions_count: 1,
             name: iggy_config.topic_name().to_string(),
             message_expiry: None,
+            compression_algorithm: CompressionAlgorithm::None,
             max_topic_size: None,
-            replication_factor: 1,
+            replication_factor: Some(1),
         })
         .await
     {
